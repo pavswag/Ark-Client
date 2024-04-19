@@ -168,7 +168,7 @@ public final class Player extends Entity implements RSPlayer {
 				Client.myHeadAndJaw[1] = equipment[j] - 256;
 			}
 			if (equipment[j] >= 512 && equipment[j] - 512 < ItemDefinition.totalItems) {
-				int l1 = ItemDefinition.lookup(equipment[j] - 512).team;
+				int l1 = ItemDefinition.lookup(equipment[j] - 512).teamCape;
 				if (l1 != 0)
 					team = l1;
 			}

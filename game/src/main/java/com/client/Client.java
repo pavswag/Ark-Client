@@ -9,7 +9,6 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 
 import com.client.audio.ObjectSound;
 import com.client.audio.StaticSound;
-import com.client.connection.Connection;
 
 import java.io.*;
 import java.lang.reflect.Method;
@@ -2140,7 +2139,7 @@ public class Client extends GameEngine implements RSClient {
 				(Item) class19.reverseGetNext()) {
 			ItemDefinition itemDef = ItemDefinition.lookup(item.ID);
 			int l = itemDef.cost;
-			if (itemDef.stackable)
+			if (itemDef.stacks)
 				l *= item.itemCount + 1;
 
 /*			if (l > k) {
@@ -3093,7 +3092,7 @@ public class Client extends GameEngine implements RSClient {
 													pushMessage("<col=255>" + itemDef.name + ":</col> Male: <col=255>"
 															+ itemDef.maleModel0 + "</col> Female: <col=255>"
 															+ itemDef.femaleModel0 + "</col> Model id: <col=255>"
-															+ itemDef.modelId, 0, "");
+															+ itemDef.inventoryModel, 0, "");
 													pushMessage("Zoom: <col=255>" + itemDef.zoom2d
 															+ "</col> Rotation: <col=255>x" + itemDef.xan2d + " y"
 															+ itemDef.yan2d + "", 0, "");
@@ -3107,7 +3106,7 @@ public class Client extends GameEngine implements RSClient {
 											String target = "@lre@" + itemDef.name;
 
 											if (localPlayer.isAdminRights()) {
-												target = "@lre@" + itemDef.name + " @whi@(" + itemID + " / " + itemDef.modelId + ")";
+												target = "@lre@" + itemDef.name + " @whi@(" + itemID + " / " + itemDef.inventoryModel + ")";
 											}
 
 											if (cosmetic_cost.containsKey(itemID)) {
@@ -6462,7 +6461,7 @@ public class Client extends GameEngine implements RSClient {
 							for (int ii = 0, slot = -1; ii < ItemDefinition.totalItems && slot < 100; ii++) {
 								ItemDefinition def = ItemDefinition.lookup(ii);
 
-								if (def.name == null || def.noted_item_id == ii - 1 || def.unnoted_item_id == ii - 1
+								if (def.name == null || def.noteTemplateId == ii - 1 || def.noteLinkId == ii - 1
 										|| RSInterface.interfaceCache[61254].message.length() == 0) {
 									continue;
 								}
@@ -14581,7 +14580,7 @@ public class Client extends GameEngine implements RSClient {
 									if (class9_1.inventoryItemId[k4] > 0) {
 										ItemDefinition itemDef = ItemDefinition.lookup(class9_1.inventoryItemId[k4] - 1);
 										String s2 = itemDef.name;
-										if (itemDef.stackable || class9_1.inventoryAmounts[k4] != 1)
+										if (itemDef.stacks || class9_1.inventoryAmounts[k4] != 1)
 											s2 = s2 + " x" + intToKOrMilLongName(class9_1.inventoryAmounts[k4]);
 										int i9 = _x + i6 * (115 + class9_1.invSpritePadX);
 										int k9 = _y + j5 * (12 + class9_1.invSpritePadY);
@@ -21261,8 +21260,8 @@ public class Client extends GameEngine implements RSClient {
 	private static int anInt1288;
 	public static int anInt1290;
 	private int hoverShopTile = -1;
-	public static String server = Connection.WORLD_2.address;
-	public static int port = Integer.parseInt(Connection.WORLD_2.port);
+	public static String server = Configuration.CONNECTION.address;
+	public static int port = Integer.parseInt(Configuration.CONNECTION.port);
 	public static boolean controlIsDown;
 	public int drawCount;
 	public int fullscreenInterfaceID;

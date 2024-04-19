@@ -31,7 +31,7 @@ public class Configuration {
 	public static final String CLIENT_TITLE = "ArkCane";
 	public static final String WEBSITE = "ArkCane.net";
 	public static final String DEDICATED_SERVER_ADDRESS = "127.0.0.1";
-	public static Connection CONNECTION = Connection.WORLD_2;
+	public static Connection CONNECTION = Connection.WORLD_1;
 	public static final int TEST_PORT = 43595;
 	public static final String CACHE_NAME = ".arkcane_live";
 	public static final String DEV_CACHE_NAME = "local_cache";

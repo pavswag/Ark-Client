@@ -21,59 +21,59 @@ public final class ItemDefinition implements RSItemComposition {
     private static Buffer item_data;
     private static int[] streamIndices;
     public int cost;
-    public int[] colorReplace;
+    public int[] modifiedColours;
     public int id;
-    public int[] colorFind;
+    public int[] originalColours;
     public boolean members;
-    public int noted_item_id;
+    public int noteTemplateId;
     public int femaleModel1;
     public int maleModel0;
     public String[] options;
     public int xOffset2d;
     public String name;
-    public int modelId;
-    public int maleHeadModel;
+    public int inventoryModel;
+    public int maleHeadModel0;
     public int weight;
     public int wearPos1;
     public int wearPos2;
     public int wearPos3;
-    public boolean stackable;
-    public int unnoted_item_id;
+    public boolean stacks;
+    public int noteLinkId;
     public int zoom2d;
     public int maleModel1;
     public String[] interfaceOptions;
     public int xan2d;
     public int[] countObj;
     public int yOffset2d;//
-    public int femaleHeadModel;
+    public int femaleHeadModel0;
     public int yan2d;
     public int femaleModel0;
     public int[] countCo;
-    public int team;
+    public int teamCape;
     public int zan2d;
     public String[] equipActions;
-    public boolean tradeable;
+    public boolean isTradeable;
     public HashMap<Integer, Object> params;
     public int glowColor = -1;
-    private short[] textureReplace;
-    private short[] textureFind;
+    private short[] modifiedTextureColours;
+    private short[] originalTextureColours;
     private byte femaleOffset;
     private int femaleModel2;
-    private int maleHeadModel2;
+    private int maleHeadModel1;
     private int resizeX;
-    private int femaleHeadModel2;
+    private int femaleHeadModel1;
     private int contrast;
     private int maleModel2;
     private int resizeZ;
     private int resizeY;
     private int ambient;
     private byte maleOffset;
-    private int shiftClickIndex = -2;
+    private int dropOptionIndex = -2;
     private int category;
-    private int bought_id;
-    private int bought_template_id;
-    private int placeholder_id;
-    private int placeholder_template_id;
+    private int unnotedId;
+    private int notedId;
+    private int placeholderLink;
+    private int placeholderTemplate;
 
     private ItemDefinition() {
         id = -1;
@@ -132,9 +132,9 @@ public final class ItemDefinition implements RSItemComposition {
         ItemDefinition copyItemDef = lookup(copyingItemId);
         itemDef.id = newId;
         itemDef.name = newName;
-        itemDef.colorFind = copyItemDef.colorFind;
-        itemDef.colorReplace = copyItemDef.colorReplace;
-        itemDef.modelId = copyItemDef.modelId;
+        itemDef.originalColours = copyItemDef.originalColours;
+        itemDef.modifiedColours = copyItemDef.modifiedColours;
+        itemDef.inventoryModel = copyItemDef.inventoryModel;
         itemDef.maleModel0 = copyItemDef.maleModel0;
         itemDef.femaleModel0 = copyItemDef.femaleModel0;
         itemDef.zoom2d = copyItemDef.zoom2d;
@@ -163,39 +163,39 @@ public final class ItemDefinition implements RSItemComposition {
         switch (itemId) {
             case 6798:
                 itemDef.name = "Damage Reduction Scroll(10min)";
-                itemDef.stackable = true;
+                itemDef.stacks = true;
                 break;
             case 6799:
                 itemDef.name = "Damage Reduction Scroll(30min)";
-                itemDef.stackable = true;
+                itemDef.stacks = true;
                 break;
             case 6800:
                 itemDef.name = "Damage Reduction Scroll(60min)";
-                itemDef.stackable = true;
+                itemDef.stacks = true;
                 break;
             case 6801:
                 itemDef.name = "Slayer task damage(10min)";
-                itemDef.stackable = true;
+                itemDef.stacks = true;
                 break;
             case 6802:
                 itemDef.name = "Slayer task damage(30min)";
-                itemDef.stackable = true;
+                itemDef.stacks = true;
                 break;
             case 6803:
                 itemDef.name = "Slayer task damage(60min)";
-                itemDef.stackable = true;
+                itemDef.stacks = true;
                 break;
             case 6804:
                 itemDef.name = "Double harvest(10min)";
-                itemDef.stackable = true;
+                itemDef.stacks = true;
                 break;
             case 6806:
                 itemDef.name = "Double harvest(30min)";
-                itemDef.stackable = true;
+                itemDef.stacks = true;
                 break;
             case 6808:
                 itemDef.name = "Double harvest(60min)";
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 break;
             case 26551:
                 itemDef.name = "ArkCane grimoire";
@@ -206,8 +206,8 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "@red@lil' Nyx";
                 //itemDef.description = "The most powerful pet, see ::foepets for full list of perks.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
-                itemDef.modelId = 60050;
+                itemDef.stacks = false;
+                itemDef.inventoryModel = 60050;
                 itemDef.zoom2d = 4280;
                 itemDef.xan2d = 270;
                 itemDef.yan2d = 322;
@@ -220,8 +220,8 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "@gre@lil' Flying pumpkin";
                 //itemDef.description = "The most powerful pet, see ::foepets for full list of perks.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
-                itemDef.modelId = 49469;
+                itemDef.stacks = false;
+                itemDef.inventoryModel = 49469;
                 itemDef.zoom2d = 5980;
                 itemDef.xan2d = 96;
                 itemDef.yan2d = 119;
@@ -234,8 +234,8 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "@gre@lil' Jack-O-Kraken";
                 //itemDef.description = "The most powerful pet, see ::foepets for full list of perks.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
-                itemDef.modelId = 60049;
+                itemDef.stacks = false;
+                itemDef.inventoryModel = 60049;
                 itemDef.zoom2d = 7480;
                 itemDef.xan2d = 200;
                 itemDef.yan2d = 0;
@@ -248,21 +248,21 @@ public final class ItemDefinition implements RSItemComposition {
                 break;
             case 24364:
                 itemDef.name = "Island Scroll (15min)";
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.interfaceOptions = new String[] { "Open", null, null, null, null};
                 break;
             case 24365:
                 itemDef.name = "Island Scroll (30min)";
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.interfaceOptions = new String[] { "Open", null, null, null, null};
                 break;
             case 24366:
                 itemDef.name = "Island Scroll (60min)";
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.interfaceOptions = new String[] { "Open", null, null, null, null};
                 break;
             case 20754:
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 break;
 
             case 26545:
@@ -284,7 +284,7 @@ public final class ItemDefinition implements RSItemComposition {
                 break;
             case 21726:
             case 21728:
-                itemDef.stackable = true;
+                itemDef.stacks = true;
                 break;
             case 12863:
                 itemDef.interfaceOptions = new String[] { "Open", null, null, null, null};
@@ -388,7 +388,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33237:
                 itemDef.name = "@yel@1 Nomad Point Certificate";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.modelId = 60039;
+                itemDef.inventoryModel = 60039;
                 itemDef.zoom2d = ItemDefinition.lookup(691).zoom2d;
                 itemDef.xan2d = ItemDefinition.lookup(691).xan2d;
                 itemDef.yan2d = ItemDefinition.lookup(691).yan2d;
@@ -415,7 +415,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 23877:
                 itemDef.name = "Crystal Shard";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = true;
+                itemDef.stacks = true;
                 break;
             case 23943:
                 itemDef.interfaceOptions = new String[] { null, "Wear", "Uncharge", "Check", "Drop" };
@@ -516,7 +516,7 @@ public final class ItemDefinition implements RSItemComposition {
                 break;
             case 6829:
                 itemDef.name = "@yel@P2P Division pass box";
-                itemDef.modelId = 60052;
+                itemDef.inventoryModel = 60052;
                 itemDef.zoom2d = ItemDefinition.lookup(13346).zoom2d;
                 itemDef.xan2d = ItemDefinition.lookup(13346).xan2d;
                 itemDef.yan2d = ItemDefinition.lookup(13346).yan2d;
@@ -526,7 +526,7 @@ public final class ItemDefinition implements RSItemComposition {
                 break;
             case 6831:
                 itemDef.name = "@cya@F2P Division pass box";
-                itemDef.modelId = 49466;
+                itemDef.inventoryModel = 49466;
                 itemDef.zoom2d = ItemDefinition.lookup(13346).zoom2d;
                 itemDef.xan2d = ItemDefinition.lookup(13346).xan2d;
                 itemDef.yan2d = ItemDefinition.lookup(13346).yan2d;
@@ -687,7 +687,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 4205:
                 itemDef.name = "@gre@Consecration seed";
                 //itemDef.description = "Provides the whole server with +5 PC points for 1 hour.";
-                itemDef.stackable = true;
+                itemDef.stacks = true;
                 break;
             case 11864:
             case 11865:
@@ -718,7 +718,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 19557:
                 itemDef.setDefaults();
 //                itemDef = ItemDefinition.lookup(19556);
-                itemDef.modelId = ItemDefinition.lookup(19556).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(19556).inventoryModel;
                 itemDef.name = "Monkey";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
                 itemDef.zoom2d = ItemDefinition.lookup(19556).zoom2d;
@@ -731,7 +731,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 19942:
                 itemDef.setDefaults();
 //                itemDef = ItemDefinition.lookup(23184);
-                itemDef.modelId = ItemDefinition.lookup(23184).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(23184).inventoryModel;
                 itemDef.name = "Lil Mimic";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
                 itemDef.zoom2d = ItemDefinition.lookup(23184).zoom2d;
@@ -768,7 +768,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.equipActions[1] = "Clan wars";
                 break;
             case 6680:
-                itemDef.modelId = 60026;
+                itemDef.inventoryModel = 60026;
                 itemDef.name = "Mini Arbograve Box";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, "Quick-Open", "Drop" };
                 itemDef.zoom2d = 1480;
@@ -779,7 +779,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.yOffset2d = -14;
                 break;
             case 12579:
-                itemDef.modelId = 60026;
+                itemDef.inventoryModel = 60026;
                 itemDef.name = "Arbograve Box";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, "Quick-Open", "Drop" };
                 itemDef.zoom2d = (ItemDefinition.lookup(6199).zoom2d);
@@ -790,7 +790,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.yOffset2d = ItemDefinition.lookup(6199).yOffset2d;
                 break;
             case 12582:
-                itemDef.modelId = 60027;
+                itemDef.inventoryModel = 60027;
                 itemDef.name = "Chambers Box";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, "Quick-Open", "Drop" };
                 itemDef.zoom2d = (ItemDefinition.lookup(6199).zoom2d);
@@ -801,7 +801,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.yOffset2d = ItemDefinition.lookup(6199).yOffset2d;
                 break;
             case 12585:
-                itemDef.modelId = 60027;
+                itemDef.inventoryModel = 60027;
                 itemDef.name = "Mini Chambers Box";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, "Quick-Open", "Drop" };
                 itemDef.zoom2d = 1480;
@@ -812,7 +812,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.yOffset2d = -14;
                 break;
             case 12588:
-                itemDef.modelId = 60028;
+                itemDef.inventoryModel = 60028;
                 itemDef.name = "Donation Box";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, "Quick-Open", "Drop" };
                 itemDef.zoom2d = (ItemDefinition.lookup(6199).zoom2d);
@@ -823,7 +823,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.yOffset2d = ItemDefinition.lookup(6199).yOffset2d;
                 break;
             case 19887:
-                itemDef.modelId = 60028;
+                itemDef.inventoryModel = 60028;
                 itemDef.name = "Mini Donation Box";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, "Quick-Open", "Drop" };
                 itemDef.zoom2d = 1480;
@@ -834,7 +834,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.yOffset2d = -14;
                 break;
             case 19891:
-                itemDef.modelId = 60029;
+                itemDef.inventoryModel = 60029;
                 itemDef.name = "Theatre Of Blood Box";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, "Quick-Open", "Drop" };
                 itemDef.zoom2d = (ItemDefinition.lookup(6199).zoom2d);
@@ -845,7 +845,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.yOffset2d = ItemDefinition.lookup(6199).yOffset2d;
                 break;
             case 19895:
-                itemDef.modelId = 60029;
+                itemDef.inventoryModel = 60029;
                 itemDef.name = "Mini Theatre Of Blood Box";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, "Quick-Open", "Drop" };
                 itemDef.zoom2d = 1480;
@@ -856,7 +856,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.yOffset2d = -14;
                 break;
             case 19897:
-                itemDef.modelId = 60030;
+                itemDef.inventoryModel = 60030;
                 itemDef.name = " Cosmetic Box";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, "Quick-Open", "Drop" };
                 itemDef.zoom2d = (ItemDefinition.lookup(6199).zoom2d);
@@ -867,7 +867,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.yOffset2d = ItemDefinition.lookup(6199).yOffset2d;
                 break;
             case 11739:
-                itemDef.modelId = 60031;
+                itemDef.inventoryModel = 60031;
                 itemDef.name = "@gre@Vote Mystery Box";
                 //itemDef.description = "Probably contains cosmetics, or maybe not...";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, null, "Drop" };
@@ -879,7 +879,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.yOffset2d = ItemDefinition.lookup(6199).yOffset2d;
                 break;
             case 6828:
-                itemDef.modelId = 60032;
+                itemDef.inventoryModel = 60032;
                 itemDef.name = "Super Mystery Box";
                 //itemDef.description = "Mystery box that contains goodies.";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, "Quick-Open", "Drop" };
@@ -889,10 +889,10 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.zan2d = ItemDefinition.lookup(6199).zan2d;
                 itemDef.xOffset2d = ItemDefinition.lookup(6199).xOffset2d;
                 itemDef.yOffset2d = ItemDefinition.lookup(6199).yOffset2d;
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 break;
             case 6677:
-                itemDef.modelId = 60032;
+                itemDef.inventoryModel = 60032;
                 itemDef.name = "Mini Super Mystery Box";
                 //itemDef.description = "Mystery box that contains goodies.";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, "Quick-Open", "Drop" };
@@ -902,7 +902,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.zan2d = 0;
                 itemDef.xOffset2d = 0;
                 itemDef.yOffset2d = -14;
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 break;
             case 6199:
                 itemDef.name = "Mystery Box";
@@ -910,9 +910,9 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.interfaceOptions = new String[] { "Open", null, null, "Quick-Open", "Drop" };
                 break;
             case 6679:
-                itemDef.modelId = ItemDefinition.lookup(6199).modelId;
-                itemDef.colorFind = ItemDefinition.lookup(6199).colorFind;
-                itemDef.colorReplace = ItemDefinition.lookup(6199).colorReplace;
+                itemDef.inventoryModel = ItemDefinition.lookup(6199).inventoryModel;
+                itemDef.originalColours = ItemDefinition.lookup(6199).originalColours;
+                itemDef.modifiedColours = ItemDefinition.lookup(6199).modifiedColours;
                 itemDef.name = "Mini Mystery Box";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, "Quick-Open", "Drop" };
                 itemDef.zoom2d = 1480;
@@ -932,9 +932,9 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.interfaceOptions = new String[] { "Open", null, null, "Quick-Open", "Drop" };
                 break;
             case 6678:
-                itemDef.modelId = ItemDefinition.lookup(13346).modelId;
-                itemDef.colorFind = ItemDefinition.lookup(13346).colorFind;
-                itemDef.colorReplace = ItemDefinition.lookup(13346).colorReplace;
+                itemDef.inventoryModel = ItemDefinition.lookup(13346).inventoryModel;
+                itemDef.originalColours = ItemDefinition.lookup(13346).originalColours;
+                itemDef.modifiedColours = ItemDefinition.lookup(13346).modifiedColours;
                 itemDef.name = "Mini Ultra Mystery Box";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, "Quick-Open", "Drop" };
                 itemDef.zoom2d = 1480;
@@ -958,14 +958,14 @@ public final class ItemDefinition implements RSItemComposition {
                 //itemDef.description = "50% chance to pick up crystal keys that drop.";
                 itemDef.createCustomSprite("Postie_Pete.png");
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 break;
             case 30011:
                 itemDef.setDefaults();
                 itemDef.name = "Imp";
                 //itemDef.description = "50% chance to pick up clue scrolls that drop.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Imp.png");
                 break;
             case 30012:
@@ -973,7 +973,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Toucan";
                 //itemDef.description = "50% chance to pick up resource packs.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Toucan.png");
                 break;
             case 30013:
@@ -981,7 +981,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Penguin King";
                 //itemDef.description = "50% chance to auto-pick up coin bags.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Penguin_King.png");
                 break;
             case 30014:
@@ -989,7 +989,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "K'klik";
                 //itemDef.description = "An extra 5% in drop rate boost.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("K'klik.png");
                 break;
             case 30015:
@@ -997,7 +997,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Shadow warrior";
                 //itemDef.description = "50% chance for an additional +10% strength bonus in pvm.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Shadow_warrior.png");
                 break;
             case 30016:
@@ -1005,7 +1005,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Shadow archer";
                 //itemDef.description = "50% chance for an additional +10% range str bonus in PvM.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Shadow_archer.png");
                 break;
             case 30017:
@@ -1013,7 +1013,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Shadow wizard";
                 //itemDef.description = "50% chance for an additional +10% mage str bonus in PvM.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Shadow_wizard.png");
                 break;
             case 30018:
@@ -1021,7 +1021,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Healer Death Spawn";
                 //itemDef.description = "5% chance hit restores HP.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Healer_Death_Spawn.png");
                 break;
             case 30019:
@@ -1029,7 +1029,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Holy Death Spawn";
                 //itemDef.description = "5% chance 1/2 of your hit is restored into prayer.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Holy_Death_Spawn.png");
                 break;
             case 30020:
@@ -1037,7 +1037,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Corrupt beast";
                 //itemDef.description = "50% chance for an additional +10% strength bonus for melee, mage, and range in pvm.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Corrupt_beast.png");
                 break;
             case 30021:
@@ -1045,7 +1045,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Roc";
                 //itemDef.description = "An extra 10% in drop rate boost.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Roc.png");
                 break;
             case 30022:
@@ -1053,7 +1053,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "@red@Kratos";
                 //itemDef.description = "The most powerful pet, see ::foepets for full list of perks.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Yama.png");
                 break;
             case 30023:
@@ -1061,13 +1061,13 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Rain cloud";
                 //itemDef.description = "Don't worry be happy.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Rain_cloud.png");
                 break;
             case 8866:
                 itemDef.name = "Storage chest key (UIM)";
                 //itemDef.description = "Used to open the UIM storage chest 1 time.";
-                itemDef.stackable = true;
+                itemDef.stacks = true;
                 break;
             case 8868:
                 itemDef.name = "Perm. storage chest key (UIM)";
@@ -1106,14 +1106,14 @@ public final class ItemDefinition implements RSItemComposition {
                 //itemDef.description = "Picks up all crystal keys and 25% chance to double.";
                 itemDef.createCustomSprite("dark_Postie_Pete.png");
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 break;
             case 30111:
                 itemDef.setDefaults();
                 itemDef.name = "Dark imp";
                 //itemDef.description = "Picks up all clue scrolls and 25% chance to double.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("dark_Imp.png");
                 break;
             case 30112:
@@ -1121,7 +1121,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Dark toucan";
                 //itemDef.description = "Picks up all resource boxes and 25% chance to double.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("dark_Toucan.png");
                 break;
             case 30113:
@@ -1129,7 +1129,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Dark penguin King";
                 //itemDef.description = "Picks up all coin bags and 25% chance to double.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("dark_Penguin_King.png");
                 break;
             case 30114:
@@ -1137,7 +1137,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Dark k'klik";
                 //itemDef.description = "An extra 10% in drop rate boost.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("dark_K'klik.png");
                 break;
             case 30115:
@@ -1145,7 +1145,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Dark shadow warrior";
                 //itemDef.description = "Gives constant +10% strength bonus in pvm.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("dark_Shadow_warrior.png");
                 break;
             case 30116:
@@ -1153,7 +1153,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Dark shadow archer";
                 //itemDef.description = "Gives constant +10% range str bonus in PvM.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("dark_Shadow_archer.png");
                 break;
             case 30117:
@@ -1161,7 +1161,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Dark shadow wizard";
                 //itemDef.description = "Gives constant +10% mage str bonus in PvM.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("dark_Shadow_wizard.png");
                 break;
             case 30118:
@@ -1169,7 +1169,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Dark healer death spawn";
                 //itemDef.description = "10% chance hit restores HP.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("dark_Healer_Death_Spawn.png");
                 break;
             case 30119:
@@ -1177,7 +1177,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Dark holy death spawn";
                 //itemDef.description = "10% chance 1/2 of your hit is restored into prayer.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("dark_Holy_Death_Spawn.png");
                 break;
             case 30120:
@@ -1185,7 +1185,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Dark corrupt beast";
                 //itemDef.description = "Extra 10% in drop rate and constant +10% strength bonus for all styles in pvm.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("dark_Corrupt_beast.png");
                 break;
             case 30121:
@@ -1193,13 +1193,13 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Dark roc";
                 //itemDef.description = "An extra 20% in drop rate boost.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("dark_Roc.png");
                 break;
             case 30122:
                 itemDef.setDefaults();
                 itemDef.id = 30022;
-                itemDef.modelId = 47025;
+                itemDef.inventoryModel = 47025;
                 itemDef.name = "@gre@$$@blu@CashMoney@gre@$$";
                 //itemDef.description = "The Spender's pet.";
                 itemDef.interfaceOptions = new String[] { "Check", null, "Empty", null, "Drop" };
@@ -1215,7 +1215,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Dark seren";
                 //itemDef.description = "85% chance for Wildy Event Boss to hit a 0 and 25% chance to double key.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("dark_seren.png");
                 break;
 
@@ -1227,7 +1227,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 21046:
                 itemDef.name = "@cya@Chest rate bonus (+15%)";
                 //itemDef.description = "A single use +15% chance from chests, or to receive a rare raids key.";
-                itemDef.stackable = true;
+                itemDef.stacks = true;
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
                 break;
             case 11666:
@@ -1238,29 +1238,29 @@ public final class ItemDefinition implements RSItemComposition {
             case 1004:
                 itemDef.name = "@gre@20m Coins";
                 //itemDef.description = "Lovely coins.";
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.interfaceOptions = new String[] { "Claim", null, null, null, "Drop" };
                 break;
             case 7629:
                 itemDef.name = "@or3@2x Slayer point scroll";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = true;
+                itemDef.stacks = true;
                 break;
             case 24460:
                 itemDef.name = "@or3@Faster clues (30 mins)";
                 //itemDef.description = "Clue rates are halved for npcs and skilling.";
                 itemDef.interfaceOptions = new String[] { "Boost", null, null, null, "Drop" };
-                itemDef.stackable = true;
+                itemDef.stacks = true;
                 break;
             case 7968:
                 itemDef.name = "@or3@+25% Skilling pet rate (30 mins)";
                 itemDef.interfaceOptions = new String[] { "Boost", null, null, null, "Drop" };
-                itemDef.stackable = true;
+                itemDef.stacks = true;
                 break;
             case 8899:
                 itemDef.name = "@gre@50m Coins";
                 //itemDef.description = "Lovely coins.";
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.interfaceOptions = new String[] { "Claim", null, null, null, "Drop" };
                 break;
             case 4035:
@@ -1274,7 +1274,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 15098:
                 itemDef.name = "Dice (up to 100)";
                 //itemDef.description = "A 100-sided dice.";
-                itemDef.modelId = 31223;
+                itemDef.inventoryModel = 31223;
                 itemDef.zoom2d = 1104;
                 itemDef.yan2d = 215;
                 itemDef.xan2d = 94;
@@ -1347,10 +1347,10 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "Agility master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
-                itemDef.colorReplace = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.colorFind = new int[] { 677, 801, 43540, 43543, 43546, 43549, 43550, 43552, 43554, 43558,
+                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.originalColours = new int[] { 677, 801, 43540, 43543, 43546, 43549, 43550, 43552, 43554, 43558,
                         43560, 43575 };
-                itemDef.modelId = 50030;
+                itemDef.inventoryModel = 50030;
                 itemDef.maleModel0 = 50031;
                 itemDef.femaleModel0 = 50031;
                 itemDef.zoom2d = 2300;
@@ -1368,9 +1368,9 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Attack master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.colorReplace = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.colorFind = new int[] { 7104, 9151, 911, 914, 917, 920, 921, 923, 925, 929, 931, 946 };
-                itemDef.modelId = 50032;
+                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.originalColours = new int[] { 7104, 9151, 911, 914, 917, 920, 921, 923, 925, 929, 931, 946 };
+                itemDef.inventoryModel = 50032;
                 itemDef.maleModel0 = 50033;
                 itemDef.femaleModel0 = 50033;
                 itemDef.zoom2d = 2300;
@@ -1388,10 +1388,10 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Construction master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.colorReplace = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.colorFind = new int[] { 6061, 5945, 6327, 6330, 6333, 6336, 6337, 6339, 6341, 6345, 6347,
+                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.originalColours = new int[] { 6061, 5945, 6327, 6330, 6333, 6336, 6337, 6339, 6341, 6345, 6347,
                         6362 };
-                itemDef.modelId = 50034;
+                itemDef.inventoryModel = 50034;
                 itemDef.maleModel0 = 50035;
                 itemDef.femaleModel0 = 50035;
                 itemDef.zoom2d = 2300;
@@ -1409,10 +1409,10 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Cooking master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.colorReplace = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.colorFind = new int[] { 920, 920, 51856, 51859, 51862, 51865, 51866, 51868, 51870, 51874,
+                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.originalColours = new int[] { 920, 920, 51856, 51859, 51862, 51865, 51866, 51868, 51870, 51874,
                         51876, 51891 };
-                itemDef.modelId = 50036;
+                itemDef.inventoryModel = 50036;
                 itemDef.maleModel0 = 50037;
                 itemDef.femaleModel0 = 50037;
                 itemDef.zoom2d = 2300;
@@ -1430,10 +1430,10 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Crafting master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.colorReplace = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.colorFind = new int[] { 9142, 9152, 4511, 4514, 4517, 4520, 4521, 4523, 4525, 4529, 4531,
+                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.originalColours = new int[] { 9142, 9152, 4511, 4514, 4517, 4520, 4521, 4523, 4525, 4529, 4531,
                         4546 };
-                itemDef.modelId = 50038;
+                itemDef.inventoryModel = 50038;
                 itemDef.maleModel0 = 50039;
                 itemDef.femaleModel0 = 50039;
                 itemDef.zoom2d = 2300;
@@ -1451,10 +1451,10 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Defence master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.colorReplace = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.colorFind = new int[] { 10460, 10473, 41410, 41413, 41416, 41419, 41420, 41422, 41424,
+                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.originalColours = new int[] { 10460, 10473, 41410, 41413, 41416, 41419, 41420, 41422, 41424,
                         41428, 41430, 41445 };
-                itemDef.modelId = 50040;
+                itemDef.inventoryModel = 50040;
                 itemDef.maleModel0 = 50041;
                 itemDef.femaleModel0 = 50041;
                 itemDef.zoom2d = 2300;
@@ -1472,10 +1472,10 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Farming master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.colorReplace = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.colorFind = new int[] { 14775, 14792, 22026, 22029, 22032, 22035, 22036, 22038, 22040,
+                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.originalColours = new int[] { 14775, 14792, 22026, 22029, 22032, 22035, 22036, 22038, 22040,
                         22044, 22046, 22061 };
-                itemDef.modelId = 50042;
+                itemDef.inventoryModel = 50042;
                 itemDef.maleModel0 = 50043;
                 itemDef.femaleModel0 = 50043;
                 itemDef.zoom2d = 2300;
@@ -1493,10 +1493,10 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Firemaking master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.colorReplace = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.colorFind = new int[] { 8125, 9152, 4015, 4018, 4021, 4024, 4025, 4027, 4029, 4033, 4035,
+                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.originalColours = new int[] { 8125, 9152, 4015, 4018, 4021, 4024, 4025, 4027, 4029, 4033, 4035,
                         4050 };
-                itemDef.modelId = 50044;
+                itemDef.inventoryModel = 50044;
                 itemDef.maleModel0 = 50045;
                 itemDef.femaleModel0 = 50045;
                 itemDef.zoom2d = 2300;
@@ -1514,10 +1514,10 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Fishing master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.colorReplace = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.colorFind = new int[] { 9144, 9152, 38202, 38205, 38208, 38211, 38212, 38214, 38216,
+                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.originalColours = new int[] { 9144, 9152, 38202, 38205, 38208, 38211, 38212, 38214, 38216,
                         38220, 38222, 38237 };
-                itemDef.modelId = 50046;
+                itemDef.inventoryModel = 50046;
                 itemDef.maleModel0 = 50047;
                 itemDef.femaleModel0 = 50047;
                 itemDef.zoom2d = 2300;
@@ -1535,10 +1535,10 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Fletching master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.colorReplace = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.colorFind = new int[] { 6067, 9152, 33670, 33673, 33676, 33679, 33680, 33682, 33684,
+                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.originalColours = new int[] { 6067, 9152, 33670, 33673, 33676, 33679, 33680, 33682, 33684,
                         33688, 33690, 33705 };
-                itemDef.modelId = 50048;
+                itemDef.inventoryModel = 50048;
                 itemDef.maleModel0 = 50049;
                 itemDef.femaleModel0 = 50049;
                 itemDef.zoom2d = 2300;
@@ -1556,10 +1556,10 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Herblore master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.colorReplace = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.colorFind = new int[] { 9145, 9156, 22414, 22417, 22420, 22423, 22424, 22426, 22428,
+                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.originalColours = new int[] { 9145, 9156, 22414, 22417, 22420, 22423, 22424, 22426, 22428,
                         22432, 22434, 22449 };
-                itemDef.modelId = 50050;
+                itemDef.inventoryModel = 50050;
                 itemDef.maleModel0 = 50051;
                 itemDef.femaleModel0 = 50051;
                 itemDef.zoom2d = 2300;
@@ -1577,10 +1577,10 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Hitpoints master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.colorReplace = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.colorFind = new int[] { 818, 951, 8291, 8294, 8297, 8300, 8301, 8303, 8305, 8309, 8311,
+                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.originalColours = new int[] { 818, 951, 8291, 8294, 8297, 8300, 8301, 8303, 8305, 8309, 8311,
                         8319 };
-                itemDef.modelId = 50052;
+                itemDef.inventoryModel = 50052;
                 itemDef.maleModel0 = 50053;
                 itemDef.femaleModel0 = 50053;
                 itemDef.zoom2d = 2300;
@@ -1599,10 +1599,10 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Hunter master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.colorReplace = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.colorFind = new int[] { 5262, 6020, 8472, 8475, 8478, 8481, 8482, 8484, 8486, 8490, 8492,
+                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.originalColours = new int[] { 5262, 6020, 8472, 8475, 8478, 8481, 8482, 8484, 8486, 8490, 8492,
                         8507 };
-                itemDef.modelId = 50054;
+                itemDef.inventoryModel = 50054;
                 itemDef.maleModel0 = 50055;
                 itemDef.femaleModel0 = 50055;
                 itemDef.zoom2d = 2300;
@@ -1620,10 +1620,10 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Magic master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.colorReplace = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.colorFind = new int[] { 43569, 43685, 6336, 6339, 6342, 6345, 6346, 6348, 6350, 6354,
+                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.originalColours = new int[] { 43569, 43685, 6336, 6339, 6342, 6345, 6346, 6348, 6350, 6354,
                         6356, 6371 };
-                itemDef.modelId = 50056;
+                itemDef.inventoryModel = 50056;
                 itemDef.maleModel0 = 50057;
                 itemDef.femaleModel0 = 50057;
                 itemDef.zoom2d = 2300;
@@ -1641,10 +1641,10 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Mining master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.colorReplace = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.colorFind = new int[] { 36296, 36279, 10386, 10389, 10392, 10395, 10396, 10398, 10400,
+                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.originalColours = new int[] { 36296, 36279, 10386, 10389, 10392, 10395, 10396, 10398, 10400,
                         10404, 10406, 10421 };
-                itemDef.modelId = 50058;
+                itemDef.inventoryModel = 50058;
                 itemDef.maleModel0 = 50059;
                 itemDef.femaleModel0 = 50059;
                 itemDef.zoom2d = 2300;
@@ -1662,9 +1662,9 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Prayer master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.colorReplace = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.colorFind = new int[] { 9163, 9168, 117, 120, 123, 126, 127, 127, 127, 127, 127, 127 };
-                itemDef.modelId = 50060;
+                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.originalColours = new int[] { 9163, 9168, 117, 120, 123, 126, 127, 127, 127, 127, 127, 127 };
+                itemDef.inventoryModel = 50060;
                 itemDef.maleModel0 = 50061;
                 itemDef.femaleModel0 = 50061;
                 itemDef.zoom2d = 2300;
@@ -1682,10 +1682,10 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Range master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.colorReplace = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.colorFind = new int[] { 3755, 3998, 15122, 15125, 15128, 15131, 15132, 15134, 15136,
+                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.originalColours = new int[] { 3755, 3998, 15122, 15125, 15128, 15131, 15132, 15134, 15136,
                         15140, 15142, 15157 };
-                itemDef.modelId = 50062;
+                itemDef.inventoryModel = 50062;
                 itemDef.maleModel0 = 50063;
                 itemDef.femaleModel0 = 50063;
                 itemDef.zoom2d = 2300;
@@ -1703,10 +1703,10 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Runecrafting master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.colorReplace = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.colorFind = new int[] { 9152, 8128, 10318, 10321, 10324, 10327, 10328, 10330, 10332,
+                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.originalColours = new int[] { 9152, 8128, 10318, 10321, 10324, 10327, 10328, 10330, 10332,
                         10336, 10338, 10353 };
-                itemDef.modelId = 50064;
+                itemDef.inventoryModel = 50064;
                 itemDef.maleModel0 = 50065;
                 itemDef.femaleModel0 = 50065;
                 itemDef.zoom2d = 2300;
@@ -1723,9 +1723,9 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "Slayer master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
-                itemDef.colorReplace = new int[] { 57022, 48811 };
-                itemDef.colorFind = new int[] { 912, 920 };
-                itemDef.modelId = 50066;
+                itemDef.modifiedColours = new int[] { 57022, 48811 };
+                itemDef.originalColours = new int[] { 912, 920 };
+                itemDef.inventoryModel = 50066;
                 itemDef.maleModel0 = 50067;
                 itemDef.femaleModel0 = 50067;
                 itemDef.zoom2d = 2300;
@@ -1742,10 +1742,10 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "Smithing master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
-                itemDef.colorReplace = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.colorFind = new int[] { 8115, 9148, 10386, 10389, 10392, 10395, 10396, 10398, 10400,
+                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.originalColours = new int[] { 8115, 9148, 10386, 10389, 10392, 10395, 10396, 10398, 10400,
                         10404, 10406, 10421 };
-                itemDef.modelId = 50068;
+                itemDef.inventoryModel = 50068;
                 itemDef.maleModel0 = 50069;
                 itemDef.femaleModel0 = 50069;
                 itemDef.zoom2d = 2300;
@@ -1762,10 +1762,10 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "Strength master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
-                itemDef.colorReplace = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.colorFind = new int[] { 935, 931, 27538, 27541, 27544, 27547, 27548, 27550, 27552, 27556,
+                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.originalColours = new int[] { 935, 931, 27538, 27541, 27544, 27547, 27548, 27550, 27552, 27556,
                         27558, 27573 };
-                itemDef.modelId = 50070;
+                itemDef.inventoryModel = 50070;
                 itemDef.maleModel0 = 50071;
                 itemDef.femaleModel0 = 50071;
                 itemDef.zoom2d = 2300;
@@ -1782,12 +1782,12 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "Thieving master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
-                itemDef.colorReplace = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.colorFind = new int[] { 11, 0, 58779, 58782, 58785, 58788, 58789, 57891, 58793, 58797,
+                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.originalColours = new int[] { 11, 0, 58779, 58782, 58785, 58788, 58789, 57891, 58793, 58797,
                         58799, 58814 };
                 itemDef.maleModel0 = 50073;
                 itemDef.femaleModel0 = 50073;
-                itemDef.modelId = 50072;
+                itemDef.inventoryModel = 50072;
                 itemDef.zoom2d = 2300;
                 itemDef.xan2d = 400;
                 itemDef.yan2d = 1020;
@@ -1803,10 +1803,10 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "Woodcutting master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
-                itemDef.colorReplace = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.colorFind = new int[] { 25109, 24088, 6693, 6696, 6699, 6702, 6703, 6705, 6707, 6711,
+                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.originalColours = new int[] { 25109, 24088, 6693, 6696, 6699, 6702, 6703, 6705, 6707, 6711,
                         6713, 6728 };
-                itemDef.modelId = 50074;
+                itemDef.inventoryModel = 50074;
                 itemDef.maleModel0 = 50075;
                 itemDef.femaleModel0 = 50075;
                 itemDef.zoom2d = 2300;
@@ -1868,7 +1868,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33056:
                 itemDef.setDefaults();
                 itemDef.id = 33056;
-                itemDef.modelId = 65270;
+                itemDef.inventoryModel = 65270;
                 itemDef.name = "Completionist cape";
                 //itemDef.description = "A cape worn by those who've overachieved.";
 
@@ -1892,7 +1892,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33058:
                 itemDef.setDefaults();
                 itemDef.id = 33058;
-                itemDef.modelId = 60000;
+                itemDef.inventoryModel = 60000;
                 itemDef.name = "Seren godbow";
                 //itemDef.description = "An intricate bow of pure crystal.";
                 itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
@@ -1914,7 +1914,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33059:
                 itemDef.setDefaults();
                 itemDef.id = 33059;
-                itemDef.modelId = 60005;
+                itemDef.inventoryModel = 60005;
                 itemDef.name = "Halloween Body";
                 //itemDef.description = "Halloween Body.";
 
@@ -1936,7 +1936,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33060:
                 itemDef.setDefaults();
                 itemDef.id = 33060;
-                itemDef.modelId = 60007;
+                itemDef.inventoryModel = 60007;
                 itemDef.name = "Halloween boots";
                 //itemDef.description = "Halloween boots.";
 
@@ -1958,7 +1958,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33061:
                 itemDef.setDefaults();
                 itemDef.id = 33061;
-                itemDef.modelId = 60009;
+                itemDef.inventoryModel = 60009;
                 itemDef.name = "Halloween cape";
                 //itemDef.description = "Halloween cape.";
 
@@ -1980,7 +1980,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33062:
                 itemDef.setDefaults();
                 itemDef.id = 33062;
-                itemDef.modelId = 60011;
+                itemDef.inventoryModel = 60011;
                 itemDef.name = "Halloween gloves";
                 //itemDef.description = "Halloween gloves.";
 
@@ -2002,7 +2002,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33063:
                 itemDef.setDefaults();
                 itemDef.id = 33063;
-                itemDef.modelId = 60013;
+                itemDef.inventoryModel = 60013;
                 itemDef.name = "Halloween head";
                 //itemDef.description = "Halloween head.";
 
@@ -2024,7 +2024,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33064:
                 itemDef.setDefaults();
                 itemDef.id = 33064;
-                itemDef.modelId = 60015;
+                itemDef.inventoryModel = 60015;
                 itemDef.name = "Halloween legs";
                 //itemDef.description = "Halloween legs.";
 
@@ -2046,7 +2046,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33065:
                 itemDef.setDefaults();
                 itemDef.id = 33065;
-                itemDef.modelId = 60001;
+                itemDef.inventoryModel = 60001;
                 itemDef.name = "Beaver";
                 //itemDef.description = "Beaver";
 
@@ -2063,7 +2063,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33066:
                 itemDef.setDefaults();
                 itemDef.id = 33066;
-                itemDef.modelId = 47003;
+                itemDef.inventoryModel = 47003;
                 itemDef.name = "Rock";
                 //itemDef.description = "Rock";
 
@@ -2080,7 +2080,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33067:
                 itemDef.setDefaults();
                 itemDef.id = 33067;
-                itemDef.modelId = 47004;
+                itemDef.inventoryModel = 47004;
                 itemDef.name = "Mystery Box";
                 //itemDef.description = "Mystery Box";
 
@@ -2097,7 +2097,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33068:
                 itemDef.setDefaults();
                 itemDef.id = 33068;
-                itemDef.modelId = 60002;
+                itemDef.inventoryModel = 60002;
                 itemDef.name = "Fish";
                 //itemDef.description = "Fish";
 
@@ -2114,7 +2114,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33069:
                 itemDef.setDefaults();
                 itemDef.id = 33069;
-                itemDef.modelId = 60003;
+                itemDef.inventoryModel = 60003;
                 itemDef.name = "Magic";
                 //itemDef.description = "Magic";
 
@@ -2131,7 +2131,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33070:
                 itemDef.setDefaults();
                 itemDef.id = 33070;
-                itemDef.modelId = 47008;
+                itemDef.inventoryModel = 47008;
                 itemDef.name = "Skeleton";
                 //itemDef.description = "Skeleton";
 
@@ -2148,7 +2148,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33071:
                 itemDef.setDefaults();
                 itemDef.id = 33071;
-                itemDef.modelId = 60004;
+                itemDef.inventoryModel = 60004;
                 itemDef.name = "head";
                 //itemDef.description = "head";
 
@@ -2167,526 +2167,526 @@ public final class ItemDefinition implements RSItemComposition {
             case 33072:
                 itemDef.setDefaults();
                 itemDef.name = "The Fusionist";
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to save Materials/Platinum when fusing items.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("alchemaniac.png");
                 break;
             case 33073:
                 itemDef.setDefaults();
                 itemDef.name = "Dwarf Overload";
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to automatically reload your cannon on kill.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Arcane_Conduit.png");
                 break;
             case 33074:
                 itemDef.setDefaults();
                 itemDef.name = "PK Master";
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Double PK Points.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Armadylean_Decree.png");
                 break;
             case 33075:
                 itemDef.setDefaults();
                 itemDef.name = "Wildy Slayer";
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Earn double slayer points while skulled in wilderness.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Bandosian_Might.png");
                 break;
             case 33076:
                 itemDef.setDefaults();
                 itemDef.name = "Sneaky Sneaky";
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to double pickpocket loot when stealing from master farmer.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Barbarian_Pest_Wars.png");
                 break;
             case 33077:
                 itemDef.setDefaults();
                 itemDef.name = "Iron Giant";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to smelt an extra bar when smelting bar's.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Bottomless_Quiver.png");
                 break;
             case 33078:
                 itemDef.setDefaults();
                 itemDef.name = "Slayer Override";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Earn 100% more slayer point's upon completing a slayer task.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Catch_Of_The_Day.png");
                 break;
             case 33079:
                 itemDef.setDefaults();
                 itemDef.name = "Runecrafter";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "you will no longer receive rune's lower than or equal to level 20.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Certified_Farmer.png");
                 break;
             case 33080:
                 itemDef.setDefaults();
                 itemDef.name = "Pro Fletcher";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Fletching logs & Stringing bows grant 50% more fletching exp.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Chef's_Catch.png");
                 break;
             case 33081:
                 itemDef.setDefaults();
                 itemDef.name = "Chisel Master";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to make 50% more bolt tips per gem, arrow  tips, dart tips.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Chinchonkers.png");
                 break;
             case 33082:
                 itemDef.setDefaults();
                 itemDef.name = "Ava's Accomplice";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to save ammo when using ranged weapon.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Clued_In.png");
                 break;
             case 33083:
                 itemDef.setDefaults();
                 itemDef.name = "Deeper Pockets";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to send drops to your bank.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Deeper_Pockets.png");
                 break;
             case 33084:
                 itemDef.setDefaults();
                 itemDef.name = "Recharger";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "charges have a 60% chance to be saved.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Dine_&_Dash.png");
                 break;
             case 33085:
                 itemDef.setDefaults();
                 itemDef.name = "Magic Paper CHANCED";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "chance to note drops.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Divine_Restoration.png");
                 break;
             case 33086:
                 itemDef.setDefaults();
                 itemDef.name = "Dragon Bait";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "50% increase hunter catch rate.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Dragon_On_A_Bit.png");
                 break;
             case 33087:
                 itemDef.setDefaults();
                 itemDef.name = "Skilled Thief";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to double thieving xp.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Enchanted_Jeweler.png");
                 break;
             case 33088:
                 itemDef.setDefaults();
                 itemDef.name = "Crafting Guru";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to double crafting xp.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Golden_Brick_Road.png");
                 break;
             case 33089:
                 itemDef.setDefaults();
                 itemDef.name = "Hot Hands";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to double cooking xp.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Grave_Robber.png");
                 break;
             case 33090:
                 itemDef.setDefaults();
                 itemDef.name = "Magic Master";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to save rune's when casting spells.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Homewrecker.png");
                 break;
             case 33091:
                 itemDef.setDefaults();
                 itemDef.name = "Yin Yang";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "25% slower prayer drain.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Hot_On_The_Trail.png");
                 break;
             case 33092:
                 itemDef.setDefaults();
                 itemDef.name = "Nomad Master";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to double Nomad Points when burning.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Imcando's_Apprentice.png");
                 break;
             case 33093:
                 itemDef.setDefaults();
                 itemDef.name = "Demon Slayer";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to double demon hunter xp.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Just_Druid!.png");
                 break;
             case 33094:
                 itemDef.setDefaults();
                 itemDef.name = "Slayer Master";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to double slayer xp.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Larger_Recharger.png");
                 break;
             case 33095:
                 itemDef.setDefaults();
                 itemDef.name = "Pyromaniac";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to double firemaking xp.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Livin'_On_A_Prayer.png");
                 break;
             case 33096:
                 itemDef.setDefaults();
                 itemDef.name = "Skilled Hunter";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to double hunter xp.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Message_In_A_Bottle.png");
                 break;
             case 33097:
                 itemDef.setDefaults();
                 itemDef.name = "Molten Miner";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to double mining xp.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Mixologist.png");
                 break;
             case 33098:
                 itemDef.setDefaults();
                 itemDef.name = "Woodchipper";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to double woodcutting xp.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Molten_Miner.png");
                 break;
             case 33099:
                 itemDef.setDefaults();
                 itemDef.name = "Bare Hands";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to double fishing xp.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Mother's_Magic_Fossils.png");
                 break;
             case 33100:
                 itemDef.setDefaults();
                 itemDef.name = "Bare Hands x3";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to triple your fish when fishing.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Plank_Stretcher.png");
                 break;
             case 33101:
                 itemDef.setDefaults();
                 itemDef.name = "Praying Respects";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to double prayer xp.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Praying_Respects.png");
                 break;
             case 33102:
                 itemDef.setDefaults();
                 itemDef.name = "Novice Zerk";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Gain 5% Melee Damage Bonus.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Pro_Tips.png");
                 break;
             case 33103:
                 itemDef.setDefaults();
                 itemDef.name = "Novice Magician";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Gain 5% Magic Damage Bonus.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Profletchional.png");
                 break;
             case 33104:
                 itemDef.setDefaults();
                 itemDef.name = "Novice Ranger";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Gain 5% Range Damage Bonus.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Rock_Solid.png");
                 break;
             case 33105:
                 itemDef.setDefaults();
                 itemDef.name = "Pro Zerk";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Gain 10% Melee Damage Bonus.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Rogues'_Chompy_Farm.png");
                 break;
             case 33106:
                 itemDef.setDefaults();
                 itemDef.name = "Pro Magician";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Gain 10% Magic Damage.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Rooty_Tooty_2x_Runeys.png");
                 break;
             case 33107:
                 itemDef.setDefaults();
                 itemDef.name = "Pro Ranger";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Gain 10% Range Damage Bonus.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Rumple-Bow-String.png");
                 break;
             case 33108:
                 itemDef.setDefaults();
                 itemDef.name = "Swedish Swindle";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "10% Bonus Drop Rate.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Rune_Escape.png");
                 break;
             case 33109:
                 itemDef.setDefaults();
                 itemDef.name = "Raiders Luck";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "10% Chance to get an extra key from COX.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Saradominist_Defence.png");
                 break;
             case 33110:
                 itemDef.setDefaults();
                 itemDef.name = "Clepto Maniac";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Collect all drop's.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Seedy_Business.png");
                 break;
             case 33111:
                 itemDef.setDefaults();
                 itemDef.name = "Magic Paper";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Note all drop's.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Slash_&_Burn.png");
                 break;
             case 33112:
                 itemDef.setDefaults();
                 itemDef.name = "Pot Of Gold";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "20% Increased Drop Rate.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Slay_All_Day.png");
                 break;
             case 33113:
                 itemDef.setDefaults();
                 itemDef.name = "Mystery Madness";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to double reward's from any mystery box.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Slay_'n'_Pay.png");
                 break;
             case 33114:
                 itemDef.setDefaults();
                 itemDef.name = "Casket Master";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance of an extra clue casket upon openin.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Smithing_Double.png");
                 break;
             case 33115:
                 itemDef.setDefaults();
                 itemDef.name = "Voting King";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "2 extra vote point's per vote.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Smooth_Criminal.png");
                 break;
             case 33116:
                 itemDef.setDefaults();
                 itemDef.name = "Pet Locator";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Extra Chance to find a pet.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Special_Discount.png");
                 break;
             case 33117:
                 itemDef.setDefaults();
                 itemDef.name = "Monk Heals";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to double health when using healer icon.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Superior_Tracking.png");
                 break;
             case 33118:
                 itemDef.setDefaults();
                 itemDef.name = "Dragon Fire";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Permanent Anti-fire potion effect.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Tactical_Duelist.png");
                 break;
             case 33119:
                 itemDef.setDefaults();
                 itemDef.name = "Overload Protection";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Overload's no longer deal damage.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Thrall_Damage.png");
                 break;
             case 33120:
                 itemDef.setDefaults();
                 itemDef.name = "Lucky Coin";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to save 20% when donating to the well.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Unholy_Ranger.png");
                 break;
             case 33121:
                 itemDef.setDefaults();
                 itemDef.name = "Cannon Extender";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "100 extra cannon ball's can be held in your cannon.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Unholy_Warrior.png");
                 break;
             case 33122:
                 itemDef.setDefaults();
                 itemDef.name = "Pure Skills";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "2x Skilling xp to all skills.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Unholy_Wizard.png");
                 break;
             case 33123:
                 itemDef.setDefaults();
                 itemDef.name = "Pc Pro";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "3x Pest control points.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Venomaster.png");
                 break;
             case 33124:
                 itemDef.setDefaults();
                 itemDef.name = "Slayer Guru";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Double slayer task size.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Zamorakian_Sight.png");
                 break;
 
@@ -2695,40 +2695,40 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "Skilling Crystal (easy)";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "A Crystal gained from skilling, used with the fusion system.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Destroy" };
-                itemDef.stackable = true;
+                itemDef.stacks = true;
                 itemDef.createCustomSprite("skilling_easy.png");
                 break;
             case 33126:
                 itemDef.setDefaults();
                 itemDef.name = "Skilling Crystal (medium)";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "A Crystal gained from skilling, used with the fusion system.";
                 itemDef.interfaceOptions = new String[] { "Use", null, null, null, "Destroy" };
-                itemDef.stackable = true;
+                itemDef.stacks = true;
                 itemDef.createCustomSprite("skilling_medium.png");
                 break;
             case 33127:
                 itemDef.setDefaults();
                 itemDef.name = "Skilling Crystal (hard)";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "A Crystal gained from skilling, used with the fusion system.";
                 itemDef.interfaceOptions = new String[] { "Use", null, null, null, "Destroy" };
-                itemDef.stackable = true;
+                itemDef.stacks = true;
                 itemDef.createCustomSprite("skilling_hard.png");
                 break;
             case 33128:
                 itemDef.setDefaults();
                 itemDef.name = "Skilling Crystal (elite)";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "A Crystal gained from skilling, used with the fusion system.";
                 itemDef.interfaceOptions = new String[] { "Use", null, null, null, "Destroy" };
-                itemDef.stackable = true;
+                itemDef.stacks = true;
                 itemDef.createCustomSprite("skilling_elite.png");
                 break;
 
@@ -2739,40 +2739,40 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "PVM Crystal (easy)";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "A Crystal gained from PVM, used with the fusion system.";
                 itemDef.interfaceOptions = new String[] { "Use", null, null, null, "Destroy" };
-                itemDef.stackable = true;
+                itemDef.stacks = true;
                 itemDef.createCustomSprite("pvm_easy.png");
                 break;
             case 33130:
                 itemDef.setDefaults();
                 itemDef.name = "PVM Crystal (medium)";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "A Crystal gained from PVM, used with the fusion system.";
                 itemDef.interfaceOptions = new String[] { "Use", null, null, null, "Destroy" };
-                itemDef.stackable = true;
+                itemDef.stacks = true;
                 itemDef.createCustomSprite("pvm_medium.png");
                 break;
             case 33131:
                 itemDef.setDefaults();
                 itemDef.name = "PVM Crystal (hard)";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "A Crystal gained from PVM, used with the fusion system.";
                 itemDef.interfaceOptions = new String[] { "Use", null, null, null, "Destroy" };
-                itemDef.stackable = true;
+                itemDef.stacks = true;
                 itemDef.createCustomSprite("pvm_hard.png");
                 break;
             case 33132:
                 itemDef.setDefaults();
                 itemDef.name = "PVM Crystal (elite)";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "A Crystal gained from PVM, used with the fusion system.";
                 itemDef.interfaceOptions = new String[] { "Use", null, null, null, "Destroy" };
-                itemDef.stackable = true;
+                itemDef.stacks = true;
                 itemDef.createCustomSprite("pvm_elite.png");
                 break;
 
@@ -2782,40 +2782,40 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "Misc Crystal (easy)";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "A Crystal gained from Various Activities, used with the fusion system.";
                 itemDef.interfaceOptions = new String[] { "Use", null, null, null, "Destroy" };
-                itemDef.stackable = true;
+                itemDef.stacks = true;
                 itemDef.createCustomSprite("misc_easy.png");
                 break;
             case 33134:
                 itemDef.setDefaults();
                 itemDef.name = "Misc Crystal (medium)";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "A Crystal gained from Various Activities, used with the fusion system.";
                 itemDef.interfaceOptions = new String[] { "Use", null, null, null, "Destroy" };
-                itemDef.stackable = true;
+                itemDef.stacks = true;
                 itemDef.createCustomSprite("misc_medium.png");
                 break;
             case 33135:
                 itemDef.setDefaults();
                 itemDef.name = "Misc Crystal (hard)";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "A Crystal gained from Various Activities, used with the fusion system.";
                 itemDef.interfaceOptions = new String[] { "Use", null, null, null, "Destroy" };
-                itemDef.stackable = true;
+                itemDef.stacks = true;
                 itemDef.createCustomSprite("misc_hard.png");
                 break;
             case 33136:
                 itemDef.setDefaults();
                 itemDef.name = "Misc Crystal (elite)";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "A Crystal gained from Various Activities, used with the fusion system.";
                 itemDef.interfaceOptions = new String[] { "Use", null, null, null, "Destroy" };
-                itemDef.stackable = true;
+                itemDef.stacks = true;
                 itemDef.createCustomSprite("misc_elite.png");
                 break;
             /*Foundry crystals*/
@@ -2823,40 +2823,40 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "Foundry Crystal (easy)";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "A Crystal gained from Foundry Points, used with the fusion system.";
                 itemDef.interfaceOptions = new String[] { "Use", null, null, null, "Destroy" };
-                itemDef.stackable = true;
+                itemDef.stacks = true;
                 itemDef.createCustomSprite("foundry_easy.png");
                 break;
             case 33138:
                 itemDef.setDefaults();
                 itemDef.name = "Foundry Crystal (medium)";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "A Crystal gained from Foundry Points, used with the fusion system.";
                 itemDef.interfaceOptions = new String[] { "Use", null, null, null, "Destroy" };
-                itemDef.stackable = true;
+                itemDef.stacks = true;
                 itemDef.createCustomSprite("foundry_medium.png");
                 break;
             case 33139:
                 itemDef.setDefaults();
                 itemDef.name = "Foundry Crystal (hard)";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "A Crystal gained from Foundry Points, used with the fusion system.";
                 itemDef.interfaceOptions = new String[] { "Use", null, null, null, "Destroy" };
-                itemDef.stackable = true;
+                itemDef.stacks = true;
                 itemDef.createCustomSprite("foundry_hard.png");
                 break;
             case 33140:
                 itemDef.setDefaults();
                 itemDef.name = "Foundry Crystal (elite)";
 
-                itemDef.modelId = ItemDefinition.lookup(26546).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "A Crystal gained from Foundry Points, used with the fusion system.";
                 itemDef.interfaceOptions = new String[] { "Use", null, null, null, "Destroy" };
-                itemDef.stackable = true;
+                itemDef.stacks = true;
                 itemDef.createCustomSprite("foundry_elite.png");
                 break;
 
@@ -2865,7 +2865,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33141:
                 itemDef.setDefaults();
                 itemDef.id = 33141;
-                itemDef.modelId = 46806;
+                itemDef.inventoryModel = 46806;
                 itemDef.name = "Virtus Mask";
                 //itemDef.description = "An ancient mage's mask.";
                 itemDef.zoom2d = 880;
@@ -2883,7 +2883,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33142:
                 itemDef.setDefaults();
                 itemDef.id = 33142;
-                itemDef.modelId = 46802;
+                itemDef.inventoryModel = 46802;
                 itemDef.name = "Virtus robe top";
                 //itemDef.description = "An ancient mage's robe top.";
 
@@ -2906,7 +2906,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33143:
                 itemDef.setDefaults();
                 itemDef.id = 33143;
-                itemDef.modelId = 46807;
+                itemDef.inventoryModel = 46807;
                 itemDef.name = "Virtus robe legs";
                 //itemDef.description = "An ancient mage's robe legs.";
 
@@ -2929,7 +2929,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33144:
                 itemDef.setDefaults();
                 itemDef.id = 33144;
-                itemDef.modelId = 46813;
+                itemDef.inventoryModel = 46813;
                 itemDef.name = "Pernix cowl";
                 //itemDef.description = "An ancient ranger's cowl.";
 
@@ -2952,7 +2952,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33145:
                 itemDef.setDefaults();
                 itemDef.id = 33145;
-                itemDef.modelId = 46811;
+                itemDef.inventoryModel = 46811;
                 itemDef.name = "Pernix body";
                 //itemDef.description = "An ancient ranger's body armour.";
 
@@ -2975,7 +2975,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33146:
                 itemDef.setDefaults();
                 itemDef.id = 33146;
-                itemDef.modelId = 46815;
+                itemDef.inventoryModel = 46815;
                 itemDef.name = "Pernix chaps";
                 //itemDef.description = "An ancient ranger's chaps.";
 
@@ -2999,7 +2999,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33147:
                 itemDef.setDefaults();
                 itemDef.id = 33147;
-                itemDef.modelId = 46826;
+                itemDef.inventoryModel = 46826;
                 itemDef.name = "Korai's sword";
                 //itemDef.description = "The sword of a Void Knight.";
                 itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
@@ -3016,7 +3016,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33148:
                 itemDef.setDefaults();
                 itemDef.id = 33148;
-                itemDef.modelId = 46821;
+                itemDef.inventoryModel = 46821;
                 itemDef.name = "Noxious scythe";
                 //itemDef.description = "A lethal scythe, made from spider parts.";
                 itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
@@ -3037,7 +3037,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33149:
                 itemDef.setDefaults();
                 itemDef.id = 33149;
-                itemDef.modelId = 46823;
+                itemDef.inventoryModel = 46823;
                 itemDef.name = "Noxious staff";
                 //itemDef.description = "A lethal staff, made from spider parts.";
                 itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
@@ -3053,11 +3053,11 @@ public final class ItemDefinition implements RSItemComposition {
 
             case 3128:
                 itemDef.id = 3128;
-                itemDef.modelId = ItemDefinition.lookup(1044).modelId;
+                itemDef.inventoryModel = ItemDefinition.lookup(1044).inventoryModel;
                 itemDef.name = "Durial's Green Party Hat";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
-                itemDef.colorFind = ItemDefinition.lookup(1044).colorFind;
-                itemDef.colorReplace = ItemDefinition.lookup(1044).colorReplace;
+                itemDef.originalColours = ItemDefinition.lookup(1044).originalColours;
+                itemDef.modifiedColours = ItemDefinition.lookup(1044).modifiedColours;
                 itemDef.zoom2d = ItemDefinition.lookup(1044).zoom2d;
                 itemDef.xan2d = ItemDefinition.lookup(1044).xan2d;
                 itemDef.yan2d = ItemDefinition.lookup(1044).yan2d;
@@ -3070,7 +3070,7 @@ public final class ItemDefinition implements RSItemComposition {
 
             case 33238:
                 itemDef.id = 33238;
-                itemDef.modelId = (60040);
+                itemDef.inventoryModel = (60040);
                 itemDef.name = "Sponges Hat";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 itemDef.zoom2d = ItemDefinition.lookup(1044).zoom2d;
@@ -3085,7 +3085,7 @@ public final class ItemDefinition implements RSItemComposition {
 
             case 33239:
                 itemDef.id = 33239;
-                itemDef.modelId = (60043);
+                itemDef.inventoryModel = (60043);
                 itemDef.name = "Golden Nut";
                 itemDef.interfaceOptions = new String[] { null, "Use", null, null, "Drop" };
                 itemDef.zoom2d = ItemDefinition.lookup(4012).zoom2d;
@@ -3099,7 +3099,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33150:
                 itemDef.setDefaults();
                 itemDef.id = 33150;
-                itemDef.modelId = 46752;
+                itemDef.inventoryModel = 46752;
                 itemDef.name = "Sirenic hauberk";
                 //itemDef.description = "Made from sirenic scales and strengthened by algarum thread.";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
@@ -3115,7 +3115,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33151:
                 itemDef.setDefaults();
                 itemDef.id = 33151;
-                itemDef.modelId = 46755;
+                itemDef.inventoryModel = 46755;
                 itemDef.name = "Sirenic mask";
                 //itemDef.description = "Made from sirenic scales and strengthened by algarum thread.";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
@@ -3131,7 +3131,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33152:
                 itemDef.setDefaults();
                 itemDef.id = 33152;
-                itemDef.modelId = 46758;
+                itemDef.inventoryModel = 46758;
                 itemDef.name = "Sirenic chaps";
                 //itemDef.description = "Made from sirenic scales and strengthened by algarum thread.";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
@@ -3148,7 +3148,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33153:
                 itemDef.setDefaults();
                 itemDef.id = 33153;
-                itemDef.modelId = 46765;
+                itemDef.inventoryModel = 46765;
                 itemDef.name = "Malevolent helm";
                 //itemDef.description = "Armour infused with malevolent energy.";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
@@ -3164,7 +3164,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33154:
                 itemDef.setDefaults();
                 itemDef.id = 33154;
-                itemDef.modelId = 46762;
+                itemDef.inventoryModel = 46762;
                 itemDef.name = "Malevolent cuirass";
                 //itemDef.description = "Armour infused with malevolent energy.";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
@@ -3180,7 +3180,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33155:
                 itemDef.setDefaults();
                 itemDef.id = 33155;
-                itemDef.modelId = 46766;
+                itemDef.inventoryModel = 46766;
                 itemDef.name = "Malevolent greaves";
                 //itemDef.description = "Armour infused with malevolent energy.";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
@@ -3197,7 +3197,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33156:
                 itemDef.setDefaults();
                 itemDef.id = 33156;
-                itemDef.modelId = 46770;
+                itemDef.inventoryModel = 46770;
                 itemDef.name = "Tectonic mask";
                 //itemDef.description = "A powerful mask from the depths.";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
@@ -3213,7 +3213,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33157:
                 itemDef.setDefaults();
                 itemDef.id = 33157;
-                itemDef.modelId = 46773;
+                itemDef.inventoryModel = 46773;
                 itemDef.name = "Tectonic robe top";
                 //itemDef.description = "A powerful robe from the depths.";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
@@ -3229,7 +3229,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33158:
                 itemDef.setDefaults();
                 itemDef.id = 33158;
-                itemDef.modelId = 46776;
+                itemDef.inventoryModel = 46776;
                 itemDef.name = "Tectonic robe bottom";
                 //itemDef.description = "A powerful robe from the depths.";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
@@ -3249,7 +3249,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33159:
                 itemDef.setDefaults();
                 itemDef.id = 33159;
-                itemDef.modelId = 46779;
+                itemDef.inventoryModel = 46779;
                 itemDef.name = "Christmas Imp";
                 //itemDef.description = "A Christmas Imp.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
@@ -3265,7 +3265,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33160:
                 itemDef.setDefaults();
                 itemDef.id = 33160;
-                itemDef.modelId = 60018;
+                itemDef.inventoryModel = 60018;
                 itemDef.name = "Candy Cane Twisted Bow";
                 //itemDef.description = "A Candy Cane Twisted Bow.";
                 itemDef.interfaceOptions = new String[] { null, "Wield", "Check", "Uncharge", "Drop" };
@@ -3283,7 +3283,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33161:
                 itemDef.setDefaults();
                 itemDef.id = 33161;
-                itemDef.modelId = 60020;
+                itemDef.inventoryModel = 60020;
                 itemDef.name = "Candy Cane Scythe";
                 //itemDef.description = "A Candy Cane Scythe.";
                 itemDef.interfaceOptions = new String[] { null, "Wield", "Check", "Uncharge", "Drop" };
@@ -3301,7 +3301,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33162:
                 itemDef.setDefaults();
                 itemDef.id = 33159;
-                itemDef.modelId = 60022;
+                itemDef.inventoryModel = 60022;
                 itemDef.name = "Candy Cane Whip";
                 //itemDef.description = "A Candy Cane Whip.";
                 itemDef.interfaceOptions = new String[] { null, "Wield", "Check", "Uncharge", "Drop" };
@@ -3498,7 +3498,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33175:
                 itemDef.setDefaults();
                 itemDef.id = 33175;
-                itemDef.modelId = 60024;
+                itemDef.inventoryModel = 60024;
                 itemDef.name = "Axe Of Araphel";
                 itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
                 itemDef.zoom2d = 1980;
@@ -3514,7 +3514,7 @@ public final class ItemDefinition implements RSItemComposition {
 //				itemDef.setDefaults();
                 itemDef.id = 33176;
                 itemDef.name = "Discord Booster's Cape";
-                itemDef.modelId = 46830;
+                itemDef.inventoryModel = 46830;
                 itemDef.zoom2d = 2600;
                 itemDef.xan2d = 0;
                 itemDef.yan2d = 0;
@@ -3539,12 +3539,12 @@ public final class ItemDefinition implements RSItemComposition {
             case 10533:
                 itemDef.name = "Guardian Angel Pet";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 break;
             case 33177:
                 itemDef.setDefaults();
                 itemDef.id = 33177;
-                itemDef.modelId = 49914;
+                itemDef.inventoryModel = 49914;
                 itemDef.name = "Golden blowpipe";
                 itemDef.interfaceOptions = new String[] { null, "Wield", "Check", "Unload", "Uncharge" };
                 itemDef.zoom2d = 1480;
@@ -3559,7 +3559,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33183:
                 itemDef.setDefaults();
                 itemDef.id = 33183;
-                itemDef.modelId = 47054;
+                itemDef.inventoryModel = 47054;
                 itemDef.name = "Cape of malar";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 itemDef.zoom2d = 1780;
@@ -3574,7 +3574,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33184:
                 itemDef.setDefaults();
                 itemDef.id = 33184;
-                itemDef.modelId = 47056;
+                itemDef.inventoryModel = 47056;
                 itemDef.name = "Blood Scythe";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 itemDef.zoom2d = 3280;
@@ -3589,7 +3589,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33186:
                 itemDef.setDefaults();
                 itemDef.id = 33186;
-                itemDef.modelId = 47060;
+                itemDef.inventoryModel = 47060;
                 itemDef.name = "Mask Of Malar";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 itemDef.zoom2d = 680;
@@ -3604,7 +3604,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33187:
                 itemDef.setDefaults();
                 itemDef.id = 33187;
-                itemDef.modelId = 47062;
+                itemDef.inventoryModel = 47062;
                 itemDef.name = "Chest Of Malar";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 itemDef.zoom2d = 1280;
@@ -3619,7 +3619,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33188:
                 itemDef.setDefaults();
                 itemDef.id = 33188;
-                itemDef.modelId = 47064;
+                itemDef.inventoryModel = 47064;
                 itemDef.name = "Bottoms Of Malar";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 itemDef.zoom2d = 1680;
@@ -3634,7 +3634,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33189:
                 itemDef.setDefaults();
                 itemDef.id = 33189;
-                itemDef.modelId = 47068;
+                itemDef.inventoryModel = 47068;
                 itemDef.name = "Dragon Guard Helm";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 itemDef.zoom2d = 980;
@@ -3649,7 +3649,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33190:
                 itemDef.setDefaults();
                 itemDef.id = 33190;
-                itemDef.modelId = 47070;
+                itemDef.inventoryModel = 47070;
                 itemDef.name = "Dragon Guard Chest";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 itemDef.zoom2d = 1280;
@@ -3664,7 +3664,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33191:
                 itemDef.setDefaults();
                 itemDef.id = 33191;
-                itemDef.modelId = 47072;
+                itemDef.inventoryModel = 47072;
                 itemDef.name = "Dragon Guard Bottoms";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 itemDef.zoom2d = 1680;
@@ -3679,7 +3679,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33195:
                 itemDef.setDefaults();
                 itemDef.id = 33195;
-                itemDef.modelId = 47081;
+                itemDef.inventoryModel = 47081;
                 itemDef.name = "Blood Helm";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 itemDef.zoom2d = 980;
@@ -3694,7 +3694,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33196:
                 itemDef.setDefaults();
                 itemDef.id = 33196;
-                itemDef.modelId = 47083;
+                itemDef.inventoryModel = 47083;
                 itemDef.name = "Blood Chest";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 itemDef.zoom2d = 1280;
@@ -3709,7 +3709,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33197:
                 itemDef.setDefaults();
                 itemDef.id = 33197;
-                itemDef.modelId = 47085;
+                itemDef.inventoryModel = 47085;
                 itemDef.name = "Blood Bottoms";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 itemDef.zoom2d = 1680;
@@ -3724,7 +3724,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33198:
                 itemDef.setDefaults();
                 itemDef.id = 33198;
-                itemDef.modelId = 47087;
+                itemDef.inventoryModel = 47087;
                 itemDef.name = "Reaper Cape";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 itemDef.zoom2d = 1780;
@@ -3739,7 +3739,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33199:
                 itemDef.setDefaults();
                 itemDef.id = 33199;
-                itemDef.modelId = 47089;
+                itemDef.inventoryModel = 47089;
                 itemDef.name = "Reaper Helm";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 itemDef.zoom2d = 680;
@@ -3754,7 +3754,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33200:
                 itemDef.setDefaults();
                 itemDef.id = 33200;
-                itemDef.modelId = 47091;
+                itemDef.inventoryModel = 47091;
                 itemDef.name = "Reaper Chest";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 itemDef.zoom2d = 1380;
@@ -3769,7 +3769,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33201:
                 itemDef.setDefaults();
                 itemDef.id = 33201;
-                itemDef.modelId = 47093;
+                itemDef.inventoryModel = 47093;
                 itemDef.name = "Reaper Bottoms";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 itemDef.zoom2d = 1980;
@@ -3784,7 +3784,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33202:
                 itemDef.setDefaults();
                 itemDef.id = 33202;
-                itemDef.modelId = 47095;
+                itemDef.inventoryModel = 47095;
                 itemDef.name = "Demon X Sword";
                 itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
                 itemDef.zoom2d = 2080;
@@ -3799,7 +3799,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33203:
                 itemDef.setDefaults();
                 itemDef.id = 33203;
-                itemDef.modelId = 47097;
+                itemDef.inventoryModel = 47097;
                 itemDef.name = "Demon X Scythe";
                 itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
                 itemDef.zoom2d = 1580;
@@ -3814,7 +3814,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33204:
                 itemDef.setDefaults();
                 itemDef.id = 33204;
-                itemDef.modelId = 47099;
+                itemDef.inventoryModel = 47099;
                 itemDef.name = "Demon X Spear";
                 itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
                 itemDef.zoom2d = 1580;
@@ -3829,7 +3829,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33205:
                 itemDef.setDefaults();
                 itemDef.id = 33205;
-                itemDef.modelId = 47101;
+                itemDef.inventoryModel = 47101;
                 itemDef.name = "Demon X Staff";
                 itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
                 itemDef.zoom2d = 1280;
@@ -3844,7 +3844,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33206:
                 itemDef.setDefaults();
                 itemDef.id = 33206;
-                itemDef.modelId = 47103;
+                itemDef.inventoryModel = 47103;
                 itemDef.name = "Ascension Crossbow";
                 itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
                 itemDef.zoom2d = 880;
@@ -3859,7 +3859,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33207:
                 itemDef.setDefaults();
                 itemDef.id = 33207;
-                itemDef.modelId = 47108;
+                itemDef.inventoryModel = 47108;
                 itemDef.name = "Demon X Bow";
                 itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
                 itemDef.zoom2d = 1780;
@@ -3875,14 +3875,14 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "@gre@Lil' Groot";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("Groot.png");
                 break;
             case 33209:
                 itemDef.setDefaults();
                 itemDef.name = "@gre@Xmas Box";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, "Quick-Open", "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("xmas_box.png");
                 break;
             case 33210:
@@ -3890,8 +3890,8 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "lil' Gingie";
                 //itemDef.description = "The most powerful pet, see ::foepets for full list of perks.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
-                itemDef.modelId = 60034;
+                itemDef.stacks = false;
+                itemDef.inventoryModel = 60034;
                 itemDef.zoom2d = 1780;
                 itemDef.xan2d = 240;
                 itemDef.yan2d = 26;
@@ -3904,8 +3904,8 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "lil' Elf";
                 //itemDef.description = "The most powerful pet, see ::foepets for full list of perks.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
-                itemDef.modelId = 60033;
+                itemDef.stacks = false;
+                itemDef.inventoryModel = 60033;
                 itemDef.zoom2d = 1780;
                 itemDef.xan2d = 287;
                 itemDef.yan2d = 217;
@@ -3918,8 +3918,8 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "lil' Evil Snowman";
                 //itemDef.description = "The most powerful pet, see ::foepets for full list of perks.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
-                itemDef.modelId = 46750;
+                itemDef.stacks = false;
+                itemDef.inventoryModel = 46750;
                 itemDef.zoom2d = 2980;
                 itemDef.xan2d = 165;
                 itemDef.yan2d = 0;
@@ -3931,168 +3931,168 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "Christmas Pudding";
                 itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("pudding.png");
                 break;
             case 33214:
                 itemDef.setDefaults();
                 itemDef.name = "Relic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("5309.png");
                 break;
             case 33215:
                 itemDef.setDefaults();
                 itemDef.name = "Relic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("5310.png");
                 break;
             case 33216:
                 itemDef.setDefaults();
                 itemDef.name = "Relic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("5311.png");
                 break;
             case 33217:
                 itemDef.setDefaults();
                 itemDef.name = "Relic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("5312.png");
                 break;
             case 33218:
                 itemDef.setDefaults();
                 itemDef.name = "Relic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("5313.png");
                 break;
             case 33219:
                 itemDef.setDefaults();
                 itemDef.name = "Relic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("5314.png");
                 break;
             case 33220:
                 itemDef.setDefaults();
                 itemDef.name = "Faster melee";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("5315.png");
                 break;
             case 33221:
                 itemDef.setDefaults();
                 itemDef.name = "Faster Range";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("5316.png");
                 break;
             case 33222:
                 itemDef.setDefaults();
                 itemDef.name = "Faster Magic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("5317.png");
                 break;
             case 33223:
                 itemDef.setDefaults();
                 itemDef.name = "Relic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("5318.png");
                 break;
             case 33224:
                 itemDef.setDefaults();
                 itemDef.name = "Relic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("5319.png");
                 break;
             case 33225:
                 itemDef.setDefaults();
                 itemDef.name = "Relic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("5320.png");
                 break;
             case 33226:
                 itemDef.setDefaults();
                 itemDef.name = "3x Xp Bonus";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("5321.png");
                 break;
             case 33227:
                 itemDef.setDefaults();
                 itemDef.name = "Relic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("5322.png");
                 break;
             case 33228:
                 itemDef.setDefaults();
                 itemDef.name = "Simplified Farming";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("5323.png");
                 break;
             case 33229:
                 itemDef.setDefaults();
                 itemDef.name = "Relic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("5324.png");
                 break;
             case 33230:
                 itemDef.setDefaults();
                 itemDef.name = "Maximum Damage";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("5325.png");
                 break;
             case 33231:
                 itemDef.setDefaults();
                 itemDef.name = "Relic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("5326.png");
                 break;
             case 33232:
                 itemDef.setDefaults();
                 itemDef.name = "Meteor";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("5327.png");
                 break;
             case 33233:
                 itemDef.setDefaults();
                 itemDef.name = "AOE Relic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("5328.png");
                 break;
             case 33234:
                 itemDef.setDefaults();
                 itemDef.name = "Relic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" } ;
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("5329.png");
                 break;
             case 33235:
                 itemDef.setDefaults();
                 itemDef.name = "Relic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("5330.png");
                 break;
             case 33236:
                 itemDef.setDefaults();
                 itemDef.name = "Relic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 itemDef.createCustomSprite("5335.png");
                 break;
             case 5020:
@@ -4108,7 +4108,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 26269:
                 itemDef.setDefaults();
                 itemDef.id = 26269;
-                itemDef.modelId = 49477;
+                itemDef.inventoryModel = 49477;
                 itemDef.name = "Demon X Crossbow";
                 itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
                 itemDef.zoom2d = 1280;
@@ -4131,7 +4131,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 11738:
                 itemDef.name = "Herb box";
                 itemDef.interfaceOptions = new String[] { "Open", null, "Open-All", null, "Drop" };
-                itemDef.modelId =  60038;
+                itemDef.inventoryModel =  60038;
                 //itemDef.description = "I can see some herbs in here.";
                 break;
             case 26858:
@@ -4155,22 +4155,22 @@ public final class ItemDefinition implements RSItemComposition {
             case 28669:
                 itemDef.name = "Pheasant";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 break;
             case 10998:
                 itemDef.name = "13th Pet Goblin";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 break;
             case 24864:
                 itemDef.name = "Maniacal Monkey";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 break;
             case 24863:
                 itemDef.name = "Zombie Monkey";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 break;
 
             case 19903:
@@ -4208,11 +4208,11 @@ public final class ItemDefinition implements RSItemComposition {
             case 11279:
                 itemDef.name = "Baby Green Dragon";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 break;
             case 33241:
                 itemDef.name = "Baby Blue Dragon";
-                itemDef.modelId = 60045;
+                itemDef.inventoryModel = 60045;
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
                 itemDef.zoom2d = ItemDefinition.lookup(11279).zoom2d;
                 itemDef.xan2d = ItemDefinition.lookup(11279).xan2d;
@@ -4220,11 +4220,11 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.zan2d = ItemDefinition.lookup(11279).zan2d;
                 itemDef.xOffset2d = ItemDefinition.lookup(11279).xOffset2d;
                 itemDef.yOffset2d = ItemDefinition.lookup(11279).yOffset2d;
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 break;
             case 33240:
                 itemDef.name = "Baby Red Dragon";
-                itemDef.modelId = 60044;
+                itemDef.inventoryModel = 60044;
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
                 itemDef.zoom2d = ItemDefinition.lookup(11279).zoom2d;
                 itemDef.xan2d = ItemDefinition.lookup(11279).xan2d;
@@ -4232,11 +4232,11 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.zan2d = ItemDefinition.lookup(11279).zan2d;
                 itemDef.xOffset2d = ItemDefinition.lookup(11279).xOffset2d;
                 itemDef.yOffset2d = ItemDefinition.lookup(11279).yOffset2d;
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 break;
             case 33242:
                 itemDef.name = "Baby Black Dragon";
-                itemDef.modelId = 60046;
+                itemDef.inventoryModel = 60046;
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
                 itemDef.zoom2d = ItemDefinition.lookup(11279).zoom2d;
                 itemDef.xan2d = ItemDefinition.lookup(11279).xan2d;
@@ -4244,14 +4244,14 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.zan2d = ItemDefinition.lookup(11279).zan2d;
                 itemDef.xOffset2d = ItemDefinition.lookup(11279).xOffset2d;
                 itemDef.yOffset2d = ItemDefinition.lookup(11279).yOffset2d;
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 break;
             case 33243:
                 itemDef.setDefaults();
                 itemDef.name = "@red@Realm Nyx";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stackable = false;
-                itemDef.modelId = 60047;
+                itemDef.stacks = false;
+                itemDef.inventoryModel = 60047;
                 itemDef.zoom2d = 4280;
                 itemDef.xan2d = 270;
                 itemDef.yan2d = 322;
@@ -4278,37 +4278,37 @@ public final class ItemDefinition implements RSItemComposition {
             case 6644:
                 itemDef.name = "@blu@Crystal Armour";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 break;
             case 6642:
                 itemDef.name = "@gre@Crystal Armour";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 break;
             case 6641:
                 itemDef.name = "@yel@Crystal Armour";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 break;
             case 6650:
                 itemDef.name = "@bla@Crystal Armour";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 break;
             case 6645:
                 itemDef.name = "@MAG@Crystal Armour";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 break;
             case 6640:
                 itemDef.name = "@red@Crystal Armour";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 break;
             case 6646:
                 itemDef.name = "@whi@Crystal Armour";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, null, "Drop" };
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 break;
             case 24866:  //Shoulder Monkey
             case 24862:  //Shoulder Monkey
@@ -4319,7 +4319,7 @@ public final class ItemDefinition implements RSItemComposition {
                 break;
             case 20211:
                 itemDef.name = "Cape of darkness";
-                itemDef.stackable = false;
+                itemDef.stacks = false;
                 break;
             case 10595:
                 itemDef.name = "Penguin Suit";
@@ -4343,7 +4343,7 @@ public final class ItemDefinition implements RSItemComposition {
                 break;
             case 33245:
                 itemDef.id = 33245;
-                itemDef.modelId = (60100);
+                itemDef.inventoryModel = (60100);
                 itemDef.name = "Centurians party Hat";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 itemDef.zoom2d = ItemDefinition.lookup(1044).zoom2d;
@@ -4357,7 +4357,7 @@ public final class ItemDefinition implements RSItemComposition {
                 break;
             case 33246:
                 itemDef.id = 33246;
-                itemDef.modelId = (60106);
+                itemDef.inventoryModel = (60106);
                 itemDef.name = "Sponges Skeleton Mask";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 itemDef.zoom2d = ItemDefinition.lookup(9925).zoom2d;
@@ -4371,7 +4371,7 @@ public final class ItemDefinition implements RSItemComposition {
                 break;
             case 33247:
                 itemDef.id = 33247;
-                itemDef.modelId = (60103);
+                itemDef.inventoryModel = (60103);
                 itemDef.name = "Sponges Skeleton Body";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 itemDef.zoom2d = ItemDefinition.lookup(9924).zoom2d;
@@ -4387,7 +4387,7 @@ public final class ItemDefinition implements RSItemComposition {
                 break;
             case 33248:
                 itemDef.id = 33248;
-                itemDef.modelId = (60107);
+                itemDef.inventoryModel = (60107);
                 itemDef.name = "Sponges Skeleton Legs";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 itemDef.zoom2d = ItemDefinition.lookup(9923).zoom2d;
@@ -4401,7 +4401,7 @@ public final class ItemDefinition implements RSItemComposition {
                 break;
             case 33249:
                 itemDef.id = 33249;
-                itemDef.modelId = (60104);
+                itemDef.inventoryModel = (60104);
                 itemDef.name = "Sponges Skeleton Boots";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 itemDef.zoom2d = ItemDefinition.lookup(9921).zoom2d;
@@ -4415,7 +4415,7 @@ public final class ItemDefinition implements RSItemComposition {
                 break;
             case 33250:
                 itemDef.id = 33250;
-                itemDef.modelId = (60105);
+                itemDef.inventoryModel = (60105);
                 itemDef.name = "Sponges Skeleton Gloves";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 itemDef.zoom2d = ItemDefinition.lookup(9922).zoom2d;
@@ -4429,7 +4429,7 @@ public final class ItemDefinition implements RSItemComposition {
                 break;
             case 33261:
                 itemDef.id = 33261;
-                itemDef.modelId = (60123);
+                itemDef.inventoryModel = (60123);
                 itemDef.name = "Green Skeleton Mask";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 itemDef.zoom2d = ItemDefinition.lookup(9925).zoom2d;
@@ -4443,7 +4443,7 @@ public final class ItemDefinition implements RSItemComposition {
                 break;
             case 33262:
                 itemDef.id = 33262;
-                itemDef.modelId = (60120);
+                itemDef.inventoryModel = (60120);
                 itemDef.name = "Green Skeleton Body";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 itemDef.zoom2d = ItemDefinition.lookup(9924).zoom2d;
@@ -4459,7 +4459,7 @@ public final class ItemDefinition implements RSItemComposition {
                 break;
             case 33263:
                 itemDef.id = 33263;
-                itemDef.modelId = (60124);
+                itemDef.inventoryModel = (60124);
                 itemDef.name = "Green Skeleton Legs";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 itemDef.zoom2d = ItemDefinition.lookup(9923).zoom2d;
@@ -4473,7 +4473,7 @@ public final class ItemDefinition implements RSItemComposition {
                 break;
             case 33264:
                 itemDef.id = 33264;
-                itemDef.modelId = (60121);
+                itemDef.inventoryModel = (60121);
                 itemDef.name = "Green Skeleton Boots";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 itemDef.zoom2d = ItemDefinition.lookup(9921).zoom2d;
@@ -4487,7 +4487,7 @@ public final class ItemDefinition implements RSItemComposition {
                 break;
             case 33265:
                 itemDef.id = 33265;
-                itemDef.modelId = (60122);
+                itemDef.inventoryModel = (60122);
                 itemDef.name = "Green Skeleton Gloves";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 itemDef.zoom2d = ItemDefinition.lookup(9922).zoom2d;
@@ -4501,7 +4501,7 @@ public final class ItemDefinition implements RSItemComposition {
                 break;
             case 33266:
                 itemDef.id = 33266;
-                itemDef.modelId = (60138);
+                itemDef.inventoryModel = (60138);
                 itemDef.name = "Red Skeleton Mask";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop"};
                 itemDef.zoom2d = ItemDefinition.lookup(9925).zoom2d;
@@ -4515,7 +4515,7 @@ public final class ItemDefinition implements RSItemComposition {
                 break;
             case 33267:
                 itemDef.id = 33267;
-                itemDef.modelId = (60152);
+                itemDef.inventoryModel = (60152);
                 itemDef.name = "Red Skeleton Body";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop"};
                 itemDef.zoom2d = ItemDefinition.lookup(9924).zoom2d;
@@ -4531,7 +4531,7 @@ public final class ItemDefinition implements RSItemComposition {
                 break;
             case 33268:
                 itemDef.id = 33268;
-                itemDef.modelId = (60139);
+                itemDef.inventoryModel = (60139);
                 itemDef.name = "Red Skeleton Legs";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop"};
                 itemDef.zoom2d = ItemDefinition.lookup(9923).zoom2d;
@@ -4545,7 +4545,7 @@ public final class ItemDefinition implements RSItemComposition {
                 break;
             case 33269:
                 itemDef.id = 33269;
-                itemDef.modelId = (60136);
+                itemDef.inventoryModel = (60136);
                 itemDef.name = "Red Skeleton Boots";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop"};
                 itemDef.zoom2d = ItemDefinition.lookup(9921).zoom2d;
@@ -4559,7 +4559,7 @@ public final class ItemDefinition implements RSItemComposition {
                 break;
             case 33270:
                 itemDef.id = 33270;
-                itemDef.modelId = (60137);
+                itemDef.inventoryModel = (60137);
                 itemDef.name = "Red Skeleton gloves";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop"};
                 itemDef.zoom2d = ItemDefinition.lookup(9922).zoom2d;
@@ -4632,7 +4632,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 33260:
                 itemDef.name = "Phone";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, null, "Drop" };
-                itemDef.modelId = (60053);
+                itemDef.inventoryModel = (60053);
                 itemDef.zoom2d = 1991;
                 itemDef.xan2d = 96;
                 itemDef.yan2d = 165;
@@ -4665,7 +4665,7 @@ public final class ItemDefinition implements RSItemComposition {
         itemDef.setDefaults();
         itemDef.decode(item_data);
 
-        if (itemDef.noted_item_id != -1)
+        if (itemDef.noteTemplateId != -1)
             itemDef.toNote();
 
         int id = itemDef.id;
@@ -4677,31 +4677,31 @@ public final class ItemDefinition implements RSItemComposition {
 
 
     void method2789(ItemDefinition var1, ItemDefinition var2) {
-        modelId = var1.modelId * 1;
+        inventoryModel = var1.inventoryModel * 1;
         zoom2d = var1.zoom2d * 1;
         xan2d = 1 * var1.xan2d;
         yan2d = 1 * var1.yan2d;
         zan2d = 1 * var1.zan2d;
         xOffset2d = 1 * var1.xOffset2d;
         yOffset2d = var1.yOffset2d * 1;
-        colorReplace = var2.colorReplace;
-        colorFind = var2.colorFind;
+        modifiedColours = var2.modifiedColours;
+        originalColours = var2.originalColours;
         // originalTextureColors = var2.originalTextureColors;
         // modifiedTextureColors = var2.modifiedTextureColors;
         name = var2.name;
         members = var2.members;
-        stackable = var2.stackable;
+        stacks = var2.stacks;
         maleModel0 = 1 * var2.maleModel0;
         maleModel1 = 1 * var2.maleModel1;
         maleModel2 = 1 * var2.maleModel2;
         femaleModel0 = var2.femaleModel0 * 1;
         femaleModel1 = var2.femaleModel1 * 1;
         femaleModel2 = 1 * var2.femaleModel2;
-        maleHeadModel = 1 * var2.maleHeadModel;
-        maleHeadModel2 = var2.maleHeadModel2 * 1;
-        femaleHeadModel = var2.femaleHeadModel * 1;
-        femaleHeadModel2 = var2.femaleHeadModel2 * 1;
-        team = var2.team * 1;
+        maleHeadModel0 = 1 * var2.maleHeadModel0;
+        maleHeadModel1 = var2.maleHeadModel1 * 1;
+        femaleHeadModel0 = var2.femaleHeadModel0 * 1;
+        femaleHeadModel1 = var2.femaleHeadModel1 * 1;
+        teamCape = var2.teamCape * 1;
         options = var2.options;
         interfaceOptions = new String[5];
         equipActions = new String[5];
@@ -4716,18 +4716,18 @@ public final class ItemDefinition implements RSItemComposition {
     }
 
     void toPlaceholder(ItemDefinition var1, ItemDefinition var2) {
-        modelId = var1.modelId * 1;
+        inventoryModel = var1.inventoryModel * 1;
         zoom2d = 1 * var1.zoom2d;
         xan2d = var1.xan2d * 1;
         yan2d = var1.yan2d * 1;
         zan2d = var1.zan2d * 1;
         xOffset2d = 1 * var1.xOffset2d;
         yOffset2d = var1.yOffset2d * 1;
-        colorReplace = var1.colorReplace;
-        colorFind = var1.colorFind;
-        textureFind = var1.textureFind;
-        textureReplace = var1.textureReplace;
-        stackable = var1.stackable;
+        modifiedColours = var1.modifiedColours;
+        originalColours = var1.originalColours;
+        originalTextureColours = var1.originalTextureColours;
+        modifiedTextureColours = var1.modifiedTextureColours;
+        stacks = var1.stacks;
         name = var2.name;
         cost = 0;
     }
@@ -4841,7 +4841,7 @@ public final class ItemDefinition implements RSItemComposition {
         Rasterizer3D.scanOffsets = lineOffsets;
         Rasterizer3D.aBoolean1464 = true;
         Rasterizer3D.world = true;
-        enabledSprite.maxWidth = definition.stackable ? 33 : 32;
+        enabledSprite.maxWidth = definition.stacks ? 33 : 32;
         enabledSprite.maxHeight = stackSize;
         return enabledSprite;
     }
@@ -4874,8 +4874,8 @@ public final class ItemDefinition implements RSItemComposition {
         if (model == null)
             return null;
         Sprite sprite = null;
-        if (itemDef.noted_item_id != -1) {
-            sprite = getSprite(itemDef.unnoted_item_id, 10, -1);
+        if (itemDef.noteTemplateId != -1) {
+            sprite = getSprite(itemDef.noteLinkId, 10, -1);
             if (sprite == null)
                 return null;
         }
@@ -4920,7 +4920,7 @@ public final class ItemDefinition implements RSItemComposition {
 
         Rasterizer2D.initDrawingArea(32, 32, enabledSprite.myPixels);
 
-        if (itemDef.noted_item_id != -1) {
+        if (itemDef.noteTemplateId != -1) {
             int old_w = sprite.maxWidth;
             int old_h = sprite.maxHeight;
             sprite.maxWidth = 32;
@@ -4938,7 +4938,7 @@ public final class ItemDefinition implements RSItemComposition {
         Rasterizer3D.scanOffsets = lineOffsets;
         Rasterizer3D.aBoolean1464 = true;
         Rasterizer3D.world = true;
-        if (itemDef.stackable)
+        if (itemDef.stacks)
             enabledSprite.maxWidth = 33;
         else
             enabledSprite.maxWidth = 32;
@@ -4964,8 +4964,8 @@ public final class ItemDefinition implements RSItemComposition {
         if (model == null)
             return null;
         Sprite sprite = null;
-        if (itemDef.noted_item_id != -1) {
-            sprite = getSprite(itemDef.unnoted_item_id, 10, -1);
+        if (itemDef.noteTemplateId != -1) {
+            sprite = getSprite(itemDef.noteLinkId, 10, -1);
             if (sprite == null)
                 return null;
         }
@@ -4995,7 +4995,7 @@ public final class ItemDefinition implements RSItemComposition {
 
         enabledSprite.outline(1);
 
-        if (itemDef.noted_item_id != -1) {
+        if (itemDef.noteTemplateId != -1) {
             int old_w = sprite.maxWidth;
             int old_h = sprite.maxHeight;
             sprite.maxWidth = 18;
@@ -5074,7 +5074,7 @@ public final class ItemDefinition implements RSItemComposition {
         Rasterizer3D.scanOffsets = lineOffsets;
         Rasterizer3D.aBoolean1464 = true;
         Rasterizer3D.world = true;
-        if (itemDef.stackable)
+        if (itemDef.stacks)
             sprite.maxWidth = 33;
         else
             sprite.maxWidth = 32;
@@ -5083,11 +5083,11 @@ public final class ItemDefinition implements RSItemComposition {
     }
 
     public boolean isDialogueModelCached(int gender) {
-        int model_1 = maleHeadModel;
-        int model_2 = maleHeadModel2;
+        int model_1 = maleHeadModel0;
+        int model_2 = maleHeadModel1;
         if (gender == 1) {
-            model_1 = femaleHeadModel;
-            model_2 = femaleHeadModel2;
+            model_1 = femaleHeadModel0;
+            model_2 = femaleHeadModel1;
         }
         if (model_1 == -1)
             return true;
@@ -5098,11 +5098,11 @@ public final class ItemDefinition implements RSItemComposition {
     }
 
     public Model getChatEquipModel(int gender) {
-        int dialogueModel = maleHeadModel;
-        int dialogueHatModel = maleHeadModel2;
+        int dialogueModel = maleHeadModel0;
+        int dialogueHatModel = maleHeadModel1;
         if (gender == 1) {
-            dialogueModel = femaleHeadModel;
-            dialogueHatModel = femaleHeadModel2;
+            dialogueModel = femaleHeadModel0;
+            dialogueHatModel = femaleHeadModel1;
         }
         if (dialogueModel == -1)
             return null;
@@ -5112,14 +5112,14 @@ public final class ItemDefinition implements RSItemComposition {
             Model[] models = {dialogueModel_, hatModel_};
             dialogueModel_ = new Model(2, models);
         }
-        if (colorReplace != null) {
-            for (int i1 = 0; i1 < colorReplace.length; i1++)
-                dialogueModel_.recolor(colorReplace[i1], colorFind[i1]);
+        if (modifiedColours != null) {
+            for (int i1 = 0; i1 < modifiedColours.length; i1++)
+                dialogueModel_.recolor(modifiedColours[i1], originalColours[i1]);
 
         }
-        if (textureReplace != null) {
-            for (int i1 = 0; i1 < textureReplace.length; i1++)
-                dialogueModel_.retexture(textureReplace[i1], textureFind[i1]);
+        if (modifiedTextureColours != null) {
+            for (int i1 = 0; i1 < modifiedTextureColours.length; i1++)
+                dialogueModel_.retexture(modifiedTextureColours[i1], originalTextureColours[i1]);
         }
         return dialogueModel_;
     }
@@ -5193,14 +5193,14 @@ public final class ItemDefinition implements RSItemComposition {
         if (gender == 1 && femaleOffset != 0)
             primaryModel_.offsetBy(0, femaleOffset, 0);
 
-        if (colorReplace != null) {
-            for (int i1 = 0; i1 < colorReplace.length; i1++)
-                primaryModel_.recolor(colorReplace[i1], colorFind[i1]);
+        if (modifiedColours != null) {
+            for (int i1 = 0; i1 < modifiedColours.length; i1++)
+                primaryModel_.recolor(modifiedColours[i1], originalColours[i1]);
 
         }
-        if (textureReplace != null) {
-            for (int i1 = 0; i1 < textureReplace.length; i1++)
-                primaryModel_.retexture(textureReplace[i1], textureFind[i1]);
+        if (modifiedTextureColours != null) {
+            for (int i1 = 0; i1 < modifiedTextureColours.length; i1++)
+                primaryModel_.retexture(modifiedTextureColours[i1], originalTextureColours[i1]);
         }
         return primaryModel_;
     }
@@ -5209,12 +5209,12 @@ public final class ItemDefinition implements RSItemComposition {
         customSpriteLocation = null;
         customSmallSpriteLocation = null;
         equipActions = new String[]{"Remove", null, "Operate", null, null};
-        modelId = 0;
+        inventoryModel = 0;
         name = null;
-        colorReplace = null;
-        colorFind = null;
-        textureReplace = null;
-        textureFind = null;
+        modifiedColours = null;
+        originalColours = null;
+        modifiedTextureColours = null;
+        originalTextureColours = null;
 
         zoom2d = 2000;
         xan2d = 0;
@@ -5222,7 +5222,7 @@ public final class ItemDefinition implements RSItemComposition {
         zan2d = 0;
         xOffset2d = 0;
         yOffset2d = 0;
-        stackable = false;
+        stacks = false;
         cost = 1;
         members = false;
         options = null;
@@ -5235,20 +5235,20 @@ public final class ItemDefinition implements RSItemComposition {
         femaleOffset = 0;
         maleModel2 = -1;
         femaleModel2 = -1;
-        maleHeadModel = -1;
-        maleHeadModel2 = -1;
-        femaleHeadModel = -1;
-        femaleHeadModel2 = -1;
+        maleHeadModel0 = -1;
+        maleHeadModel1 = -1;
+        femaleHeadModel0 = -1;
+        femaleHeadModel1 = -1;
         countObj = null;
         countCo = null;
-        unnoted_item_id = -1;
-        noted_item_id = -1;
+        noteLinkId = -1;
+        noteTemplateId = -1;
         resizeX = 128;
         resizeY = 128;
         resizeZ = 128;
         ambient = 0;
         contrast = 0;
-        team = 0;
+        teamCape = 0;
         glowColor = -1;
     }
 
@@ -5262,14 +5262,14 @@ public final class ItemDefinition implements RSItemComposition {
         zoom2d = copy.zoom2d;
         xOffset2d = copy.xOffset2d;
         yOffset2d = copy.yOffset2d;
-        modelId = copy.modelId;
-        stackable = copy.stackable;
+        inventoryModel = copy.inventoryModel;
+        stacks = copy.stacks;
 
     }
 
     private void toNote() {
-        ItemDefinition itemDef = lookup(noted_item_id);
-        modelId = itemDef.modelId;
+        ItemDefinition itemDef = lookup(noteTemplateId);
+        inventoryModel = itemDef.inventoryModel;
         zoom2d = itemDef.zoom2d;
         xan2d = itemDef.xan2d;
         yan2d = itemDef.yan2d;
@@ -5278,11 +5278,11 @@ public final class ItemDefinition implements RSItemComposition {
         xOffset2d = itemDef.xOffset2d;
         yOffset2d = itemDef.yOffset2d;
 
-        ItemDefinition itemDef_1 = lookup(unnoted_item_id);
+        ItemDefinition itemDef_1 = lookup(noteLinkId);
         name = itemDef_1.name;
         members = itemDef_1.members;
         cost = itemDef_1.cost;
-        stackable = true;
+        stacks = true;
     }
 
     @Override
@@ -5302,7 +5302,7 @@ public final class ItemDefinition implements RSItemComposition {
 
     @Override
     public int getNote() {
-        return noted_item_id;
+        return noteTemplateId;
     }
 
     @Override
@@ -5312,7 +5312,7 @@ public final class ItemDefinition implements RSItemComposition {
 
     @Override
     public int getPlaceholderId() {
-        return placeholder_id;
+        return placeholderLink;
     }
 
     @Override
@@ -5332,7 +5332,7 @@ public final class ItemDefinition implements RSItemComposition {
 
     @Override
     public boolean isTradeable() {
-        return tradeable;
+        return isTradeable;
     }
 
     @Override
@@ -5361,12 +5361,12 @@ public final class ItemDefinition implements RSItemComposition {
     }
     @Override
     public int getShiftClickActionIndex() {
-        return shiftClickIndex;
+        return dropOptionIndex;
     }
 
     @Override
     public void setShiftClickActionIndex(int shiftClickActionIndex) {
-        this.shiftClickIndex = shiftClickActionIndex;
+        this.dropOptionIndex = shiftClickActionIndex;
     }
 
     public Model getModel(int stack_size) {
@@ -5382,19 +5382,19 @@ public final class ItemDefinition implements RSItemComposition {
         Model model = (Model) models.get(id);
         if (model != null)
             return model;
-        model = Model.getModel(modelId);
+        model = Model.getModel(inventoryModel);
         if (model == null)
             return null;
         if (resizeX != 128 || resizeY != 128 || resizeZ != 128)
             model.scale(resizeX, resizeZ, resizeY);
-        if (colorReplace != null) {
-            for (int l = 0; l < colorReplace.length; l++)
-                model.recolor(colorReplace[l], colorFind[l]);
+        if (modifiedColours != null) {
+            for (int l = 0; l < modifiedColours.length; l++)
+                model.recolor(modifiedColours[l], originalColours[l]);
 
         }
-        if (textureReplace != null) {
-            for (int i1 = 0; i1 < textureReplace.length; i1++)
-                model.retexture(textureReplace[i1], textureFind[i1]);
+        if (modifiedTextureColours != null) {
+            for (int i1 = 0; i1 < modifiedTextureColours.length; i1++)
+                model.retexture(modifiedTextureColours[i1], originalTextureColours[i1]);
         }
         int lightInt = 64 + ambient;
         int lightMag = 768 + contrast;
@@ -5444,16 +5444,18 @@ public final class ItemDefinition implements RSItemComposition {
             if (stack_item_id != -1)
                 return lookup(stack_item_id).getUnshadedModel(1);
         }
-        Model model = Model.getModel(modelId);
+        Model model = Model.getModel(inventoryModel);
         if (model == null)
             return null;
-        if (colorReplace != null) {
-            for (int colorPtr = 0; colorPtr < colorReplace.length; colorPtr++)
-                model.recolor(colorReplace[colorPtr], colorFind[colorPtr]);
+        if (modifiedColours != null) {
+            for (int colorPtr = 0; colorPtr < modifiedColours.length; colorPtr++)
+                model.recolor(modifiedColours[colorPtr], originalColours[colorPtr]);
 
         }
         return model;
     }
+
+    public String description;
 
     private void decode(Buffer buffer) {
         while (true) {
@@ -5461,9 +5463,11 @@ public final class ItemDefinition implements RSItemComposition {
             if (opcode == 0)
                 return;
             if (opcode == 1)
-                modelId = buffer.readUShort();
+                inventoryModel = buffer.readUShort();
             else if (opcode == 2)
                 name = buffer.readStrings();
+            else if (opcode == 3)
+                description = buffer.readStrings();
             else if (opcode == 4)
                 zoom2d = buffer.readUShort();
             else if (opcode == 5)
@@ -5481,7 +5485,7 @@ public final class ItemDefinition implements RSItemComposition {
             } else if (opcode == 10) {
                 buffer.readUShort();
             } else if (opcode == 11)
-                stackable = true;
+                stacks = true;
             else if (opcode == 12)
                 cost = buffer.readInt();
             else if (opcode == 13)
@@ -5514,24 +5518,24 @@ public final class ItemDefinition implements RSItemComposition {
                 interfaceOptions[opcode - 35] = buffer.readString();
             } else if (opcode == 40) {
                 int length = buffer.readUnsignedByte();
-                colorReplace = new int[length];
-                colorFind = new int[length];
+                modifiedColours = new int[length];
+                originalColours = new int[length];
                 for (int index = 0; index < length; index++) {
-                    colorReplace[index] = buffer.readUShort();
-                    colorFind[index] = buffer.readUShort();
+                    modifiedColours[index] = buffer.readUShort();
+                    originalColours[index] = buffer.readUShort();
                 }
             } else if (opcode == 41) {
                 int length = buffer.readUnsignedByte();
-                textureFind = new short[length];
-                textureReplace = new short[length];
+                originalTextureColours = new short[length];
+                modifiedTextureColours = new short[length];
                 for (int index = 0; index < length; index++) {
-                    textureFind[index] = (short) buffer.readUShort();
-                    textureReplace[index] = (short) buffer.readUShort();
+                    originalTextureColours[index] = (short) buffer.readUShort();
+                    modifiedTextureColours[index] = (short) buffer.readUShort();
                 }
             } else if (opcode == 42) {
-                shiftClickIndex = buffer.readUnsignedByte();
+                dropOptionIndex = buffer.readUnsignedByte();
             } else if (opcode == 65) {
-                tradeable = true;
+                isTradeable = true;
             } else if (opcode == 75) {
                 weight = buffer.readUShort();
             } else if (opcode == 78)
@@ -5539,21 +5543,21 @@ public final class ItemDefinition implements RSItemComposition {
             else if (opcode == 79)
                 femaleModel2 = buffer.readUShort();
             else if (opcode == 90)
-                maleHeadModel = buffer.readUShort();
+                maleHeadModel0 = buffer.readUShort();
             else if (opcode == 91)
-                femaleHeadModel = buffer.readUShort();
+                femaleHeadModel0 = buffer.readUShort();
             else if (opcode == 92)
-                maleHeadModel2 = buffer.readUShort();
+                maleHeadModel1 = buffer.readUShort();
             else if (opcode == 93)
-                femaleHeadModel2 = buffer.readUShort();
+                femaleHeadModel1 = buffer.readUShort();
             else if (opcode == 94)
                 category = buffer.readUShort();
             else if (opcode == 95)
                 zan2d = buffer.readUShort();
             else if (opcode == 97)
-                unnoted_item_id = buffer.readUShort();
+                noteLinkId = buffer.readUShort();
             else if (opcode == 98)
-                noted_item_id = buffer.readUShort();
+                noteTemplateId = buffer.readUShort();
             else if (opcode >= 100 && opcode < 110) {
                 if (countObj == null) {
                     countObj = new int[10];
@@ -5573,19 +5577,19 @@ public final class ItemDefinition implements RSItemComposition {
             else if (opcode == 114)
                 contrast = buffer.readSignedByte() * 5;
             else if (opcode == 115)
-                team = buffer.readUnsignedByte();
+                teamCape = buffer.readUnsignedByte();
             else if (opcode == 139)
-                bought_id = buffer.readUShort();
+                unnotedId = buffer.readUShort();
             else if (opcode == 140)
-                bought_template_id = buffer.readUShort();
+                notedId = buffer.readUShort();
             else if (opcode == 148)
-                placeholder_id = buffer.readUShort();
+                placeholderLink = buffer.readUShort();
             else if (opcode == 149) {
-                placeholder_template_id = buffer.readUShort();
+                placeholderTemplate = buffer.readUShort();
             } else if (opcode == 249) {
                 params = BufferExt.readStringIntParameters(buffer);
             }
-            if (stackable) {
+            if (stacks) {
                 weight = 0;
             }
         }
@@ -5598,12 +5602,12 @@ public final class ItemDefinition implements RSItemComposition {
 
     @Override
     public boolean isStackable() {
-        return stackable;
+        return stacks;
     }
 
     @Override
     public void resetShiftClickActionIndex() {
-        this.shiftClickIndex = 0;
+        this.dropOptionIndex = 0;
     }
 
     @Override
