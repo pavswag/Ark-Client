@@ -1,7 +1,7 @@
 package com.client;
 
 import com.client.definitions.GraphicsDefinition;
-import com.client.definitions.SeqDefinition;
+import com.client.definitions.SequenceDefinition;
 import net.runelite.api.Animation;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.rs.api.RSGraphicsObject;
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 class GraphicObject extends Renderable implements RSGraphicsObject {
 	private int gfxId;
 
-	protected SeqDefinition sequenceDefinition;
+	protected SequenceDefinition sequenceDefinition;
 	public GraphicObject(int plane, int j, int l, int definitionId, int height, int k1, int xPos) {
 		gfxId = definitionId;
 		gfxToDisplay = GraphicsDefinition.cache[definitionId];
@@ -31,7 +31,7 @@ class GraphicObject extends Renderable implements RSGraphicsObject {
 		return gfxToDisplay.getModel();
 	}
 	
-	protected SeqDefinition getDisplayedAnimation() {
+	protected SequenceDefinition getDisplayedAnimation() {
 		return gfxToDisplay.animationSequence;
 	}
 
@@ -41,7 +41,7 @@ class GraphicObject extends Renderable implements RSGraphicsObject {
 		if (model == null) {
 			return null;
 		}
-		SeqDefinition animationSequence = getDisplayedAnimation();
+		SequenceDefinition animationSequence = getDisplayedAnimation();
 		if(animationSequence == null || animationSequence.isEmpty())
 			return null;
 		int frame = (this.frame < animationSequence.frameIDs.length) ? animationSequence.frameIDs[this.frame] : -1;
@@ -74,7 +74,7 @@ class GraphicObject extends Renderable implements RSGraphicsObject {
 	}
 
 	public void update(int animationCycle) {
-		SeqDefinition seqDefinition = getDisplayedAnimation();
+		SequenceDefinition seqDefinition = getDisplayedAnimation();
 		if (this.gfxToDisplay == null || seqDefinition == null || seqDefinition.isEmpty()) {
 			if(!(this instanceof RuneLiteObjectImpl))
 				this.isFinished = true;
@@ -218,6 +218,6 @@ class GraphicObject extends Renderable implements RSGraphicsObject {
 
 	@Override
 	public void setSequenceDefinition(RSSequenceDefinition sequenceDefinition) {
-		this.sequenceDefinition = (SeqDefinition) sequenceDefinition;
+		this.sequenceDefinition = (SequenceDefinition) sequenceDefinition;
 	}
 }

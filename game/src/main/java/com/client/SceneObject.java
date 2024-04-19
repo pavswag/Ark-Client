@@ -1,7 +1,7 @@
 package com.client;
 
 import com.client.definitions.ObjectDefinition;
-import com.client.definitions.SeqDefinition;
+import com.client.definitions.SequenceDefinition;
 import com.client.definitions.VarBit;
 
 final class SceneObject extends Renderable {
@@ -13,7 +13,7 @@ final class SceneObject extends Renderable {
 	private final int anInt1604;
 	private final int anInt1605;
 	private final int anInt1606;
-	private SeqDefinition seq;
+	private SequenceDefinition seq;
 	private int cycleDelay;
 	public static Client clientInstance;
 	private final int anInt1610;
@@ -110,7 +110,7 @@ final class SceneObject extends Renderable {
 		anInt1606 = k1;
 		if (l1 != -1) {
 			try {
-				seq = SeqDefinition.get(l1);
+				seq = SequenceDefinition.get(l1);
 				animationFrame = 0;
 				cycleDelay = Client.loopCycle;
 				if (flag && seq.frameStep != -1) {

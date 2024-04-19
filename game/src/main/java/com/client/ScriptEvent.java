@@ -1,6 +1,5 @@
 package com.client;
 
-import com.client.definitions.anims.datastructure.Node;
 import com.client.graphics.interfaces.RSInterface;
 import net.runelite.mapping.Export;
 import net.runelite.mapping.Implements;

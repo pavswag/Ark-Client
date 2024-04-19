@@ -77,10 +77,10 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 		characterScreenWidths = new int[256];
 		Buffer stream = new Buffer(archive.getArchiveData(s + ".dat"));
 		Buffer stream_1 = new Buffer(archive.getArchiveData("index.dat"));
-		stream_1.currentPosition = stream.readUShort() + 4;
+		stream_1.pos = stream.readUShort() + 4;
 		int k = stream_1.readUnsignedByte();
 		if (k > 0) {
-			stream_1.currentPosition += 3 * (k - 1);
+			stream_1.pos += 3 * (k - 1);
 		}
 		for (int l = 0; l < 256; l++) {
 			characterDrawXOffsets[l] = stream_1.readUnsignedByte();
@@ -334,11 +334,11 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		idxBuf.currentPosition = datBuf.readUShort() + 4;
+		idxBuf.pos = datBuf.readUShort() + 4;
 		int k = idxBuf.readUnsignedByte();
 
 		if (k > 0) {
-			idxBuf.currentPosition += 3 * (k - 1);
+			idxBuf.pos += 3 * (k - 1);
 		}
 
 		for (int l = 0; l < 256; l++) {

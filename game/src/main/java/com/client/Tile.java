@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class Tile extends Linkable implements RSTile {
+public final class Tile extends Node implements RSTile {
 
 	public Tile(int i, int j, int k){
 		gameObjects = new GameObject[5];
@@ -431,7 +431,7 @@ public final class Tile extends Linkable implements RSTile {
 		}
 
 		List<TileItem> result = new ArrayList<TileItem>();
-		Node node = layer.getBottom();
+		net.runelite.api.Node node = layer.getBottom();
 		while (node instanceof RSTileItem)
 		{
 			RSTileItem item = (RSTileItem) node;

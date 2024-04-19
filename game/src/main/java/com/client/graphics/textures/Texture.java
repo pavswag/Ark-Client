@@ -3,7 +3,7 @@ package com.client.graphics.textures;
 import com.client.*;
 import net.runelite.rs.api.RSTexture;
 
-public class Texture extends Linkable implements RSTexture {
+public class Texture extends Node implements RSTexture {
 
     private static int[] animatedPixels;
 

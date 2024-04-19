@@ -92,4 +92,8 @@ public class Configuration {
 	public final static int SILVER = 0xC0C0C0;
 	public final static int BRONZE = 0xcd7f32;
 	public final static int YELLOW = 0xffff01;
+    public static int areaSoundEffectVolume = 127;
+	public static int soundEffectVolume = 127;
+	public static int musicVolume = 127;
+	public static boolean disableLoginScreenMusic = true;
 }

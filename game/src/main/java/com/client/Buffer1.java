@@ -38,7 +38,7 @@ public final class Buffer1 extends Cacheable {
 
     public static Buffer create() {
         Buffer buffer = new Buffer();
-        buffer.currentPosition = 0;
+        buffer.pos = 0;
         buffer.payload = new byte[5000];
         return buffer;
     }

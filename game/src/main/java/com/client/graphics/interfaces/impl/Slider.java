@@ -1,8 +1,10 @@
 package com.client.graphics.interfaces.impl;
 
 import com.client.Client;
+import com.client.Configuration;
 import com.client.Rasterizer3D;
 import com.client.Sprite;
+import com.client.audio.StaticSound;
 import com.client.engine.impl.MouseHandler;
 import com.client.features.settings.Preferences;
 import com.client.graphics.interfaces.RSInterface;
@@ -111,6 +113,8 @@ public class Slider {
 			case MUSIC:
 				Preferences.getPreferences().musicVolume = (int) value;
 				Client.setVolumeMusic((int) value);
+				StaticSound.updateMusicVolume((int) value);
+
 				if (value >= 1) {
 					Client.instance.setConfigButton(1088, true);
 					Preferences.getPreferences().musicEnabled = true;
@@ -121,6 +125,7 @@ public class Slider {
 				break;
 			case SOUND:
 				Preferences.getPreferences().soundVolume = (int) value;
+				StaticSound.updateSoundEffectVolume((int) value);
 				if (value >= 1) {
 					Client.instance.setConfigButton(1086, true);
 				} else {
@@ -129,6 +134,7 @@ public class Slider {
 				break;
 			case AREA_SOUND:
 				Preferences.getPreferences().areaSoundVolume = (int) value;
+				StaticSound.updateAreaVolume((int) value);
 				if (value >= 1) {
 					Client.instance.setConfigButton(1087, true);
 				} else {

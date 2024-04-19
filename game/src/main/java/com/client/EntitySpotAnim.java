@@ -4,7 +4,7 @@ import net.runelite.api.ActorSpotAnim;
 
 import java.util.Random;
 
-public class EntitySpotAnim extends Linkable implements ActorSpotAnim {
+public class EntitySpotAnim extends Node implements ActorSpotAnim {
     private int id;
     private int height;
     private int frame = -1;

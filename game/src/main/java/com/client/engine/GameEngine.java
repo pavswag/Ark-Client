@@ -3,6 +3,7 @@ package com.client.engine;
 import com.client.Bounds;
 import com.client.Client;
 import com.client.ProducingGraphicsBuffer;
+import com.client.audio.StaticSound;
 import com.client.engine.impl.KeyHandler;
 import com.client.engine.impl.MouseHandler;
 import com.client.engine.impl.MouseWheelHandler;
@@ -11,6 +12,8 @@ import com.client.engine.task.TaskHandler;
 import com.client.engine.task.TaskUtils;
 import com.client.engine.task.impl.MilliClock;
 import com.client.engine.task.impl.NanoClock;
+import com.client.js5.disk.ArchiveDisk;
+import com.client.sign.Signlink;
 import net.runelite.api.events.CanvasSizeChanged;
 import net.runelite.api.events.FocusChanged;
 import net.runelite.api.hooks.DrawCallbacks;
@@ -112,6 +115,7 @@ public abstract class GameEngine extends Applet implements Runnable, WindowListe
 
         eventQueue = queue;
 
+        StaticSound.init();
     }
 
 
@@ -479,7 +483,6 @@ public abstract class GameEngine extends Applet implements Runnable, WindowListe
         }
     }
 
-    protected abstract void startUp();
 
     protected abstract void processGameLoop();
 
@@ -549,13 +552,13 @@ public abstract class GameEngine extends Applet implements Runnable, WindowListe
 
     }
 
-    protected void error(String var1) {
+    public void error(String var1) {
         if (!hasErrored) {
             hasErrored = true;
             System.out.println("error_game_" + var1);
 
             try {
-                getAppletContext().showDocument(new URL(getCodeBase(), "error_game_" + var1 + ".ws"), "_self");
+                getAppletContext().showDocument(new URL(super.getCodeBase(), "error_game_" + var1 + ".ws"), "_self");
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
@@ -632,7 +635,8 @@ public abstract class GameEngine extends Applet implements Runnable, WindowListe
 
             setFocusCycleRoot(true);
             addCanvas();
-            startUp();
+
+            Signlink.masterDisk = new ArchiveDisk(255, Signlink.cacheData, Signlink.cacheMasterIndex, 500000);
 
             clock = getClock();
 
@@ -661,6 +665,7 @@ public abstract class GameEngine extends Applet implements Runnable, WindowListe
     }
 
     public final void focusGained(FocusEvent var1) {
+        repaint();
         volatileFocus = true;
         fullRedraw = true;
         final FocusChanged focusChanged = new FocusChanged();

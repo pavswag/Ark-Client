@@ -7,8 +7,8 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 
-import com.client.cache.CacheDownloader;
-import com.client.cache.Progress;
+import com.client.audio.ObjectSound;
+import com.client.audio.StaticSound;
 import com.client.connection.Connection;
 
 import java.io.*;
@@ -27,7 +27,6 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,8 +34,7 @@ import javax.swing.JFrame;
 
 import ch.qos.logback.classic.Level;
 import com.client.accounts.Account;
-import com.client.definitions.anims.datastructure.IterableNodeHashTable;
-import com.client.engine.impl.MouseWheelHandler;
+import com.client.definitions.SequenceDefinition;
 import com.client.graphics.interfaces.*;
 import com.client.graphics.interfaces.impl.health_hud.HealthHud;
 import com.client.graphics.interfaces.impl.notification.NotificationInterface;
@@ -44,6 +42,12 @@ import com.client.graphics.loaders.*;
 import com.client.instruction.InstructionArgs;
 import com.client.instruction.InstructionId;
 import com.client.instruction.InstructionProcessor;
+import com.client.js5.Js5ArchiveIndex;
+import com.client.js5.Js5List;
+import com.client.js5.Js5System;
+import com.client.js5.disk.ArchiveDiskActionHandler;
+import com.client.js5.net.JagexNetThread;
+import com.client.js5.util.Js5ConfigType;
 import com.client.menu.MenuEntry;
 import com.client.accounts.AccountManager;
 import com.client.broadcast.Broadcast;
@@ -74,9 +78,7 @@ import com.client.graphics.textures.TextureProvider;
 import com.client.menu.MenuManager;
 import com.client.model.Items;
 import com.client.music.Class56;
-import com.client.music.JavaMidiPlayer;
 import com.client.osrs.OSRSCacheLoader;
-import com.client.script.ClientScripts;
 import com.client.sign.Signlink;
 import com.client.skillorbs.SkillOrbs;
 import com.client.sound.Music;
@@ -127,6 +129,7 @@ import com.client.engine.GameEngine;
 @Slf4j
 public class Client extends GameEngine implements RSClient {
 
+	public static JagexNetThread jagexNetThread = new JagexNetThread();
     public boolean sliderShowAlpha;
 	public Account lastAccount;
 	public int DamageDealer;
@@ -146,7 +149,12 @@ public class Client extends GameEngine implements RSClient {
 		isMembers = true;
 		Sprite.start();
 		Signlink.storeid = 32;
-		try {
+        try {
+            Signlink.init(22);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        try {
 			Signlink.startpriv(InetAddress.getLocalHost());
 		} catch (UnknownHostException e) {
 			throw new RuntimeException(e);
@@ -1784,7 +1792,10 @@ public class Client extends GameEngine implements RSClient {
 	public final void loadRegion() {
 		try {
 			setGameState(GameState.LOADING);
+
+			StaticSound.playPcmPlayers();
 			anInt985 = -1;
+			StaticSound.resetSoundCount();
 			incompleteAnimables.removeAll();
 			projectiles.removeAll();
 
@@ -1802,8 +1813,9 @@ public class Client extends GameEngine implements RSClient {
 						tileFlags[l][k1][j2] = 0;
 				}
 			}
+			StaticSound.playPcmPlayers();
 			currentMapRegion = new MapRegion(tileFlags, tileHeights);
-
+			ObjectSound.clearObjectSounds();
 			int k2 = terrainData.length;
 
 			/*
@@ -1821,17 +1833,21 @@ public class Client extends GameEngine implements RSClient {
 
 					byte abyte0[] = terrainData[i3];
 
-					if (abyte0 != null)
+					if (abyte0 != null) {
+						StaticSound.playPcmPlayers();
 						currentMapRegion.method180(abyte0, k5, i4, (currentRegionX - 6) * 8, (currentRegionY - 6) * 8,
 								collisionMaps);
+					}
 				}
 
 				for (int j4 = 0; j4 < k2; j4++) {
 					int l5 = (mapCoordinates[j4] >> 8) * 64 - baseX;
 					int k7 = (mapCoordinates[j4] & 0xff) * 64 - baseY;
 					byte abyte2[] = terrainData[j4];
-					if (abyte2 == null && currentRegionY < 800)
+					if (abyte2 == null && currentRegionY < 800) {
+						StaticSound.playPcmPlayers();
 						currentMapRegion.initiateVertexHeights(k7, 64, 64, l5);
+					}
 				}
 
 				anInt1097++;
@@ -1848,6 +1864,7 @@ public class Client extends GameEngine implements RSClient {
 					if (abyte1 != null) {
 						int l8 = (mapCoordinates[i6] >> 8) * 64 - baseX;
 						int k9 = (mapCoordinates[i6] & 0xff) * 64 - baseY;
+						StaticSound.playPcmPlayers();
 						currentMapRegion.loadObjectsInScene(l8, collisionMaps, k9, scene, abyte1);
 					}
 				}
@@ -1855,6 +1872,7 @@ public class Client extends GameEngine implements RSClient {
 			}
 			if (isDynamicRegion) {
 				for (int j3 = 0; j3 < 4; j3++) {
+					StaticSound.playPcmPlayers();
 					for (int k4 = 0; k4 < 13; k4++) {
 						for (int j6 = 0; j6 < 13; j6++) {
 							int l7 = constructRegionData[j3][k4][j6];
@@ -1891,6 +1909,7 @@ public class Client extends GameEngine implements RSClient {
 				stream.createFrame(0);
 
 				for (int l6 = 0; l6 < 4; l6++) {
+					StaticSound.playPcmPlayers();
 					for (int j8 = 0; j8 < 13; j8++) {
 						for (int j9 = 0; j9 < 13; j9++) {
 							int chunkBits = constructRegionData[l6][j8][j9];
@@ -1918,6 +1937,7 @@ public class Client extends GameEngine implements RSClient {
 
 			}
 			stream.createFrame(0);
+			StaticSound.playPcmPlayers();
 			currentMapRegion.createRegionScene(collisionMaps, scene);
 
 			stream.createFrame(0);
@@ -1939,6 +1959,7 @@ public class Client extends GameEngine implements RSClient {
 				}
 			}
 
+			StaticSound.playPcmPlayers();
 			anInt1051++;
 			if (anInt1051 > 98) {
 				anInt1051 = 0;
@@ -1948,7 +1969,7 @@ public class Client extends GameEngine implements RSClient {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		ObjectDefinition.baseModels.unlinkAll();
+		ObjectDefinition.baseModels.clear();
 		if (lowMem && Signlink.cache_dat != null) {
 			int j = resourceProvider.getVersionCount(0);
 			for (int i1 = 0; i1 < j; i1++) {
@@ -1959,7 +1980,7 @@ public class Client extends GameEngine implements RSClient {
 
 		}
 		stream.createFrame(210);
-		stream.writeDWord(0x3f008edd);
+		stream.writeInt(0x3f008edd);
 		System.gc();
 
 		resourceProvider.method566();
@@ -1987,6 +2008,7 @@ public class Client extends GameEngine implements RSClient {
 
 		}
 		setGameState(GameState.LOGGED_IN);
+		StaticSound.playPcmPlayers();
 		if (drawCallbacks != null) {
 			drawCallbacks.loadScene(scene);
 			drawCallbacks.swapScene(scene);
@@ -1994,13 +2016,13 @@ public class Client extends GameEngine implements RSClient {
 	}
 
 	public void unlinkMRUNodes() {
-		ObjectDefinition.baseModels.unlinkAll();
-		ObjectDefinition.models.unlinkAll();
-		NpcDefinition.mruNodes.unlinkAll();
-		ItemDefinition.models.unlinkAll();
-		ItemDefinition.sprites.unlinkAll();
-		Player.mruNodes.unlinkAll();
-		GraphicsDefinition.aMRUNodes_415.unlinkAll();
+		ObjectDefinition.baseModels.clear();
+		ObjectDefinition.models.clear();
+		NpcDefinition.mruNodes.clear();
+		ItemDefinition.models.clear();
+		ItemDefinition.sprites.clear();
+		Player.mruNodes.clear();
+		GraphicsDefinition.aMRUNodes_415.clear();
 	}
 
 	private int lastSong = 0;
@@ -2065,7 +2087,7 @@ public class Client extends GameEngine implements RSClient {
 						j3 = -1;
 					}
 					if (j3 >= 0) {
-						int sprite = AreaDefinition.lookup(j3).spriteId;
+						int sprite = AreaDefinition.lookup(j3).sprite1;
 						if (sprite != -1) {
 							int k3 = k2;
 							int l3 = l2;
@@ -2128,7 +2150,7 @@ public class Client extends GameEngine implements RSClient {
 
 		}
 
-		class19.insertTail(((Linkable) (obj)));
+		class19.insertTail(((Node) (obj)));
 		Object obj1 = null;
 		Object obj2 = null;
 		for (Item item = (Item) class19
@@ -3241,14 +3263,14 @@ public class Client extends GameEngine implements RSClient {
 		}
 
 		// Cheaphax fix to it doesnt throw exception and boot player
-		if (stream.currentPosition <= -1 || stream.currentPosition != i) {
+		if (stream.pos <= -1 || stream.pos != i) {
 			System.out.println("[NPC] Size mismatch : returning");
 			return;
 		}
 
-		if (stream.currentPosition != i) {
+		if (stream.pos != i) {
 			Signlink.reporterror(
-					myUsername + " size mismatch in getnpcpos - pos:" + stream.currentPosition + " psize:" + i);
+					myUsername + " size mismatch in getnpcpos - pos:" + stream.pos + " psize:" + i);
 			throw new RuntimeException("eek");
 		}
 
@@ -3370,7 +3392,7 @@ public class Client extends GameEngine implements RSClient {
 //				Rasterizer.setBrightness(0.69999999999999996D);
 //			if (k == 4)
 //				Rasterizer.setBrightness(0.59999999999999998D);
-			ItemDefinition.sprites.unlinkAll();
+			ItemDefinition.sprites.clear();
 			welcomeScreenRaised = true;
 		}
 		if (j == 3) {
@@ -4425,6 +4447,7 @@ public class Client extends GameEngine implements RSClient {
 	}
 
 	public void resetLogout() {
+		logger.info("resetLogout");
 		setGameState(GameState.LOGIN_SCREEN);
 		logger.debug("being logged out.. from: "+new Throwable().getStackTrace()[1].toString());
 		logger.debug("Logging out..");
@@ -4494,7 +4517,7 @@ public class Client extends GameEngine implements RSClient {
 				break;
 			}
 			if (npcs[k] == null) {
-				npcs[k] = new Npc(); // Teleports works fine if we create a new npc?
+				npcs[k] = new Npc();
 			}
 			Npc npc = npcs[k];
 			npcIndices[npcCount++] = k;
@@ -4530,19 +4553,36 @@ public class Client extends GameEngine implements RSClient {
 
 	@Override
 	public void processGameLoop() {
+		loopCycle++;
 		if(loggedIn) {
-			getCallbacks().tick();
-			getCallbacks().post(ClientTick.INSTANCE);
+			callbacks.tick();
+		}
+		Js5System.doCycleJs5();
+		ArchiveDiskActionHandler.processArchiveDiskActions();
+		StaticSound.pulse();
+
+
+		if (gameState == 0) {
+			load();
+		} else if (gameState == 5) {
+			load();
+		} else if (gameState != 10 && gameState != 11) {
+			if (gameState == 20) {
+				doCycleLoggedOut();
+			} else if (gameState == 50) {
+				doCycleLoggedOut();
+			} else if (gameState == 25) {
+				loadRegion();
+			}
+		} else {
+			doCycleLoggedOut();
 		}
 
-
-		if (rsAlreadyLoaded || loadingError || genericLoadingError)
-			return;
-		loopCycle++;
-		if (!loggedIn)
-			processLoginScreenInput();
-		else
-			mainGameProcessor();
+		if (gameState == 30) {
+			doCycleLoggedIn();
+		} else if (gameState == 40 || gameState == 45) {
+			doCycleLoggedOut();
+		}
 
 		processOnDemandQueue();
 		processMusic();
@@ -4661,12 +4701,12 @@ public class Client extends GameEngine implements RSClient {
 		if (j >= 314 && j <= 323) {
 			int l = (j - 314) / 2;
 			int k1 = j & 1;
-			int j2 = anIntArray990[l];
+			int j2 = characterDesignColours[l];
 			if (k1 == 0 && --j2 < 0)
 				j2 = anIntArrayArray1003[l].length - 1;
 			if (k1 == 1 && ++j2 >= anIntArrayArray1003[l].length)
 				j2 = 0;
-			anIntArray990[l] = j2;
+			characterDesignColours[l] = j2;
 			aBoolean1031 = true;
 		}
 		if (j == 324 && !aBoolean1047) {
@@ -4684,7 +4724,7 @@ public class Client extends GameEngine implements RSClient {
 				stream.writeUnsignedByte(myAppearance[i1]);
 
 			for (int l1 = 0; l1 < 5; l1++)
-				stream.writeUnsignedByte(anIntArray990[l1]);
+				stream.writeUnsignedByte(characterDesignColours[l1]);
 
 			return true;
 		}
@@ -5154,6 +5194,8 @@ public class Client extends GameEngine implements RSClient {
 	}
 
 	private void processOnDemandQueue() {
+		if(resourceProvider == null)
+			return;
 		do {
 			OnDemandData onDemandData;
 			do {
@@ -5284,9 +5326,11 @@ public class Client extends GameEngine implements RSClient {
 
 	private GameTimer gameTimer;
 
-	private void mainGameProcessor() {
-		callbacks.tick();
-		callbacks.post(ClientTick.INSTANCE);
+	private void doCycleLoggedIn() {
+		if(loggedIn) {
+			callbacks.tick();
+			callbacks.post(ClientTick.INSTANCE);
+		}
 		callbacks.post(new GameTick());
 
 		timeOutHasLoggedMessages();
@@ -5368,6 +5412,7 @@ public class Client extends GameEngine implements RSClient {
 
 		NotificationInterface.processNotifications();
 		InterfaceAnimations.processAnimations();
+		StaticSound.method4532();
 		tickDelta++;
 		if (crossType != 0) {
 			crossIndex += 20;
@@ -5628,18 +5673,16 @@ public class Client extends GameEngine implements RSClient {
 			stream.createFrame(0);
 
 		try {
-			if (socketStream != null && stream.currentPosition > 0) {
-				socketStream.queueBytes(stream.currentPosition, stream.payload);
-				stream.currentPosition = 0;
+			if (socketStream != null && stream.pos > 0) {
+				socketStream.queueBytes(stream.pos, stream.payload);
+				stream.pos = 0;
 				anInt1010 = 0;
 			}
 		} catch (IOException _ex) {
 			dropClient();
 		} catch (Exception exception) {
 			resetLogout();
-			if (Configuration.developerMode) {
-				exception.printStackTrace();
-			}
+			exception.printStackTrace();
 		}
 	}
 
@@ -5668,8 +5711,9 @@ public class Client extends GameEngine implements RSClient {
 
 
 	public void drawLoadingText(int percentage, String s) {
-		anInt1079 = percentage;
+		loadingProgress = percentage;
 		aString1049 = s;
+		System.out.println(s);
 
 		if (titleStreamLoader == null) {
 			super.drawInitial(percentage, s + " " + (percentage) + "%",false);
@@ -6150,7 +6194,7 @@ public class Client extends GameEngine implements RSClient {
 			stream.method432(j);
 			stream.writeWord(buttonPressed);
 			stream.method432(i1);
-			stream.writeDWord(modifiableXValue);
+			stream.writeInt(modifiableXValue);
 		}
 		if (l == 291) {
 			if (openInterfaceID == 5292) {
@@ -6171,7 +6215,7 @@ public class Client extends GameEngine implements RSClient {
 				stream.method432(j);
 				stream.writeWord(buttonPressed);
 				stream.method432(i1);
-				stream.writeDWord(this.modifiableXValue);
+				stream.writeInt(this.modifiableXValue);
 			}
 		}
 		if (l == 582) {
@@ -6205,7 +6249,7 @@ public class Client extends GameEngine implements RSClient {
 		if (l == 62 && clickObject(keyLong, buttonPressed, j)) {
 			stream.createFrame(192);
 			stream.writeWord(anInt1284);
-			stream.writeDWord(ObjectKeyUtil.getObjectId(keyLong));
+			stream.writeInt(ObjectKeyUtil.getObjectId(keyLong));
 			stream.method433(buttonPressed + baseY);
 			stream.method431(anInt1283);
 			stream.method433(j + baseX);
@@ -6347,10 +6391,10 @@ public class Client extends GameEngine implements RSClient {
 								itemContainer.itemSearchSelectedSlot = 0;
 							}
 							stream.createFrame(124);
-							stream.writeDWord(RSInterface.selectedItemInterfaceId);
-							stream.writeDWord(itemContainer.itemSearchSelectedSlot);
-							stream.writeDWord(itemContainer.itemSearchSelectedId - 1);
-							stream.writeDWord(amount);
+							stream.writeInt(RSInterface.selectedItemInterfaceId);
+							stream.writeInt(itemContainer.itemSearchSelectedSlot);
+							stream.writeInt(itemContainer.itemSearchSelectedId - 1);
+							stream.writeInt(amount);
 						}
 						break;
 
@@ -6375,10 +6419,10 @@ public class Client extends GameEngine implements RSClient {
 								itemContainer2.itemSearchSelectedSlot = 0;
 							}
 							stream.createFrame(124);
-							stream.writeDWord(RSInterface.selectedItemInterfaceId);
-							stream.writeDWord(itemContainer2.itemSearchSelectedSlot);
-							stream.writeDWord(itemContainer2.itemSearchSelectedId - 1);
-							stream.writeDWord(amount);
+							stream.writeInt(RSInterface.selectedItemInterfaceId);
+							stream.writeInt(itemContainer2.itemSearchSelectedSlot);
+							stream.writeInt(itemContainer2.itemSearchSelectedId - 1);
+							stream.writeInt(amount);
 						}
 						break;
 					case 19144:
@@ -6441,7 +6485,7 @@ public class Client extends GameEngine implements RSClient {
 
 								stream.createFrame(149);
 								stream.writeWord(id);
-								stream.writeDWord((int) num);
+								stream.writeInt((int) num);
 								stream.writeUnsignedByte(variousSettings[1075]);
 								break;
 							}
@@ -6472,7 +6516,7 @@ public class Client extends GameEngine implements RSClient {
 		}
 		if (l == 745) {
 			stream.createFrame(8);
-			stream.writeDWord(i1);
+			stream.writeInt(i1);
 		}
 		if (l == 20) {
 			Npc class30_sub2_sub4_sub1_sub1_1 = npcs[i1];
@@ -6525,7 +6569,7 @@ public class Client extends GameEngine implements RSClient {
 			}
 			clickObject(keyLong, buttonPressed, j);
 			stream.createFrame(228);
-			stream.writeDWord(ObjectKeyUtil.getObjectId(keyLong));
+			stream.writeInt(ObjectKeyUtil.getObjectId(keyLong));
 			stream.method432(buttonPressed + baseY);
 			stream.writeWord(j + baseX);
 		}
@@ -6598,7 +6642,7 @@ public class Client extends GameEngine implements RSClient {
 			stream.method432(j);
 			stream.writeWord(buttonPressed);
 			stream.method432(i1);
-			stream.writeDWord(modifiableXValue);
+			stream.writeInt(modifiableXValue);
 		}
 		if (l == 539) {
 			stream.createFrame(16);
@@ -7222,7 +7266,7 @@ public class Client extends GameEngine implements RSClient {
 		if (l == 900) {
 			clickObject(keyLong, buttonPressed, j);
 			stream.createFrame(252);
-			stream.writeDWord(ObjectKeyUtil.getObjectId(keyLong));
+			stream.writeInt(ObjectKeyUtil.getObjectId(keyLong));
 			stream.method431(buttonPressed + baseY);
 			stream.method432(j + baseX);
 		}
@@ -7284,7 +7328,7 @@ public class Client extends GameEngine implements RSClient {
 			stream.method431(j + baseX);
 			stream.method432(anInt1137);
 			stream.method432(buttonPressed + baseY);
-			stream.writeDWord(ObjectKeyUtil.getObjectId(keyLong));
+			stream.writeInt(ObjectKeyUtil.getObjectId(keyLong));
 		}
 		if (l == 567) {
 			boolean flag6 = doWalkTo(2, localPlayer.pathX[0], localPlayer.pathY[0], 0, 0, 0, 0, 0, buttonPressed, false, j);
@@ -7454,28 +7498,28 @@ public class Client extends GameEngine implements RSClient {
 			stream.createFrame(70);
 			stream.method431(j + baseX);
 			stream.writeWord(buttonPressed + baseY);
-			stream.writeDWord(ObjectKeyUtil.getObjectId(keyLong));
+			stream.writeInt(ObjectKeyUtil.getObjectId(keyLong));
 		}
 		if (l == 872) {
 			clickObject(keyLong, buttonPressed, j);
 			stream.createFrame(234);
 			stream.method433(j + baseX);
-			stream.writeDWord(ObjectKeyUtil.getObjectId(keyLong));
+			stream.writeInt(ObjectKeyUtil.getObjectId(keyLong));
 			stream.method433(buttonPressed + baseY);
 		}
 		if (l == 502) {
 			clickObject(keyLong, buttonPressed, j);
 			stream.createFrame(132);
 			stream.method433(j + baseX);
-			stream.writeDWord(ObjectKeyUtil.getObjectId(keyLong));
+			stream.writeInt(ObjectKeyUtil.getObjectId(keyLong));
 			stream.method432(buttonPressed + baseY);
 		}
 		if (l == 1126 || l == 1125) {
 			RSInterface class9_4 = RSInterface.interfaceCache[buttonPressed];
 			if (class9_4 != null) {
 				stream.createFrame(134);
-				stream.writeDWord(i1);
-				stream.writeDWord(class9_4.inventoryAmounts[j]);
+				stream.writeInt(i1);
+				stream.writeInt(class9_4.inventoryAmounts[j]);
 			}
 		}
 		if (l == 1130) {
@@ -7815,7 +7859,7 @@ public class Client extends GameEngine implements RSClient {
 			if (k1 == 2) {
 				ObjectDefinition class46 = ObjectDefinition.lookup(l1);
 				if (class46.configs != null) {
-					class46 = class46.method580();
+					class46 = class46.transform();
 				}
 				if (class46 == null) {
 					continue;
@@ -8118,8 +8162,6 @@ public class Client extends GameEngine implements RSClient {
 		ObjectDefinition.nullLoader();
 		NpcDefinition.nullLoader();
 		ItemDefinition.clear();
-		FloorDefinition.underlays = null;
-		FloorDefinition.overlays = null;
 		IDK.cache = null;
 		RSInterface.interfaceCache = null;
 		DummyClass.cache = null;
@@ -8229,10 +8271,10 @@ public class Client extends GameEngine implements RSClient {
 					if (friendsListAction == 3 && promptInput.length() > 0) {
 						stream.createFrame(126);
 						stream.writeUnsignedByte(0);
-						int k = stream.currentPosition;
+						int k = stream.pos;
 						stream.writeQWord(aLong953);
 						TextInput.method526(promptInput, stream);
-						stream.writeBytes(stream.currentPosition - k);
+						stream.writeBytes(stream.pos - k);
 						promptInput = TextInput.processText(promptInput);
 						// promptInput = Censor.doCensor(promptInput);
 						pushMessage(promptInput, 6, StringUtils.fixName(StringUtils.nameForLong(aLong953)));
@@ -8296,7 +8338,7 @@ public class Client extends GameEngine implements RSClient {
 						} catch (Exception _ex) {
 						}
 						stream.createFrame(208);
-						stream.writeDWord(i1);
+						stream.writeInt(i1);
 						modifiableXValue = i1;
 						if (modifiableXValue < 0)
 							modifiableXValue = 1;
@@ -8383,7 +8425,7 @@ public class Client extends GameEngine implements RSClient {
 						try {
 							int amount = Integer.parseInt(amountOrNameInput);
 							stream.createFrame(208);
-							stream.writeDWord(amount);
+							stream.writeInt(amount);
 							modifiableXValue = amount;
 						} catch (NumberFormatException e) {
 							clearTopInterfaces();
@@ -8419,7 +8461,7 @@ public class Client extends GameEngine implements RSClient {
 						int amount = 0;
 						amount = Integer.parseInt(amountOrNameInput);
 						stream.createFrame(208);
-						stream.writeDWord(amount);
+						stream.writeInt(amount);
 						modifiableXValue = amount;
 					}
 					inputDialogState = 0;
@@ -8492,7 +8534,7 @@ public class Client extends GameEngine implements RSClient {
 						if (rsi.inputFieldSendPacket) {
 							stream.createFrame(142);
 							stream.writeUnsignedByte(4 + rsi.message.length() + 1);
-							stream.writeDWord(rsi.id);
+							stream.writeInt(rsi.id);
 							stream.writeString(rsi.message);
 							return;
 						}
@@ -8505,7 +8547,7 @@ public class Client extends GameEngine implements RSClient {
 						if (rsi.inputFieldSendPacket) {
 							stream.createFrame(142);
 							stream.writeUnsignedByte(4 + rsi.message.length() + 1);
-							stream.writeDWord(rsi.id);
+							stream.writeInt(rsi.id);
 							stream.writeString(rsi.message);
 							return;
 						}
@@ -8910,8 +8952,7 @@ public class Client extends GameEngine implements RSClient {
 										chatTextDrawingArea, aTextDrawingArea_1273 };
 								FileArchive streamLoader_1 = streamLoaderForName(3, "interface"
 								);
-								FileArchive streamLoader_2 = streamLoaderForName(4, "2d graphics"
-								);
+								FileArchive streamLoader_2 = streamLoaderForName(4, "2d graphics");
 								RSInterface.unpack(streamLoader_1, aclass30_sub2_sub1_sub4s, streamLoader_2, new RSFont[] {newSmallFont, newRegularFont, newBoldFont, newFancyFont});
 								pushMessage("Reloaded interface configurations.", 0, "");
 							}
@@ -8991,13 +9032,13 @@ public class Client extends GameEngine implements RSClient {
 							}
 							stream.createFrame(4);
 							stream.writeUnsignedByte(0);
-							int j3 = stream.currentPosition;
+							int j3 = stream.pos;
 							stream.method425(i3);
 							stream.method425(j2);
-							aStream_834.currentPosition = 0;
+							aStream_834.pos = 0;
 							TextInput.method526(inputString, aStream_834);
-							stream.method441(0, aStream_834.payload, aStream_834.currentPosition);
-							stream.writeBytes(stream.currentPosition - j3);
+							stream.method441(0, aStream_834.payload, aStream_834.pos);
+							stream.writeBytes(stream.pos - j3);
 							inputString = TextInput.processText(inputString);
 							// inputString = Censor.doCensor(inputString);
 							localPlayer.textSpoken = inputString;
@@ -9727,7 +9768,7 @@ public class Client extends GameEngine implements RSClient {
 				rsInterface.modelRotation1 = 150;
 				rsInterface.modelRotation2 = petNpcId == 1013 ? 150 : (int) (loopCycle / 40D * 256D) & 0x7ff;
 				int k;
-				SeqDefinition animation = SeqDefinition.get(npcDisplay.standingAnimation);
+				SequenceDefinition animation = SequenceDefinition.get(npcDisplay.standingAnimation);
 				k = animation.frameIDs[rsInterface.animationFrame];
 				Model model_2 = npcDisplay.getAnimatedModel(-1, k, null);
 				model_2.scale2((int) 1.5);
@@ -9806,16 +9847,16 @@ public class Client extends GameEngine implements RSClient {
 
 				Model model = new Model(i2, aclass30_sub2_sub4_sub6s);
 				for (int l2 = 0; l2 < 5; l2++)
-					if (anIntArray990[l2] != 0) {
-						model.recolor((short) anIntArrayArray1003[l2][0], (short) anIntArrayArray1003[l2][anIntArray990[l2]]);
+					if (characterDesignColours[l2] != 0) {
+						model.recolor((short) anIntArrayArray1003[l2][0], (short) anIntArrayArray1003[l2][characterDesignColours[l2]]);
 						if (l2 == 1)
-							model.recolor((short) anIntArray1204[0], (short) anIntArray1204[anIntArray990[l2]]);
+							model.recolor((short) anIntArray1204[0], (short) anIntArray1204[characterDesignColours[l2]]);
 						// if(l2 == 1)
 						// model.method476(Legs2[0], Legs2[anIntArray990[l2]]);
 					}
 
 				model.generateBones();
-				model.interpolate(SeqDefinition.get(localPlayer.seqStandID).frameIDs[0]);
+				model.interpolate(SequenceDefinition.get(localPlayer.seqStandID).frameIDs[0]);
 				model.light(64, 1300, 0, -570, 0, true);
 				class9.anInt233 = 5;
 				class9.mediaID = 0;
@@ -9832,15 +9873,15 @@ public class Client extends GameEngine implements RSClient {
 			if (aBoolean1031) {
 				Model characterDisplay = localPlayer.method452();
 				for (int l2 = 0; l2 < 5; l2++)
-					if (anIntArray990[l2] != 0) {
+					if (characterDesignColours[l2] != 0) {
 						characterDisplay.recolor(anIntArrayArray1003[l2][0],
-								anIntArrayArray1003[l2][anIntArray990[l2]]);
+								anIntArrayArray1003[l2][characterDesignColours[l2]]);
 						if (l2 == 1)
-							characterDisplay.recolor(anIntArray1204[0], anIntArray1204[anIntArray990[l2]]);
+							characterDisplay.recolor(anIntArray1204[0], anIntArray1204[characterDesignColours[l2]]);
 					}
 				int staticFrame = localPlayer.seqStandID;
 				characterDisplay.generateBones();
-				characterDisplay.interpolate(SeqDefinition.get(staticFrame).frameIDs[0]);
+				characterDisplay.interpolate(SequenceDefinition.get(staticFrame).frameIDs[0]);
 				// characterDisplay.method479(64, 850, -30, -50, -30, true);
 				rsInterface.anInt233 = 5;
 				rsInterface.mediaID = 0;
@@ -10975,7 +11016,7 @@ public class Client extends GameEngine implements RSClient {
 			socketStream = new RSSocket(openSocket(port + portOff));
 			long l = longForName(s);
 			int i = (int) (l >> 16 & 31L);
-			stream.currentPosition = 0;
+			stream.pos = 0;
 			stream.writeUnsignedByte(14);
 			stream.writeUnsignedByte(i);
 			socketStream.queueBytes(2, stream.payload);
@@ -10992,18 +11033,18 @@ public class Client extends GameEngine implements RSClient {
 					fnfe.printStackTrace();
 				}
 				socketStream.flushInputStream(inStream.payload, 8);
-				inStream.currentPosition = 0;
+				inStream.pos = 0;
 				aLong1215 = inStream.readQWord();
 
 				// Pow request
-				stream.currentPosition = 0;
+				stream.pos = 0;
 				stream.writeUnsignedByte(19);
 				socketStream.queueBytes(1, stream.payload);
 				int powRequestReturnCode = socketStream.read();
 				if (powRequestReturnCode == 60) {
 					int size = ((socketStream.read()) << 8) + (socketStream.read() & 0xff);
 					socketStream.flushInputStream(inStream.payload, size);
-					inStream.currentPosition = 0;
+					inStream.pos = 0;
 					int randomValue = inStream.readUShort();
 					int difficulty = inStream.readUShort();
 					String seed = inStream.readNewString();
@@ -11018,12 +11059,12 @@ public class Client extends GameEngine implements RSClient {
 					Buffer powStream = Buffer.create();
 					powStream.writeByte(20); // Pow check opcode
 					powStream.writeQWord(answer);
-					this.socketStream.queueBytes(powStream.currentPosition, powStream.payload);
+					this.socketStream.queueBytes(powStream.pos, powStream.payload);
 
 					int response = socketStream.read();
 					if (response == 0) {
 						socketStream.flushInputStream(inStream.payload, 8);
-						inStream.currentPosition = 0;
+						inStream.pos = 0;
 						inStream.readQWord();
 					}
 
@@ -11032,38 +11073,38 @@ public class Client extends GameEngine implements RSClient {
 					ai[1] = (int) (Math.random() * 99999999D);
 					ai[2] = (int) (aLong1215 >> 32);
 					ai[3] = (int) aLong1215;
-					stream.currentPosition = 0;
+					stream.pos = 0;
 					stream.writeUnsignedByte(10);
-					stream.writeDWord(ai[0]);
-					stream.writeDWord(ai[1]);
-					stream.writeDWord(ai[2]);
-					stream.writeDWord(ai[3]);
-					stream.writeDWord(Signlink.uid);
+					stream.writeInt(ai[0]);
+					stream.writeInt(ai[1]);
+					stream.writeInt(ai[2]);
+					stream.writeInt(ai[3]);
+					stream.writeInt(Signlink.uuid);
 					stream.writeString(s);
 					stream.writeString(s1);
 					stream.writeString(captchaInput);
 					stream.writeString(macAddress);
 					stream.writeString(FingerPrint.getFingerprint());
 					stream.doKeys();
-					aStream_847.currentPosition = 0;
+					aStream_847.pos = 0;
 					if (flag)
 						aStream_847.writeUnsignedByte(18);
 					else
 						aStream_847.writeUnsignedByte(16);
-					aStream_847.writeUnsignedByte(stream.currentPosition + 36 + 1 + 1 + 2);
+					aStream_847.writeUnsignedByte(stream.pos + 36 + 1 + 1 + 2);
 					aStream_847.writeUnsignedByte(255);
 					aStream_847.writeWord(Configuration.CLIENT_VERSION);
 					aStream_847.writeUnsignedByte(lowMem ? 1 : 0);
 					for (int l1 = 0; l1 < 9; l1++)
-						aStream_847.writeDWord(expectedCRCs[l1]);
+						aStream_847.writeInt(expectedCRCs[l1]);
 
-					aStream_847.writeBytes(stream.payload, stream.currentPosition, 0);
+					aStream_847.writeBytes(stream.payload, stream.pos, 0);
 					stream.encryption = new ISAACRandomGen(ai);
 					for (int j2 = 0; j2 < 4; j2++)
 						ai[j2] += 50;
 
 					encryption = new ISAACRandomGen(ai);
-					socketStream.queueBytes(aStream_847.currentPosition, aStream_847.payload);
+					socketStream.queueBytes(aStream_847.pos, aStream_847.payload);
 					responseCode = socketStream.read();
 				}
 			}
@@ -11095,8 +11136,8 @@ public class Client extends GameEngine implements RSClient {
 				aBoolean954 = true;
 				loggedIn = true;
 				setGameState(GameState.LOGGING_IN);
-				stream.currentPosition = 0;
-				inStream.currentPosition = 0;
+				stream.pos = 0;
+				inStream.pos = 0;
 				incomingPacket = -1;
 				dealtWithPacket = -1;
 				previousPacket1 = -1;
@@ -11165,7 +11206,7 @@ public class Client extends GameEngine implements RSClient {
 				aBoolean1047 = true;
 				method45();
 				for (int j3 = 0; j3 < 5; j3++)
-					anIntArray990[j3] = 0;
+					characterDesignColours[j3] = 0;
 
 				for (int l3 = 0; l3 < 6; l3++) {
 					atPlayerActions[l3] = null;
@@ -11194,6 +11235,12 @@ public class Client extends GameEngine implements RSClient {
 				if (!Client.instance.isResized() && getUserSettings().isStretchedMode()) {
 					StretchedModeMenu.updateStretchedMode(true);
 				}
+				Rasterizer2D.clear();
+				jagexNetThread.writePacket(false);
+				drawChatArea();
+				drawMinimap();
+				drawTabArea();
+				setGameState(GameState.LOGGED_IN);
 				return;
 			}
 			if (responseCode == 3) {
@@ -11277,8 +11324,8 @@ public class Client extends GameEngine implements RSClient {
 			if (responseCode == 15) {
 				loginScreenState = LoginScreenState.LOGIN;
 				loggedIn = true;
-				stream.currentPosition = 0;
-				inStream.currentPosition = 0;
+				stream.pos = 0;
+				inStream.pos = 0;
 				incomingPacket = -1;
 				dealtWithPacket = -1;
 				previousPacket1 = -1;
@@ -11585,7 +11632,7 @@ public class Client extends GameEngine implements RSClient {
 			anInt1288 += k4;
 			if (anInt1288 >= 92) {
 				stream.createFrame(36);
-				stream.writeDWord(0);
+				stream.writeInt(0);
 				anInt1288 = 0;
 			}
 			if (clickType == 0) {
@@ -11639,7 +11686,7 @@ public class Client extends GameEngine implements RSClient {
 					i1 = -1;
 				int i2 = stream.readUnsignedByte();
 				if (i1 == npc.primarySeqID && i1 != -1) {
-					int l2 = SeqDefinition.get(i1).replyMode;
+					int l2 = SequenceDefinition.get(i1).replyMode;
 					if (l2 == 1) {
 						npc.primarySeqFrame = 0;
 						npc.primarySeqCycle = 0;
@@ -11649,7 +11696,7 @@ public class Client extends GameEngine implements RSClient {
 					if (l2 == 2)
 						npc.animationLoops = 0;
 				} else if (i1 == -1 || npc.primarySeqID == -1
-						|| SeqDefinition.get(i1).forcedPriority >= SeqDefinition.get(npc.primarySeqID).forcedPriority) {
+						|| SequenceDefinition.get(i1).forcedPriority >= SequenceDefinition.get(npc.primarySeqID).forcedPriority) {
 					npc.primarySeqID = i1;
 					npc.primarySeqFrame = 0;
 					npc.primarySeqCycle = 0;
@@ -12127,6 +12174,7 @@ public class Client extends GameEngine implements RSClient {
 
 	}
 
+	private static GraphicsDefaults spriteIds;
 	public static String fontFilter() {
 		if (Configuration.newFonts) {
 			return "_2";
@@ -12136,55 +12184,106 @@ public class Client extends GameEngine implements RSClient {
 
 	public FileArchive mediaStreamLoader;
 
-	@Override
-	protected void startUp() {
+	static int titleLoadingStage;
+	@SneakyThrows
+	public void load() {
+		System.out.println("Load#" + Client.titleLoadingStage);
+		int loadingProgress;
+		if (Client.titleLoadingStage == 0) {
 
-		setGameState(GameState.STARTING);
-		SettingsManager.loadSettings();
-		ClientScripts.load();
-
-		drawLoadingText(5, "Starting up...");
-
-		getDocumentBaseHost();
-		variousSettings[304] = 1;
-		if (Signlink.cache_dat != null) {
-			for (int i = 0; i < 5; i++)
-				decompressors[i] = new Decompressor(Signlink.cache_dat, Signlink.cache_idx[i], i + 1);
-		}
-
-//		new CacheDownloader(this).downloadCache();
-		CacheDownloader cacheDownloader = new CacheDownloader(Signlink.getCacheDirectory(), "https://arkcanestorage.b-cdn.net/cache/", true, false, new Progress() {
-			@Override
-			public void update(int progress, String message) {
-				drawLoadingText(progress, message);
+			getDocumentBaseHost();
+			variousSettings[304] = 1;
+			if (Signlink.cache_dat != null) {
+				for (int i = 0; i < 5; i++)
+					decompressors[i] = new Decompressor(Signlink.cache_dat, Signlink.cache_idx[i], i + 1);
 			}
-		});
+			SettingsManager.loadSettings();
+			frameMode(false);
 
-		cacheDownloader.awaitCompletion();
+			scene = new SceneGraph(tileHeights);
 
-		OSRSCacheLoader.init();
+			for (int index = 0; index < 4; index++) {
+				collisionMaps[index] = new CollisionMap();
+			}
 
-		SpriteLoader1.loadSprites();
-		cacheSprite1 = SpriteLoader1.sprites;
-		SpriteLoader1.sprites = null;
+			minimapImage = new Sprite(512, 512);
 
-		SpriteLoader2.loadSprites();
-		cacheSprite2 = SpriteLoader2.sprites;
-		SpriteLoader2.sprites = null;
+			drawLoadingText(5, "Starting game engine...");
+			Client.titleLoadingStage = 20;
+		} else if (Client.titleLoadingStage == 20) {
+			drawLoadingText(10, "Prepared visibility map");
+			Client.titleLoadingStage = 30;
+		} else if (Client.titleLoadingStage == 30) {
+			Js5List.animations = Js5System.createJs5(Js5ArchiveIndex.ANIMATIONS, false, true, true, false);
+			Js5List.skeletons = Js5System.createJs5(Js5ArchiveIndex.SKELETONS, false, true, true, false);
+			Js5List.configs = Js5System.createJs5(Js5ArchiveIndex.CONFIGS, true, false, true, false);
+			Js5List.interfaces = Js5System.createJs5(Js5ArchiveIndex.INTERFACES, false, true, true, false);
+			Js5List.soundEffects = Js5System.createJs5(Js5ArchiveIndex.SOUNDEFFECTS, false, true, true, false);
+			Js5List.maps = Js5System.createJs5(Js5ArchiveIndex.MAPS, true, true, true, false);
+			Js5List.musicTracks = Js5System.createJs5(Js5ArchiveIndex.MUSIC_TRACKS, true, true, true, false);
+			Js5List.models = Js5System.createJs5(Js5ArchiveIndex.MODELS, false, true, true, false);
+			Js5List.sprites = Js5System.createJs5(Js5ArchiveIndex.SPRITES, false, true, true, false);
+			Js5List.textures = Js5System.createJs5(Js5ArchiveIndex.TEXTURES, false, true, true, false);
+			Js5List.binary = Js5System.createJs5(Js5ArchiveIndex.BINARY, false, true, true, false);
+			Js5List.musicJingles = Js5System.createJs5(Js5ArchiveIndex.MUSIC_JINGLES, false, true, true, false);
+			Js5List.clientScript = Js5System.createJs5(Js5ArchiveIndex.CLIENTSCRIPT, false, true, true, false);
+			Js5List.fonts = Js5System.createJs5(Js5ArchiveIndex.FONTS, true, false, true, false);
+			Js5List.musicSamples = Js5System.createJs5(Js5ArchiveIndex.MUSIC_SAMPLES, false, true, true, false);
+			Js5List.musicPatches = Js5System.createJs5(Js5ArchiveIndex.MUSIC_PATCHES, false, true, true, false);
+			Js5List.dbtableindex = Js5System.createJs5(Js5ArchiveIndex.DBTABLEINDEX, false, true, true, true);
+			drawLoadingText(20, "Connecting to update server");
+			titleLoadingStage = 40;
 
-		SpriteLoader3.loadSprites();
-		cacheSprite3 = SpriteLoader3.sprites;
-		SpriteLoader3.sprites = null;
+		} else if (Client.titleLoadingStage == 40) {
+			byte var24 = 0;
+			loadingProgress = var24 + Js5List.animations.percentage() * 4 / 100;
+			loadingProgress += Js5List.sprites.percentage() * 4 / 100;
+			loadingProgress += Js5List.configs.percentage() * 2 / 100;
+			loadingProgress += Js5List.interfaces.percentage() * 2 / 100;
+			loadingProgress += Js5List.soundEffects.percentage() * 6 / 100;
+			loadingProgress += Js5List.maps.percentage() * 4 / 100;
+			loadingProgress += Js5List.musicTracks.percentage() * 2 / 100;
+			loadingProgress += Js5List.models.percentage() * 55 / 100;
+			loadingProgress += Js5List.sprites.percentage() * 2 / 100;
+			loadingProgress += Js5List.textures.percentage() * 2 / 100;
+			loadingProgress += Js5List.binary.percentage() * 2 / 100;
+			loadingProgress += Js5List.musicJingles.percentage() * 2 / 100;
+			loadingProgress += Js5List.clientScript.percentage() * 2 / 100;
+			loadingProgress += Js5List.fonts.percentage() * 2 / 100;
+			loadingProgress += Js5List.musicSamples.percentage() * 2 / 100;
+			loadingProgress += Js5List.musicPatches.percentage() * 2 / 100;
+			loadingProgress += Js5List.dbtableindex.percentage() / 100;
 
-		SpriteLoader4.loadSprites();
-		cacheSprite4 = SpriteLoader4.sprites;
-		SpriteLoader4.sprites = null;
-		drawLoadingText(10, "Loading Packed Sprites...");
-		try {
-			ItemDef.load();
-			ItemStats.readDefinitions();
+			if (loadingProgress != 96) {
+				if (loadingProgress != 0) {
+					drawLoadingText(30, "Checking for updates - " + loadingProgress + "%");
+				}
+			} else {
+				Js5System.init(Js5List.animations, "Animations");
+				Js5System.init(Js5List.skeletons, "Skeletons");
+				Js5System.init(Js5List.soundEffects, "Sound FX");
+				Js5System.init(Js5List.maps, "Maps");
+				Js5System.init(Js5List.musicTracks, "Music Tracks");
+				Js5System.init(Js5List.models, "Models");
+				Js5System.init(Js5List.sprites, "Sprites");
+				Js5System.init(Js5List.textures, "Textures");
+				Js5System.init(Js5List.musicJingles, "Music Jingles");
+				Js5System.init(Js5List.musicSamples, "Music Samples");
+				Js5System.init(Js5List.musicPatches, "Music Patches");
+				drawLoadingText(30, "Loaded update list");
+				Client.titleLoadingStage = 45;
+			}
+		} else if (Client.titleLoadingStage == 45) {
+
+			resourceProvider = new OnDemandFetcher();
+			FileArchive streamLoader_6 = streamLoaderForName(5, "update list");
+			resourceProvider.start(streamLoader_6, this);
+			StaticSound.setup(!Client.lowMem, Js5List.soundEffects, Js5List.musicTracks, Js5List.musicJingles, Js5List.musicSamples, Js5List.musicPatches);
+			drawLoadingText(35, "Prepared sound engine");
+			Client.titleLoadingStage = 50;
+			//fontLoader = new FontLoader();
+		} else if (Client.titleLoadingStage == 50) {
 			titleStreamLoader = streamLoaderForName(1, "title screen");
-			drawLoadingText(12, "Loading Fonts...");
 			smallText = new TextDrawingArea(false, "p11_full" + fontFilter(), titleStreamLoader);
 			XPFONT = new TextDrawingArea(true, "q8_full" + fontFilter(), titleStreamLoader);
 			aTextDrawingArea_1271 = new TextDrawingArea(false, "p12_full" + fontFilter(), titleStreamLoader);
@@ -12195,374 +12294,431 @@ public class Client extends GameEngine implements RSClient {
 			newRegularFont = new RSFont(false, "p12_full" + fontFilter(), titleStreamLoader);
 			newBoldFont = new RSFont(false, "b12_full" + fontFilter(), titleStreamLoader);
 			newFancyFont = new RSFont(true, "q8_full" + fontFilter(), titleStreamLoader);
-
-			for (int index = 0; index < 25; index++) {
-				bubbles.add(new Bubble());
-			}
-
-			/**
-			 * New fonts
-			 */
 			lato = new RSFont(true, "lato_full", titleStreamLoader);
 			latoBold = new RSFont(true, "lato_bold_full", titleStreamLoader);
 			kingthingsPetrock = new RSFont(true, "kingthings_petrock_full", titleStreamLoader);
 			kingthingsPetrockLight = new RSFont(true, "kingthings_petrock_light_full", titleStreamLoader);
-			drawLoadingText(20, "Loading Archives...");
+			drawLoadingText(40, "Loading fonts");
+			Client.titleLoadingStage = 60;
+		} else {
+			int var3;
+			if (Client.titleLoadingStage == 60) {
+				drawLoadingText(50, "Loaded title screen");
+				setGameState(5);
 
-			loadTitleScreen();
-			createScreenImages();
+				ItemDef.load();
+				ItemStats.readDefinitions();
 
-			anInt720 = 20;
-			/** Required for Music **/
-			midi_player = new JavaMidiPlayer();
-			FileArchive streamLoader = streamLoaderForName(2, "config");
-			FileArchive streamLoader_1 = streamLoaderForName(3, "interface");
-			FileArchive streamLoader_2 = streamLoaderForName(4, "2d graphics");
-			mediaStreamLoader = streamLoader_2;
-			drawLoadingText(25, "Loading Archives...");
-			FileArchive streamLoader_3 = streamLoaderForName(6, "textures");
-			FileArchive streamLoader_4 = streamLoaderForName(7, "chat system");
-			@SuppressWarnings("unused")
-			FileArchive streamLoader_5 = streamLoaderForName(8, "sound effects");
-			byte[] bytes = streamLoader_5.readFile("sounds.dat");
-			Buffer buffer = new Buffer(bytes);
+				OSRSCacheLoader.init();
 
-			SoundEffects.unpack(buffer);
-			drawLoadingText(25, "Loading Scene...");
-			tileFlags = new byte[4][104][104];
-			tileHeights = new int[4][105][105];
-			scene = new SceneGraph(tileHeights);
-			for (int j = 0; j < 4; j++)
-				collisionMaps[j] = new CollisionMap();
+				SpriteLoader1.loadSprites();
+				cacheSprite1 = SpriteLoader1.sprites;
+				SpriteLoader1.sprites = null;
 
-			FileArchive streamLoader_6 = streamLoaderForName(5, "update list");
-			drawLoadingText(30, "Connecting to update server");
+				SpriteLoader2.loadSprites();
+				cacheSprite2 = SpriteLoader2.sprites;
+				SpriteLoader2.sprites = null;
 
-			resourceProvider = new OnDemandFetcher();
-			resourceProvider.start(streamLoader_6, this);
+				SpriteLoader3.loadSprites();
+				cacheSprite3 = SpriteLoader3.sprites;
+				SpriteLoader3.sprites = null;
 
-			if (Configuration.dumpMaps) {
-				resourceProvider.dumpMaps();
-			}
+				SpriteLoader4.loadSprites();
+				cacheSprite4 = SpriteLoader4.sprites;
+				SpriteLoader4.sprites = null;
 
-			Frame.method528();
 
-			Model.init();
+				loadTitleScreen();
+				createScreenImages();
 
-			drawLoadingText(35, "Unpacking media");
-			 donatorOrb = new Sprite("orbs/promo_orb");
-			 donatorOrbHover = new Sprite("orbs/promo_orb_hover");
+				anInt720 = 20;
 
-			 utilityOrb = new Sprite("orbs/utility_orb");
-			 utilityOrbHover = new Sprite("orbs/utility_orb_hover");
+				Client.titleLoadingStage = 70;
+			} else if (Client.titleLoadingStage == 70) {
+				if (!Js5List.configs.isFullyLoaded()) {
+					drawLoadingText(60, "Loading config - " + Js5List.configs.loadPercent() + "%");
+				} else if (!Js5List.configs.isFullyLoaded()) {
+					drawLoadingText(60, "Loading config - " + (80 + Js5List.clientScript.loadPercent() / 6) + "%");
+				} else {
+					Js5List.initConfigSizes();
+					//ItemDefinition.members = isMembers;
+					//NpcDefinition.init(currrentRev <= 209, spriteIds.headIconArchive);
 
-			 questOrb = new Sprite("orbs/quest_orb");
-			 questOrbHover = new Sprite("orbs/quest_hover_orb");
+					if (Js5List.configs.isFullyLoaded()) {
+						AreaDefinition.definitions = new AreaDefinition[Js5List.getConfigSize(Js5ConfigType.AREA)];
 
-			 knowOrb = new Sprite("orbs/event_orb");
-			 knowOrbHover = new Sprite("orbs/event_orb_hover");
-			mapIcon7 = new Sprite(streamLoader_2, "mapfunction", 1);
-			mapIcon8 = new Sprite(streamLoader_2, "mapfunction", 51);
-			mapIcon6 = new Sprite(streamLoader_2, "mapfunction", 74);
-			mapIcon5 = new Sprite(streamLoader_2, "mapfunction", 5);
-			mapIcon9 = new Sprite(streamLoader_2, "mapfunction", 56);
-			multiOverlay = new Sprite(streamLoader_2, "overlay_multiway", 0);
-
-			eventIcon = new Sprite(streamLoader_2, "mapfunction", 72);
-			bankDivider = new Sprite("bank_divider");
-			minimapImage = new Sprite(512,512);
-			// Login
-			drawLoadingText(40, "Unpacking media");
-			// Login
-			loginAsset0 = new Sprite("loginscreen2/677");//username hover
-			loginAsset1 = new Sprite("loginscreen2/677");//password hover
-			loginAsset2 = new Sprite("loginscreen2/676");//Account Name Background
-
-			loginAsset4 = new Sprite("loginscreen2/60");//World switcher hover.
-			loginAsset5 = new Sprite("loginscreen2/61");//World switcher hover.
-
-			loginAsset6 = new Sprite("loginscreen2/58");//Login Button
-			loginAsset7 = new Sprite("loginscreen2/59");//Login Button
-
-			loginAsset8 = new Sprite("loginscreen2/674");//Account Delete
-			loginAsset9 = new Sprite("loginscreen2/675");//Account Delete
-			loginAsset10 = new Sprite("loginscreen2/676");//Account Hover
-			loginAsset11 = new Sprite("loginscreen2/186");//Discord Icon
-			loginAsset12 = new Sprite("loginscreen2/187");//Discord Icon
-			loginAsset13 = new Sprite("loginscreen2/178");//Remember me check
-			loginAsset14 = new Sprite("loginscreen2/180");//Remember me check
-			loginAsset15 = new Sprite("loginscreen2/188");//Music Control
-			loginAsset16 = new Sprite("loginscreen2/189");//Music Control
-			loginScreenBackground = new Sprite("/loginscreen2/57");
-			loginScreenBackgroundCaptcha = new Sprite("/loginscreen/captcha_background");
-
-			drawLoadingText(45, "Unpacking media");
-			File[] file = new File(Signlink.getCacheDirectory() + "/sprites/sprites/").listFiles();
-			int size = file.length;
-			cacheSprite = new Sprite[size];
-			for (int i = 0; i < size; i++) {
-				cacheSprite[i] = new Sprite("Sprites/" + i);
-			}
-			drawLoadingText(47, "Unpacking media");
-			xpSprite = new Sprite("medal");
-			for (int i = 0; i < inputSprites.length; i++)
-				inputSprites[i] = new Sprite("Interfaces/Inputfield/SPRITE " + (i + 1));
-
-			/*
-			 * for (int index = 0; index < minimapSprites.length; index++) {
-			 * minimapSprites[index] = new Sprite(streamLoader_2, "gameframe", index); Image
-			 * image = minimapSprites[index].getImage(); if (image == null) {
-			 * System.out.println("Image is null for: " + index); } }
-			 */
-
-			for (int i = 0; i < tabAreaResizable.length; i++)
-				tabAreaResizable[i] = new Sprite("Gameframe/resizable/tabArea " + i);
-			drawLoadingText(49, "Unpacking media");
-			loadTabArea();
-
-			SkillOrbs.init();
-
-			infinity = new Sprite("infinity");
-			chatArea = new Sprite("Gameframe/chatarea");
-			channelButtons = new Sprite("Gameframe/channelbuttons");
-			venomOrb = new Sprite("orbs/venom");
-			shopSprite = new Sprite("orbs/shop");
-			shopSpriteHover = new Sprite("orbs/shophover");
-			drawLoadingText(50, "Unpacking media");
-			for (int index = 0; index < smallXpSprites.length; index++) {
-				smallXpSprites[index] = new Sprite("expdrop/" + index);
-
-			}
-
-			for (int c1 = 0; c1 <= 3; c1++)
-				chatButtons[c1] = new Sprite(streamLoader_2, "chatbuttons", c1);
-			chatButtons[3] = new Sprite("1025_0");
-			Sprite[] clanIcons = new Sprite[9];
-			for (int index = 0; index < clanIcons.length; index++) {
-				clanIcons[index] = new Sprite("Clan Chat/Icons/" + index);
-			}
-			drawLoadingText(51, "Unpacking media");
-			String iconPackDir = Signlink.getCacheDirectory() + "sprites" + Signlink.separator + "icon_pack";
-			Sprite[] iconPack = new Sprite[FileUtility.getFileCount(iconPackDir)];
-			for (int index = 0; index < iconPack.length; index++) {
-				iconPack[index] = new Sprite("icon_pack/" + index);
-			}
-
-			RSFont.unpackImages(modIcons, clanIcons, iconPack);
-			drawLoadingText(53, "Unpacking media");
-			mapEdge = new Sprite(streamLoader_2, "mapedge", 0);
-			mapEdge.method345();
-
-			try {
-				for (int k3 = 0; k3 < 188; k3++)
-					mapScenes[k3] = new IndexedImage(streamLoader_2, "mapscene", k3);
-			} catch (Exception _ex) {
-			}
-			try {
-				for (int l3 = 0; l3 < 125; l3++)
-					mapFunctions[l3] = new Sprite("mapfunctions/" + l3);
-			} catch (Exception _ex) {
-			}
-
-			try {
-				for (int i4 = 0; i4 < 17; i4++) {
-					hitMarks[i4] = new Sprite("hitmark/HIT " + i4);
-				}
-			} catch (Exception _ex) {
-			}
-
-			drawLoadingText(55, "Unpacking media");
-			try {
-				for (int h1 = 0; h1 < 6; h1++)
-					headIconsHint[h1] = new Sprite(streamLoader_2, "headicons_hint", h1);
-			} catch (Exception _ex) {
-			}
-			try {
-				for (int j4 = 0; j4 < 18; j4++)
-					headIcons[j4] = new Sprite(streamLoader_2, "headicons_prayer", j4);
-				for (int j45 = 0; j45 < 3; j45++)
-					skullIcons[j45] = new Sprite(streamLoader_2, "headicons_pk", j45);
-			} catch (Exception _ex) {
-			}
-			for (int i = 0; i < minimapIcons.length; i++) {
-				minimapIcons[i] = new Sprite("Mapicons/ICON " + i);
-			}
-
-			mapFlag = new Sprite(streamLoader_2, "mapmarker", 0);
-			mapMarker = new Sprite(streamLoader_2, "mapmarker", 1);
-			for (int k4 = 0; k4 < 8; k4++)
-				crosses[k4] = new Sprite(streamLoader_2, "cross", k4);
-			drawLoadingText(56, "Unpacking media");
- 			mapDots = new Sprite[6];
-			mapDots[0] = new Sprite(streamLoader_2, "mapdots", 0);
-			mapDots[1] = new Sprite(streamLoader_2, "mapdots", 1);
-			mapDots[2] = new Sprite(streamLoader_2, "mapdots", 2);
-			mapDots[3] = new Sprite(streamLoader_2, "mapdots", 3);
-			mapDots[4] = new Sprite(streamLoader_2, "mapdots", 4);
-			mapDots[5] = new Sprite(streamLoader_2, "mapdots", 5);
-			drawLoadingText(57, "Unpacking media");
-			scrollBar1 = new Sprite(streamLoader_2, "scrollbar", 0);
-			scrollBar2 = new Sprite(streamLoader_2, "scrollbar", 1);
-			for (int i = 0; i < modIcons.length; i++) {
-				modIcons[i] = new Sprite("Player/MODICONS " + i + "");
-			}
-
-			for (int index = 0; index < GameTimerHandler.TIMER_IMAGES.length; index++) {
-				GameTimerHandler.TIMER_IMAGES[index] = new Sprite("GameTimer/TIMER " + index);
-			}
-			drawLoadingText(60, "Unpacking media");
-			int i5 = (int) (Math.random() * 21D) - 10;
-			int j5 = (int) (Math.random() * 21D) - 10;
-			int k5 = (int) (Math.random() * 21D) - 10;
-			int l5 = (int) (Math.random() * 41D) - 20;
-
-			for (int i6 = 0; i6 < 188; i6++) {
-				if (mapScenes[i6] != null)
-					mapScenes[i6].offsetColor(i5 + l5, j5 + l5, k5 + l5);
-			}
-
-			drawLoadingText(65, "Unpacking Textures");
-			TextureProvider textureProvider = new TextureProvider(streamLoader_3,streamLoader,20,Rasterizer3D.lowMem ? 64 : 128);
-			textureProvider.setBrightness(0.80000000000000004D);
-			Rasterizer3D.setTextureLoader(textureProvider);
-			drawLoadingText(66, "Unpacking Animations");
-
-			drawLoadingText(67, "Unpacking Objects");
-			ObjectDefinition.init(streamLoader);
-			drawLoadingText(68, "Unpacking Floors");
-			FloorDefinition.init(streamLoader);
-			drawLoadingText(70, "Unpacking Items");
-			ItemDefinition.init(streamLoader);
-			drawLoadingText(73, "Unpacking Npc's");
-			NpcDefinition.unpackConfig(streamLoader);
-			drawLoadingText(74, "Unpacking Player Kits");
-			IDK.unpackConfig(streamLoader);
-			drawLoadingText(75, "Unpacking Graphics");
-			GraphicsDefinition.unpackConfig(streamLoader);
-			drawLoadingText(80, "Unpacking textures");
-			AreaDefinition.init(streamLoader);
-			drawLoadingText(84, "Unpacking Varps");
-			Varp.unpackConfig(streamLoader);
-			VarBit.unpackConfig(streamLoader);
-			drawLoadingText(88, "Unpacking textures");
-			loadPlayerData();
-
-			if (Configuration.dumpDataLists) {
-				NpcDefinition.dumpList();
-				ObjectDefinition.dumpList();
-				resourceProvider.dumpModels();
-			}
-
-			drawLoadingText(90, "Unpacking interfaces");
-
-			TextDrawingArea allFonts[] = { smallText, aTextDrawingArea_1271, chatTextDrawingArea,
-					aTextDrawingArea_1273 };
-			RSInterface.unpack(streamLoader_1, allFonts, streamLoader_2, new RSFont[] {newSmallFont, newRegularFont, newBoldFont, newFancyFont});
-			drawLoadingText(92, "Preparing game engine");
-
-			if(getUserSettings().isOldGameframe() == false) {
-				mapBack = new Sprite("Gameframe/fixed/mapBack");
-			} else {
-				mapBack = new Sprite("Gameframe317/fixed/mapBack");
-			}
-			drawLoadingText(94, "Preparing game engine");
-			for (int pixelY = 0; pixelY < 33; pixelY++) {
-				int k6 = 999;
-				int i7 = 0;
-				for (int pixelX = 0; pixelX < 34; pixelX++) {
-					if (mapBack.myPixels[pixelX + pixelY * mapBack.myWidth] == 0) {
-						if (k6 == 999)
-							k6 = pixelX;
-						continue;
-					}
-					if (k6 == 999)
-						continue;
-					i7 = pixelX;
-					break;
-				}
-				anIntArray968[pixelY] = k6;
-				anIntArray1057[pixelY] = i7 - k6;
-			}
-			drawLoadingText(95, "Preparing game engine");
-			for (int pixelY = 1; pixelY < 153; pixelY++) {
-				int j7 = 999;
-				int l7 = 0;
-				for (int pixelX = 24; pixelX < 177; pixelX++) {
-					if (mapBack.myPixels[pixelX + pixelY * mapBack.myWidth] == 0 && (pixelX > 34 || pixelY > 34)) {
-						if (j7 == 999) {
-							j7 = pixelX;
+						for (int count = 0; count < Js5List.getConfigSize(Js5ConfigType.AREA); ++count) {
+							byte[] fileData = Js5List.configs.takeFile(Js5ConfigType.AREA, count);
+							AreaDefinition.definitions[count] = new AreaDefinition(count);
+							if (fileData != null) {
+								AreaDefinition.definitions[count].decode(new Buffer(fileData));
+								AreaDefinition.definitions[count].init();
+							}
 						}
-						continue;
 					}
-					if (j7 == 999) {
-						continue;
+
+
+					tileFlags = new byte[4][104][104];
+					tileHeights = new int[4][105][105];
+					scene = new SceneGraph(tileHeights);
+					for (int j = 0; j < 4; j++)
+						collisionMaps[j] = new CollisionMap();
+					Frame.method528();
+
+					Model.init();
+					Client.titleLoadingStage = 80;
+
+
+					FileArchive streamLoader = streamLoaderForName(2, "config");
+					ObjectDefinition.init(streamLoader);
+					ItemDefinition.init(streamLoader);
+					NpcDefinition.unpackConfig(streamLoader);
+					IDK.unpackConfig(streamLoader);
+					GraphicsDefinition.unpackConfig(streamLoader);
+					Varp.unpackConfig(streamLoader);
+					VarBit.unpackConfig(streamLoader);
+					loadPlayerData();
+				}
+			} else if (Client.titleLoadingStage == 80) {
+				loadingProgress = 0;
+
+
+				++loadingProgress;
+				++loadingProgress;
+				++loadingProgress;
+				++loadingProgress;
+				++loadingProgress;
+				++loadingProgress;
+				donatorOrb = new Sprite("orbs/promo_orb");
+				donatorOrbHover = new Sprite("orbs/promo_orb_hover");
+
+				utilityOrb = new Sprite("orbs/utility_orb");
+				utilityOrbHover = new Sprite("orbs/utility_orb_hover");
+
+				questOrb = new Sprite("orbs/quest_orb");
+				questOrbHover = new Sprite("orbs/quest_hover_orb");
+
+				knowOrb = new Sprite("orbs/event_orb");
+				knowOrbHover = new Sprite("orbs/event_orb_hover");
+
+				FileArchive streamLoader_2 = streamLoaderForName(4, "2d graphics");
+				mapIcon7 = new Sprite(streamLoader_2, "mapfunction", 1);
+				mapIcon8 = new Sprite(streamLoader_2, "mapfunction", 51);
+				mapIcon6 = new Sprite(streamLoader_2, "mapfunction", 74);
+				mapIcon5 = new Sprite(streamLoader_2, "mapfunction", 5);
+				mapIcon9 = new Sprite(streamLoader_2, "mapfunction", 56);
+				multiOverlay = new Sprite(streamLoader_2, "overlay_multiway", 0);
+
+				eventIcon = new Sprite(streamLoader_2, "mapfunction", 72);
+				bankDivider = new Sprite("bank_divider");
+				// Login
+				// Login
+				loginAsset0 = new Sprite("loginscreen2/677");//username hover
+				loginAsset1 = new Sprite("loginscreen2/677");//password hover
+				loginAsset2 = new Sprite("loginscreen2/676");//Account Name Background
+
+				loginAsset4 = new Sprite("loginscreen2/60");//World switcher hover.
+				loginAsset5 = new Sprite("loginscreen2/61");//World switcher hover.
+
+				loginAsset6 = new Sprite("loginscreen2/58");//Login Button
+				loginAsset7 = new Sprite("loginscreen2/59");//Login Button
+
+				loginAsset8 = new Sprite("loginscreen2/674");//Account Delete
+				loginAsset9 = new Sprite("loginscreen2/675");//Account Delete
+				loginAsset10 = new Sprite("loginscreen2/676");//Account Hover
+				loginAsset11 = new Sprite("loginscreen2/186");//Discord Icon
+				loginAsset12 = new Sprite("loginscreen2/187");//Discord Icon
+				loginAsset13 = new Sprite("loginscreen2/178");//Remember me check
+				loginAsset14 = new Sprite("loginscreen2/180");//Remember me check
+				loginAsset15 = new Sprite("loginscreen2/188");//Music Control
+				loginAsset16 = new Sprite("loginscreen2/189");//Music Control
+				loginScreenBackground = new Sprite("/loginscreen2/57");
+				loginScreenBackgroundCaptcha = new Sprite("/loginscreen/captcha_background");
+				++loadingProgress;
+
+				++loadingProgress;
+				++loadingProgress;
+				++loadingProgress;
+				++loadingProgress;
+
+				++loadingProgress;
+
+				++loadingProgress;
+
+
+				++loadingProgress;
+
+				++loadingProgress;
+
+				if (loadingProgress < 14) {
+					drawLoadingText(70, "Loading sprites - " + loadingProgress * 100 / 13 + "%");
+				} else {
+					File[] file = new File(Signlink.getCacheDirectory() + "/sprites/sprites/").listFiles();
+					int size = file.length;
+					cacheSprite = new Sprite[size];
+					for (int i = 0; i < size; i++) {
+						cacheSprite[i] = new Sprite("Sprites/" + i);
 					}
-					l7 = pixelX;
-					break;
+					xpSprite = new Sprite("medal");
+					for (int i = 0; i < inputSprites.length; i++)
+						inputSprites[i] = new Sprite("Interfaces/Inputfield/SPRITE " + (i + 1));
+
+
+					for (int i = 0; i < tabAreaResizable.length; i++)
+						tabAreaResizable[i] = new Sprite("Gameframe/resizable/tabArea " + i);
+					loadTabArea();
+
+					SkillOrbs.init();
+
+					infinity = new Sprite("infinity");
+					chatArea = new Sprite("Gameframe/chatarea");
+					channelButtons = new Sprite("Gameframe/channelbuttons");
+					venomOrb = new Sprite("orbs/venom");
+					shopSprite = new Sprite("orbs/shop");
+					shopSpriteHover = new Sprite("orbs/shophover");
+					for (int index = 0; index < smallXpSprites.length; index++) {
+						smallXpSprites[index] = new Sprite("expdrop/" + index);
+
+					}
+
+					for (int c1 = 0; c1 <= 3; c1++)
+						chatButtons[c1] = new Sprite(streamLoader_2, "chatbuttons", c1);
+					chatButtons[3] = new Sprite("1025_0");
+					Sprite[] clanIcons = new Sprite[9];
+					for (int index = 0; index < clanIcons.length; index++) {
+						clanIcons[index] = new Sprite("Clan Chat/Icons/" + index);
+					}
+					String iconPackDir = Signlink.getCacheDirectory() + "sprites" + Signlink.separator + "icon_pack";
+					Sprite[] iconPack = new Sprite[FileUtility.getFileCount(iconPackDir)];
+					for (int index = 0; index < iconPack.length; index++) {
+						iconPack[index] = new Sprite("icon_pack/" + index);
+					}
+
+					RSFont.unpackImages(modIcons, clanIcons, iconPack);
+					mapEdge = new Sprite(streamLoader_2, "mapedge", 0);
+					mapEdge.method345();
+
+					try {
+						for (int k3 = 0; k3 < 188; k3++)
+							mapScenes[k3] = new IndexedImage(streamLoader_2, "mapscene", k3);
+					} catch (Exception _ex) {
+					}
+					try {
+						for (int l3 = 0; l3 < 125; l3++)
+							mapFunctions[l3] = new Sprite("mapfunctions/" + l3);
+					} catch (Exception _ex) {
+					}
+
+					try {
+						for (int i4 = 0; i4 < 17; i4++) {
+							hitMarks[i4] = new Sprite("hitmark/HIT " + i4);
+						}
+					} catch (Exception _ex) {
+					}
+
+					try {
+						for (int h1 = 0; h1 < 6; h1++)
+							headIconsHint[h1] = new Sprite(streamLoader_2, "headicons_hint", h1);
+					} catch (Exception _ex) {
+					}
+					try {
+						for (int j4 = 0; j4 < 18; j4++)
+							headIcons[j4] = new Sprite(streamLoader_2, "headicons_prayer", j4);
+						for (int j45 = 0; j45 < 3; j45++)
+							skullIcons[j45] = new Sprite(streamLoader_2, "headicons_pk", j45);
+					} catch (Exception _ex) {
+					}
+					for (int i = 0; i < minimapIcons.length; i++) {
+						minimapIcons[i] = new Sprite("Mapicons/ICON " + i);
+					}
+
+					mapFlag = new Sprite(streamLoader_2, "mapmarker", 0);
+					mapMarker = new Sprite(streamLoader_2, "mapmarker", 1);
+					for (int k4 = 0; k4 < 8; k4++)
+						crosses[k4] = new Sprite(streamLoader_2, "cross", k4);
+					mapDots = new Sprite[6];
+					mapDots[0] = new Sprite(streamLoader_2, "mapdots", 0);
+					mapDots[1] = new Sprite(streamLoader_2, "mapdots", 1);
+					mapDots[2] = new Sprite(streamLoader_2, "mapdots", 2);
+					mapDots[3] = new Sprite(streamLoader_2, "mapdots", 3);
+					mapDots[4] = new Sprite(streamLoader_2, "mapdots", 4);
+					mapDots[5] = new Sprite(streamLoader_2, "mapdots", 5);
+					drawLoadingText(57, "Unpacking media");
+					scrollBar1 = new Sprite(streamLoader_2, "scrollbar", 0);
+					scrollBar2 = new Sprite(streamLoader_2, "scrollbar", 1);
+					for (int i = 0; i < modIcons.length; i++) {
+						modIcons[i] = new Sprite("Player/MODICONS " + i + "");
+					}
+
+					for (int index = 0; index < GameTimerHandler.TIMER_IMAGES.length; index++) {
+						GameTimerHandler.TIMER_IMAGES[index] = new Sprite("GameTimer/TIMER " + index);
+					}
+					int i5 = (int) (Math.random() * 21D) - 10;
+					int j5 = (int) (Math.random() * 21D) - 10;
+					int k5 = (int) (Math.random() * 21D) - 10;
+					int l5 = (int) (Math.random() * 41D) - 20;
+
+					for (int i6 = 0; i6 < 188; i6++) {
+						if (mapScenes[i6] != null)
+							mapScenes[i6].offsetColor(i5 + l5, j5 + l5, k5 + l5);
+					}
+					if(getUserSettings().isOldGameframe() == false) {
+						mapBack = new Sprite("Gameframe/fixed/mapBack");
+					} else {
+						mapBack = new Sprite("Gameframe317/fixed/mapBack");
+					}
+					for (int pixelY = 0; pixelY < 33; pixelY++) {
+						int k6 = 999;
+						int i7 = 0;
+						for (int pixelX = 0; pixelX < 34; pixelX++) {
+							if (mapBack.myPixels[pixelX + pixelY * mapBack.myWidth] == 0) {
+								if (k6 == 999)
+									k6 = pixelX;
+								continue;
+							}
+							if (k6 == 999)
+								continue;
+							i7 = pixelX;
+							break;
+						}
+						anIntArray968[pixelY] = k6;
+						anIntArray1057[pixelY] = i7 - k6;
+					}
+					for (int pixelY = 1; pixelY < 153; pixelY++) {
+						int j7 = 999;
+						int l7 = 0;
+						for (int pixelX = 24; pixelX < 177; pixelX++) {
+							if (mapBack.myPixels[pixelX + pixelY * mapBack.myWidth] == 0 && (pixelX > 34 || pixelY > 34)) {
+								if (j7 == 999) {
+									j7 = pixelX;
+								}
+								continue;
+							}
+							if (j7 == 999) {
+								continue;
+							}
+							l7 = pixelX;
+							break;
+						}
+						anIntArray1052[pixelY - 1] = j7 - 24;
+						anIntArray1229[pixelY - 1] = l7 - j7;
+					}
+					try {
+						macAddress = GetNetworkAddress.GetAddress("mac");
+						if (macAddress == null)
+							macAddress = "";
+						if (Configuration.developerMode) {
+							System.out.println(macAddress);
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+						macAddress = "";
+					}
+
+					try {
+						informationFile.read();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+					if (informationFile.isUsernameRemembered()) {
+						myUsername = informationFile.getStoredUsername();
+					}
+					if (informationFile.isPasswordRemembered()) {
+						setPassword(informationFile.getStoredPassword());
+					}
+					if (informationFile.isRememberRoof()) {
+						removeRoofs = true;
+					}
+					SceneObject.clientInstance = this;
+					ObjectDefinition.clientInstance = this;
+					NpcDefinition.clientInstance = this;
+					Frame.clientInstance = this;
+					Preferences.load();
+					AccountManager.loadAccount();
+					drawLoadingText(70, "Loading sprites");
+					Client.titleLoadingStage = 90;
 				}
-				anIntArray1052[pixelY - 1] = j7 - 24;
-				anIntArray1229[pixelY - 1] = l7 - j7;
-			}
-			drawLoadingText(97, "Preparing game engine");
-			try {
-				macAddress = GetNetworkAddress.GetAddress("mac");
-				if (macAddress == null)
-					macAddress = "";
-				if (Configuration.developerMode) {
-					System.out.println(macAddress);
+			} else if (Client.titleLoadingStage == 90) {
+				if (!Js5List.textures.isFullyLoaded()) {
+					drawLoadingText(90, "Loading textures - 0%");
+				} else {
+					FileArchive streamLoader = streamLoaderForName(2, "config");
+					FileArchive streamLoader_3 = streamLoaderForName(6, "textures");
+					TextureProvider textureProvider = new TextureProvider(streamLoader_3,streamLoader,20,Rasterizer3D.lowMem ? 64 : 128);
+					Rasterizer3D.setTextureLoader(textureProvider);
+					Rasterizer3D.setBrightness(0.80000000000000004D);
+					drawLoadingText(100, "Loading textures");
+					Client.titleLoadingStage = 95;
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				macAddress = "";
-			}
-			drawLoadingText(98, "Preparing game engine");
-			//Censor.loadConfig(streamLoader_4);
-			setConfigButtonsAtStartup();
-			//mouseDetection = new MouseDetection(this);
+			} else if (Client.titleLoadingStage == 95) {
+				if (!Js5List.maps.isFullyLoaded()) {
+					drawLoadingText(90, "Loading maps - " + Js5List.maps.percentage() + "%");
+				} else {
+					drawLoadingText(90, "Loading maps");
+					Client.titleLoadingStage = 100;
 
-			try {
-				informationFile.read();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+				}
+			} else if (Client.titleLoadingStage == 100) {
+				drawLoadingText(90, "Loading textures");
+				Client.titleLoadingStage = 110;
+			} else if (Client.titleLoadingStage == 110) {
+				drawLoadingText(92, "Loading input handler");
+				Client.titleLoadingStage = 120;
+			} else if (Client.titleLoadingStage == 120) {
+				if (!Js5List.binary.tryLoadFileByNames("huffman", "")) {
+					drawLoadingText(94, "Loading wordpack - " + 0 + "%");
+				} else {
+					//Huffman var22 = new Huffman(Js5List.binary.takeFileByNames("huffman", ""));
+					//huffman = var22;
+					drawLoadingText(94, "Loaded wordpack");
+					Client.titleLoadingStage = 130;
+				}
 
-			if (informationFile.isUsernameRemembered()) {
-				myUsername = informationFile.getStoredUsername();
-			}
-			if (informationFile.isPasswordRemembered()) {
-				setPassword(informationFile.getStoredPassword());
-			}
-			if (informationFile.isRememberRoof()) {
-				removeRoofs = true;
-			}
-			drawLoadingText(99, "Preparing game engine");
-			//startRunnable(mouseDetection, 10);
-			SceneObject.clientInstance = this;
-			ObjectDefinition.clientInstance = this;
-			NpcDefinition.clientInstance = this;
-			Frame.clientInstance = this;
+				drawLoadingText(94, "Loaded wordpack");
+				Client.titleLoadingStage = 130;
+			} else if (Client.titleLoadingStage == 130) {
+				drawLoadingText(98, "Loaded interfaces");
+				TextDrawingArea allFonts[] = { smallText, aTextDrawingArea_1271, chatTextDrawingArea,
+						aTextDrawingArea_1273 };
 
-			if (Configuration.PRINT_EMPTY_INTERFACE_SECTIONS) {
-				RSInterface.printEmptyInterfaceSections();
-			}
+				FileArchive streamLoader_1 = streamLoaderForName(3, "interface");
+				FileArchive streamLoader_2 = streamLoaderForName(4, "2d graphics");
+				RSInterface.unpack(streamLoader_1, allFonts, streamLoader_2, new RSFont[] {newSmallFont, newRegularFont, newBoldFont, newFancyFont});
 
-			if (anInt913 == 0) {
-				RSInterface.interfaceCache[58002].active = true;
-			} else if (anInt913 == 1) {
-				RSInterface.interfaceCache[58002].active = false;
-			}
-			RSInterface.interfaceCache[58010].active = true;
-			Preferences.load();
-			AccountManager.loadAccount();
-			drawLoadingText(100, "Preparing game engine");
 
-			requestMusic(SoundConstants.SCAPE_RUNE);
-			setGameState(GameState.LOGIN_SCREEN);
-			clientLoaded = true;
-			return;
-		} catch (Exception exception) {
-			exception.printStackTrace();
-			Signlink.reporterror("loaderror " + aString1049 + " " + anInt1079);
+				if (Configuration.PRINT_EMPTY_INTERFACE_SECTIONS) {
+					RSInterface.printEmptyInterfaceSections();
+				}
+
+				if (anInt913 == 0) {
+					RSInterface.interfaceCache[58002].active = true;
+				} else if (anInt913 == 1) {
+					RSInterface.interfaceCache[58002].active = false;
+				}
+				RSInterface.interfaceCache[58010].active = true;
+				Client.titleLoadingStage = 140;
+			} else if (Client.titleLoadingStage == 140) {
+				drawLoadingText(99, "Loaded world map");
+				setConfigButtonsAtStartup();
+				Client.titleLoadingStage = 150;
+			} else if (Client.titleLoadingStage == 150) {
+				try {
+					logger.info("titleLoadingStage == 150");
+					setGameState(GameState.LOGIN_SCREEN);
+					long clientLoadStart = System.currentTimeMillis();
+
+
+					clientLoaded = true;
+
+					long clientLoadEnd = System.currentTimeMillis();
+					long clientLoadDifference = clientLoadEnd - clientLoadStart;
+					Client.titleLoadingStage = 210;
+					return;
+				} catch (Exception exception) {
+					exception.printStackTrace();
+				}
+			}
 		}
 		loadingError = true;
 	}
@@ -12901,7 +13057,7 @@ public class Client extends GameEngine implements RSClient {
 				anInt1117 = 0;
 				stream.createFrame(246);
 				stream.writeUnsignedByte(0);
-				int l = stream.currentPosition;
+				int l = stream.pos;
 				if ((int) (Math.random() * 2D) == 0)
 					stream.writeUnsignedByte(101);
 				stream.writeUnsignedByte(197);
@@ -12915,7 +13071,7 @@ public class Client extends GameEngine implements RSClient {
 				if ((int) (Math.random() * 2D) == 0)
 					stream.writeUnsignedByte(220);
 				stream.writeUnsignedByte(180);
-				stream.writeBytes(stream.currentPosition - l);
+				stream.writeBytes(stream.pos - l);
 			}
 		}
 	}
@@ -13189,7 +13345,7 @@ public class Client extends GameEngine implements RSClient {
 			method98(entity);
 		else
 			method99(entity);
-		method100(entity);
+		appendFocusDestination(entity);
 		updateAnimation(entity);
 	}
 
@@ -13212,7 +13368,7 @@ public class Client extends GameEngine implements RSClient {
 
 	public void method98(Entity entity) {
 		if (entity.cease_movement == loopCycle || entity.primarySeqID == -1 || entity.primarySeqDelay != 0
-				|| entity.primarySeqCycle + 1 > SeqDefinition.get(entity.primarySeqID).getDuration(entity.primarySeqFrame)) {
+				|| entity.primarySeqCycle + 1 > SequenceDefinition.get(entity.primarySeqID).getDuration(entity.primarySeqFrame)) {
 			int i = entity.cease_movement - entity.initiate_movement;
 			int j = loopCycle - entity.initiate_movement;
 			int k = entity.anInt1543 * 128 + entity.anInt1540 * 64;
@@ -13241,7 +13397,7 @@ public class Client extends GameEngine implements RSClient {
 			return;
 		}
 		if (entity.primarySeqID != -1 && entity.primarySeqDelay == 0) {
-			SeqDefinition animation = SeqDefinition.get(entity.primarySeqID);
+			SequenceDefinition animation = SequenceDefinition.get(entity.primarySeqID);
 			if (entity.remaining_steps > 0 && animation.moveStyle == 0) {
 				entity.anInt1503++;
 				return;
@@ -13331,7 +13487,7 @@ public class Client extends GameEngine implements RSClient {
 		}
 	}
 
-	public void method100(Entity entity) {
+	public void appendFocusDestination(Entity entity) {
 		if (entity.anInt1504 == 0)
 			return;
 		if (entity.interactingEntity != -1 && entity.interactingEntity < 32768) {
@@ -13385,19 +13541,20 @@ public class Client extends GameEngine implements RSClient {
 
 	public void updateAnimation(Entity entity) {
 		try {
-			if (entity.graphicId > SeqDefinition.length())
+			if (entity.graphicId > SequenceDefinition.length())
 				entity.graphicId = -1;
 			entity.dynamic = false;
 
-			if (entity.secondarySeqID > SeqDefinition.length())
+			if (entity.secondarySeqID > SequenceDefinition.length())
 				entity.secondarySeqID = -1;
 			if (entity.secondarySeqID != -1) {
-				if (entity.secondarySeqID > SeqDefinition.length())
+				if (entity.secondarySeqID > SequenceDefinition.length())
 					entity.secondarySeqID = 0;
 
-				SeqDefinition secondarySeq = SeqDefinition.get(entity.secondarySeqID);
+				SequenceDefinition secondarySeq = SequenceDefinition.get(entity.secondarySeqID);
 				if (secondarySeq.isSkeletalAnimation()) {
 					++entity.secondarySeqFrame;
+					entity.playSkeletalSounds(secondarySeq, entity.secondarySeqFrame, entity.x, entity.y);
 					int skeletalLength = secondarySeq.getSkeletalLength();
 					if (entity.secondarySeqFrame < skeletalLength) {
 
@@ -13421,6 +13578,7 @@ public class Client extends GameEngine implements RSClient {
 					if (entity.secondarySeqFrame < secondarySeq.getFrameCount() && entity.secondarySeqCycle > secondarySeq.getDuration(entity.secondarySeqFrame)) {
 						entity.secondarySeqCycle = 1;
 						entity.secondarySeqFrame++;
+						entity.playAnimationSound(secondarySeq, entity.secondarySeqFrame, entity.x, entity.y);
 						entity.nextIdleFrame++;
 					}
 
@@ -13443,7 +13601,7 @@ public class Client extends GameEngine implements RSClient {
 				if(graphicObject.getId() != -1 && loopCycle >= graphicObject.getCycle()) {
 					if(graphicObject.getFrame() < 0)
 						graphicObject.setFrame(0);
-					SeqDefinition gfxSeq = GraphicsDefinition.cache[graphicObject.getId()].animationSequence;
+					SequenceDefinition gfxSeq = GraphicsDefinition.cache[graphicObject.getId()].animationSequence;
 					if(gfxSeq == null) {
 						graphicObject.remove();
 						continue;
@@ -13451,6 +13609,7 @@ public class Client extends GameEngine implements RSClient {
 					if (gfxSeq.isSkeletalAnimation()) {
 						int length = gfxSeq.getSkeletalLength();
 						graphicObject.setFrame(graphicObject.getFrame() + 1);
+						entity.playSkeletalSounds(gfxSeq, graphicObject.getFrame(), entity.x, entity.y);
 						if(graphicObject.getFrame() >= length) {
 							graphicObject.setId(-1);
 							graphicObject.remove();
@@ -13459,6 +13618,7 @@ public class Client extends GameEngine implements RSClient {
 						for (graphicObject.currentAnimationTimeRemaining++; graphicObject.getFrame() < gfxSeq.getFrameCount() && graphicObject.currentAnimationTimeRemaining > gfxSeq.getDuration(entity.graphicFrame);) {
 							graphicObject.currentAnimationTimeRemaining -= gfxSeq.getDuration(graphicObject.getFrame());
 							graphicObject.setFrame(graphicObject.getFrame() + 1);
+							entity.playAnimationSound(gfxSeq, graphicObject.getFrame(), entity.x, entity.y);
 						}
 
 						if (graphicObject.getFrame() >= gfxSeq.getFrameCount() && (graphicObject.getFrame() < 0 || graphicObject.getFrame() >= gfxSeq.getFrameCount())) {
@@ -13475,47 +13635,21 @@ public class Client extends GameEngine implements RSClient {
 					}
 				}
 			}
-			/*if (entity.graphicId != -1 && loopCycle >= entity.graphic_cycle) {
-				if (entity.graphicFrame < 0)
-					entity.graphicFrame = 0;
-
-				SeqDefinition gfxSeq = GraphicsDefinition.cache[entity.graphicId].animationSequence;
-
-				if (gfxSeq.isSkeletalAnimation()) {
-					int length = gfxSeq.getSkeletalLength();
-					entity.graphicFrame++;
-					if(entity.graphicFrame >= length) {
-						entity.graphicId = -1;
-					}
-				} else {
-					for (entity.currentAnimationTimeRemaining++; entity.graphicFrame < gfxSeq.getFrameCount() && entity.currentAnimationTimeRemaining > gfxSeq.getDuration(entity.graphicFrame); entity.graphicFrame++)
-						entity.currentAnimationTimeRemaining -= gfxSeq.getDuration(entity.graphicFrame);
-
-					if (entity.graphicFrame >= gfxSeq.getFrameCount() && (entity.graphicFrame < 0 || entity.graphicFrame >= gfxSeq.getFrameCount()))
-						entity.graphicId = -1;
-
-					if (entity.nextGraphicFrame < 0 || entity.nextGraphicFrame >= gfxSeq.getFrameCount())
-						entity.nextGraphicFrame = entity.graphicFrame + 1;
-					if (entity.nextGraphicFrame >= gfxSeq.getFrameCount()) {
-
-						entity.graphicId = -1;
-					}
-				}
-			}*/
 			if (entity.primarySeqID != -1 && entity.primarySeqDelay <= 1) {
-				if (entity.primarySeqID >= SeqDefinition.length()) {
+				if (entity.primarySeqID >= SequenceDefinition.length()) {
 					entity.primarySeqID = -1;
 				}
-				SeqDefinition primarySeq = SeqDefinition.get(entity.primarySeqID);
+				SequenceDefinition primarySeq = SequenceDefinition.get(entity.primarySeqID);
 				if (primarySeq.getMoveStyle() == 1 && entity.remaining_steps > 0 && entity.initiate_movement <= loopCycle && entity.cease_movement < loopCycle) {
 					entity.primarySeqDelay = 1;
 					return;
 				}
 			}
 			if (entity.primarySeqID != -1 && entity.primarySeqDelay == 0) {
-				SeqDefinition primarySeq = SeqDefinition.get(entity.primarySeqID);
+				SequenceDefinition primarySeq = SequenceDefinition.get(entity.primarySeqID);
 				if (primarySeq.isSkeletalAnimation()) {
 					++entity.primarySeqFrame;
+					entity.playSkeletalSounds(primarySeq, entity.primarySeqFrame, entity.x, entity.y);
 					int skeletalLength = primarySeq.getSkeletalLength();
 					if (entity.primarySeqFrame < skeletalLength) {
 					} else {
@@ -13536,6 +13670,7 @@ public class Client extends GameEngine implements RSClient {
 					if (entity.primarySeqFrame >= primarySeq.getFrameCount()) {
 						entity.primarySeqFrame -= primarySeq.getFrameStep();
 						entity.animationLoops++;
+						entity.playAnimationSound(primarySeq, entity.primarySeqFrame, entity.x, entity.y);
 						if (entity.animationLoops >= primarySeq.getLoopCount())
 							entity.primarySeqID = -1;
 						if (entity.primarySeqFrame < 0 || entity.primarySeqFrame >= primarySeq.getFrameCount())
@@ -13712,6 +13847,7 @@ public class Client extends GameEngine implements RSClient {
 		}
 
 
+		ObjectSound.updateObjectSounds(plane, localPlayer.x, localPlayer.y, tickDelta); // L:
 		tickDelta = 0;
 	}
 
@@ -14420,7 +14556,7 @@ public class Client extends GameEngine implements RSClient {
 							if (i7 == -1) {
 								model = class9_1.method209(-1, -1, flag2);
 							} else {
-								SeqDefinition animation = SeqDefinition.get(i7);
+								SequenceDefinition animation = SequenceDefinition.get(i7);
 								if (class9_1.anInt246 >= animation.secondaryFrameIds.length || class9_1.anInt246 >= animation.frameIDs.length) {
 									class9_1.anInt246 = 0; // Fixes array index out of bounds on npc dialogues
 								}
@@ -15176,7 +15312,7 @@ public class Client extends GameEngine implements RSClient {
 				l = -1;
 			int i2 = stream.method427();
 			if (l == player.primarySeqID && l != -1) {
-				int i3 = SeqDefinition.get(l).replyMode;
+				int i3 = SequenceDefinition.get(l).replyMode;
 				if (i3 == 1) {
 					player.primarySeqFrame = 0;
 					player.primarySeqCycle = 0;
@@ -15186,7 +15322,7 @@ public class Client extends GameEngine implements RSClient {
 				if (i3 == 2)
 					player.animationLoops = 0;
 			} else if (l == -1 || player.primarySeqID == -1
-					|| SeqDefinition.get(l).forcedPriority >= SeqDefinition.get(player.primarySeqID).forcedPriority) {
+					|| SequenceDefinition.get(l).forcedPriority >= SequenceDefinition.get(player.primarySeqID).forcedPriority) {
 				player.primarySeqID = l;
 				player.primarySeqFrame = 0;
 				player.primarySeqCycle = 0;
@@ -15222,7 +15358,7 @@ public class Client extends GameEngine implements RSClient {
 			int i1 = stream.method434();
 			int rightsPrimaryValue = stream.readUnsignedByte();
 			int j3 = stream.method427();
-			int k3 = stream.currentPosition;
+			int k3 = stream.pos;
 			PlayerRights rights = PlayerRights.forRightsValue(rightsPrimaryValue);
 			if (player.displayName != null && player.visible) {
 				long l3 = longForName(player.displayName);
@@ -15237,9 +15373,9 @@ public class Client extends GameEngine implements RSClient {
 				}
 				if (!flag && anInt1251 == 0)
 					try {
-						aStream_834.currentPosition = 0;
+						aStream_834.pos = 0;
 						stream.method442(j3, 0, aStream_834.payload);
-						aStream_834.currentPosition = 0;
+						aStream_834.pos = 0;
 						String s = TextInput.method525(j3, aStream_834);
 
 						// Only show flower poker chat to people within the area
@@ -15260,7 +15396,7 @@ public class Client extends GameEngine implements RSClient {
 						Signlink.reporterror("cde2");
 					}
 			}
-			stream.currentPosition = k3 + j3;
+			stream.pos = k3 + j3;
 		}
 		if ((i & 1) != 0) {
 			player.interactingEntity = stream.method434();
@@ -15366,7 +15502,7 @@ public class Client extends GameEngine implements RSClient {
 				anInt1005 = 0;
 				stream.createFrame(77);
 				stream.writeUnsignedByte(0);
-				int i2 = stream.currentPosition;
+				int i2 = stream.pos;
 				stream.writeUnsignedByte((int) (Math.random() * 256D));
 				stream.writeUnsignedByte(101);
 				stream.writeUnsignedByte(233);
@@ -15378,7 +15514,7 @@ public class Client extends GameEngine implements RSClient {
 				stream.writeUnsignedByte(38);
 				stream.writeWord((int) (Math.random() * 65536D));
 				stream.writeWord((int) (Math.random() * 65536D));
-				stream.writeBytes(stream.currentPosition - i2);
+				stream.writeBytes(stream.pos - i2);
 			}
 			int j2 = k1 * 192;
 			if (j2 > 0x17f00)
@@ -15430,6 +15566,7 @@ public class Client extends GameEngine implements RSClient {
 	@Override
 	public void draw(boolean redraw) {
 
+		StaticSound.draw();
 
 		callbacks.frame();
 		updateCamera();
@@ -15796,6 +15933,7 @@ public class Client extends GameEngine implements RSClient {
 		drawScreenBox();
 	}
 
+
 	private void addIgnore(long l) {
 		try {
 			if (l == 0L)
@@ -16046,7 +16184,7 @@ public class Client extends GameEngine implements RSClient {
 				else
 					l = class9_1.disabledAnimationId;
 				if (l != -1) {
-					SeqDefinition animation = SeqDefinition.get(l);
+					SequenceDefinition animation = SequenceDefinition.get(l);
 					for (class9_1.anInt208 += tick; class9_1.anInt208 > animation.getDuration(class9_1.anInt246);) {
 						class9_1.anInt208 -= animation.getDuration(class9_1.anInt246) + 1;
 						class9_1.anInt246++;
@@ -17372,11 +17510,11 @@ public class Client extends GameEngine implements RSClient {
 			boolean replay = false;
 			try {
 				Buffer stream = SoundEffects.data(soundLoops[count], sounds[count]);
-				new SoundPlayer(new ByteArrayInputStream(stream.payload, 0, stream.currentPosition), soundVolume[count], soundDelay[count]);
-				if (System.currentTimeMillis() + (long) (stream.currentPosition / 22) > soundTimer + (long) (currentSoundTime / 22)) {
-					currentSoundTime = stream.currentPosition;
+				new SoundPlayer(new ByteArrayInputStream(stream.payload, 0, stream.pos), soundVolume[count], soundDelay[count]);
+				if (System.currentTimeMillis() + (long) (stream.pos / 22) > soundTimer + (long) (currentSoundTime / 22)) {
+					currentSoundTime = stream.pos;
 					soundTimer = System.currentTimeMillis();
-					if (saveWave(stream.payload, stream.currentPosition)) {
+					if (saveWave(stream.payload, stream.pos)) {
 						currentSoundPlaying = sounds[count];
 						currentSoundLoop = soundLoops[count];
 					} else {
@@ -17758,6 +17896,7 @@ public class Client extends GameEngine implements RSClient {
 				sounds[soundCount] = i9;
 				soundLoops[soundCount] = i16;
 				soundDelay[soundCount] = SoundEffects.delays[i9];
+				StaticSound.queueSoundEffect(i9, i16, SoundEffects.delays[i9]);
 				// aClass26Array1468[soundCount] = null;
 				soundCount++;
 			}
@@ -18092,7 +18231,7 @@ public class Client extends GameEngine implements RSClient {
 	public static boolean clientLoaded = false;
 
 	@SuppressWarnings("static-access")
-	private void processLoginScreenInput() {
+	private void doCycleLoggedOut() {
 		if (!clientLoaded) {
 			return;
 		}
@@ -18470,8 +18609,8 @@ public class Client extends GameEngine implements RSClient {
 				players[l] = null;
 		}
 
-		if (stream.currentPosition != i) {
-			Signlink.reporterror("Error packet size mismatch in getplayer pos:" + stream.currentPosition + " psize:" + i);
+		if (stream.pos != i) {
+			Signlink.reporterror("Error packet size mismatch in getplayer pos:" + stream.pos + " psize:" + i);
 			throw new RuntimeException("eek");
 		}
 		for (int i1 = 0; i1 < playerCount; i1++)
@@ -18624,7 +18763,7 @@ public class Client extends GameEngine implements RSClient {
 			if (packetSize == -2)
 				if (i > 1) {
 					socketStream.flushInputStream(inStream.payload, 2);
-					inStream.currentPosition = 0;
+					inStream.pos = 0;
 					packetSize = inStream.readUShort();
 					i -= 2;
 				} else {
@@ -18641,7 +18780,7 @@ public class Client extends GameEngine implements RSClient {
 				return false;
 			}
 
-			inStream.currentPosition = 0;
+			inStream.pos = 0;
 			socketStream.flushInputStream(inStream.payload, packetSize);
 			anInt1009 = 0;
 
@@ -18753,7 +18892,7 @@ public class Client extends GameEngine implements RSClient {
 				 * Progress Bar Update Packet
 				 */
 				case 77:
-					while (inStream.currentPosition < packetSize) {
+					while (inStream.pos < packetSize) {
 						int interfaceId = inStream.readDWord();
 						byte progressBarState = inStream.readSignedByte();
 						byte progressBarPercentage = inStream.readSignedByte();
@@ -19000,15 +19139,7 @@ public class Client extends GameEngine implements RSClient {
 
 				case 74:
 					int songId = inStream.method434();
-					if (songId == 65535) {
-						songId = -1;
-					}
-					if (songId != -1 && currentSong != songId && musicVolume != 0 && prevSong == 0) {
-						nextSong = songId;
-						songChanging = true;
-						resourceProvider.provide(2, nextSong);
-					}
-					currentSong = songId;
+					StaticSound.playSong(songId);
 					incomingPacket = -1;
 					return true;
 
@@ -19312,7 +19443,7 @@ public class Client extends GameEngine implements RSClient {
 				case 60:
 					anInt1269 = inStream.readUnsignedByte();
 					anInt1268 = inStream.method427();
-					while (inStream.currentPosition < packetSize) {
+					while (inStream.pos < packetSize) {
 						int k3 = inStream.readUnsignedByte();
 						method137(inStream, k3);
 					}
@@ -19334,6 +19465,8 @@ public class Client extends GameEngine implements RSClient {
 
 				case 174:
 					int id = inStream.readUShort();
+
+					StaticSound.playJingle(id, 0);
 					int type = inStream.readUnsignedByte();
 					int delay = inStream.readUShort();
 					if (soundEffectVolume != 0 && type != 0 && soundCount < 50) {
@@ -20240,7 +20373,7 @@ public class Client extends GameEngine implements RSClient {
 						return true;
 					}
 					RSInterface class9_2 = RSInterface.interfaceCache[i9];
-					while (inStream.currentPosition < packetSize) {
+					while (inStream.pos < packetSize) {
 						int j20 = inStream.readDWord();
 						int i23 = inStream.readUShort(); //Item ID
 						int l25 = inStream.readUnsignedByte(); // Amount
@@ -20380,7 +20513,7 @@ public class Client extends GameEngine implements RSClient {
 		}
 
 		RSInterface items = RSInterface.interfaceCache[frame];
-		while (inStream.currentPosition < packetSize) {
+		while (inStream.pos < packetSize) {
 			int slot = inStream.readSmart();
 			int itemId = inStream.readUShort();
 
@@ -20488,6 +20621,7 @@ public class Client extends GameEngine implements RSClient {
 
 		Model.cursorCalculations();
 
+		StaticSound.playPcmPlayers();
 		Rasterizer2D.clear();
 		if (Rasterizer3D.fieldOfView != cameraZoom) {
 			Rasterizer3D.fieldOfView = cameraZoom;
@@ -20500,6 +20634,7 @@ public class Client extends GameEngine implements RSClient {
 
 
 		scene.render(xCameraPos, yCameraPos, xCameraCurve, zCameraPos, j, yCameraCurve);
+		StaticSound.playPcmPlayers();
 		rasterProvider.setRaster();
 		scene.clearGameObjectCache();
 
@@ -20554,6 +20689,8 @@ public class Client extends GameEngine implements RSClient {
 	private Sprite[] chatButtons;
 
 	public Client() {
+
+		setGameState(GameState.STARTING);
 		accountManager = new AccountManager();
 		fullscreenInterfaceID = -1;
 		firstLoginMessage = "";
@@ -20624,7 +20761,7 @@ public class Client extends GameEngine implements RSClient {
 		aStringArray983 = new String[anInt975];
 		anInt985 = -1;
 		hitMarks = new Sprite[20];
-		anIntArray990 = new int[5];
+		characterDesignColours = new int[5];
 		aBoolean994 = false;
 		amountOrNameInput = "";
 		projectiles = new Deque();
@@ -20863,7 +21000,7 @@ public class Client extends GameEngine implements RSClient {
 	private int anInt986;
 	private Sprite[] hitMarks;
 	private int anInt989;
-	private final int[] anIntArray990;
+	private final int[] characterDesignColours;
 	private final boolean aBoolean994;
 	private int cinematicCamXViewpointLoc;
 	private int cinematicCamYViewpointLoc;
@@ -20959,7 +21096,7 @@ public class Client extends GameEngine implements RSClient {
 	private int[] anIntArray1073;
 
 	private Sprite[] mapDots;
-	private int anInt1079;
+	private int loadingProgress;
 	private boolean loadingMap;
 	private String[] friendsList;
 	private Buffer inStream;
@@ -21065,7 +21202,7 @@ public class Client extends GameEngine implements RSClient {
 	public static int chatAreaScrollLength;
 	private String promptInput;
 	private int mouseClickCount;
-	private int[][][] tileHeights;
+	public int[][][] tileHeights;
 	private long aLong1215;
 	private int loginScreenCursorPos;
 	private final Sprite[] modIcons;
@@ -21799,7 +21936,7 @@ public class Client extends GameEngine implements RSClient {
 		}
 		return chatMessage;
 	}
-	public int gameState = -1;
+	public int gameState = 0;
 	@Override
 	public GameState getGameState() {
 		return GameState.of(gameState);
@@ -21815,11 +21952,78 @@ public class Client extends GameEngine implements RSClient {
 		return gameState;
 	}
 
-	@Override
-	public void setRSGameState(int state) {
-		gameState = state;
+	public static boolean clearLoginScreen;
+
+	public static void setupLoginScreen() {
+		if (clearLoginScreen) { // L: 183
+
+		} else {
+
+			StaticSound.update();
+			clearLoginScreen = true;
+		}
+
+
 	}
 
+	@Override
+	public void setRSGameState(int state) {
+		if (state != gameState) {
+			if (gameState == 30) {
+				//Updates Widget does not have on 317
+			}
+
+			if (gameState == 0) {
+				//Resets fonts dont need for 317
+			}
+
+			if (state == 20 || state == 40 || state == 45 || state == 50) {
+				//loginStage = 0;
+			}
+
+			if (state != 20 && state != 40) {
+				//Resets some Socket
+			}
+
+			if (state != 5 && state != 10) { // L: 1270
+				if (state == 20) { // L: 1278
+					setupLoginScreen();
+				} else if (state == 11) { // L: 1282
+					setupLoginScreen();
+				} else if (state == 50) { // L: 1285
+					setupLoginScreen();
+				} else if (clearLoginScreen) { // L: 1290
+					StaticSound.clear();
+					clearLoginScreen = false;
+				}
+			} else {
+				setupLoginScreen();
+			}
+
+			jagexNetThread.writePacket(true);
+
+			gameStateChanged(0);
+			gameState = state;
+
+		}
+	}
+
+	public static void gameStateChanged(int idx) {
+		GameState gameState = Client.instance.getGameState();
+		Client.instance.getLogger().debug("Game state changed: {}", gameState);
+		GameStateChanged gameStateChange = new GameStateChanged();
+		gameStateChange.setGameState(gameState);
+		Client.instance.getCallbacks().post(gameStateChange);
+
+		if (gameState == GameState.LOGGED_IN) {
+			if (Client.instance.getLocalPlayer() == null) {
+				return;
+			}
+
+		} else if (gameState == GameState.LOGIN_SCREEN) {
+			//Laod Varbits
+		}
+	}
 	@Override
 	public void setCheckClick(boolean checkClick) {
 		scene.clicked = checkClick;
@@ -21837,13 +22041,8 @@ public class Client extends GameEngine implements RSClient {
 
 	@Override
 	public void setGameState(GameState state) {
-		assert this.isClientThread() : "setGameState must be called on client thread";
-		gameState = state.getState();
-		GameStateChanged event = new GameStateChanged();
-		event.setGameState(state);
-		if(callbacks != null) {
-			callbacks.post(event);
-		}
+		System.out.println("Setting state too " + state.name());
+		setGameState(state.getState());
 	}
 
 	@Override
@@ -21853,7 +22052,7 @@ public class Client extends GameEngine implements RSClient {
 
 	@Override
 	public void setGameState(int gameState) {
-		loadingStage = gameState;
+		setRSGameState(gameState);
 	}
 
 	@Override
@@ -22723,7 +22922,7 @@ public class Client extends GameEngine implements RSClient {
 
 	@Override
 	public int getRevision() {
-		return 1;
+		return 221;
 	}
 
 	@Override
@@ -23075,7 +23274,6 @@ public class Client extends GameEngine implements RSClient {
 		updateGraphicObjects();
 		return (RuneLiteObject)runeLiteObject;
 	}
-	public ReferenceCache tmpModelDataCache = new ReferenceCache(64);
 	public Model loadModel(int id) {
 		return Model.getModel(id);
 	}
@@ -23095,10 +23293,10 @@ public class Client extends GameEngine implements RSClient {
 
 	@Override
 	public net.runelite.api.Animation loadAnimation(int id) {
-		SeqDefinition animation = SeqDefinition.get(id);
+		SequenceDefinition animation = SequenceDefinition.get(id);
 		if(animation == null)
 			System.out.println("loadAnimation failed for " + id);
-		return SeqDefinition.get(id);
+		return SequenceDefinition.get(id);
 	}
 
 	@Override
@@ -23225,12 +23423,12 @@ public class Client extends GameEngine implements RSClient {
 			}
 
 			@Override
-			public Node getNext() {
+			public net.runelite.api.Node getNext() {
 				return null;
 			}
 
 			@Override
-			public Node getPrevious() {
+			public net.runelite.api.Node getPrevious() {
 				return null;
 			}
 

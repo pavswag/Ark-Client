@@ -22,7 +22,7 @@ public final class IndexedImage extends Rasterizer2D implements RSIndexedSprite 
 	public IndexedImage(FileArchive archive, String s, int i) {
 		Buffer image = new Buffer(archive.readFile(s + ".dat"));
 		Buffer meta = new Buffer(archive.readFile("index.dat"));
-		meta.currentPosition = image.readUShort();
+		meta.pos = image.readUShort();
 		width = meta.readUShort();
 		height = meta.readUShort();
 
@@ -34,9 +34,9 @@ public final class IndexedImage extends Rasterizer2D implements RSIndexedSprite 
 		}
 
 		for (int l = 0; l < i; l++) {
-			meta.currentPosition += 2;
-			image.currentPosition += meta.readUShort() * meta.readUShort();
-			meta.currentPosition++;
+			meta.pos += 2;
+			image.pos += meta.readUShort() * meta.readUShort();
+			meta.pos++;
 		}
 		xOffset = meta.readUnsignedByte();
 		yOffset = meta.readUnsignedByte();

@@ -1,15 +1,15 @@
 package com.client.definitions.anims.decoder.impl;
 
 import com.client.InputBuffer;
-import com.client.definitions.SeqDefinition;
+import com.client.definitions.SequenceDefinition;
 import com.client.definitions.anims.decoder.Decoder;
 
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class SeqDefinitionDecoderOSRS implements Decoder<SeqDefinition> {
+public class SeqDefinitionDecoderOSRS implements Decoder<SequenceDefinition> {
     @Override
-    public void decode(InputBuffer buffer, SeqDefinition definition) {
+    public void decode(InputBuffer buffer, SequenceDefinition definition) {
         while (true) {
             int opcode = buffer.readUnsignedByte();
 

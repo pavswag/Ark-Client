@@ -1,6 +1,5 @@
 package com.client;
 
-import com.client.definitions.anims.datastructure.Node;
 import net.runelite.mapping.Export;
 import net.runelite.mapping.Implements;
 import net.runelite.mapping.ObfuscatedName;
@@ -26,6 +25,10 @@ public class NodeDeque {
         this.sentinel = new Node();
         this.sentinel.previous = this.sentinel;
         this.sentinel.next = this.sentinel;
+    }
+
+    public boolean method2028() {
+        return this.sentinel.previous == this.sentinel;
     }
 
     @ObfuscatedName("az")

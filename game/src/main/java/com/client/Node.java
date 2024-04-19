@@ -3,7 +3,7 @@ package com.client;
 
 import net.runelite.rs.api.RSNode;
 
-public class Linkable implements RSNode {
+public class Node implements RSNode {
 
 	@Override
 	public RSNode getNext() {
@@ -18,6 +18,11 @@ public class Linkable implements RSNode {
 	@Override
 	public RSNode getPrevious() {
 		return previous;
+	}
+
+
+	public boolean hasNext() {
+		return this.next != null;
 	}
 
 	public void remove() {
@@ -35,10 +40,10 @@ public class Linkable implements RSNode {
 
 	}
 
-	public Linkable() {
+	public Node() {
 	}
 
 	public long key;
-	public Linkable previous;
-	public Linkable next;
+	public Node previous;
+	public Node next;
 }

@@ -6,12 +6,12 @@ package com.client;
 public final class Deque {
 
 	public Deque() {
-		head = new Linkable();
+		head = new Node();
 		head.previous = head;
 		head.next = head;
 	}
 
-	public void insertHead(Linkable node) {
+	public void insertHead(Node node) {
 		if (node.next != null)
 			node.remove();
 		node.next = head.next;
@@ -20,7 +20,7 @@ public final class Deque {
 		node.previous.next = node;
 	}
 
-	public void insertTail(Linkable node) {
+	public void insertTail(Node node) {
 		if (node == null) {
 			return;
 		}
@@ -32,7 +32,7 @@ public final class Deque {
 		node.previous.next = node;
 	}
 
-	public final void method894(Linkable class3, Linkable class3_27_) {
+	public final void method894(Node class3, Node class3_27_) {
 		if (class3.previous != null) {
 			class3.remove();
 		}
@@ -44,8 +44,8 @@ public final class Deque {
 	}
 
 	
-	public Linkable popHead() {
-		Linkable node = head.previous;
+	public Node popHead() {
+		Node node = head.previous;
 		if (node == head) {
 			return null;
 		} else {
@@ -54,8 +54,8 @@ public final class Deque {
 		}
 	}
 
-	public Linkable reverseGetFirst() {
-		Linkable node = head.previous;
+	public Node reverseGetFirst() {
+		Node node = head.previous;
 		if (node == head) {
 			current = null;
 			return null;
@@ -65,8 +65,8 @@ public final class Deque {
 		}
 	}
 
-	public Linkable getFirst() {
-		Linkable node = head.next;
+	public Node getFirst() {
+		Node node = head.next;
 		if (node == head) {
 			current = null;
 			return null;
@@ -76,8 +76,8 @@ public final class Deque {
 		}
 	}
 
-	public Linkable reverseGetNext() {
-		Linkable node = current;
+	public Node reverseGetNext() {
+		Node node = current;
 		if (node == head) {
 			current = null;
 			return null;
@@ -87,8 +87,8 @@ public final class Deque {
 		}
 	}
 
-	public Linkable getNext() {
-		Linkable node = current;
+	public Node getNext() {
+		Node node = current;
 		if (node == head) {
 			current = null;
 			return null;
@@ -101,13 +101,13 @@ public final class Deque {
 		if (head.previous == head)
 			return;
 		do {
-			Linkable node = head.previous;
+			Node node = head.previous;
 			if (node == head)
 				return;
 			node.remove();
 		} while (true);
 	}
 
-	public final Linkable head;
-	private Linkable current;
+	public final Node head;
+	private Node current;
 }

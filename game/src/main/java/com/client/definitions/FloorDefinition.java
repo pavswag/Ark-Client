@@ -1,13 +1,19 @@
 package com.client.definitions;
 
+import com.client.Buffer;
+import com.client.EvictingDualNodeHashTable;
 import com.client.FileArchive;
+import com.client.cache.DualNode;
+import com.client.js5.Js5List;
+import com.client.js5.util.Js5ConfigType;
 
 import java.nio.ByteBuffer;
 
 
-public class FloorDefinition {
+public class FloorDefinition extends DualNode {
 
-    public static FloorDefinition[] overlays;
+    public static EvictingDualNodeHashTable underlayCache = new EvictingDualNodeHashTable(64);
+    public static EvictingDualNodeHashTable overlayCache = new EvictingDualNodeHashTable(64);
     public static FloorDefinition[] underlays;
 
     public int rgb = 0;
@@ -30,32 +36,31 @@ public class FloorDefinition {
 
     public int secondaryLightness;
 
-    public static void init(FileArchive archive) {
-        ByteBuffer buffer = ByteBuffer.wrap(archive.readFile("flo.dat"));
-        int underlayAmount = buffer.getShort();
-        underlays = new FloorDefinition[underlayAmount];
-
-        for (int i = 0; i < underlayAmount; i++) {
-            if (underlays[i] == null) {
-                underlays[i] = new FloorDefinition();
+    public static FloorDefinition lookupUnderlay(int floorID) {
+        FloorDefinition floorDef = (FloorDefinition) underlayCache.get(floorID);
+        if (floorDef == null) {
+            byte[] data = Js5List.configs.takeFile(Js5ConfigType.UNDERLAY, floorID);
+            floorDef = new FloorDefinition();
+            if (data != null) {
+                floorDef.readValuesUnderlay(new Buffer(data));
             }
-
-            underlays[i].readValuesUnderlay(buffer);
-            underlays[i].generateHsl(true);
+            floorDef.generateHsl(true);
+            underlayCache.put(floorDef, floorID);
         }
-
-        int overlayAmount = buffer.getShort();
-        overlays = new FloorDefinition[overlayAmount];
-
-        for (int i = 0; i < overlayAmount; i++) {
-            if (overlays[i] == null) {
-                overlays[i] = new FloorDefinition();
+        return floorDef;
+    }
+    public static FloorDefinition lookupOverlay(int floorID) {
+        FloorDefinition floorDef = (FloorDefinition) overlayCache.get(floorID);
+        if (floorDef == null) {
+            byte[] data = Js5List.configs.takeFile(Js5ConfigType.OVERLAY, floorID);
+            floorDef = new FloorDefinition();
+            if (data != null) {
+                floorDef.readValuesOverlay(new Buffer(data));
             }
-
-            overlays[i].readValuesOverlay(buffer);
-            overlays[i].postDecode();
+            floorDef.postDecode();
+            overlayCache.put(floorDef, floorID);
         }
-        System.out.println("Floors read -> (" + underlayAmount + " underlays) | (" + overlayAmount + " overlays)");
+        return floorDef;
     }
 
 
@@ -85,32 +90,32 @@ public class FloorDefinition {
     }
 
 
-    private void readValuesUnderlay(ByteBuffer buffer) {
+    private void readValuesUnderlay(Buffer buffer) {
         for (;;) {
-            int opcode = buffer.get();
+            int opcode = buffer.readByte();
             if (opcode == 0) {
                 break;
             } else if (opcode == 1) {
-                rgb = ((buffer.get() & 0xff) << 16) + ((buffer.get() & 0xff) << 8) + (buffer.get() & 0xff);
+                rgb = ((buffer.readByte() & 0xff) << 16) + ((buffer.readByte() & 0xff) << 8) + (buffer.readByte() & 0xff);
             } else {
                 System.out.println("Error unrecognised underlay code: " + opcode);
             }
         }
     }
 
-    private void readValuesOverlay(ByteBuffer buffer) {
+    private void readValuesOverlay(Buffer buffer) {
         for (;;) {
-            int opcode = buffer.get();
+            int opcode = buffer.readByte();
             if (opcode == 0) {
                 break;
             } else if (opcode == 1) {
-                rgb = ((buffer.get() & 0xff) << 16) + ((buffer.get() & 0xff) << 8) + (buffer.get() & 0xff);
+                rgb = ((buffer.readByte() & 0xff) << 16) + ((buffer.readByte() & 0xff) << 8) + (buffer.readByte() & 0xff);
             } else if (opcode == 2) {
-                texture = buffer.get() & 0xff;
+                texture = buffer.readByte() & 0xff;
             } else if (opcode == 5) {
                 hideUnderlay = false;
             } else if (opcode == 7) {
-                secondaryRgb = ((buffer.get() & 0xff) << 16) + ((buffer.get() & 0xff) << 8) + (buffer.get() & 0xff);
+                secondaryRgb = ((buffer.readByte() & 0xff) << 16) + ((buffer.readByte() & 0xff) << 8) + (buffer.readByte() & 0xff);
             } else {
                 System.out.println("Error unrecognised overlay code: " + opcode);
             }

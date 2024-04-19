@@ -1,5 +1,6 @@
 package com.client;
 
+import com.client.audio.ObjectSound;
 import com.client.definitions.FloorDefinition;
 import com.client.definitions.ObjectDefinition;
 import com.client.utilities.ChunkUtil;
@@ -118,10 +119,7 @@ public final class MapRegion {
 						if (k9 >= 0 && k9 < regionSizeX) {
 							int l12 = underlays[z][k9][i8] & 0x7FFF;
 							if (l12 > 0) {
-								if (l12 > FloorDefinition.underlays.length) {
-									l12 = FloorDefinition.underlays.length;
-								}
-								FloorDefinition flo = FloorDefinition.underlays[l12 - 1];
+								FloorDefinition flo = FloorDefinition.lookupUnderlay(l12 - 1);
 								hues[i8] += flo.blendHue;
 								saturations[i8] += flo.saturation;
 								luminances[i8] += flo.luminance;
@@ -133,7 +131,7 @@ public final class MapRegion {
 						if (i13 >= 0 && i13 < regionSizeX) {
 							int i14 = underlays[z][i13][i8] & 0x7FFF;
 							if (i14 > 0) {
-								FloorDefinition flo_1 = FloorDefinition.underlays[i14 - 1];
+								FloorDefinition flo_1 = FloorDefinition.lookupUnderlay(i14 - 1);
 								hues[i8] -= flo_1.blendHue;
 								saturations[i8] -= flo_1.saturation;
 								luminances[i8] -= flo_1.luminance;
@@ -199,7 +197,7 @@ public final class MapRegion {
 										boolean flag = true;
 										if (l18 == 0 && overlayTypes[z][l6][k17] != 0)
 											flag = false;
-										if (i19 > 0 && !FloorDefinition.overlays[i19 - 1].hideUnderlay)
+										if (i19 > 0 && !FloorDefinition.lookupOverlay(i19 - 1).hideUnderlay)
 											flag = false;
 										if (flag && j19 == k19 && j19 == l19 && j19 == i20)
 											anIntArrayArrayArray135[z][l6][k17] |= 0x924;
@@ -214,10 +212,7 @@ public final class MapRegion {
 
 										int k22 = overlayTypes[z][l6][k17] + 1;
 										byte byte4 = overlayOrientations[z][l6][k17];
-										if (i19 - 1 > FloorDefinition.overlays.length) {
-											i19 = FloorDefinition.overlays.length;
-										}
-										FloorDefinition overlay_flo = FloorDefinition.overlays[i19 - 1];
+										FloorDefinition overlay_flo = FloorDefinition.lookupOverlay(i19 - 1);
 										int texture = overlay_flo.texture;
 										int encodedTile;
 										int minimapColor;
@@ -1120,6 +1115,12 @@ public final class MapRegion {
 		}
 		key |= (long) j1 << 32;
 		byte byte1 = (byte) ((rotation << 6) + type);
+		if (definition.hasSound()) {
+			System.out.println(definition.getId() + " has sound");
+			System.out.println("Local player x/y = " + Client.localPlayer.x + "/" + Client.localPlayer.y);
+			System.out.println("Object x/y/z=" + regionX + "/" + regionY + "/" + k1);
+			ObjectSound.addObjectSounds(k1, regionX, regionY, definition, rotation);
+		}
 		if (type == 22) {
 			Object obj;
 			if (definition.animation == -1 && definition.configs == null) {

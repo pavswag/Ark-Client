@@ -155,13 +155,13 @@ public class RSInterface implements RSWidget {
 
 	public static void unpack(FileArchive streamLoader, TextDrawingArea textDrawingAreas[],
 							  FileArchive streamLoader_1, RSFont[] newFontSystem) {
-		aMRUNodes_238 = new ReferenceCache(50000);
+		aMRUNodes_238 = new EvictingDualNodeHashTable(50000);
 		Buffer stream = new Buffer(streamLoader.readFile("data"));
 		newFonts = newFontSystem;
 		int i = -1;
 		int j = stream.readUShort();
 		interfaceCache = new RSInterface[j + 80000];
-		while (stream.currentPosition < stream.payload.length) {
+		while (stream.pos < stream.payload.length) {
 			int k = stream.readUShort();
 			if (k == 65535) {
 				i = stream.readUShort();
@@ -4031,7 +4031,7 @@ public class RSInterface implements RSWidget {
 		int j = 5;// was parameter
 		if (flag)
 			return;
-		aMRUNodes_264.unlinkAll();
+		aMRUNodes_264.clear();
 		if (model != null && j != 4)
 			aMRUNodes_264.put(model, (j << 16) + i);
 	}
@@ -5523,7 +5523,7 @@ public class RSInterface implements RSWidget {
 	public int spellUsableOn;
 	public int autocastSpellId;
 	public boolean autocastDefensive;
-	private static ReferenceCache aMRUNodes_238;
+	private static EvictingDualNodeHashTable aMRUNodes_238;
 	public int anInt239;
 	public int children[];
 	public int childX[];
@@ -5557,7 +5557,7 @@ public class RSInterface implements RSWidget {
 	public int scrollMax;
 	public int type;
 	public int anInt263;
-	private static final ReferenceCache aMRUNodes_264 = new ReferenceCache(30);
+	private static final EvictingDualNodeHashTable aMRUNodes_264 = new EvictingDualNodeHashTable(30);
 	public int transparency = 0;
 	public int anInt265;
 	public boolean isMouseoverTriggered;

@@ -1,10 +1,18 @@
 package com.client;
 
+import com.client.audio.StaticSound;
 import com.client.cache.IterableNodeHashTable;
-import com.client.definitions.SeqDefinition;
+import com.client.definitions.SequenceDefinition;
 
 public class Entity extends Renderable {
 
+	void playAnimationSound(SequenceDefinition var0, int var1, int var2, int var3) {
+		StaticSound.playAnimationSound(var0,var1,var2,var3,this);
+	}
+
+	void playSkeletalSounds(SequenceDefinition var0, int var1, int var2, int var3) {
+		StaticSound.playSkeletalSounds(var0,var1,var2,var3,this);
+	}
 	public boolean isLocalPlayer() {
 		return this == Client.localPlayer;
 	}
@@ -36,7 +44,7 @@ public class Entity extends Renderable {
 	}
 
 	public final void setPos(int i, int j, boolean flag) {
-		if (primarySeqID != -1 && SeqDefinition.get(primarySeqID).idleStyle == 1)
+		if (primarySeqID != -1 && SequenceDefinition.get(primarySeqID).idleStyle == 1)
 			primarySeqID = -1;
 		if (!flag) {
 			int k = i - pathX[0];
@@ -108,7 +116,7 @@ public class Entity extends Renderable {
 			j++;
 			k--;
 		}
-		if (primarySeqID != -1 && SeqDefinition.get(primarySeqID).idleStyle == 1)
+		if (primarySeqID != -1 && SequenceDefinition.get(primarySeqID).idleStyle == 1)
 			primarySeqID = -1;
 		if (smallXYIndex < 9)
 			smallXYIndex++;

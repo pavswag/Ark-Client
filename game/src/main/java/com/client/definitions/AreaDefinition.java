@@ -1,128 +1,215 @@
 package com.client.definitions;
 
-import com.client.Buffer;
-import com.client.Client;
-import com.client.FileArchive;
-import com.client.Sprite;
-import com.client.sign.Signlink;
+import com.client.*;
+import com.client.cache.DualNode;
+import com.client.util.EnumUtils;
+import net.runelite.rs.api.RSSpritePixels;
+import net.runelite.rs.api.RSWorldMapElement;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.HashMap;
 
-public final class AreaDefinition {
+public final class AreaDefinition extends DualNode implements RSWorldMapElement {
 
-    public static int size;
-    public static AreaDefinition[] cache;
-    public static HashMap<Integer, Sprite> sprites = new HashMap<>();
-    private static int cacheIndex;
-    private static Buffer area_data;
-    private static int[] indices;
+    public static AreaDefinition[] definitions;
 
-    public int id;
-    public int spriteId = -1;
-    public int field3294 = -1;
-    public String name = "";
-    public int fontColor = -1;
-    public int field3297 = -1;
-    public String actions[];
-    public int field3310 = -1;
+    public static EvictingDualNodeHashTable cachedSprites = new EvictingDualNodeHashTable(256);
 
+    public final int objectId;
 
-    private AreaDefinition() {
-        id = -1;
+    public int sprite1 = -1;
+
+    int sprite2 = -1;
+
+    public String name;
+
+    public int fontColor;
+
+    public int textSize = 0;
+
+    public boolean field1936 = true;
+
+    public boolean field1940 = false;
+
+    public String[] options = new String[5];
+
+    public String menuTargetName;
+
+    int[] field1933;
+
+    int field1941 = Integer.MAX_VALUE;
+
+    int field1942 = Integer.MAX_VALUE;
+
+    int field1943 = Integer.MIN_VALUE;
+
+    int field1937 = Integer.MIN_VALUE;
+
+    public HorizontalAlignment horizontalAlignment;
+
+    public VerticalAlignment verticalAlignment;
+
+    int[] field1930;
+
+    byte[] field1948;
+
+    public int category;
+
+    public AreaDefinition(int objectID) {
+        this.horizontalAlignment = HorizontalAlignment.HorizontalAlignment_centered;
+        this.verticalAlignment = VerticalAlignment.VerticalAlignment_centered;
+        this.category = -1;
+        this.objectId = objectID;
     }
 
-    public static void clear() {
-        indices = null;
-        cache = null;
-        area_data = null;
+    public static AreaDefinition lookup(int objectID) {
+        return objectID >= 0 && objectID < AreaDefinition.definitions.length && AreaDefinition.definitions[objectID] != null ? AreaDefinition.definitions[objectID] : new AreaDefinition(objectID);
     }
 
-    public static void init(FileArchive archive) {
-        area_data = new Buffer(archive.readFile("areas.dat"));
-        Buffer stream = new Buffer(archive.readFile("areas.idx"));
-
-        size = stream.readUShort();
-
-        indices = new int[size];
-        int offset = 2;
-
-        for (int _ctr = 0; _ctr < size; _ctr++) {
-            indices[_ctr] = offset;
-            offset += stream.readUShort();
-        }
-
-        cache = new AreaDefinition[10];
-
-        for (int _ctr = 0; _ctr < 10; _ctr++) {
-            cache[_ctr] = new AreaDefinition();
-        }
-
-        System.out.println("Areas read -> " + size);
-
-    }
-
-    public static Sprite getImage(int sprite) {
-        return sprites.get(sprite);
-    }
-
-    public static AreaDefinition lookup(int area) {
-        for (int count = 0; count < 10; count++) {
-            if (cache[count].id == area) {
-                return cache[count];
+    public void decode(Buffer buffer) {
+        while(true) {
+            int opcodes = buffer.readUnsignedByte();
+            if (opcodes == 0) {
+                return;
             }
-        }
-        cacheIndex = (cacheIndex + 1) % 10;
-        AreaDefinition data = cache[cacheIndex];
-        try {
-            if (area >= 0) {
-                area_data.currentPosition = indices[area];
-                data.readValues(area_data);
 
-                if (!sprites.containsKey(data.spriteId)) {
-                    try {
-                        sprites.put(data.spriteId, new Sprite(Client.instance.mediaStreamLoader, "mapfunction", data.spriteId));
-                    } catch (Exception e) {
-                        System.out.println("Missing Sprite: " + data.spriteId + " Using Shop Icon");
-                        sprites.put(data.spriteId, new Sprite(Client.instance.mediaStreamLoader, "mapfunction", 0));
-                    }
+            this.decodeNext(buffer, opcodes);
+        }
+    }
+
+    void decodeNext(Buffer buffer, int opcode) {
+        if (opcode == 1) {
+            sprite1 = buffer.readNullableLargeSmart();
+        } else if (opcode == 2) {
+            sprite2 = buffer.readNullableLargeSmart();
+        } else if (opcode == 3) {
+            name = buffer.readStringCp1252NullTerminated();
+        } else if (opcode == 4) {
+            fontColor = buffer.readMedium();
+        } else if (opcode == 5) {
+            buffer.readMedium();
+        } else if (opcode == 6) {
+            textSize = buffer.readUnsignedByte();
+        } else {
+            int size;
+            if (opcode == 7) {
+                size = buffer.readUnsignedByte();
+                if ((size & 1) == 0) {
+                    field1936 = false;
+                }
+
+                if ((size & 2) == 2) {
+                    field1940 = true;
+                }
+            } else if (opcode == 8) {
+                buffer.readUnsignedByte();
+            } else if (opcode >= 10 && opcode <= 14) {
+                options[opcode - 10] = buffer.readStringCp1252NullTerminated();
+            } else if (opcode == 15) {
+                size = buffer.readUnsignedByte();
+                field1933 = new int[size * 2];
+
+                int index;
+                for(index = 0; index < size * 2; ++index) {
+                    field1933[index] = buffer.readShort();
+                }
+
+                buffer.readInt();
+                index = buffer.readUnsignedByte();
+                field1930 = new int[index];
+
+                int var5;
+                for(var5 = 0; var5 < field1930.length; ++var5) {
+                    field1930[var5] = buffer.readInt();
+                }
+
+                field1948 = new byte[size];
+
+                for(var5 = 0; var5 < size; ++var5) {
+                    field1948[var5] = buffer.readSignedByte();
+                }
+            } else if (opcode != 16) {
+                if (opcode == 17) {
+                    menuTargetName = buffer.readStringCp1252NullTerminated();
+                } else if (opcode == 18) {
+                    buffer.readNullableLargeSmart();
+                } else if (opcode == 19) {
+                    category = buffer.readUShort();
+                } else if (opcode == 21) {
+                    buffer.readInt();
+                } else if (opcode == 22) {
+                    buffer.readInt();
+                } else if (opcode == 23) {
+                    buffer.readUnsignedByte();
+                    buffer.readUnsignedByte();
+                    buffer.readUnsignedByte();
+                } else if (opcode == 24) {
+                    buffer.readShort();
+                    buffer.readShort();
+                } else if (opcode == 25) {
+                    buffer.readNullableLargeSmart();
+                } else if (opcode == 28) {
+                    buffer.readUnsignedByte();
+                } else if (opcode == 29) {
+                    HorizontalAlignment[] horizontalAlignment = new HorizontalAlignment[]{HorizontalAlignment.field2010, HorizontalAlignment.HorizontalAlignment_centered, HorizontalAlignment.field2008};
+                    this.horizontalAlignment = (HorizontalAlignment) EnumUtils.findEnumerated(horizontalAlignment, buffer.readUnsignedByte());
+                } else if (opcode == 30) {
+                    VerticalAlignment[] verticalAlignment = new VerticalAlignment[]{VerticalAlignment.field2073, VerticalAlignment.field2072, VerticalAlignment.VerticalAlignment_centered};
+                    this.verticalAlignment = (VerticalAlignment) EnumUtils.findEnumerated(verticalAlignment, buffer.readUnsignedByte());
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            AreaDefinition.lookup(1);
         }
 
-        return data;
     }
 
-    public void readValues(Buffer buffer) {
-        do {
-            int opCode = buffer.readUnsignedByte();
-            if (opCode == 0)
-                return;
-            if (opCode == 1)
-                spriteId = buffer.readShort();
-            else if (opCode == 2)
-                field3294 = buffer.readShort();
-            else if (opCode == 3)
-                name = buffer.readNewString();
-            else if (opCode == 4)
-                fontColor = buffer.readInt();
-            else if (opCode == 5)
-                field3297 = buffer.readInt();
-            else if (opCode == 6)
-                fontColor = buffer.readInt();
-            else if (opCode >= 6 && opCode < 11) {
-                if (actions  == null)
-                    actions = new String[5];
-                actions[opCode - 6] = buffer.readNewString();
-            } else if (opCode == 12)
-                field3310 = buffer.readInt();
 
-        } while (true);
+    public void init() {
+        if (this.field1933 != null) {
+            for(int var1 = 0; var1 < this.field1933.length; var1 += 2) {
+                if (this.field1933[var1] < this.field1941) {
+                    this.field1941 = this.field1933[var1];
+                } else if (this.field1933[var1] > this.field1943) {
+                    this.field1943 = this.field1933[var1];
+                }
+
+                if (this.field1933[var1 + 1] < this.field1942) {
+                    this.field1942 = this.field1933[var1 + 1];
+                } else if (this.field1933[var1 + 1] > this.field1937) {
+                    this.field1937 = this.field1933[var1 + 1];
+                }
+            }
+        }
     }
 
+    public Sprite getIconSprite() {
+        int spriteID = this.sprite1;
+        return this.getIconSprite(spriteID);
+    }
+
+
+    public Sprite getIconSprite(int spriteID) {
+        if (spriteID < 0) {
+            return null;
+        }
+
+        Sprite sprite = (Sprite) cachedSprites.get(spriteID);
+        if (sprite != null) {
+            return sprite;
+        }
+
+        sprite = Sprite.getSprite(spriteID, 0);
+        if (sprite != null) {
+            cachedSprites.put(sprite, spriteID);
+        }
+        return sprite;
+    }
+
+    public int getObjectId() {
+        return this.objectId;
+    }
+
+
+    @Override
+    public RSSpritePixels getMapIcon(boolean id) {
+        return getIconSprite();
+    }
 }

@@ -1,6 +1,6 @@
 package com.client.cache;
 
-import com.client.Linkable;
+import com.client.Node;
 
 import java.util.Iterator;
 
@@ -8,11 +8,11 @@ public class IterableNodeHashTableIterator implements Iterator {
 
     IterableNodeHashTable hashTable;
 
-    Linkable head;
+    Node head;
 
     int index;
 
-    Linkable last = null;
+    Node last = null;
 
     IterableNodeHashTableIterator(IterableNodeHashTable var1) {
         this.hashTable = var1;
@@ -26,7 +26,7 @@ public class IterableNodeHashTableIterator implements Iterator {
     }
 
     public Object next() {
-        Linkable var1;
+        Node var1;
         if (this.hashTable.buckets[this.index - 1] != this.head) {
             var1 = this.head;
             this.head = var1.previous;

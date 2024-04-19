@@ -82,7 +82,7 @@ public class InformationFile {
         stream.writeHiddenString(storedPassword);
 
         // Writes all bytes to the file from a new byte array which has been resized
-        FileOperations.writeFile(FILE_LOCATION.toString(), Arrays.copyOf(stream.payload, stream.currentPosition));
+        FileOperations.writeFile(FILE_LOCATION.toString(), Arrays.copyOf(stream.payload, stream.pos));
     }
 
     /**
@@ -108,7 +108,7 @@ public class InformationFile {
         Buffer stream = new Buffer(buffer);
 
         // Continues to read from the buffer until it can no longer
-        while (stream.currentPosition < buffer.length) {
+        while (stream.pos < buffer.length) {
 
             // Reads the first byte that determines what data we're reading
             int opcode = stream.readSignedByte();

@@ -1,7 +1,7 @@
 package com.client;
 
 import com.client.definitions.NpcDefinition;
-import com.client.definitions.SeqDefinition;
+import com.client.definitions.SequenceDefinition;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -34,10 +34,10 @@ public class PetSystem {
         this.name = entity.name;
         this.description = entity.description.getBytes();
         animation = entity.standingAnimation;
-        if (animationFrame >= SeqDefinition.get(animation).delays.length - 1) {
+        if (animationFrame >= SequenceDefinition.get(animation).delays.length - 1) {
             animationFrame = 0;
         }
-        animationDelay = SeqDefinition.get(animation).delays[animationFrame];
+        animationDelay = SequenceDefinition.get(animation).delays[animationFrame];
     }
 
     public static void petAnimationStep() {
@@ -45,7 +45,7 @@ public class PetSystem {
             return;
         }
         animationFrame++;
-        if (animationFrame >= SeqDefinition.get(animation).frameIDs.length) {
+        if (animationFrame >= SequenceDefinition.get(animation).frameIDs.length) {
             animationFrame = 0;
         }
     }

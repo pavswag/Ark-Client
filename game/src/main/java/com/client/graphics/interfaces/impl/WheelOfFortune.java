@@ -140,10 +140,10 @@ public class WheelOfFortune {
 
     private void notifyServer() {
         Client.stream.createFrame(124);
-        Client.stream.writeDWord(73331);
-        Client.stream.writeDWord(index);
-        Client.stream.writeDWord(index);
-        Client.stream.writeDWord(index);
+        Client.stream.writeInt(73331);
+        Client.stream.writeInt(index);
+        Client.stream.writeInt(index);
+        Client.stream.writeInt(index);
     }
 
 }

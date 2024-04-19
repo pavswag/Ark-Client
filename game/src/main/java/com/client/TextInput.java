@@ -43,10 +43,10 @@ final class TextInput {
 	}
 
 	public static String processText(String s) {
-		stream.currentPosition = 0;
+		stream.pos = 0;
 		method526(s, stream);
-		int j = stream.currentPosition;
-		stream.currentPosition = 0;
+		int j = stream.pos;
+		stream.pos = 0;
 		String s1 = method525(j, stream);
 		return s1;
 	}

@@ -4,11 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.Arrays;
 
-import com.client.Configuration;
-import com.client.ReferenceCache;
-import com.client.Model;
-import com.client.Buffer;
-import com.client.FileArchive;
+import com.client.*;
 
 public final class GraphicsDefinition {
 
@@ -32,7 +28,7 @@ public final class GraphicsDefinition {
 		cache[2267].id = 2267;
 		cache[2267].modelId = 60036;
 		cache[2267].animationId = 328;
-		cache[2267].animationSequence = SeqDefinition.get(cache[2267].animationId);
+		cache[2267].animationSequence = SequenceDefinition.get(cache[2267].animationId);
 
 		if (Configuration.dumpDataLists) {
 			gfxDump();
@@ -77,7 +73,7 @@ public final class GraphicsDefinition {
 				modelId = buffer.readUShort();
 			} else if (opcode == 2) {
 				animationId = buffer.readUShort();
-				animationSequence = SeqDefinition.get(animationId);
+				animationSequence = SequenceDefinition.get(animationId);
 			} else if (opcode == 4) {
 				resizeXY = buffer.readUShort();
 			} else if (opcode == 5) {
@@ -173,7 +169,7 @@ public final class GraphicsDefinition {
 	public int id;
 	private int modelId;
 	public int animationId;
-	public SeqDefinition animationSequence;
+	public SequenceDefinition animationSequence;
 	public int[] recolorToFind;
 	public int[] recolorToReplace;
 	public int resizeXY;
@@ -181,6 +177,6 @@ public final class GraphicsDefinition {
 	public int rotation;
 	public int modelBrightness;
 	public int modelShadow;
-	public static ReferenceCache aMRUNodes_415 = new ReferenceCache(30);
+	public static EvictingDualNodeHashTable aMRUNodes_415 = new EvictingDualNodeHashTable(30);
 
 }

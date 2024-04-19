@@ -1,9 +1,7 @@
 package com.client;
 
-import com.client.definitions.SeqDefinition;
+import com.client.definitions.SequenceDefinition;
 import net.runelite.api.Animation;
-import net.runelite.api.Client;
-import net.runelite.api.GraphicsObject;
 import net.runelite.api.Model;
 import net.runelite.api.Perspective;
 import net.runelite.api.RuneLiteObject;
@@ -13,7 +11,7 @@ import net.runelite.api.events.GraphicsObjectCreated;
 public class RuneLiteObjectImpl extends GraphicObject implements RuneLiteObject {
     private Model model;
 
-    private SeqDefinition animation;
+    private SequenceDefinition animation;
 
     private boolean shouldLoop;
 
@@ -30,14 +28,14 @@ public class RuneLiteObjectImpl extends GraphicObject implements RuneLiteObject 
     public void setAnimation(Animation animation) {
         setFrame(0);
         setFrameCycle(0);
-        this.animation = (SeqDefinition) animation;
+        this.animation = (SequenceDefinition) animation;
     }
 
     protected com.client.Model getDisplayedModel() {
         return (com.client.Model) this.model;
     }
 
-    protected SeqDefinition getDisplayedAnimation() {
+    protected SequenceDefinition getDisplayedAnimation() {
         return this.animation;
     }
 
@@ -66,7 +64,7 @@ public class RuneLiteObjectImpl extends GraphicObject implements RuneLiteObject 
                 client.getCallbacks().post(new GraphicsObjectCreated(this));
                 client.incompleteAnimables.insertHead(this);
             } else {
-                unlinkSub();
+                unlinkDual();
             }
         }
     }

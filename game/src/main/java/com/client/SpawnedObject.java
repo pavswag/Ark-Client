@@ -3,7 +3,7 @@ package com.client;
 // Jad home page: http://www.kpdus.com/jad.html
 // Decompiler options: packimports(3) 
 
-final class SpawnedObject extends Linkable {
+final class SpawnedObject extends Node {
 
 	SpawnedObject() {
 		getLongetivity = -1;

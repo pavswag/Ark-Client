@@ -261,7 +261,7 @@ final class Synthesizer {
         volume.decode(stream);
         int option = stream.readUnsignedByte();
         if (option != 0) {
-            stream.currentPosition--;
+            stream.pos--;
             pitchModifier = new Envelope();
             pitchModifier.decode(stream);
             pitchModifierAmplitude = new Envelope();
@@ -269,7 +269,7 @@ final class Synthesizer {
         }
         option = stream.readUnsignedByte();
         if (option != 0) {
-            stream.currentPosition--;
+            stream.pos--;
             volumeMultiplier = new Envelope();
             volumeMultiplier.decode(stream);
             volumeMultiplierAmplitude = new Envelope();
@@ -277,7 +277,7 @@ final class Synthesizer {
         }
         option = stream.readUnsignedByte();
         if (option != 0) {
-            stream.currentPosition--;
+            stream.pos--;
             release = new Envelope();
             release.decode(stream);
             attack = new Envelope();

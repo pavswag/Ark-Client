@@ -1,10 +1,11 @@
 package com.client;
 
+import com.client.cache.DualNode;
 import net.runelite.rs.api.RSModel;
 import net.runelite.rs.api.RSNode;
 import net.runelite.rs.api.RSRenderable;
 
-public class Renderable extends Cacheable implements RSRenderable {
+public class Renderable extends DualNode implements RSRenderable {
 
     public boolean hidden = false;
 

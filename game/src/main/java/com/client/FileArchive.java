@@ -2,8 +2,6 @@ package com.client;
 import java.io.*;
 import java.util.zip.*;
 
-import com.client.sign.Signlink;
-
 public class FileArchive {
 
 	public FileArchive(byte[] b, String s) {
@@ -74,7 +72,7 @@ public class FileArchive {
 		anIntArray729 = new int[dataSize];
 		anIntArray730 = new int[dataSize];
 		anIntArray731 = new int[dataSize];
-		int k = stream.currentPosition + dataSize * 10;
+		int k = stream.pos + dataSize * 10;
 		for (int l = 0; l < dataSize; l++) {
 			archiveNameHash[l] = stream.readDWord();
 			anIntArray729[l] = stream.read3Bytes();

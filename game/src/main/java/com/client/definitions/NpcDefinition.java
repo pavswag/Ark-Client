@@ -35,7 +35,7 @@ public final class NpcDefinition implements RSNPCComposition {
 
         anInt56 = (anInt56 + 1) % 20;
         NpcDefinition entityDef = cache[anInt56] = new NpcDefinition();
-        stream.currentPosition = streamIndices[i];
+        stream.pos = streamIndices[i];
         entityDef.npcId = i;
         entityDef.readValues(stream);
         if (i == Npcs.BOB_BARTER_HERBS) {
@@ -1672,7 +1672,7 @@ public final class NpcDefinition implements RSNPCComposition {
         return model_1;
     }
 
-    public Model getAnimatedModelSkeletal(SeqDefinition primary, SeqDefinition secondary, int primaryTick, int secondaryTick) {
+    public Model getAnimatedModelSkeletal(SequenceDefinition primary, SequenceDefinition secondary, int primaryTick, int secondaryTick) {
         if (configs != null) {
             NpcDefinition entityDef = method161();
             if (entityDef == null)
@@ -1858,7 +1858,7 @@ public final class NpcDefinition implements RSNPCComposition {
     public int contrast;
     public boolean aBoolean93;
     public int[] models;
-    public static ReferenceCache mruNodes = new ReferenceCache(70);
+    public static EvictingDualNodeHashTable mruNodes = new EvictingDualNodeHashTable(70);
     public int[] anIntArray76;
 
     @Override

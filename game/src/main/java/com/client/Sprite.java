@@ -8,9 +8,8 @@ import java.util.Hashtable;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
-import com.client.Rasterizer2D;
 import com.client.engine.impl.MouseHandler;
-import com.client.graphics.sprites.OsrsSprite;
+import com.client.js5.Js5List;
 import com.client.sign.Signlink;
 import com.client.utilities.FileUtils;
 import net.runelite.rs.api.RSSpritePixels;
@@ -414,7 +413,7 @@ public class Sprite extends Rasterizer2D implements RSSpritePixels {
 		Buffer dataBuffer = new Buffer(archive.readFile(name + ".dat"));
 		Buffer indexBuffer = new Buffer(archive.readFile("index.dat"));
 
-		indexBuffer.currentPosition = dataBuffer.readUShort();
+		indexBuffer.pos = dataBuffer.readUShort();
 
 		maxWidth = indexBuffer.readUShort();
 		maxHeight = indexBuffer.readUShort();
@@ -428,9 +427,9 @@ public class Sprite extends Rasterizer2D implements RSSpritePixels {
 		}
 
 		for (int index = 0; index < i; index++) {
-			indexBuffer.currentPosition += 2;
-			dataBuffer.currentPosition += indexBuffer.readUShort() * indexBuffer.readUShort();
-			indexBuffer.currentPosition++;
+			indexBuffer.pos += 2;
+			dataBuffer.pos += indexBuffer.readUShort() * indexBuffer.readUShort();
+			indexBuffer.pos++;
 		}
 
 		drawOffsetX = indexBuffer.readUnsignedByte();
@@ -1381,4 +1380,56 @@ public class Sprite extends Rasterizer2D implements RSSpritePixels {
 		img.setRGB(0, 0, width, height, newPixels, 0, width);
 	}
 
+
+	public static EvictingDualNodeHashTable cachedSprites = new EvictingDualNodeHashTable(256);
+
+	public static Sprite getSprite(int id, int index) {
+
+		Sprite sprite = (Sprite) cachedSprites.get(id);
+		if (sprite != null) {
+			return sprite;
+		}
+
+		byte[] spriteData = Js5List.sprites.takeFile(id, index);
+		boolean decoded;
+		if (spriteData == null) {
+			decoded = false;
+		} else {
+			SpriteData.decode(spriteData);
+			decoded = true;
+		}
+		if (!decoded) {
+			return Sprite.EMPTY_SPRITE;
+		} else {
+			Sprite image = generateImage();
+			cachedSprites.put(image, id);
+			return image;
+		}
+	}
+	static Sprite generateImage() {
+		Sprite sprite = new Sprite();
+		sprite.maxWidth = SpriteData.spriteWidth;
+		sprite.maxHeight = SpriteData.spriteHeight;
+		sprite.myWidth = SpriteData.spriteWidth;
+		sprite.myHeight = SpriteData.spriteHeight;
+		sprite.drawOffsetX = SpriteData.xOffsets[0];
+		sprite.drawOffsetY = SpriteData.yOffsets[0];
+		sprite.width = SpriteData.spriteWidths[0];
+		sprite.height = SpriteData.spriteHeights[0];
+		int totalPixels = sprite.width * sprite.height;
+		byte[] pixels = SpriteData.pixels[0];
+		sprite.pixels = new int[totalPixels];
+
+		for(int currentPixel = 0; currentPixel < totalPixels; ++currentPixel) {
+			sprite.pixels[currentPixel] = SpriteData.spritePalette[pixels[currentPixel] & 255];
+		}
+
+		SpriteData.xOffsets = null;
+		SpriteData.yOffsets = null;
+		SpriteData.spriteWidths = null;
+		SpriteData.spriteHeights = null;
+		SpriteData.spritePalette = null;
+		SpriteData.pixels = null;
+		return sprite;
+	}
 }

@@ -1,6 +1,7 @@
 package com.client;
 
 
+import com.client.cache.DualNode;
 import net.runelite.rs.api.RSRasterizer2D;
 
 import java.awt.*;
@@ -8,7 +9,7 @@ import java.awt.geom.Arc2D;
 
 import static com.client.MathUtils.map;
 
-public class Rasterizer2D extends Cacheable implements RSRasterizer2D {
+public class Rasterizer2D extends DualNode implements RSRasterizer2D {
 
     public static void drawTransparentBoxOutline(int leftX, int topY, int width, int height, int rgbColour, int opacity) {
         drawTransparentHorizontalLine(leftX, topY, width, rgbColour, opacity);

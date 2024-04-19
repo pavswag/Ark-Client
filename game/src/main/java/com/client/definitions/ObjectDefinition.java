@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.client.*;
-import com.client.definitions.anims.datastructure.EvictingDualNodeHashTable;
 import lombok.ToString;
 import net.runelite.api.IterableHashTable;
 import net.runelite.rs.api.RSBuffer;
@@ -36,7 +35,7 @@ public final class ObjectDefinition implements RSObjectComposition {
 
 		cacheIndex = (cacheIndex + 1) % 20;
 		ObjectDefinition objectDef = cache[cacheIndex];
-		stream.currentPosition = streamIndices[i];
+		stream.pos = streamIndices[i];
 		objectDef.type = i;
 		objectDef.setDefaults();
 		objectDef.decode(stream);
@@ -747,7 +746,7 @@ public final class ObjectDefinition implements RSObjectComposition {
 
 		return true;
 	}
-	public Model modelAt(int type, int orientation, int aY, int bY, int cY, int dY, int frameId, SeqDefinition primary, int tick) {
+	public Model modelAt(int type, int orientation, int aY, int bY, int cY, int dY, int frameId, SequenceDefinition primary, int tick) {
 		Model model = model(type, frameId, orientation, primary, tick);
 		if (model == null)
 			return null;
@@ -780,7 +779,7 @@ public final class ObjectDefinition implements RSObjectComposition {
 		return flag1;
 	}
 
-	public ObjectDefinition method580() {
+	public ObjectDefinition transform() {
 		int i = -1;
 		if (varpID != -1) {
 			VarBit varBit = VarBit.cache[varpID];
@@ -792,6 +791,8 @@ public final class ObjectDefinition implements RSObjectComposition {
 		} else if (varbitID != -1)
 			i = clientInstance.variousSettings[varbitID];
 		int var3;
+		if(configs == null)
+			return null;
 		if (i >= 0 && i < configs.length)
 			var3 = configs[i];
 		else
@@ -799,7 +800,7 @@ public final class ObjectDefinition implements RSObjectComposition {
 		return var3 == -1 ? null : lookup(var3);
 	}
 
-	public Model model(int j, int animation_id, int l, SeqDefinition primary, int tick) {
+	public Model model(int j, int animation_id, int l, SequenceDefinition primary, int tick) {
 		Model model = null;
 		long l1;
 		if (objectTypes == null) {
@@ -923,13 +924,13 @@ public final class ObjectDefinition implements RSObjectComposition {
 	}
 
 	public int category;
-	public int[] ambientSoundIds;
+	public int[] soundEffectIds;
 	private int ambientSoundId;
 	private boolean randomAnimStart;
-	private int anInt2112;
-	private int anInt2113;
-	public int ambientSoundID;
-	public int anInt2083;
+	public int soundMin;
+	public int soundMax;
+	public int soundId;
+	public int soundRange;
 	private Map<Integer, Object> params = null;
 
 	public void decode(Buffer buffer) {
@@ -950,7 +951,7 @@ public final class ObjectDefinition implements RSObjectComposition {
 							objectTypes[i] = buffer.readUnsignedByte();
 						}
 					} else {
-						buffer.currentPosition += len * 3;
+						buffer.pos += len * 3;
 					}
 				}
 			} else if (opcode == 2) {
@@ -967,7 +968,7 @@ public final class ObjectDefinition implements RSObjectComposition {
 							objectModels[i] = buffer.readUShort();
 						}
 					} else {
-						buffer.currentPosition += len * 2;
+						buffer.pos += len * 2;
 					}
 				}
 			} else if (opcode == 14) {
@@ -1055,12 +1056,12 @@ public final class ObjectDefinition implements RSObjectComposition {
 			} else if (opcode == 75) {
 				supportItems = buffer.readUnsignedByte();
 			} else if (opcode == 78) {
-				ambientSoundID = buffer.readUShort(); // ambient sound id
-				anInt2083 = buffer.readUnsignedByte();
+				soundId = buffer.readUShort(); // ambient sound id
+				soundRange = buffer.readUnsignedByte();
 			} else if (opcode == 79) {
-				anInt2112 = buffer.readUShort();
-				anInt2113 = buffer.readUShort();
-				anInt2083 = buffer.readUShort();
+				soundMin = buffer.readUShort();
+				soundMax = buffer.readUShort();
+				soundRange = buffer.readUShort();
 
 				int length = buffer.readUnsignedByte();
 				int[] anims = new int[length];
@@ -1069,7 +1070,7 @@ public final class ObjectDefinition implements RSObjectComposition {
 				{
 					anims[index] = buffer.readUShort();
 				}
-				ambientSoundIds = anims;
+				soundEffectIds = anims;
 			} else if (opcode == 81) {
 				clipType = stream.readUnsignedByte() * 65536;
 			} else if (opcode == 82) {
@@ -1201,12 +1202,12 @@ public final class ObjectDefinition implements RSObjectComposition {
 	public String description;
 	public boolean isInteractive;
 	public boolean castsShadow;
-	public static ReferenceCache models = new ReferenceCache(30);
+	public static EvictingDualNodeHashTable models = new EvictingDualNodeHashTable(30);
 	public int animation;
 	private static ObjectDefinition[] cache;
 	private int translateZ;
 	private int[] recolorToFind;
-	public static ReferenceCache baseModels = new ReferenceCache(500);
+	public static EvictingDualNodeHashTable baseModels = new EvictingDualNodeHashTable(500);
 	public String actions[];
 	private boolean field2118 = false;
 	private int field2130 = 0;
@@ -1624,6 +1625,22 @@ public final class ObjectDefinition implements RSObjectComposition {
 	@Override
 	public int[] getTransforms() {
 		return new int[0];
+	}
+
+	public boolean hasSound() {
+		if (this.configs == null) {
+			return this.soundId != -1 || this.soundEffectIds != null;
+		} else {
+			for (int transform : this.configs) {
+				if (transform != -1) {
+					ObjectDefinition var2 = lookup(transform);
+					if (var2.soundId != -1 || var2.soundEffectIds != null) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
 	}
 
 /*	public static Renderable getObjectModel(int type, int orientation, int[][] tilesHeight, int mean, int var17, int var18, Object reference) {

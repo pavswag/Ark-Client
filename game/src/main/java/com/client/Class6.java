@@ -217,7 +217,7 @@ final class Class6 {
 		aClass29_99.method325(stream);
 		int i = stream.readUnsignedByte();
 		if (i != 0) {
-			stream.currentPosition--;
+			stream.pos--;
 			aClass29_100 = new Class29();
 			aClass29_100.method325(stream);
 			aClass29_101 = new Class29();
@@ -225,7 +225,7 @@ final class Class6 {
 		}
 		i = stream.readUnsignedByte();
 		if (i != 0) {
-			stream.currentPosition--;
+			stream.pos--;
 			aClass29_102 = new Class29();
 			aClass29_102.method325(stream);
 			aClass29_103 = new Class29();
@@ -233,7 +233,7 @@ final class Class6 {
 		}
 		i = stream.readUnsignedByte();
 		if (i != 0) {
-			stream.currentPosition--;
+			stream.pos--;
 			aClass29_104 = new Class29();
 			aClass29_104.method325(stream);
 			aClass29_105 = new Class29();

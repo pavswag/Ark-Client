@@ -80,7 +80,7 @@ public class Script
             def.setStringOperands(stringOperands);
 
             int opcode;
-            for (int i = 0; in.currentPosition < endIdx; instructions[i++] = opcode) {
+            for (int i = 0; in.pos < endIdx; instructions[i++] = opcode) {
                 opcode = in.readUnsignedShort();
                 if (opcode == SCONST) {
                     stringOperands[i] = in.readNullTerminatedString();

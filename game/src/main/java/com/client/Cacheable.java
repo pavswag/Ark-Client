@@ -1,6 +1,6 @@
 package com.client;
 
-public class Cacheable extends Linkable {
+public class Cacheable extends Node {
 
     public final void unlinkSub() {
         if (nextNodeSub == null) {

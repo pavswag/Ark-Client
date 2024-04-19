@@ -1,7 +1,7 @@
 package com.client.osrs;
 
 import com.client.Script;
-import com.client.definitions.SeqDefinition;
+import com.client.definitions.SequenceDefinition;
 import com.client.definitions.SeqFrame;
 import com.client.definitions.anims.defs.SeqBaseDefs;
 import com.client.definitions.anims.defs.SeqDefs;
@@ -32,6 +32,7 @@ public class OSRSCacheLoader {
         if(cacheWrapper != null) {
             return;
         }
+
         CacheWrapper.setCachePath(Signlink.getCacheDirectory() + "osrs/");
         cacheWrapper = new CacheWrapper();
         seqDefs = SeqDefs.load(cacheWrapper);
@@ -49,7 +50,7 @@ public class OSRSCacheLoader {
      * @param id
      * @return
      */
-    public static SeqDefinition getSeqDef(int id) {
+    public static SequenceDefinition getSeqDef(int id) {
         return seqDefs.get(id);
     }
 

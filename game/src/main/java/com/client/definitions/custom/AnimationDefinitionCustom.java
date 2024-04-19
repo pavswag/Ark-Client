@@ -1,10 +1,10 @@
 package com.client.definitions.custom;
 
-import com.client.definitions.SeqDefinition;
+import com.client.definitions.SequenceDefinition;
 
 public class AnimationDefinitionCustom {
 
-    public static void custom(int j, SeqDefinition[] anims) {
+    public static void custom(int j, SequenceDefinition[] anims) {
         if (j == 719) {
             (anims[j]).rightHandItem = 28232;
             (anims[j]).forcedPriority = 6;
@@ -17,7 +17,7 @@ public class AnimationDefinitionCustom {
             (anims[j]).moveStyle = -1;
             (anims[j]).idleStyle = -1;
         }
-        SeqDefinition anim = anims[j];
+        SequenceDefinition anim = anims[j];
         switch (j) {
             case 451:
                 anim.frameCount = 10;
@@ -186,7 +186,7 @@ public class AnimationDefinitionCustom {
                 anim.masks = null;
                 break;
             case 7156:
-                anims[j] = new SeqDefinition();
+                anims[j] = new SequenceDefinition();
                 (anims[j]).delays = new int[] {
                         3, 3, 3, 3, 3, 3, 3, 4, 3, 3,
                         3, 3, 3, 3, 3, 3, 3, 3, 4, 3,
@@ -202,7 +202,7 @@ public class AnimationDefinitionCustom {
                 (anims[j]).replyMode = 2;
                 break;
             case 7155:
-                anims[j] = new SeqDefinition();
+                anims[j] = new SequenceDefinition();
                 (anims[j]).delays = new int[] {
                         18, 3, 1, 1, 1, 1, 1, 1, 1, 1,
                         1, 1, 3, 3, 1, 1, 1, 1, 1, 1,

@@ -28,13 +28,13 @@ final class MusicDefinition {
     }
 
 	public boolean method521() {
-        if (buffer.currentPosition >= 0)
+        if (buffer.pos >= 0)
             return false;
         return true;
     }
 
 	public void method522(int i) {
-        anIntArray214[i] = buffer.currentPosition;
+        anIntArray214[i] = buffer.pos;
     }
 
 	public void method523() {
@@ -46,27 +46,27 @@ final class MusicDefinition {
     }
 
     private int method524(int i) {
-        int i_1_ = (buffer.payload[buffer.currentPosition]);
+        int i_1_ = (buffer.payload[buffer.pos]);
         if (i_1_ < 0) {
             i_1_ &= 0xff;
             anIntArray212[i] = i_1_;
-            buffer.currentPosition++;
+            buffer.pos++;
         } else
             i_1_ = anIntArray212[i];
         if (i_1_ == 240 || i_1_ == 247) {
             int i_2_ = buffer.method428();
             if (i_1_ == 247 && i_2_ > 0) {
                 int i_3_ = ((buffer.payload
-                        [buffer.currentPosition])
+                        [buffer.pos])
                         & 0xff);
                 if (i_3_ >= 241 && i_3_ <= 243 || i_3_ == 246 || i_3_ == 248
                         || i_3_ >= 250 && i_3_ <= 252 || i_3_ == 254) {
-                    buffer.currentPosition++;
+                    buffer.pos++;
                     anIntArray212[i] = i_3_;
                     return method535(i, i_3_);
                 }
             }
-            buffer.currentPosition += i_2_;
+            buffer.pos += i_2_;
             return 0;
         }
         return method535(i, i_1_);
@@ -74,7 +74,7 @@ final class MusicDefinition {
 
     public void decode(byte[] payload) {
         buffer.payload = payload;
-        buffer.currentPosition = 10;
+        buffer.pos = 10;
         int indexLength = buffer.readUShort();
         anInt213 = buffer.readUShort();
         anInt218 = 500000;
@@ -84,10 +84,10 @@ final class MusicDefinition {
             int i_5_ = buffer.readInt();
             int i_6_ = buffer.readInt();
             if (i_5_ == 1297379947) {
-                anIntArray217[id] = buffer.currentPosition;
+                anIntArray217[id] = buffer.pos;
                 id++;
             }
-            buffer.currentPosition += i_6_;
+            buffer.pos += i_6_;
         }
         anIntArray214 = anIntArray217.clone();
         anIntArray216 = new int[indexLength];
@@ -95,7 +95,7 @@ final class MusicDefinition {
     }
 
 	public void method526(int i) {
-        buffer.currentPosition = anIntArray214[i];
+        buffer.pos = anIntArray214[i];
     }
 
 	public boolean hasPayload() {
@@ -105,7 +105,7 @@ final class MusicDefinition {
     }
 
 	public void method528() {
-        buffer.currentPosition = -1;
+        buffer.pos = -1;
     }
 
 	public int method529(int i) {
@@ -140,9 +140,9 @@ final class MusicDefinition {
         for (int index = 0; index < i; index++) {
             anIntArray216[index] = 0;
             anIntArray212[index] = 0;
-            buffer.currentPosition = anIntArray217[index];
+            buffer.pos = anIntArray217[index];
             method520(index);
-            anIntArray214[index] = buffer.currentPosition;
+            anIntArray214[index] = buffer.pos;
         }
     }
 
@@ -151,7 +151,7 @@ final class MusicDefinition {
             int i_11_ = buffer.readUnsignedByte();
             int i_12_ = buffer.method428();
             if (i_11_ == 47) {
-                buffer.currentPosition += i_12_;
+                buffer.pos += i_12_;
                 return 1;
             }
             if (i_11_ == 81) {
@@ -160,10 +160,10 @@ final class MusicDefinition {
                 int i_14_ = anIntArray216[i];
                 aLong215 += (long) i_14_ * (long) (anInt218 - i_13_);
                 anInt218 = i_13_;
-                buffer.currentPosition += i_12_;
+                buffer.pos += i_12_;
                 return 2;
             }
-            buffer.currentPosition += i_12_;
+            buffer.pos += i_12_;
             return 3;
         }
         byte i_15_ = aByteArray210[i_10_ - 128];

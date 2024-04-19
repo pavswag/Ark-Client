@@ -7,10 +7,10 @@ import net.runelite.api.Skeleton;
 
 import java.util.Map;
 
-import static com.client.definitions.SeqDefinition.Defaults.*;
+import static com.client.definitions.SequenceDefinition.Defaults.*;
 
 @Data
-public class SeqDefinition implements Animation {
+public class SequenceDefinition implements Animation {
     public int id;
     public int frameCount = DEFAULT_FRAME_COUNT;
     public int[] frameIDs;
@@ -38,7 +38,13 @@ public class SeqDefinition implements Animation {
     public int maxLoops = 99;
 
     private Map<Integer, Integer> soundRelated;
+    public int[] getSoundEffects() {
+        return soundEffects;
+    }
 
+    public Map getSkeletalSounds() {
+        return soundRelated;
+    }
     public int getSkeletalLength() {
         return this.rangeEnd - this.rangeBegin;
     }
@@ -47,7 +53,7 @@ public class SeqDefinition implements Animation {
         return skeletalId >= 0;
     }
 
-    public static SeqDefinition get(int id) {
+    public static SequenceDefinition get(int id) {
         return OSRSCacheLoader.getSeqDef(id);
     }
 

@@ -4,7 +4,7 @@ import java.awt.Shape;
 import java.util.*;
 
 import com.client.definitions.SeqBase;
-import com.client.definitions.SeqDefinition;
+import com.client.definitions.SequenceDefinition;
 import com.client.definitions.SeqFrame;
 import com.client.definitions.anims.defs.SeqBaseDefs;
 import com.client.definitions.anims.defs.SeqFrameDefs;
@@ -108,7 +108,7 @@ public class Model extends Renderable implements RSModel {
             return;
         }
         final Buffer stream = new Buffer(modelData);
-        stream.currentPosition = modelData.length - 18;
+        stream.pos = modelData.length - 18;
         final ModelHeader modelHeader = modelHeaders[modelId] = new ModelHeader();
         modelHeader.data = modelData;
         modelHeader.vertexCount = stream.readUShort();
@@ -1120,7 +1120,7 @@ public class Model extends Renderable implements RSModel {
         }
     }
 
-    public void playSkeletal(SeqDefinition seqDefinition, int tick) {
+    public void playSkeletal(SequenceDefinition seqDefinition, int tick) {
         int skeletalId = seqDefinition.getSkeletalId();
         Index frameIndex = SeqFrameDefs.getFrameIndex();
         Index baseIndex = SeqBaseDefs.getBaseIndex();
@@ -1141,7 +1141,7 @@ public class Model extends Renderable implements RSModel {
         }
     }
 
-    public void playSkeletalDouble(SeqDefinition primary, SeqDefinition secondary, int primaryTick, int secondaryTick) {
+    public void playSkeletalDouble(SequenceDefinition primary, SequenceDefinition secondary, int primaryTick, int secondaryTick) {
         int primarySkeletalId = primary.getSkeletalId();
         int secondarySkeletalId = secondary.getSkeletalId();
         Index frameIndex = SeqFrameDefs.getFrameIndex();

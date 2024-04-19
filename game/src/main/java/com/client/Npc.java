@@ -5,7 +5,7 @@ import com.client.definitions.NpcDefinition;
 // Jad home page: http://www.kpdus.com/jad.html
 // Decompiler options: packimports(3) 
 import com.client.definitions.GraphicsDefinition;
-import com.client.definitions.SeqDefinition;
+import com.client.definitions.SequenceDefinition;
 import com.client.definitions.SeqFrame;
 import com.client.features.settings.Preferences;
 import net.runelite.api.*;
@@ -23,15 +23,15 @@ import java.util.Iterator;
 public final class Npc extends Entity implements RSNPC {
 
 	private Model getAnimatedModel() {
-		SeqDefinition primarySeq = null;
-		SeqDefinition secondarySeq = null;
+		SequenceDefinition primarySeq = null;
+		SequenceDefinition secondarySeq = null;
 		if ((super.primarySeqID >= 0) && (super.primarySeqDelay == 0)) {
-			primarySeq = SeqDefinition.get(super.primarySeqID);
+			primarySeq = SequenceDefinition.get(super.primarySeqID);
 			boolean primarySeqIsSkeletal = primarySeq.isSkeletalAnimation();
 			int primaryTransformID = primarySeqIsSkeletal ? -1 : primarySeq.getFrameIDs()[super.primarySeqFrame];
 			int secondaryTransformID = -1;
 			if ((super.secondarySeqID >= 0) && (super.secondarySeqID != super.seqStandID)) {
-				secondarySeq = SeqDefinition.get(super.secondarySeqID);
+				secondarySeq = SequenceDefinition.get(super.secondarySeqID);
 				boolean secondarySeqIsSkeletal = primarySeq.isSkeletalAnimation();
 				secondaryTransformID = secondarySeqIsSkeletal ? -1 : secondarySeq.getFrameIDs()[super.secondarySeqFrame];
 			}
@@ -39,14 +39,14 @@ public final class Npc extends Entity implements RSNPC {
 			if (primarySeq.isSkeletalAnimation() || (secondarySeq != null && secondarySeq.isSkeletalAnimation())) {
 				return desc.getAnimatedModelSkeletal(primarySeq, secondarySeq, primarySeqFrame, secondarySeqFrame);
 			}
-			return desc.getAnimatedModel(secondaryTransformID, primaryTransformID, SeqDefinition.get(super.primarySeqID)
+			return desc.getAnimatedModel(secondaryTransformID, primaryTransformID, SequenceDefinition.get(super.primarySeqID)
 					.getMasks());
 		}
 
 		int transformID = -1;
 
 		if (super.secondarySeqID >= 0) {
-			secondarySeq = SeqDefinition.get(super.secondarySeqID);
+			secondarySeq = SequenceDefinition.get(super.secondarySeqID);
 			transformID = secondarySeq.isSkeletalAnimation() ? -1 : secondarySeq.getFrameIDs()[super.secondarySeqFrame];
 		}
 
@@ -76,7 +76,7 @@ public final class Npc extends Entity implements RSNPC {
 			GraphicsDefinition spotAnim = GraphicsDefinition.cache[graphicObject.getId()];
 			Model model_2 = spotAnim.getModel();
 			if (model_2 != null) {
-				SeqDefinition seq = spotAnim.animationSequence;
+				SequenceDefinition seq = spotAnim.animationSequence;
 				Model model_3 = new Model(true, SeqFrame.noAnimationInProgress(graphicObject.getFrame()), false, model_2);
 				model_3.offsetBy(0, -graphicObject.getHeight(), 0);
 				if(graphicObject.getFrame() != -1) {

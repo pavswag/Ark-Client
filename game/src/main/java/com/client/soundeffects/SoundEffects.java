@@ -49,7 +49,7 @@ public final class SoundEffects {
         for (int synthesizer = 0; synthesizer < 10; synthesizer++) {
             int valid = stream.readUnsignedByte();
             if (valid != 0) {
-                stream.currentPosition--;
+                stream.pos--;
                 synthesizers[synthesizer] = new Synthesizer();
                 synthesizers[synthesizer].decode(stream);
             }
@@ -82,11 +82,11 @@ public final class SoundEffects {
 
     private Buffer pack(int loops) {
         int size = mix(loops);
-        riff.currentPosition = 0;
-        riff.writeDWord(0x52494646);
+        riff.pos = 0;
+        riff.writeInt(0x52494646);
         riff.method403(36 + size);
-        riff.writeDWord(0x57415645);
-        riff.writeDWord(0x666d7420);
+        riff.writeInt(0x57415645);
+        riff.writeInt(0x666d7420);
         riff.method403(16);
         riff.method400(1);
         riff.method400(1);
@@ -94,9 +94,9 @@ public final class SoundEffects {
         riff.method403(22050);
         riff.method400(1);
         riff.method400(8);
-        riff.writeDWord(0x64617461);
+        riff.writeInt(0x64617461);
         riff.method403(size);
-        riff.currentPosition += size;
+        riff.pos += size;
         return riff;
     }
 

@@ -8,7 +8,7 @@ import java.util.List;
 
 
 import com.client.definitions.SeqFrame;
-import com.client.definitions.SeqDefinition;
+import com.client.definitions.SequenceDefinition;
 import com.client.definitions.ItemDefinition;
 import com.client.definitions.NpcDefinition;
 import com.client.definitions.GraphicsDefinition;
@@ -45,7 +45,7 @@ public final class Player extends Entity implements RSPlayer {
 			GraphicsDefinition spotAnim = GraphicsDefinition.cache[graphicObject.getId()];
 			Model model_2 = spotAnim.getModel();
 			if (model_2 != null) {
-				SeqDefinition seq = spotAnim.animationSequence;
+				SequenceDefinition seq = spotAnim.animationSequence;
 				Model model_3 = new Model(true, SeqFrame.noAnimationInProgress(graphicObject.getFrame()), false, model_2);
 				model_3.offsetBy(0, -graphicObject.getHeight(), 0);
 				if (seq != null && seq.isSkeletalAnimation()) {
@@ -136,7 +136,7 @@ public final class Player extends Entity implements RSPlayer {
 	public String titleColor;
 
 	public void updatePlayer(Buffer stream) {
-		stream.currentPosition = 0;
+		stream.pos = 0;
 
 		colourFind = new int[12][];
 		colourReplace = new int[12][];
@@ -238,13 +238,13 @@ public final class Player extends Entity implements RSPlayer {
 
 	public Model method452() {
 
-		SeqDefinition primarySeq = null;
+		SequenceDefinition primarySeq = null;
 
 		int current_frame = -1;
 
 		if (npcDefinition != null) {
 			if (super.primarySeqID >= 0 && super.primarySeqDelay == 0) {
-				primarySeq = SeqDefinition.get(super.primarySeqID);
+				primarySeq = SequenceDefinition.get(super.primarySeqID);
 				if (!primarySeq.isSkeletalAnimation()) {
 					current_frame = primarySeq.getFrameIDs()[super.primarySeqFrame];
 				}
@@ -260,10 +260,10 @@ public final class Player extends Entity implements RSPlayer {
 		int j1 = -1;
 		int k1 = -1;
 		if (super.primarySeqID >= 0 && super.primarySeqDelay == 0) {
-			SeqDefinition animation = SeqDefinition.get(super.primarySeqID);
+			SequenceDefinition animation = SequenceDefinition.get(super.primarySeqID);
 			k = animation.frameIDs[super.primarySeqFrame];
 			if (super.secondarySeqID >= 0 && super.secondarySeqID != super.seqStandID)
-				i1 = SeqDefinition.get(super.secondarySeqID).frameIDs[super.secondarySeqFrame];
+				i1 = SequenceDefinition.get(super.secondarySeqID).frameIDs[super.secondarySeqFrame];
 			if (animation.leftHandItem >= 0) {
 				j1 = animation.leftHandItem;
 				l += j1 - equipment[5] << 40;
@@ -273,7 +273,7 @@ public final class Player extends Entity implements RSPlayer {
 				l += k1 - equipment[3] << 48;
 			}
 		} else if (super.secondarySeqID >= 0)
-			k = SeqDefinition.get(super.secondarySeqID).frameIDs[super.secondarySeqFrame];
+			k = SequenceDefinition.get(super.secondarySeqID).frameIDs[super.secondarySeqFrame];
 		Model model_1 = (Model) mruNodes.get(l);
 		if (model_1 == null) {
 			boolean flag = false;
@@ -339,7 +339,7 @@ public final class Player extends Entity implements RSPlayer {
 		Model model_2 = Model.emptyModel;
 		model_2.buildSharedSequenceModel(model_1, SeqFrame.noAnimationInProgress(k) & SeqFrame.noAnimationInProgress(i1));
 		if (k != -1 && i1 != -1)
-			model_2.mix(SeqDefinition.get(super.primarySeqID).masks, i1, k);
+			model_2.mix(SequenceDefinition.get(super.primarySeqID).masks, i1, k);
 		else if (k != -1)
 			model_2.interpolate(k);
 		model_2.calculateBoundsCylinder();
@@ -465,7 +465,7 @@ public final class Player extends Entity implements RSPlayer {
 	public int myGender;
 	public String displayName;
 	public int playerId;
-	static ReferenceCache mruNodes = new ReferenceCache(260);
+	static EvictingDualNodeHashTable mruNodes = new EvictingDualNodeHashTable(260);
 	public int combatLevel;
 	public int headIcon;
 	public int skullIcon;

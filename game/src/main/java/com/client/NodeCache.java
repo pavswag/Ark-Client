@@ -11,29 +11,29 @@ final class NodeCache {
 	public NodeCache() {
 		int i = 1024;// was parameter
 		size = i;
-		cache = new Linkable[i];
+		cache = new Node[i];
 		for (int k = 0; k < i; k++) {
-			Linkable node = cache[k] = new Linkable();
+			Node node = cache[k] = new Node();
 			node.previous = node;
 			node.next = node;
 		}
 
 	}
 
-	public Linkable findNodeByID(long l) {
-		Linkable node = cache[(int) (l & size - 1)];
-		for (Linkable node_1 = node.previous; node_1 != node; node_1 = node_1.previous)
+	public Node findNodeByID(long l) {
+		Node node = cache[(int) (l & size - 1)];
+		for (Node node_1 = node.previous; node_1 != node; node_1 = node_1.previous)
 			if (node_1.key == l)
 				return node_1;
 
 		return null;
 	}
 
-	public void removeFromCache(Linkable node, long l) {
+	public void removeFromCache(Node node, long l) {
 		try {
 			if (node.next != null)
 				node.remove();
-			Linkable node_1 = cache[(int) (l & size - 1)];
+			Node node_1 = cache[(int) (l & size - 1)];
 			node.next = node_1.next;
 			node.previous = node_1;
 			node.next.previous = node;
@@ -48,5 +48,5 @@ final class NodeCache {
 	}
 
 	private final int size;
-	private final Linkable[] cache;
+	private final Node[] cache;
 }

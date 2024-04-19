@@ -1,7 +1,7 @@
 package com.client.definitions.anims.defs;
 
 import com.client.InputBuffer;
-import com.client.definitions.SeqDefinition;
+import com.client.definitions.SequenceDefinition;
 import com.client.definitions.anims.decoder.Decoder;
 import com.client.definitions.anims.decoder.impl.SeqDefinitionDecoderOSRS;
 import com.client.osrs.CacheWrapper;
@@ -17,9 +17,9 @@ import java.util.Objects;
 @AllArgsConstructor
 public class SeqDefs {
 
-    private SeqDefinition[] definitions;
+    private SequenceDefinition[] definitions;
 
-    public SeqDefinition get(int id) {
+    public SequenceDefinition get(int id) {
         return definitions[id];
     }
 
@@ -36,14 +36,14 @@ public class SeqDefs {
         if (archive != null) {
             highestId = archive.fileIds()[archive.fileIds().length - 1];
         }
-        SeqDefinition[] definitions = new SeqDefinition[highestId + 1];
+        SequenceDefinition[] definitions = new SequenceDefinition[highestId + 1];
 
-        Decoder<SeqDefinition> decoder = new SeqDefinitionDecoderOSRS();
+        Decoder<SequenceDefinition> decoder = new SeqDefinitionDecoderOSRS();
 
         if (archive != null) {
             for (File file : archive.getFiles().values()) {
                 int id = file.getId();
-                SeqDefinition seqDefinition = new SeqDefinition();
+                SequenceDefinition seqDefinition = new SequenceDefinition();
                 seqDefinition.setId(id);
                 InputBuffer dataBuffer = new InputBuffer(Objects.requireNonNull(file, "Data file cannot be null")
                         .getData());

@@ -1,6 +1,7 @@
 package com.client.graphics.textures;
 
 import com.client.Buffer1;
+import com.client.Client;
 import com.client.Deque;
 import com.client.FileArchive;
 import net.runelite.rs.api.RSTexture;
@@ -155,4 +156,33 @@ public class TextureProvider implements RSTextureProvider, TextureLoader {
         }
     }
 
+    public static final void method1307(int var0, int var1, int var2) {
+        Client instance = Client.getInstance();
+        int var3;
+        for(var3 = 0; var3 < 8; ++var3) {
+            for(int var4 = 0; var4 < 8; ++var4) {
+                instance.tileHeights[var0][var3 + var1][var4 + var2] = 0;
+            }
+        }
+
+        if (var1 > 0) {
+            for(var3 = 1; var3 < 8; ++var3) {
+                instance.tileHeights[var0][var1][var3 + var2] = instance.tileHeights[var0][var1 - 1][var3 + var2];
+            }
+        }
+
+        if (var2 > 0) {
+            for(var3 = 1; var3 < 8; ++var3) {
+                instance.tileHeights[var0][var3 + var1][var2] = instance.tileHeights[var0][var3 + var1][var2 - 1];
+            }
+        }
+
+        if (var1 > 0 && instance.tileHeights[var0][var1 - 1][var2] != 0) {
+            instance.tileHeights[var0][var1][var2] = instance.tileHeights[var0][var1 - 1][var2];
+        } else if (var2 > 0 && instance.tileHeights[var0][var1][var2 - 1] != 0) {
+            instance.tileHeights[var0][var1][var2] = instance.tileHeights[var0][var1][var2 - 1];
+        } else if (var1 > 0 && var2 > 0 && instance.tileHeights[var0][var1 - 1][var2 - 1] != 0) {
+            instance.tileHeights[var0][var1][var2] = instance.tileHeights[var0][var1 - 1][var2 - 1];
+        }
+    }
 }

@@ -14,7 +14,7 @@ import com.client.graphics.interfaces.impl.SettingsTabWidget;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class Preferences {
+public class Preferences implements net.runelite.api.Preferences {
 
     private static final java.util.logging.Logger log = java.util.logging.Logger.getLogger(Preferences.class.getName());
 
@@ -118,4 +118,38 @@ public class Preferences {
     }
 
 
+    @Override
+    public String getRememberedUsername() {
+        return null;
+    }
+
+    @Override
+    public void setRememberedUsername(String username) {
+
+    }
+
+    @Override
+    public int getSoundEffectVolume() {
+        return soundVolume;
+    }
+
+    @Override
+    public void setSoundEffectVolume(int volume) {
+        this.soundVolume = volume;
+    }
+
+    @Override
+    public int getAreaSoundEffectVolume() {
+        return areaSoundVolume;
+    }
+
+    @Override
+    public void setAreaSoundEffectVolume(int volume) {
+        this.areaSoundVolume = volume;
+    }
+
+    @Override
+    public boolean getHideUsername() {
+        return false;
+    }
 }

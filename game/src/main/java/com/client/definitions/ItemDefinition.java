@@ -12,8 +12,8 @@ import java.util.HashMap;
 
 public final class ItemDefinition implements RSItemComposition {
 
-    public static ReferenceCache sprites = new ReferenceCache(100);
-    public static ReferenceCache models = new ReferenceCache(50);
+    public static EvictingDualNodeHashTable sprites = new EvictingDualNodeHashTable(100);
+    public static EvictingDualNodeHashTable models = new EvictingDualNodeHashTable(50);
     public static boolean isMembers = true;
     public static int totalItems;
     public static ItemDefinition[] cache;
@@ -4660,7 +4660,7 @@ public final class ItemDefinition implements RSItemComposition {
         cacheIndex = (cacheIndex + 1) % 10;
         ItemDefinition itemDef = cache[cacheIndex];
 
-        item_data.currentPosition = streamIndices[itemId];
+        item_data.pos = streamIndices[itemId];
         itemDef.id = itemId;
         itemDef.setDefaults();
         itemDef.decode(item_data);
