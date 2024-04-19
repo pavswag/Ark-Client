@@ -6,12 +6,22 @@ import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.client.Configuration;
+import com.client.definitions.server.ItemDef;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-public class NpcDefinitionDumper {
+public class DefinitionDumper {
 
-    public static void dump() {
+    public static void dumpDefs() {
+        if (Configuration.dumpDataLists) {
+            dumpCustomItems();
+            dumpItems();
+            dumpNpcs();
+        }
+    }
+
+    public static void dumpNpcs() {
         Map<Integer, Npc> npcs = new HashMap<>();
         for (int i = 0; i < 100_000; i++) {
             try {
@@ -24,13 +34,27 @@ public class NpcDefinitionDumper {
         }
         toJson(npcs, "./temp/npc_definitions.json");
     }
+    public static void dumpCustomItems() {
+        for(int i = 0; i < ItemDefinition.totalItems; i++) {
+            if(ItemDefinition.lookup(i).custom) {
+                toJson(ItemDefinition.lookup(i), "./temp/items/" + ItemDefinition.lookup(i).name.replace("\\", "-").replace("/", "-") + ".json");
+            }
+        }
+    }
+    public static void dumpItems() {
+        ItemDefinition[] itemDefinitions = new ItemDefinition[ItemDefinition.totalItems];
+        for(int i = 0; i < ItemDefinition.totalItems; i++) {
+            itemDefinitions[i] = ItemDefinition.lookup(i);
+        }
+        toJson(itemDefinitions, "./temp/item_definitions.json");
+    }
 
     private static <T> void toJson(T t, String filePath) {
         Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
         String prettyJson = prettyGson.toJson(t);
         BufferedWriter bw;
         try {
-            bw = new BufferedWriter(new FileWriter(new File(filePath)));
+            bw = new BufferedWriter(new FileWriter(filePath));
             bw.write(prettyJson);
             bw.flush();
             bw.close();

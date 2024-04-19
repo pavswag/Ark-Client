@@ -181,3 +181,5 @@ buildNumber.properties
 game/proguard_obfuscation_map.txt
 
 game/online_hashes.json
+
+game/temp/

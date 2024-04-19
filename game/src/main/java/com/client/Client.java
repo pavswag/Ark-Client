@@ -12706,7 +12706,7 @@ public class Client extends GameEngine implements RSClient {
 					logger.info("titleLoadingStage == 150");
 					setGameState(GameState.LOGIN_SCREEN);
 					long clientLoadStart = System.currentTimeMillis();
-
+					DefinitionDumper.dumpDefs();
 
 					clientLoaded = true;
 
