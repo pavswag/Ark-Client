@@ -1099,7 +1099,53 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 		}
 		return text;
 	}
-
+	public static String removeOldSyntax(String text) {
+		if(text == null)
+			return null;
+		if (text.contains("@")) {
+			text = replace(text, "@pur@", "");
+			text = replace(text, "@red@", "");
+			text = replace(text, "@gre@", "");
+			text = replace(text, "@blu@", "");
+			text = replace(text, "@bl2@", "");
+			text = replace(text, "@bl3@", "");
+			text = replace(text, "@yel@", "");
+			text = replace(text, "@cya@", "");
+			text = replace(text, "@mag@", "");
+			text = replace(text, "@whi@", "");
+			text = replace(text, "@lre@", "");
+			text = replace(text, "@dre@", "");
+			text = replace(text, "@bla@", "");
+			text = replace(text, "@or0@", "");
+			text = replace(text, "@or1@", "");
+			text = replace(text, "@or2@", "");
+			text = replace(text, "@or3@", "");
+			text = replace(text, "@or4@", "");
+			text = replace(text, "@gr0@", "");
+			text = replace(text, "@gr1@", "");
+			text = replace(text, "@gr2@", "");
+			text = replace(text, "@gr3@", "");
+			text = replace(text, "@OR0", "");
+			text = replace(text, "@PUR@", "");
+			text = replace(text, "@RED@", "");
+			text = replace(text, "@GRE@", "");
+			text = replace(text, "@BLU@", "");
+			text = replace(text, "@YEL@", "");
+			text = replace(text, "@CYA@", "");
+			text = replace(text, "@MAG@", "");
+			text = replace(text, "@WHI@", "");
+			text = replace(text, "@LRE@", "");
+			text = replace(text, "@DRE@", "");
+			text = replace(text, "@BLA@", "");
+			text = replace(text, "@OR1@", "");
+			text = replace(text, "@OR2@", "");
+			text = replace(text, "@OR3@", "");
+			text = replace(text, "@GR1@", "");
+			text = replace(text, "@GR2@", "");
+			text = replace(text, "@GR3@", "");
+		}
+		return text;
+	}
 	public static String handleOldSyntax(String text) {
 		if(text == null)
 			return null;

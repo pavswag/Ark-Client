@@ -18,7 +18,7 @@ public class BufferExt {
             Object value;
 
             if (isString) {
-                value = buffer.readString();
+                value = buffer.readNullTerminatedString();
             } else {
                 value = buffer.readInt();
             }

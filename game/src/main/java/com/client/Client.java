@@ -2139,7 +2139,7 @@ public class Client extends GameEngine implements RSClient {
 				(Item) class19.reverseGetNext()) {
 			ItemDefinition itemDef = ItemDefinition.lookup(item.ID);
 			int l = itemDef.cost;
-			if (itemDef.stacks)
+			if (itemDef.isStackable())
 				l *= item.itemCount + 1;
 
 /*			if (l > k) {
@@ -9354,7 +9354,7 @@ public class Client extends GameEngine implements RSClient {
 		if (menuActionRow < 2 && itemSelected == 0 && spellSelected == 0) {
 			return;
 		}
-		MenuEntry menuEntry = menuManager.getMenuEntry(menuActionRow);
+		MenuEntry menuEntry = menuManager.getMenuEntry(menuActionRow - 1);
 		if(menuEntry != null && menuEntry.getOption() != null) {
 			if ( menuEntry.getOption().contains("Walk")) {
 				return;
@@ -12370,7 +12370,6 @@ public class Client extends GameEngine implements RSClient {
 
 					FileArchive streamLoader = streamLoaderForName(2, "config");
 					ObjectDefinition.init(streamLoader);
-					ItemDefinition.init(streamLoader);
 					NpcDefinition.unpackConfig(streamLoader);
 					IDK.unpackConfig(streamLoader);
 					GraphicsDefinition.unpackConfig(streamLoader);
@@ -14580,7 +14579,7 @@ public class Client extends GameEngine implements RSClient {
 									if (class9_1.inventoryItemId[k4] > 0) {
 										ItemDefinition itemDef = ItemDefinition.lookup(class9_1.inventoryItemId[k4] - 1);
 										String s2 = itemDef.name;
-										if (itemDef.stacks || class9_1.inventoryAmounts[k4] != 1)
+										if (itemDef.isStackable() || class9_1.inventoryAmounts[k4] != 1)
 											s2 = s2 + " x" + intToKOrMilLongName(class9_1.inventoryAmounts[k4]);
 										int i9 = _x + i6 * (115 + class9_1.invSpritePadX);
 										int k9 = _y + j5 * (12 + class9_1.invSpritePadY);
@@ -22210,7 +22209,9 @@ public class Client extends GameEngine implements RSClient {
 
 	@Override
 	public ItemComposition getItemDefinition(int id) {
-		return (ItemComposition) ItemDefinition.lookup(id);
+		if(id < 0)
+			return ItemDefinition.lookup(0);
+		return ItemDefinition.lookup(id);
 	}
 
 	@Override

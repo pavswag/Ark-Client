@@ -6,7 +6,9 @@ import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.client.Client;
 import com.client.Configuration;
+import com.client.RSFont;
 import com.client.definitions.server.ItemDef;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -37,7 +39,14 @@ public class DefinitionDumper {
     public static void dumpCustomItems() {
         for(int i = 0; i < ItemDefinition.totalItems; i++) {
             if(ItemDefinition.lookup(i).custom) {
-                toJson(ItemDefinition.lookup(i), "./temp/items/" + ItemDefinition.lookup(i).name.replace("\\", "-").replace("/", "-") + ".json");
+                if(ItemDefinition.lookup(i).name == null || ItemDefinition.lookup(i).name.equalsIgnoreCase("null"))
+                    continue;
+                String fileName = i + "-" + RSFont.removeOldSyntax(ItemDefinition.lookup(i).name).replace("\\", "-").replace("/", "-");
+                if(fileName.contains(">")) {
+                    fileName = fileName.substring(fileName.indexOf(">") + 1);
+                }
+                System.out.println("Dumping " + fileName);
+                toJson(ItemDefinition.lookup(i), "./temp/items/" + fileName + ".json");
             }
         }
     }

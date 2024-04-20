@@ -1,6 +1,9 @@
 package com.client.definitions;
 
 import com.client.*;
+import com.client.cache.DualNode;
+import com.client.js5.Js5List;
+import com.client.js5.util.Js5ConfigType;
 import com.client.util.BufferExt;
 import com.client.utilities.FileOperations;
 import com.google.common.base.Preconditions;
@@ -10,13 +13,13 @@ import net.runelite.rs.api.RSIterableNodeHashTable;
 
 import java.util.HashMap;
 
-public final class ItemDefinition implements RSItemComposition {
+public final class ItemDefinition extends DualNode implements RSItemComposition {
 
     public static EvictingDualNodeHashTable sprites = new EvictingDualNodeHashTable(100);
     public static EvictingDualNodeHashTable models = new EvictingDualNodeHashTable(50);
     public static boolean isMembers = true;
     public static int totalItems;
-    public static ItemDefinition[] cache;
+    public static EvictingDualNodeHashTable cache = new EvictingDualNodeHashTable(64);
     private static int cacheIndex;
     private static Buffer item_data;
     private static int[] streamIndices;
@@ -37,9 +40,11 @@ public final class ItemDefinition implements RSItemComposition {
     public int wearPos1;
     public int wearPos2;
     public int wearPos3;
-    public boolean stacks;
+    public int stacks;
     public int noteLinkId;
     public int zoom2d;
+
+
     public int maleModel1;
     public String[] interfaceOptions;
     public int xan2d;
@@ -83,31 +88,10 @@ public final class ItemDefinition implements RSItemComposition {
         models = null;
         sprites = null;
         streamIndices = null;
-        cache = null;
         item_data = null;
     }
 
-    public static void init(FileArchive archive) {
-        item_data = new Buffer(archive.getArchiveData("obj.dat"));
-        Buffer stream = new Buffer(archive.getArchiveData("obj.idx"));
 
-        totalItems = stream.readUShort();
-        streamIndices = new int[totalItems + 20_000];
-        int offset = 2;
-
-        for (int _ctr = 0; _ctr < totalItems; _ctr++) {
-            streamIndices[_ctr] = offset;
-            offset += stream.readUShort();
-        }
-
-        cache = new ItemDefinition[10];
-
-        for (int _ctr = 0; _ctr < 10; _ctr++) {
-            cache[_ctr] = new ItemDefinition();
-        }
-
-        System.out.println("Loaded: " + totalItems + " items");
-    }
 
     private static ItemDefinition newCustomItems(int itemId) {
         ItemDefinition itemDef = new ItemDefinition();
@@ -161,47 +145,47 @@ public final class ItemDefinition implements RSItemComposition {
             case 6798:
                 itemDef.custom = true;
                 itemDef.name = "Damage Reduction Scroll(10min)";
-                itemDef.stacks = true;
+                itemDef.stacks = 1;
                 break;
             case 6799:
                 itemDef.custom = true;
                 itemDef.name = "Damage Reduction Scroll(30min)";
-                itemDef.stacks = true;
+                itemDef.stacks = 1;
                 break;
             case 6800:
                 itemDef.custom = true;
                 itemDef.name = "Damage Reduction Scroll(60min)";
-                itemDef.stacks = true;
+                itemDef.stacks = 1;
                 break;
             case 6801:
                 itemDef.custom = true;
                 itemDef.name = "Slayer task damage(10min)";
-                itemDef.stacks = true;
+                itemDef.stacks = 1;
                 break;
             case 6802:
                 itemDef.custom = true;
                 itemDef.name = "Slayer task damage(30min)";
-                itemDef.stacks = true;
+                itemDef.stacks = 1;
                 break;
             case 6803:
                 itemDef.custom = true;
                 itemDef.name = "Slayer task damage(60min)";
-                itemDef.stacks = true;
+                itemDef.stacks = 1;
                 break;
             case 6804:
                 itemDef.custom = true;
                 itemDef.name = "Double harvest(10min)";
-                itemDef.stacks = true;
+                itemDef.stacks = 1;
                 break;
             case 6806:
                 itemDef.custom = true;
                 itemDef.name = "Double harvest(30min)";
-                itemDef.stacks = true;
+                itemDef.stacks = 1;
                 break;
             case 6808:
                 itemDef.custom = true;
                 itemDef.name = "Double harvest(60min)";
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 break;
             case 26551:
                 itemDef.custom = true;
@@ -214,7 +198,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "@red@lil' Nyx";
                 //itemDef.description = "The most powerful pet, see ::foepets for full list of perks.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.inventoryModel = 60050;
                 itemDef.zoom2d = 4280;
                 itemDef.xan2d = 270;
@@ -229,7 +213,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "@gre@lil' Flying pumpkin";
                 //itemDef.description = "The most powerful pet, see ::foepets for full list of perks.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.inventoryModel = 49469;
                 itemDef.zoom2d = 5980;
                 itemDef.xan2d = 96;
@@ -244,7 +228,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "@gre@lil' Jack-O-Kraken";
                 //itemDef.description = "The most powerful pet, see ::foepets for full list of perks.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.inventoryModel = 60049;
                 itemDef.zoom2d = 7480;
                 itemDef.xan2d = 200;
@@ -260,24 +244,24 @@ public final class ItemDefinition implements RSItemComposition {
             case 24364:
                 itemDef.custom = true;
                 itemDef.name = "Island Scroll (15min)";
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.interfaceOptions = new String[] { "Open", null, null, null, null};
                 break;
             case 24365:
                 itemDef.custom = true;
                 itemDef.name = "Island Scroll (30min)";
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.interfaceOptions = new String[] { "Open", null, null, null, null};
                 break;
             case 24366:
                 itemDef.custom = true;
                 itemDef.name = "Island Scroll (60min)";
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.interfaceOptions = new String[] { "Open", null, null, null, null};
                 break;
             case 20754:
                 itemDef.custom = true;
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 break;
 
             case 26545:
@@ -305,7 +289,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 21726:
             case 21728:
                 itemDef.custom = true;
-                itemDef.stacks = true;
+                itemDef.stacks = 1;
                 break;
             case 12863:
                 itemDef.custom = true;
@@ -461,7 +445,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 23877:
                 itemDef.name = "Crystal Shard";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = true;
+                itemDef.stacks = 1;
                 itemDef.custom = true;
                 break;
             case 23943:
@@ -786,7 +770,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 4205:
                 itemDef.name = "@gre@Consecration seed";
                 //itemDef.description = "Provides the whole server with +5 PC points for 1 hour.";
-                itemDef.stacks = true;
+                itemDef.stacks = 1;
                 itemDef.custom = true;
                 break;
             case 11864:
@@ -1007,7 +991,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.zan2d = ItemDefinition.lookup(6199).zan2d;
                 itemDef.xOffset2d = ItemDefinition.lookup(6199).xOffset2d;
                 itemDef.yOffset2d = ItemDefinition.lookup(6199).yOffset2d;
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.custom = true;
                 break;
             case 6677:
@@ -1021,7 +1005,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.zan2d = 0;
                 itemDef.xOffset2d = 0;
                 itemDef.yOffset2d = -14;
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.custom = true;
                 break;
             case 6199:
@@ -1085,7 +1069,7 @@ public final class ItemDefinition implements RSItemComposition {
                 //itemDef.description = "50% chance to pick up crystal keys that drop.";
                 itemDef.createCustomSprite("Postie_Pete.png");
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.custom = true;
                 break;
             case 30011:
@@ -1093,7 +1077,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Imp";
                 //itemDef.description = "50% chance to pick up clue scrolls that drop.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Imp.png");
                 itemDef.custom = true;
                 break;
@@ -1102,7 +1086,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Toucan";
                 //itemDef.description = "50% chance to pick up resource packs.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.custom = true;
                 itemDef.createCustomSprite("Toucan.png");
                 break;
@@ -1111,7 +1095,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Penguin King";
                 //itemDef.description = "50% chance to auto-pick up coin bags.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Penguin_King.png");
                 itemDef.custom = true;
                 break;
@@ -1120,7 +1104,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "K'klik";
                 //itemDef.description = "An extra 5% in drop rate boost.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("K'klik.png");
                 itemDef.custom = true;
                 break;
@@ -1129,7 +1113,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Shadow warrior";
                 //itemDef.description = "50% chance for an additional +10% strength bonus in pvm.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Shadow_warrior.png");
                 itemDef.custom = true;
                 break;
@@ -1138,7 +1122,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Shadow archer";
                 //itemDef.description = "50% chance for an additional +10% range str bonus in PvM.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Shadow_archer.png");
                 itemDef.custom = true;
                 break;
@@ -1147,7 +1131,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Shadow wizard";
                 //itemDef.description = "50% chance for an additional +10% mage str bonus in PvM.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Shadow_wizard.png");
                 itemDef.custom = true;
                 break;
@@ -1156,7 +1140,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Healer Death Spawn";
                 //itemDef.description = "5% chance hit restores HP.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Healer_Death_Spawn.png");
                 itemDef.custom = true;
                 break;
@@ -1165,7 +1149,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Holy Death Spawn";
                 //itemDef.description = "5% chance 1/2 of your hit is restored into prayer.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Holy_Death_Spawn.png");
                 itemDef.custom = true;
                 break;
@@ -1174,7 +1158,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Corrupt beast";
                 //itemDef.description = "50% chance for an additional +10% strength bonus for melee, mage, and range in pvm.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Corrupt_beast.png");
                 itemDef.custom = true;
                 break;
@@ -1183,7 +1167,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Roc";
                 //itemDef.description = "An extra 10% in drop rate boost.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Roc.png");
                 itemDef.custom = true;
                 break;
@@ -1192,7 +1176,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "@red@Kratos";
                 //itemDef.description = "The most powerful pet, see ::foepets for full list of perks.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Yama.png");
                 itemDef.custom = true;
                 break;
@@ -1201,7 +1185,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Rain cloud";
                 //itemDef.description = "Don't worry be happy.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Rain_cloud.png");
                 itemDef.custom = true;
                 break;
@@ -1209,7 +1193,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Storage chest key (UIM)";
                 //itemDef.description = "Used to open the UIM storage chest 1 time.";
                 itemDef.custom = true;
-                itemDef.stacks = true;
+                itemDef.stacks = 1;
                 break;
             case 8868:
                 itemDef.name = "Perm. storage chest key (UIM)";
@@ -1255,7 +1239,7 @@ public final class ItemDefinition implements RSItemComposition {
                 //itemDef.description = "Picks up all crystal keys and 25% chance to double.";
                 itemDef.createCustomSprite("dark_Postie_Pete.png");
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.custom = true;
                 break;
             case 30111:
@@ -1263,7 +1247,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Dark imp";
                 //itemDef.description = "Picks up all clue scrolls and 25% chance to double.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("dark_Imp.png");
                 itemDef.custom = true;
                 break;
@@ -1272,7 +1256,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Dark toucan";
                 //itemDef.description = "Picks up all resource boxes and 25% chance to double.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("dark_Toucan.png");
                 itemDef.custom = true;
                 break;
@@ -1281,7 +1265,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Dark penguin King";
                 //itemDef.description = "Picks up all coin bags and 25% chance to double.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("dark_Penguin_King.png");
                 itemDef.custom = true;
                 break;
@@ -1290,7 +1274,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Dark k'klik";
                 //itemDef.description = "An extra 10% in drop rate boost.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("dark_K'klik.png");
                 itemDef.custom = true;
                 break;
@@ -1299,7 +1283,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Dark shadow warrior";
                 //itemDef.description = "Gives constant +10% strength bonus in pvm.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("dark_Shadow_warrior.png");
                 itemDef.custom = true;
                 break;
@@ -1308,7 +1292,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Dark shadow archer";
                 //itemDef.description = "Gives constant +10% range str bonus in PvM.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("dark_Shadow_archer.png");
                 itemDef.custom = true;
                 break;
@@ -1317,7 +1301,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Dark shadow wizard";
                 //itemDef.description = "Gives constant +10% mage str bonus in PvM.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("dark_Shadow_wizard.png");
                 itemDef.custom = true;
                 break;
@@ -1326,7 +1310,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Dark healer death spawn";
                 //itemDef.description = "10% chance hit restores HP.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("dark_Healer_Death_Spawn.png");
                 itemDef.custom = true;
                 break;
@@ -1335,7 +1319,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Dark holy death spawn";
                 //itemDef.description = "10% chance 1/2 of your hit is restored into prayer.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("dark_Holy_Death_Spawn.png");
                 itemDef.custom = true;
                 break;
@@ -1344,7 +1328,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Dark corrupt beast";
                 //itemDef.description = "Extra 10% in drop rate and constant +10% strength bonus for all styles in pvm.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("dark_Corrupt_beast.png");
                 itemDef.custom = true;
                 break;
@@ -1353,7 +1337,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Dark roc";
                 //itemDef.description = "An extra 20% in drop rate boost.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("dark_Roc.png");
                 itemDef.custom = true;
                 break;
@@ -1377,7 +1361,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "Dark seren";
                 //itemDef.description = "85% chance for Wildy Event Boss to hit a 0 and 25% chance to double key.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("dark_seren.png");
                 itemDef.custom = true;
                 break;
@@ -1391,7 +1375,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 21046:
                 itemDef.name = "@cya@Chest rate bonus (+15%)";
                 //itemDef.description = "A single use +15% chance from chests, or to receive a rare raids key.";
-                itemDef.stacks = true;
+                itemDef.stacks = 1;
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
                 itemDef.custom = true;
                 break;
@@ -1404,33 +1388,33 @@ public final class ItemDefinition implements RSItemComposition {
             case 1004:
                 itemDef.name = "@gre@20m Coins";
                 //itemDef.description = "Lovely coins.";
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.interfaceOptions = new String[] { "Claim", null, null, null, "Drop" };
                 itemDef.custom = true;
                 break;
             case 7629:
                 itemDef.name = "@or3@2x Slayer point scroll";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = true;
+                itemDef.stacks = 1;
                 itemDef.custom = true;
                 break;
             case 24460:
                 itemDef.name = "@or3@Faster clues (30 mins)";
                 //itemDef.description = "Clue rates are halved for npcs and skilling.";
                 itemDef.interfaceOptions = new String[] { "Boost", null, null, null, "Drop" };
-                itemDef.stacks = true;
+                itemDef.stacks = 1;
                 itemDef.custom = true;
                 break;
             case 7968:
                 itemDef.name = "@or3@+25% Skilling pet rate (30 mins)";
                 itemDef.interfaceOptions = new String[] { "Boost", null, null, null, "Drop" };
-                itemDef.stacks = true;
+                itemDef.stacks = 1;
                 itemDef.custom = true;
                 break;
             case 8899:
                 itemDef.name = "@gre@50m Coins";
                 //itemDef.description = "Lovely coins.";
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.interfaceOptions = new String[] { "Claim", null, null, null, "Drop" };
                 itemDef.custom = true;
                 break;
@@ -2404,7 +2388,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to save Materials/Platinum when fusing items.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("alchemaniac.png");
                 itemDef.custom = true;
                 break;
@@ -2414,7 +2398,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to automatically reload your cannon on kill.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Arcane_Conduit.png");
                 itemDef.custom = true;
                 break;
@@ -2424,7 +2408,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Double PK Points.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Armadylean_Decree.png");
                 itemDef.custom = true;
                 break;
@@ -2434,7 +2418,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Earn double slayer points while skulled in wilderness.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Bandosian_Might.png");
                 itemDef.custom = true;
                 break;
@@ -2444,7 +2428,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to double pickpocket loot when stealing from master farmer.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Barbarian_Pest_Wars.png");
                 itemDef.custom = true;
                 break;
@@ -2455,7 +2439,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to smelt an extra bar when smelting bar's.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Bottomless_Quiver.png");
                 itemDef.custom = true;
                 break;
@@ -2466,7 +2450,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Earn 100% more slayer point's upon completing a slayer task.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Catch_Of_The_Day.png");
                 itemDef.custom = true;
                 break;
@@ -2477,7 +2461,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "you will no longer receive rune's lower than or equal to level 20.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Certified_Farmer.png");
                 itemDef.custom = true;
                 break;
@@ -2488,7 +2472,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Fletching logs & Stringing bows grant 50% more fletching exp.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Chef's_Catch.png");
                 itemDef.custom = true;
                 break;
@@ -2499,7 +2483,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to make 50% more bolt tips per gem, arrow  tips, dart tips.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Chinchonkers.png");
                 itemDef.custom = true;
                 break;
@@ -2510,7 +2494,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to save ammo when using ranged weapon.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Clued_In.png");
                 itemDef.custom = true;
                 break;
@@ -2521,7 +2505,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to send drops to your bank.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Deeper_Pockets.png");
                 itemDef.custom = true;
                 break;
@@ -2532,7 +2516,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "charges have a 60% chance to be saved.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Dine_&_Dash.png");
                 itemDef.custom = true;
                 break;
@@ -2543,7 +2527,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "chance to note drops.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Divine_Restoration.png");
                 itemDef.custom = true;
                 break;
@@ -2554,7 +2538,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "50% increase hunter catch rate.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Dragon_On_A_Bit.png");
                 itemDef.custom = true;
                 break;
@@ -2565,7 +2549,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to double thieving xp.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Enchanted_Jeweler.png");
                 itemDef.custom = true;
                 break;
@@ -2576,7 +2560,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to double crafting xp.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Golden_Brick_Road.png");
                 itemDef.custom = true;
                 break;
@@ -2587,7 +2571,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to double cooking xp.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Grave_Robber.png");
                 itemDef.custom = true;
                 break;
@@ -2598,7 +2582,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to save rune's when casting spells.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Homewrecker.png");
                 itemDef.custom = true;
                 break;
@@ -2609,7 +2593,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "25% slower prayer drain.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Hot_On_The_Trail.png");
                 itemDef.custom = true;
                 break;
@@ -2620,7 +2604,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to double Nomad Points when burning.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Imcando's_Apprentice.png");
                 itemDef.custom = true;
                 break;
@@ -2631,7 +2615,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to double demon hunter xp.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Just_Druid!.png");
                 itemDef.custom = true;
                 break;
@@ -2642,7 +2626,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to double slayer xp.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Larger_Recharger.png");
                 itemDef.custom = true;
                 break;
@@ -2653,7 +2637,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to double firemaking xp.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Livin'_On_A_Prayer.png");
                 itemDef.custom = true;
                 break;
@@ -2664,7 +2648,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to double hunter xp.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Message_In_A_Bottle.png");
                 itemDef.custom = true;
                 break;
@@ -2675,7 +2659,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to double mining xp.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Mixologist.png");
                 itemDef.custom = true;
                 break;
@@ -2686,7 +2670,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to double woodcutting xp.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Molten_Miner.png");
                 itemDef.custom = true;
                 break;
@@ -2697,7 +2681,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to double fishing xp.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Mother's_Magic_Fossils.png");
                 itemDef.custom = true;
                 break;
@@ -2708,7 +2692,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to triple your fish when fishing.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Plank_Stretcher.png");
                 itemDef.custom = true;
                 break;
@@ -2719,7 +2703,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to double prayer xp.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Praying_Respects.png");
                 itemDef.custom = true;
                 break;
@@ -2730,7 +2714,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Gain 5% Melee Damage Bonus.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Pro_Tips.png");
                 itemDef.custom = true;
                 break;
@@ -2741,7 +2725,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Gain 5% Magic Damage Bonus.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Profletchional.png");
                 itemDef.custom = true;
                 break;
@@ -2752,7 +2736,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Gain 5% Range Damage Bonus.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Rock_Solid.png");
                 itemDef.custom = true;
                 break;
@@ -2763,7 +2747,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Gain 10% Melee Damage Bonus.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Rogues'_Chompy_Farm.png");
                 itemDef.custom = true;
                 break;
@@ -2774,7 +2758,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Gain 10% Magic Damage.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Rooty_Tooty_2x_Runeys.png");
                 itemDef.custom = true;
                 break;
@@ -2785,7 +2769,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Gain 10% Range Damage Bonus.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Rumple-Bow-String.png");
                 itemDef.custom = true;
                 break;
@@ -2796,7 +2780,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "10% Bonus Drop Rate.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Rune_Escape.png");
                 itemDef.custom = true;
                 break;
@@ -2807,7 +2791,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "10% Chance to get an extra key from COX.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Saradominist_Defence.png");
                 itemDef.custom = true;
                 break;
@@ -2818,7 +2802,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Collect all drop's.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Seedy_Business.png");
                 itemDef.custom = true;
                 break;
@@ -2829,7 +2813,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Note all drop's.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Slash_&_Burn.png");
                 itemDef.custom = true;
                 break;
@@ -2840,7 +2824,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "20% Increased Drop Rate.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Slay_All_Day.png");
                 itemDef.custom = true;
                 break;
@@ -2851,7 +2835,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to double reward's from any mystery box.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Slay_'n'_Pay.png");
                 itemDef.custom = true;
                 break;
@@ -2862,7 +2846,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance of an extra clue casket upon openin.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Smithing_Double.png");
                 itemDef.custom = true;
                 break;
@@ -2873,7 +2857,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "2 extra vote point's per vote.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Smooth_Criminal.png");
                 itemDef.custom = true;
                 break;
@@ -2884,7 +2868,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Extra Chance to find a pet.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Special_Discount.png");
                 itemDef.custom = true;
                 break;
@@ -2895,7 +2879,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to double health when using healer icon.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Superior_Tracking.png");
                 itemDef.custom = true;
                 break;
@@ -2906,7 +2890,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Permanent Anti-fire potion effect.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Tactical_Duelist.png");
                 itemDef.custom = true;
                 break;
@@ -2917,7 +2901,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Overload's no longer deal damage.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Thrall_Damage.png");
                 itemDef.custom = true;
                 break;
@@ -2928,7 +2912,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Chance to save 20% when donating to the well.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Unholy_Ranger.png");
                 itemDef.custom = true;
                 break;
@@ -2939,7 +2923,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "100 extra cannon ball's can be held in your cannon.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Unholy_Warrior.png");
                 itemDef.custom = true;
                 break;
@@ -2950,7 +2934,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "2x Skilling xp to all skills.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Unholy_Wizard.png");
                 itemDef.custom = true;
                 break;
@@ -2961,7 +2945,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "3x Pest control points.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Venomaster.png");
                 itemDef.custom = true;
                 break;
@@ -2972,7 +2956,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "Double slayer task size.";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Zamorakian_Sight.png");
                 itemDef.custom = true;
                 break;
@@ -2985,7 +2969,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "A Crystal gained from skilling, used with the fusion system.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Destroy" };
-                itemDef.stacks = true;
+                itemDef.stacks = 1;
                 itemDef.createCustomSprite("skilling_easy.png");
                 itemDef.custom = true;
                 break;
@@ -2996,7 +2980,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "A Crystal gained from skilling, used with the fusion system.";
                 itemDef.interfaceOptions = new String[] { "Use", null, null, null, "Destroy" };
-                itemDef.stacks = true;
+                itemDef.stacks = 1;
                 itemDef.createCustomSprite("skilling_medium.png");
                 itemDef.custom = true;
                 break;
@@ -3007,7 +2991,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "A Crystal gained from skilling, used with the fusion system.";
                 itemDef.interfaceOptions = new String[] { "Use", null, null, null, "Destroy" };
-                itemDef.stacks = true;
+                itemDef.stacks = 1;
                 itemDef.createCustomSprite("skilling_hard.png");
                 itemDef.custom = true;
                 break;
@@ -3018,7 +3002,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "A Crystal gained from skilling, used with the fusion system.";
                 itemDef.interfaceOptions = new String[] { "Use", null, null, null, "Destroy" };
-                itemDef.stacks = true;
+                itemDef.stacks = 1;
                 itemDef.createCustomSprite("skilling_elite.png");
                 itemDef.custom = true;
                 break;
@@ -3033,7 +3017,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "A Crystal gained from PVM, used with the fusion system.";
                 itemDef.interfaceOptions = new String[] { "Use", null, null, null, "Destroy" };
-                itemDef.stacks = true;
+                itemDef.stacks = 1;
                 itemDef.createCustomSprite("pvm_easy.png");
                 itemDef.custom = true;
                 break;
@@ -3044,7 +3028,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "A Crystal gained from PVM, used with the fusion system.";
                 itemDef.interfaceOptions = new String[] { "Use", null, null, null, "Destroy" };
-                itemDef.stacks = true;
+                itemDef.stacks = 1;
                 itemDef.createCustomSprite("pvm_medium.png");
                 itemDef.custom = true;
                 break;
@@ -3055,7 +3039,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "A Crystal gained from PVM, used with the fusion system.";
                 itemDef.interfaceOptions = new String[] { "Use", null, null, null, "Destroy" };
-                itemDef.stacks = true;
+                itemDef.stacks = 1;
                 itemDef.createCustomSprite("pvm_hard.png");
                 itemDef.custom = true;
                 break;
@@ -3066,7 +3050,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "A Crystal gained from PVM, used with the fusion system.";
                 itemDef.interfaceOptions = new String[] { "Use", null, null, null, "Destroy" };
-                itemDef.stacks = true;
+                itemDef.stacks = 1;
                 itemDef.createCustomSprite("pvm_elite.png");
                 itemDef.custom = true;
                 break;
@@ -3080,7 +3064,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "A Crystal gained from Various Activities, used with the fusion system.";
                 itemDef.interfaceOptions = new String[] { "Use", null, null, null, "Destroy" };
-                itemDef.stacks = true;
+                itemDef.stacks = 1;
                 itemDef.createCustomSprite("misc_easy.png");
                 itemDef.custom = true;
                 break;
@@ -3091,7 +3075,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "A Crystal gained from Various Activities, used with the fusion system.";
                 itemDef.interfaceOptions = new String[] { "Use", null, null, null, "Destroy" };
-                itemDef.stacks = true;
+                itemDef.stacks = 1;
                 itemDef.createCustomSprite("misc_medium.png");
                 itemDef.custom = true;
                 break;
@@ -3102,7 +3086,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "A Crystal gained from Various Activities, used with the fusion system.";
                 itemDef.interfaceOptions = new String[] { "Use", null, null, null, "Destroy" };
-                itemDef.stacks = true;
+                itemDef.stacks = 1;
                 itemDef.createCustomSprite("misc_hard.png");
                 itemDef.custom = true;
                 break;
@@ -3113,7 +3097,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "A Crystal gained from Various Activities, used with the fusion system.";
                 itemDef.interfaceOptions = new String[] { "Use", null, null, null, "Destroy" };
-                itemDef.stacks = true;
+                itemDef.stacks = 1;
                 itemDef.createCustomSprite("misc_elite.png");
                 itemDef.custom = true;
                 break;
@@ -3125,7 +3109,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "A Crystal gained from Foundry Points, used with the fusion system.";
                 itemDef.interfaceOptions = new String[] { "Use", null, null, null, "Destroy" };
-                itemDef.stacks = true;
+                itemDef.stacks = 1;
                 itemDef.createCustomSprite("foundry_easy.png");
                 itemDef.custom = true;
                 break;
@@ -3136,7 +3120,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "A Crystal gained from Foundry Points, used with the fusion system.";
                 itemDef.interfaceOptions = new String[] { "Use", null, null, null, "Destroy" };
-                itemDef.stacks = true;
+                itemDef.stacks = 1;
                 itemDef.createCustomSprite("foundry_medium.png");
                 itemDef.custom = true;
                 break;
@@ -3147,7 +3131,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "A Crystal gained from Foundry Points, used with the fusion system.";
                 itemDef.interfaceOptions = new String[] { "Use", null, null, null, "Destroy" };
-                itemDef.stacks = true;
+                itemDef.stacks = 1;
                 itemDef.createCustomSprite("foundry_hard.png");
                 itemDef.custom = true;
                 break;
@@ -3158,7 +3142,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.inventoryModel = ItemDefinition.lookup(26546).inventoryModel;
                 //itemDef.description = "A Crystal gained from Foundry Points, used with the fusion system.";
                 itemDef.interfaceOptions = new String[] { "Use", null, null, null, "Destroy" };
-                itemDef.stacks = true;
+                itemDef.stacks = 1;
                 itemDef.createCustomSprite("foundry_elite.png");
                 itemDef.custom = true;
                 break;
@@ -3874,7 +3858,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 10533:
                 itemDef.name = "Guardian Angel Pet";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.custom = true;
                 break;
             case 33177:
@@ -4233,7 +4217,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "@gre@Lil' Groot";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("Groot.png");
                 itemDef.custom = true;
                 break;
@@ -4241,7 +4225,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "@gre@Xmas Box";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, "Quick-Open", "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("xmas_box.png");
                 itemDef.custom = true;
                 break;
@@ -4250,7 +4234,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "lil' Gingie";
                 //itemDef.description = "The most powerful pet, see ::foepets for full list of perks.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.inventoryModel = 60034;
                 itemDef.zoom2d = 1780;
                 itemDef.xan2d = 240;
@@ -4265,7 +4249,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "lil' Elf";
                 //itemDef.description = "The most powerful pet, see ::foepets for full list of perks.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.inventoryModel = 60033;
                 itemDef.zoom2d = 1780;
                 itemDef.xan2d = 287;
@@ -4280,7 +4264,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.name = "lil' Evil Snowman";
                 //itemDef.description = "The most powerful pet, see ::foepets for full list of perks.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.inventoryModel = 46750;
                 itemDef.zoom2d = 2980;
                 itemDef.xan2d = 165;
@@ -4294,7 +4278,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "Christmas Pudding";
                 itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("pudding.png");
                 itemDef.custom = true;
                 break;
@@ -4302,7 +4286,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "Relic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("5309.png");
                 itemDef.custom = true;
                 break;
@@ -4310,7 +4294,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "Relic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("5310.png");
                 itemDef.custom = true;
                 break;
@@ -4318,7 +4302,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "Relic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("5311.png");
                 itemDef.custom = true;
                 break;
@@ -4326,7 +4310,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "Relic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("5312.png");
                 itemDef.custom = true;
                 break;
@@ -4334,7 +4318,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "Relic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("5313.png");
                 itemDef.custom = true;
                 break;
@@ -4342,7 +4326,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "Relic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("5314.png");
                 itemDef.custom = true;
                 break;
@@ -4350,7 +4334,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "Faster melee";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("5315.png");
                 itemDef.custom = true;
                 break;
@@ -4358,7 +4342,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "Faster Range";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("5316.png");
                 itemDef.custom = true;
                 break;
@@ -4366,7 +4350,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "Faster Magic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("5317.png");
                 itemDef.custom = true;
                 break;
@@ -4374,7 +4358,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "Relic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("5318.png");
                 itemDef.custom = true;
                 break;
@@ -4382,7 +4366,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "Relic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("5319.png");
                 itemDef.custom = true;
                 break;
@@ -4390,7 +4374,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "Relic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("5320.png");
                 itemDef.custom = true;
                 break;
@@ -4398,7 +4382,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "3x Xp Bonus";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("5321.png");
                 itemDef.custom = true;
                 break;
@@ -4406,7 +4390,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "Relic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("5322.png");
                 itemDef.custom = true;
                 break;
@@ -4414,7 +4398,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "Simplified Farming";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("5323.png");
                 itemDef.custom = true;
                 break;
@@ -4422,7 +4406,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "Relic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("5324.png");
                 itemDef.custom = true;
                 break;
@@ -4430,7 +4414,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "Maximum Damage";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("5325.png");
                 itemDef.custom = true;
                 break;
@@ -4438,7 +4422,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "Relic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("5326.png");
                 itemDef.custom = true;
                 break;
@@ -4446,7 +4430,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "Meteor";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("5327.png");
                 itemDef.custom = true;
                 break;
@@ -4454,7 +4438,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "AOE Relic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("5328.png");
                 itemDef.custom = true;
                 break;
@@ -4462,7 +4446,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "Relic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" } ;
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("5329.png");
                 itemDef.custom = true;
                 break;
@@ -4470,7 +4454,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "Relic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("5330.png");
                 itemDef.custom = true;
                 break;
@@ -4478,7 +4462,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.setDefaults();
                 itemDef.name = "Relic";
                 itemDef.interfaceOptions = new String[] { "Attune", null, null, null, "Destroy" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.createCustomSprite("5335.png");
                 itemDef.custom = true;
                 break;
@@ -4553,25 +4537,25 @@ public final class ItemDefinition implements RSItemComposition {
             case 28669:
                 itemDef.name = "Pheasant";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.custom = true;
                 break;
             case 10998:
                 itemDef.name = "13th Pet Goblin";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.custom = true;
                 break;
             case 24864:
                 itemDef.name = "Maniacal Monkey";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.custom = true;
                 break;
             case 24863:
                 itemDef.name = "Zombie Monkey";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.custom = true;
                 break;
 
@@ -4619,7 +4603,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 11279:
                 itemDef.name = "Baby Green Dragon";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.custom = true;
                 break;
             case 33241:
@@ -4632,7 +4616,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.zan2d = ItemDefinition.lookup(11279).zan2d;
                 itemDef.xOffset2d = ItemDefinition.lookup(11279).xOffset2d;
                 itemDef.yOffset2d = ItemDefinition.lookup(11279).yOffset2d;
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.custom = true;
                 break;
             case 33240:
@@ -4645,7 +4629,7 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.zan2d = ItemDefinition.lookup(11279).zan2d;
                 itemDef.xOffset2d = ItemDefinition.lookup(11279).xOffset2d;
                 itemDef.yOffset2d = ItemDefinition.lookup(11279).yOffset2d;
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.custom = true;
                 break;
             case 33242:
@@ -4659,14 +4643,14 @@ public final class ItemDefinition implements RSItemComposition {
                 itemDef.zan2d = ItemDefinition.lookup(11279).zan2d;
                 itemDef.xOffset2d = ItemDefinition.lookup(11279).xOffset2d;
                 itemDef.yOffset2d = ItemDefinition.lookup(11279).yOffset2d;
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.custom = true;
                 break;
             case 33243:
                 itemDef.setDefaults();
                 itemDef.name = "@red@Realm Nyx";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.inventoryModel = 60047;
                 itemDef.zoom2d = 4280;
                 itemDef.xan2d = 270;
@@ -4699,43 +4683,43 @@ public final class ItemDefinition implements RSItemComposition {
             case 6644:
                 itemDef.name = "@blu@Crystal Armour";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.custom = true;
                 break;
             case 6642:
                 itemDef.name = "@gre@Crystal Armour";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.custom = true;
                 break;
             case 6641:
                 itemDef.name = "@yel@Crystal Armour";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.custom = true;
                 break;
             case 6650:
                 itemDef.name = "@bla@Crystal Armour";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.custom = true;
                 break;
             case 6645:
                 itemDef.name = "@MAG@Crystal Armour";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.custom = true;
                 break;
             case 6640:
                 itemDef.name = "@red@Crystal Armour";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.custom = true;
                 break;
             case 6646:
                 itemDef.name = "@whi@Crystal Armour";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, null, "Drop" };
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 itemDef.custom = true;
                 break;
             case 24866:  //Shoulder Monkey
@@ -4749,7 +4733,7 @@ public final class ItemDefinition implements RSItemComposition {
             case 20211:
                 itemDef.custom = true;
                 itemDef.name = "Cape of darkness";
-                itemDef.stacks = false;
+                itemDef.stacks = 0;
                 break;
             case 10595:
                 itemDef.custom = true;
@@ -5106,34 +5090,24 @@ public final class ItemDefinition implements RSItemComposition {
     public transient boolean custom = false;
 
     public static ItemDefinition lookup(int itemId) {
-        for (int count = 0; count < 10; count++)
-            if (cache[count].id == itemId)
-                return cache[count];
+        if(itemId < 0)
+            throw new RuntimeException();
 
-        if (itemId == -1)
-            itemId = 0;
-        if (newCustomItems(itemId) != null) {
-            return newCustomItems(itemId);
+        ItemDefinition itemDef = (ItemDefinition) cache.get(itemId);
+        if (itemDef == null) {
+            byte[] data = Js5List.configs.takeFile(Js5ConfigType.ITEM, itemId);
+            itemDef = new ItemDefinition();
+            itemDef.setDefaults();
+            itemDef.id = itemId;
+            if (data != null) {
+                itemDef.decode(new Buffer(data));
+                if (itemDef.noteTemplateId != -1) {
+                    itemDef.toNote();
+                }
+                cache.put(itemDef, itemId);
+            }
         }
 
-        if (itemId >= streamIndices.length)
-            itemId = 0;
-
-        cacheIndex = (cacheIndex + 1) % 10;
-        ItemDefinition itemDef = cache[cacheIndex];
-
-        item_data.pos = streamIndices[itemId];
-        itemDef.id = itemId;
-        itemDef.setDefaults();
-        itemDef.decode(item_data);
-
-        if (itemDef.noteTemplateId != -1)
-            itemDef.toNote();
-
-        int id = itemDef.id;
-
-        customItems(itemDef.id);
-        itemDef.id = id;
         return itemDef;
     }
 
@@ -5303,7 +5277,7 @@ public final class ItemDefinition implements RSItemComposition {
         Rasterizer3D.scanOffsets = lineOffsets;
         Rasterizer3D.aBoolean1464 = true;
         Rasterizer3D.world = true;
-        enabledSprite.maxWidth = definition.stacks ? 33 : 32;
+        enabledSprite.maxWidth = definition.isStackable() ? 33 : 32;
         enabledSprite.maxHeight = stackSize;
         return enabledSprite;
     }
@@ -5321,6 +5295,8 @@ public final class ItemDefinition implements RSItemComposition {
                 return sprite;
         }
         ItemDefinition itemDef = lookup(itemId);
+        if(itemDef == null)
+            return null;
         if (itemDef.countObj == null)
             stackSize = -1;
         if (stackSize > 1) {
@@ -5338,8 +5314,19 @@ public final class ItemDefinition implements RSItemComposition {
         Sprite sprite = null;
         if (itemDef.noteTemplateId != -1) {
             sprite = getSprite(itemDef.noteLinkId, 10, -1);
-            if (sprite == null)
+            if (sprite == null) {
                 return null;
+            }
+        } else if (itemDef.notedId != -1) {
+            sprite = getSprite(itemDef.unnotedId, 10, -1);
+            if (sprite == null) {
+                return null;
+            }
+        } else if (itemDef.placeholderTemplate != -1) {
+            sprite = getSprite(itemDef.placeholderLink, 10, -1);
+            if (sprite == null) {
+                return null;
+            }
         }
         if (itemDef.customSpriteLocation != null)
         {
@@ -5400,7 +5387,7 @@ public final class ItemDefinition implements RSItemComposition {
         Rasterizer3D.scanOffsets = lineOffsets;
         Rasterizer3D.aBoolean1464 = true;
         Rasterizer3D.world = true;
-        if (itemDef.stacks)
+        if (itemDef.isStackable())
             enabledSprite.maxWidth = 33;
         else
             enabledSprite.maxWidth = 32;
@@ -5536,7 +5523,7 @@ public final class ItemDefinition implements RSItemComposition {
         Rasterizer3D.scanOffsets = lineOffsets;
         Rasterizer3D.aBoolean1464 = true;
         Rasterizer3D.world = true;
-        if (itemDef.stacks)
+        if (itemDef.isStackable())
             sprite.maxWidth = 33;
         else
             sprite.maxWidth = 32;
@@ -5685,7 +5672,7 @@ public final class ItemDefinition implements RSItemComposition {
         zan2d = 0;
         xOffset2d = 0;
         yOffset2d = 0;
-        stacks = false;
+        stacks = 0;
         cost = 1;
         members = false;
         options = null;
@@ -5706,6 +5693,10 @@ public final class ItemDefinition implements RSItemComposition {
         countCo = null;
         noteLinkId = -1;
         noteTemplateId = -1;
+        notedId = -1;
+        unnotedId = -1;
+        placeholderLink = -1;
+        placeholderTemplate = -1;
         resizeX = 128;
         resizeY = 128;
         resizeZ = 128;
@@ -5745,7 +5736,7 @@ public final class ItemDefinition implements RSItemComposition {
         name = itemDef_1.name;
         members = itemDef_1.members;
         cost = itemDef_1.cost;
-        stacks = true;
+        stacks = 1;
     }
 
     @Override
@@ -5805,7 +5796,7 @@ public final class ItemDefinition implements RSItemComposition {
 
     @Override
     public int getIsStackable() {
-        return 0;
+        return stacks;
     }
 
     @Override
@@ -5928,9 +5919,9 @@ public final class ItemDefinition implements RSItemComposition {
             if (opcode == 1)
                 inventoryModel = buffer.readUShort();
             else if (opcode == 2)
-                name = buffer.readStrings();
+                name = buffer.readNullTerminatedString();
             else if (opcode == 3)
-                description = buffer.readStrings();
+                description = buffer.readNullTerminatedString();
             else if (opcode == 4)
                 zoom2d = buffer.readUShort();
             else if (opcode == 5)
@@ -5948,7 +5939,7 @@ public final class ItemDefinition implements RSItemComposition {
             } else if (opcode == 10) {
                 buffer.readUShort();
             } else if (opcode == 11)
-                stacks = true;
+                stacks = 1;
             else if (opcode == 12)
                 cost = buffer.readInt();
             else if (opcode == 13)
@@ -5972,13 +5963,13 @@ public final class ItemDefinition implements RSItemComposition {
             } else if (opcode >= 30 && opcode < 35) {
                 if (options == null)
                     options = new String[5];
-                options[opcode - 30] = buffer.readString();
+                options[opcode - 30] = buffer.readNullTerminatedString();
                 if (options[opcode - 30].equalsIgnoreCase("hidden"))
                     options[opcode - 30] = null;
             } else if (opcode >= 35 && opcode < 40) {
                 if (interfaceOptions == null)
                     interfaceOptions = new String[5];
-                interfaceOptions[opcode - 35] = buffer.readString();
+                interfaceOptions[opcode - 35] = buffer.readNullTerminatedString();
             } else if (opcode == 40) {
                 int length = buffer.readUnsignedByte();
                 modifiedColours = new int[length];
@@ -6052,7 +6043,7 @@ public final class ItemDefinition implements RSItemComposition {
             } else if (opcode == 249) {
                 params = BufferExt.readStringIntParameters(buffer);
             }
-            if (stacks) {
+            if (isStackable()) {
                 weight = 0;
             }
         }
@@ -6065,7 +6056,7 @@ public final class ItemDefinition implements RSItemComposition {
 
     @Override
     public boolean isStackable() {
-        return stacks;
+        return stacks == 1 || noteTemplateId > 0;
     }
 
     @Override
