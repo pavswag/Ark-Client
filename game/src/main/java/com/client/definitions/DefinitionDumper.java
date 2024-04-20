@@ -20,6 +20,7 @@ public class DefinitionDumper {
             dumpCustomItems();
             dumpItems();
             dumpNpcs();
+            Client.instance.resourceProvider.dumpModels();
         }
     }
 
