@@ -61,22 +61,25 @@ public class DefinitionDumper {
     }
     public static void dumpCustomNpcs() {
         for(int i = 0; i < NpcDefinition.totalAmount; i++) {
-            NpcDefinition itemDefinition = NpcDefinition.lookup(i);
-            if(itemDefinition == null)
+            NpcDefinition npcDefinition = NpcDefinition.lookup(i);
+            if(npcDefinition == null)
                 continue;
-            if(itemDefinition.custom) {
-                if(itemDefinition.name == null || itemDefinition.name.equalsIgnoreCase("null"))
+            if(npcDefinition.custom) {
+                if(npcDefinition.name == null || npcDefinition.name.equalsIgnoreCase("null"))
                     continue;
-                String fileName = i + "-" + RSFont.removeOldSyntax(itemDefinition.name).replace("\\", "-").replace("/", "-");
+                String fileName = i + "-" + RSFont.removeOldSyntax(npcDefinition.name).replace("\\", "-").replace("/", "-");
                 if(fileName.contains(">")) {
                     fileName = fileName.substring(fileName.indexOf(">") + 1);
                 }
+                fileName = fileName.replace("<-col>", "");
+
+                fileName = fileName.trim();
 
                 System.out.println("Dumping " + fileName);
-                toJson(itemDefinition, "./temp/items/" + fileName + ".json");
+                toJson(npcDefinition, "./temp/npcs/" + fileName + ".json");
 
-                if(itemDefinition.models != null) {
-                    for(int model: itemDefinition.models) {
+                if(npcDefinition.models != null) {
+                    for(int model: npcDefinition.models) {
                         customModels.add(model);
                     }
                 }

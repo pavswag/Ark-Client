@@ -2189,7 +2189,7 @@ public class Client extends GameEngine implements RSClient {
 		for (int j = 0; j < npcCount; j++) {
 			Npc npc = npcs[npcIndices[j]];
 			long k = 0x20000000L | (long) npcIndices[j] << 32;
-			if (npc == null || !npc.isVisible() || npc.desc.aBoolean93 != flag)
+			if (npc == null || !npc.isVisible() || npc.desc.hasRenderPriority != flag)
 				continue;
 			int l = npc.x >> 7;
 			int i1 = npc.y >> 7;
@@ -2200,7 +2200,7 @@ public class Client extends GameEngine implements RSClient {
 					continue;
 				anIntArrayArray929[l][i1] = anInt1265;
 			}
-			if (!npc.desc.clickable)
+			if (!npc.desc.isInteractable)
 				k |= ~0x7fffffffffffffffL;
 			scene.addAnimableA(plane, npc.orientation, getCenterHeight(plane, npc.y, npc.x), k, npc.y,
 					(npc.anInt1540 - 1) * 64 + 60, npc.x, npc, npc.dynamic);
@@ -3465,7 +3465,7 @@ public class Client extends GameEngine implements RSClient {
 					continue;
 				if (obj instanceof Npc) {
 					NpcDefinition entityDef = ((Npc) obj).desc;
-					if (entityDef.configs != null)
+					if (entityDef.transforms != null)
 						entityDef = entityDef.method161();
 					if (entityDef == null)
 						continue;
@@ -4534,11 +4534,11 @@ public class Client extends GameEngine implements RSClient {
 			if (k1 == 1)
 				anIntArray894[anInt893++] = k;
 			npc.anInt1540 = npc.desc.size;
-			npc.anInt1504 = npc.desc.rotationSpeed;
+			npc.anInt1504 = npc.desc.rotation;
 			npc.walkAnimIndex = npc.desc.walkAnim;
-			npc.turn180AnimIndex = npc.desc.rotate180AnimIndex;
-			npc.turn90CWAnimIndex = npc.desc.rotate90CWAnimIndex;
-			npc.turn90CCWAnimIndex = npc.desc.rotate90CCWAnimIndex;
+			npc.turn180AnimIndex = npc.desc.rotateBackAnim;
+			npc.turn90CWAnimIndex = npc.desc.walkLeftAnim;
+			npc.turn90CCWAnimIndex = npc.desc.walkRightAnim;
 			npc.seqStandID = npc.desc.standAnim;
 			npc.anInt1538 = 0;
 			npc.anInt1539 = 0;
@@ -7241,7 +7241,7 @@ public class Client extends GameEngine implements RSClient {
 			if (class30_sub2_sub4_sub1_sub1_5 != null) {
 				NpcDefinition entityDef = class30_sub2_sub4_sub1_sub1_5.desc;
 				if (entityDef != null) {
-					if (entityDef.configs != null)
+					if (entityDef.transforms != null)
 						entityDef = entityDef.method161();
 					if (entityDef != null) {
 						String s9 = null;
@@ -7254,7 +7254,7 @@ public class Client extends GameEngine implements RSClient {
 						}
 					}
 
-					if (entityDef.combatLevel >= 0 || entityDef.npcId == 10529) {
+					if (entityDef.combatLevel >= 0 || entityDef.id == 10529) {
 						stream.createFrame(137);
 						stream.writeWord((int) i1);
 					}
@@ -11837,11 +11837,11 @@ public class Client extends GameEngine implements RSClient {
 			if ((l & 2) != 0) {
 				npc.desc = NpcDefinition.lookup(stream.method436());
 				npc.anInt1540 = npc.desc.size;
-				npc.anInt1504 = npc.desc.rotationSpeed;
+				npc.anInt1504 = npc.desc.rotation;
 				npc.walkAnimIndex = npc.desc.walkAnim;
-				npc.turn180AnimIndex = npc.desc.rotate180AnimIndex;
-				npc.turn90CWAnimIndex = npc.desc.rotate90CWAnimIndex;
-				npc.turn90CCWAnimIndex = npc.desc.rotate90CCWAnimIndex;
+				npc.turn180AnimIndex = npc.desc.rotateBackAnim;
+				npc.turn90CWAnimIndex = npc.desc.walkLeftAnim;
+				npc.turn90CCWAnimIndex = npc.desc.walkRightAnim;
 				npc.seqStandID = npc.desc.standAnim;
 			}
 			if ((l & 4) != 0) {
@@ -11856,11 +11856,11 @@ public class Client extends GameEngine implements RSClient {
 	public void buildAtNPCMenu(NpcDefinition entityDef, int i, int j, int k) {
 		if (menuActionRow >= 400)
 			return;
-		if (entityDef.configs != null)
+		if (entityDef.transforms != null)
 			entityDef = entityDef.method161();
 		if (entityDef == null)
 			return;
-		if (!entityDef.clickable)
+		if (!entityDef.isInteractable)
 			return;
 		String s = entityDef.name;
 		if (entityDef.combatLevel != 0)
@@ -11977,7 +11977,7 @@ public class Client extends GameEngine implements RSClient {
 				if (System.currentTimeMillis() - debugDelay > 1000 && entityDef.models != null) {
 					String modelIds = Arrays.toString(entityDef.models);
 					String regColors = Arrays.toString(entityDef.originalColors);
-					String newColors = Arrays.toString(entityDef.newColors);
+					String newColors = Arrays.toString(entityDef.modifiedColours);
 					int standAnim = entityDef.standAnim;
 					int walkAnim = entityDef.walkAnim;
 					String name = entityDef.name;
@@ -12370,7 +12370,7 @@ public class Client extends GameEngine implements RSClient {
 
 					FileArchive streamLoader = streamLoaderForName(2, "config");
 					ObjectDefinition.init(streamLoader);
-					NpcDefinition.unpackConfig(streamLoader);
+					NpcDefinition.unpackConfig();
 					IDK.unpackConfig(streamLoader);
 					GraphicsDefinition.unpackConfig(streamLoader);
 					Varp.unpackConfig(streamLoader);
@@ -16785,9 +16785,9 @@ public class Client extends GameEngine implements RSClient {
 				Npc npc = npcs[npcIndices[i6]];
 				if (npc != null && npc.isVisible()) {
 					NpcDefinition entityDef = npc.desc;
-					if (entityDef.configs != null)
+					if (entityDef.transforms != null)
 						entityDef = entityDef.method161();
-					if (entityDef != null && entityDef.onMinimap && entityDef.clickable) {
+					if (entityDef != null && entityDef.isMinimapVisible && entityDef.isInteractable) {
 						int i1 = npc.x / 32 - localPlayer.x / 32;
 						int k3 = npc.y / 32 - localPlayer.y / 32;
 						markMinimap(mapDots[1], i1, k3);
@@ -19038,7 +19038,7 @@ public class Client extends GameEngine implements RSClient {
 								+ (localPlayer.anIntArray1700[4] << 20) + (localPlayer.equipment[0] << 15)
 								+ (localPlayer.equipment[8] << 10) + (localPlayer.equipment[11] << 5) + localPlayer.equipment[1];
 					else
-						RSInterface.interfaceCache[k].mediaID = (int) (0x12345678L + localPlayer.npcDefinition.npcId);
+						RSInterface.interfaceCache[k].mediaID = (int) (0x12345678L + localPlayer.npcDefinition.id);
 					incomingPacket = -1;
 					return true;
 

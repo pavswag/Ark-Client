@@ -15,29 +15,29 @@ import java.util.Arrays;
 //import org.apache.commons.io.FileUtils;
 
 import com.client.*;
+import com.client.cache.DualNode;
+import com.client.js5.Js5List;
+import com.client.js5.util.Js5ConfigType;
 import com.client.model.Npcs;
+import com.client.util.BufferExt;
 import net.runelite.api.HeadIcon;
 import net.runelite.api.IterableHashTable;
 import net.runelite.rs.api.RSIterableNodeHashTable;
 import net.runelite.rs.api.RSNPCComposition;
 
 
-public final class NpcDefinition implements RSNPCComposition {
+public final class NpcDefinition extends DualNode implements RSNPCComposition {
+    public static EvictingDualNodeHashTable cache = new EvictingDualNodeHashTable(64);
     public transient boolean custom;
     public static NpcDefinition lookup(int i) {
-        for (int j = 0; j < 20; j++)
-            if (cache[j].npcId == i)
-                return cache[j];
-
-        /*if (i > 11839) {
-            i = 11839;
-        }*/
-
-        anInt56 = (anInt56 + 1) % 20;
-        NpcDefinition entityDef = cache[anInt56] = new NpcDefinition();
-        stream.pos = streamIndices[i];
-        entityDef.npcId = i;
-        entityDef.readValues(stream);
+        NpcDefinition npcDefinition = (NpcDefinition) cache.get(i);
+        if(npcDefinition == null) {
+            npcDefinition = new NpcDefinition();
+            npcDefinition.id = i;
+            byte[] data = Js5List.configs.takeFile(Js5ConfigType.NPC, i);
+            npcDefinition.readValues(new Buffer(data));
+        }
+        /*
         if (i == Npcs.BOB_BARTER_HERBS) {
             entityDef.custom = true;
             entityDef.actions = new String[] { "Talk-to", "Prices", "Decant", "Clean", null };
@@ -66,7 +66,7 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.walkAnim = 819;
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { null, "Talk-to", null, "Minigame", null };
-            entityDef.rotationSpeed = 64;
+            entityDef.rotation = 64;
         }
         if (i == 8368) {
             entityDef.custom = true;
@@ -76,12 +76,12 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.standAnim = 5021;
             entityDef.walkAnim = 5022;
             entityDef.size = 2;
-            entityDef.onMinimap = true;
+            entityDef.isMinimapVisible = true;
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { null, "Attack", null, null, null };
-            entityDef.rotationSpeed = 64;
-            entityDef.npcWidth = 50; //WIDTH
-            entityDef.npcHeight = 50; // HEIGHT
+            entityDef.rotation = 64;
+            entityDef.heightScale = 50; //WIDTH
+            entityDef.widthScale = 50; // HEIGHT
         }
         if (i == 2577) {
             entityDef.custom = true;
@@ -91,9 +91,9 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.standAnim = 5022;
             entityDef.walkAnim = 5022;
             entityDef.size = 1;
-            entityDef.onMinimap = false;
-            entityDef.npcWidth = 50; //WIDTH
-            entityDef.npcHeight = 50; // HEIGH
+            entityDef.isMinimapVisible = false;
+            entityDef.heightScale = 50; //WIDTH
+            entityDef.widthScale = 50; // HEIGH
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Talk-to", null, "Pick-Up", null, null };
         }
@@ -107,8 +107,8 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.custom = true;
             entityDef.name = "13th Pet Goblin";
             entityDef.combatLevel = 0;
-            entityDef.npcWidth = 80; //WIDTH
-            entityDef.npcHeight = 80; // HEIGH
+            entityDef.heightScale = 80; //WIDTH
+            entityDef.widthScale = 80; // HEIGH
             entityDef.actions = new String[] { "Talk-to", null, "Pick-Up", null, null };
         }
         if (i == 7633) {
@@ -119,10 +119,10 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.standAnim = 5021;
             entityDef.walkAnim = 5022;
             entityDef.size = 4;
-            entityDef.onMinimap = true;
+            entityDef.isMinimapVisible = true;
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { null, "Attack", null, null, null };
-            entityDef.rotationSpeed = 64;
+            entityDef.rotation = 64;
         }
         if (i == 7623) {
             entityDef.custom = true;
@@ -132,10 +132,10 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.standAnim = 3989;
             entityDef.walkAnim = 3989;
             entityDef.size = 4;
-            entityDef.onMinimap = true;
+            entityDef.isMinimapVisible = true;
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { null, "Attack", null, null, null };
-            entityDef.rotationSpeed = 64;
+            entityDef.rotation = 64;
         }
         if (i == 4629) {
             entityDef.custom = true;
@@ -144,11 +144,11 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.models = new int[] { 60037 };
             entityDef.standAnim = 5021;
             entityDef.walkAnim = 5022;
-            entityDef.rotationSpeed = 64;
+            entityDef.rotation = 64;
             entityDef.size = 1;
-            entityDef.onMinimap = false;
-            entityDef.npcWidth = 25; //WIDTH
-            entityDef.npcHeight = 25; // HEIGH
+            entityDef.isMinimapVisible = false;
+            entityDef.heightScale = 25; //WIDTH
+            entityDef.widthScale = 25; // HEIGH
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Talk-to", null, "Pick-Up", null, null };
         }
@@ -160,11 +160,11 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.standAnim = 3989;
             entityDef.walkAnim = 3989;
             entityDef.actions = new String[5];
-            entityDef.rotationSpeed = 64;
+            entityDef.rotation = 64;
             entityDef.size = 1;
-            entityDef.onMinimap = false;
-            entityDef.npcWidth = 25; //WIDTH
-            entityDef.npcHeight = 25; // HEIGH
+            entityDef.isMinimapVisible = false;
+            entityDef.heightScale = 25; //WIDTH
+            entityDef.widthScale = 25; // HEIGH
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Talk-to", null, "Pick-Up", null, null };
         }
@@ -499,11 +499,11 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.custom = true;
             entityDef.name = "@red@Queen Latsyrc";
             entityDef.combatLevel = 982;
-            entityDef.onMinimap = true;
+            entityDef.isMinimapVisible = true;
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { null, "Attack", null, null, null };
-            entityDef.npcWidth = 175; //WIDTH
-            entityDef.npcHeight = 175; // HEIGH
+            entityDef.heightScale = 175; //WIDTH
+            entityDef.widthScale = 175; // HEIGH
         }
 
 
@@ -511,11 +511,11 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.custom = true;
             entityDef.name = "@gre@AFK Goblin";
             entityDef.combatLevel = 4012;
-            entityDef.onMinimap = true;
+            entityDef.isMinimapVisible = true;
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { null, "Attack", null, null, null };
-            entityDef.npcWidth = 500; //WIDTH
-            entityDef.npcHeight = 500; // HEIGHT
+            entityDef.heightScale = 500; //WIDTH
+            entityDef.widthScale = 500; // HEIGHT
             entityDef.size = 4;
         }
         if(i==1577){
@@ -550,11 +550,11 @@ public final class NpcDefinition implements RSNPCComposition {
             // entityDef.combatLevel = 732;
             entityDef.models = new int[] { 35023 };
             entityDef.standAnim = 7946;
-            entityDef.onMinimap = true;
+            entityDef.isMinimapVisible = true;
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Poke", null, null, null, null };
-            entityDef.npcWidth = 100;
-            entityDef.npcHeight = 100;
+            entityDef.heightScale = 100;
+            entityDef.widthScale = 100;
         }
         if (i == 7852 || i == 7853 || i == 7884) {//Dawn
             entityDef.custom = true;
@@ -612,8 +612,8 @@ public final class NpcDefinition implements RSNPCComposition {
         if (i == 326 || i == 327) {
             entityDef.custom = true;
             entityDef.combatLevel = 0;
-            entityDef.npcWidth = 85;
-            entityDef.npcHeight = 85;
+            entityDef.heightScale = 85;
+            entityDef.widthScale = 85;
             entityDef.name = "Vote Pet";
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Talk-to", null, "Pick-Up", "Metamorphosis", null };
@@ -642,16 +642,16 @@ public final class NpcDefinition implements RSNPCComposition {
         if (i == 6473) { //terror dog
             entityDef.custom = true;
             entityDef.combatLevel = 0;
-            entityDef.npcWidth = 50; //WIDTH
-            entityDef.npcHeight = 50; // HEIGH
+            entityDef.heightScale = 50; //WIDTH
+            entityDef.widthScale = 50; // HEIGH
         }
         if (i == 3510) { //outlast shop
             entityDef.custom = true;
             entityDef.name = "Trader";
             entityDef.combatLevel = 0;
-            entityDef.onMinimap = true;
-            entityDef.npcWidth = 150; //WIDTH
-            entityDef.npcHeight = 150; // HEIGH
+            entityDef.isMinimapVisible = true;
+            entityDef.heightScale = 150; //WIDTH
+            entityDef.widthScale = 150; // HEIGH
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Open-Shop", null, null, null, null };
         }
@@ -659,24 +659,24 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.custom = true;
             entityDef.combatLevel = 0;
             entityDef.size = 1;
-            entityDef.onMinimap = true;
-            entityDef.npcWidth = 150; //WIDTH
-            entityDef.npcHeight = 150; // HEIGH
+            entityDef.isMinimapVisible = true;
+            entityDef.heightScale = 150; //WIDTH
+            entityDef.widthScale = 150; // HEIGH
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Talk-to", null, "Pick-Up", null, null };
         }
         if (i == 5644) { //swapcreature
             entityDef.custom = true;
-            entityDef.npcWidth = 300; //WIDTH
-            entityDef.npcHeight = 300; // HEIGH
+            entityDef.heightScale = 300; //WIDTH
+            entityDef.widthScale = 300; // HEIGH
         }
         if (i == 7668) { //voice of yama
             entityDef.custom = true;
             entityDef.name = "Kratos";
             entityDef.size = 2;
             entityDef.combatLevel = 0;
-            entityDef.npcWidth = 90; //WIDTH
-            entityDef.npcHeight = 90; // HEIGH
+            entityDef.heightScale = 90; //WIDTH
+            entityDef.widthScale = 90; // HEIGH
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Talk-to", null, "Pick-Up", null, null };
 
@@ -684,21 +684,21 @@ public final class NpcDefinition implements RSNPCComposition {
         if (i == 1377) {
             entityDef.custom = true;
             entityDef.size = 3;
-            entityDef.npcWidth = 300; //WIDTH
-            entityDef.npcHeight = 300; // HEIGH
+            entityDef.heightScale = 300; //WIDTH
+            entityDef.widthScale = 300; // HEIGH
             entityDef.actions[0] = null;
         }
         if (i == 2105) {
             entityDef.custom = true;
             entityDef.size = 4;
-            entityDef.npcWidth = 600; //WIDTH
-            entityDef.npcHeight = 600; // HEIGH
+            entityDef.heightScale = 600; //WIDTH
+            entityDef.widthScale = 600; // HEIGH
         }
         if (i == 2107) {
             entityDef.custom = true;
             entityDef.size = 4;
-            entityDef.npcWidth = 600; //WIDTH
-            entityDef.npcHeight = 600; // HEIGH
+            entityDef.heightScale = 600; //WIDTH
+            entityDef.widthScale = 600; // HEIGH
         }
         if (i == 2850) {
             entityDef.custom = true;
@@ -710,16 +710,16 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.custom = true;
             entityDef.size = 1;
             entityDef.combatLevel = 0;
-            entityDef.npcWidth = 30; //WIDTH
-            entityDef.npcHeight = 30; // HEIGH
+            entityDef.heightScale = 30; //WIDTH
+            entityDef.widthScale = 30; // HEIGH
         }
         if (i == 763) { //roc
             entityDef.custom = true;
 
             entityDef.size = 1;
             entityDef.combatLevel = 0;
-            entityDef.npcWidth = 30; //WIDTH
-            entityDef.npcHeight = 30; // HEIGH
+            entityDef.heightScale = 30; //WIDTH
+            entityDef.widthScale = 30; // HEIGH
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Talk-to", null, "Pick-Up", "Metamorphosis", null };
 
@@ -736,8 +736,8 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.custom = true;
             entityDef.size = 1;
             entityDef.combatLevel = 0;
-            entityDef.npcWidth = 45; //WIDTH
-            entityDef.npcHeight = 45; // HEIGH
+            entityDef.heightScale = 45; //WIDTH
+            entityDef.widthScale = 45; // HEIGH
         }
         if (i == 8709) {
             entityDef.custom = true;
@@ -745,24 +745,24 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.actions = new String[] { "Talk-to", null, "Pick-Up", null, null };
             entityDef.name = "Corrupt Beast";
             entityDef.combatLevel = 0;
-            entityDef.npcWidth = 60; //WIDTH
-            entityDef.npcHeight = 60; // HEIGH
+            entityDef.heightScale = 60; //WIDTH
+            entityDef.widthScale = 60; // HEIGH
             entityDef.size = 1;
         }
         if (i == 7025) { //guard dog
             entityDef.custom = true;
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Talk-to", null, "Pick-Up", null, null };
-            entityDef.npcWidth = 85; //WIDTH
-            entityDef.npcHeight = 85; // HEIGH
+            entityDef.heightScale = 85; //WIDTH
+            entityDef.widthScale = 85; // HEIGH
         }
 
         if (i == 6716) {//prayer
             entityDef.custom = true;
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Talk-to", null, "Pick-Up", null, null };
-            entityDef.npcWidth = 65; //WIDTH
-            entityDef.npcHeight = 65; // HEIGH
+            entityDef.heightScale = 65; //WIDTH
+            entityDef.widthScale = 65; // HEIGH
             entityDef.combatLevel = 0;
 
 
@@ -772,8 +772,8 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.custom = true;
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Talk-to", null, "Pick-Up", null, null };
-            entityDef.npcWidth = 65; //WIDTH
-            entityDef.npcHeight = 65; // HEIGH
+            entityDef.heightScale = 65; //WIDTH
+            entityDef.widthScale = 65; // HEIGH
             entityDef.combatLevel = 0;
 
         }
@@ -783,10 +783,10 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.models = new int[] { 38605 };
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Talk-to", null, "Pick-Up", null, null };
-            entityDef.npcWidth = 65; //WIDTH
-            entityDef.npcHeight = 65; // HEIGH
+            entityDef.heightScale = 65; //WIDTH
+            entityDef.widthScale = 65; // HEIGH
             entityDef.originalColors = null;
-            entityDef.newColors = null;
+            entityDef.modifiedColours = null;
             entityDef.combatLevel = 0;
             entityDef.standAnim = 8372;
             entityDef.walkAnim = 8372;
@@ -799,10 +799,10 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.models = new int[] { 37142 };
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Talk-to", null, "Pick-Up", null, null };
-            entityDef.npcWidth = 25; //WIDTH
-            entityDef.npcHeight = 25; // HEIGH
+            entityDef.heightScale = 25; //WIDTH
+            entityDef.widthScale = 25; // HEIGH
             entityDef.originalColors = null;
-            entityDef.newColors = null;
+            entityDef.modifiedColours = null;
             entityDef.combatLevel = 0;
             entityDef.standAnim = 8307;
             entityDef.walkAnim = 8306;
@@ -815,10 +815,10 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.models = new int[] { 29267 };
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Talk-to", null, "Pick-Up", null, null };
-            entityDef.npcWidth = 85; //WIDTH
-            entityDef.npcHeight = 85; // HEIGH
+            entityDef.heightScale = 85; //WIDTH
+            entityDef.widthScale = 85; // HEIGH
             entityDef.originalColors = null;
-            entityDef.newColors = null;
+            entityDef.modifiedColours = null;
             entityDef.combatLevel = 0;
             entityDef.standAnim = 8526;
             entityDef.walkAnim = 8527;
@@ -831,10 +831,10 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.models = new int[] { 29268 };
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Talk-to", null, "Pick-Up", null, null };
-            entityDef.npcWidth = 85; //WIDTH
-            entityDef.npcHeight = 85; // HEIGH
+            entityDef.heightScale = 85; //WIDTH
+            entityDef.widthScale = 85; // HEIGH
             entityDef.originalColors = null;
-            entityDef.newColors = null;
+            entityDef.modifiedColours = null;
             entityDef.combatLevel = 0;
             entityDef.standAnim = 8526;
             entityDef.walkAnim = 8527;
@@ -846,10 +846,10 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.models = new int[] { 29266 };
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Talk-to", null, "Pick-Up", null, null };
-            entityDef.npcWidth = 85; //WIDTH
-            entityDef.npcHeight = 85; // HEIGH
+            entityDef.heightScale = 85; //WIDTH
+            entityDef.widthScale = 85; // HEIGH
             entityDef.originalColors = null;
-            entityDef.newColors = null;
+            entityDef.modifiedColours = null;
             entityDef.combatLevel = 0;
             entityDef.standAnim = 8526;
             entityDef.walkAnim = 8527;
@@ -912,12 +912,12 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.models = new int[] { 47110 };
             entityDef.standAnim = 808;
             entityDef.walkAnim = 819;
-            entityDef.onMinimap = true;
+            entityDef.isMinimapVisible = true;
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { null, "Attack", null, null, null };
-            entityDef.rotationSpeed = 64;
-            entityDef.npcWidth = 250;
-            entityDef.npcHeight = 250;
+            entityDef.rotation = 64;
+            entityDef.heightScale = 250;
+            entityDef.widthScale = 250;
             entityDef.size = 3;
         }
 
@@ -929,9 +929,9 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.walkAnim = 819;
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Talk-to", null, "Pick-Up", null, null };
-            entityDef.rotationSpeed = 64;
-            entityDef.npcWidth = 65;
-            entityDef.npcHeight = 65;
+            entityDef.rotation = 64;
+            entityDef.heightScale = 65;
+            entityDef.widthScale = 65;
             entityDef.size = 1;
         }
 
@@ -943,8 +943,8 @@ public final class NpcDefinition implements RSNPCComposition {
 
         if (i == 6298) {
             entityDef.custom = true;
-            entityDef.npcWidth = 300; //WIDTH
-            entityDef.npcHeight = 300; // HEIGH
+            entityDef.heightScale = 300; //WIDTH
+            entityDef.widthScale = 300; // HEIGH
         }
 
         if (i == 5630) { // Giant Snail
@@ -982,9 +982,9 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.walkAnim = 819;
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { null, "Attack", null, null, null };
-            entityDef.rotationSpeed = 64;
-            entityDef.npcWidth = 180;
-            entityDef.npcHeight = 180;
+            entityDef.rotation = 64;
+            entityDef.heightScale = 180;
+            entityDef.widthScale = 180;
             entityDef.size = 3;
         }
         if (i == 8172) {
@@ -996,9 +996,9 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.walkAnim = 819;
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { null, "Attack", null, null, null };
-            entityDef.rotationSpeed = 64;
-            entityDef.npcWidth = 180;
-            entityDef.npcHeight = 180;
+            entityDef.rotation = 64;
+            entityDef.heightScale = 180;
+            entityDef.widthScale = 180;
             entityDef.size = 3;
         }
 
@@ -1010,12 +1010,12 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Talk-to", null, "Pick-Up", null, null };
             entityDef.originalColors = null;
-            entityDef.newColors = null;
+            entityDef.modifiedColours = null;
             entityDef.combatLevel = 0;
             entityDef.standAnim = 5021;
             entityDef.walkAnim = 5022;
-            entityDef.npcWidth = 85; //WIDTH
-            entityDef.npcHeight = 85; // HEIGHT
+            entityDef.heightScale = 85; //WIDTH
+            entityDef.widthScale = 85; // HEIGHT
         }
 
 
@@ -1027,9 +1027,9 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Talk-to", null, "Pick-Up", null, null };
             entityDef.originalColors = null;
-            entityDef.newColors = null;
-            entityDef.npcWidth = 65; //WIDTH
-            entityDef.npcHeight = 65; // HEIGH
+            entityDef.modifiedColours = null;
+            entityDef.heightScale = 65; //WIDTH
+            entityDef.widthScale = 65; // HEIGH
             entityDef.combatLevel = 0;
             entityDef.standAnim = 1539;
             entityDef.walkAnim = 1539;
@@ -1046,10 +1046,10 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Talk-to", null, "Pick-Up", null, null };
             entityDef.originalColors = null;
-            entityDef.newColors = null;
+            entityDef.modifiedColours = null;
             entityDef.combatLevel = 0;
-            entityDef.npcWidth = 85; //WIDTH
-            entityDef.npcHeight = 85; // HEIGHT
+            entityDef.heightScale = 85; //WIDTH
+            entityDef.widthScale = 85; // HEIGHT
             entityDef.size = 1;
             entityDef.standAnim = 1539;
             entityDef.walkAnim = 1539;
@@ -1063,7 +1063,7 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Talk-to", null, "Pick-Up", null, null };
             entityDef.originalColors = null;
-            entityDef.newColors = null;
+            entityDef.modifiedColours = null;
             entityDef.combatLevel = 0;
             entityDef.standAnim = 808;
             entityDef.walkAnim = 819;
@@ -1076,12 +1076,12 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Talk-to", null, "Pick-Up", null, null };
             entityDef.originalColors = null;
-            entityDef.newColors = null;
+            entityDef.modifiedColours = null;
             entityDef.combatLevel = 0;
             entityDef.standAnim = 808;
             entityDef.walkAnim = 819;
-            entityDef.npcWidth = 85; //WIDTH
-            entityDef.npcHeight = 85; // HEIGHT
+            entityDef.heightScale = 85; //WIDTH
+            entityDef.widthScale = 85; // HEIGHT
         }
 
         if (i == 2302) {
@@ -1091,12 +1091,12 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Talk-to", null, "Pick-Up", null, null };
             entityDef.originalColors = null;
-            entityDef.newColors = null;
+            entityDef.modifiedColours = null;
             entityDef.combatLevel = 0;
             entityDef.standAnim = 808;
             entityDef.walkAnim = 819;
-            entityDef.npcWidth = 85; //WIDTH
-            entityDef.npcHeight = 85; // HEIGHT
+            entityDef.heightScale = 85; //WIDTH
+            entityDef.widthScale = 85; // HEIGHT
         }
 
         if (i == 2307) {
@@ -1106,12 +1106,12 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Talk-to", null, "Pick-Up", null, null };
             entityDef.originalColors = null;
-            entityDef.newColors = null;
+            entityDef.modifiedColours = null;
             entityDef.combatLevel = 0;
             entityDef.standAnim = 8526;
             entityDef.walkAnim = 8527;
-            entityDef.npcWidth = 85; //WIDTH
-            entityDef.npcHeight = 85; // HEIGH
+            entityDef.heightScale = 85; //WIDTH
+            entityDef.widthScale = 85; // HEIGH
         }
 
         if (i == 2305) {
@@ -1121,7 +1121,7 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Talk-to", null, "Teleport", null, null };
             entityDef.originalColors = null;
-            entityDef.newColors = null;
+            entityDef.modifiedColours = null;
             entityDef.combatLevel = 13;
             entityDef.standAnim = 808;
             entityDef.walkAnim = 819;
@@ -1135,7 +1135,7 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Talk-to", null, "Pick-Up", null, null };
             entityDef.originalColors = null;
-            entityDef.newColors = null;
+            entityDef.modifiedColours = null;
             entityDef.standAnim = 7939;
             entityDef.walkAnim = 7939;
             entityDef.size = 1;
@@ -1150,7 +1150,7 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Talk-to", null, "Pick-Up", null, null };
             entityDef.originalColors = null;
-            entityDef.newColors = null;
+            entityDef.modifiedColours = null;
             NpcDefinition npcDefinition = NpcDefinition.lookup(3134);
             entityDef.standAnim = npcDefinition.standAnim;
             entityDef.walkAnim =  npcDefinition.walkAnim;
@@ -1161,7 +1161,7 @@ public final class NpcDefinition implements RSNPCComposition {
         if (i == 5371) {
             entityDef.custom = true;
             entityDef.combatLevel = 666;
-            entityDef.onMinimap = true;
+            entityDef.isMinimapVisible = true;
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { null, "Attack", null, null, null };
         }
@@ -1180,7 +1180,7 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Talk-to", null, "Teleport", null, null };
             entityDef.originalColors = null;
-            entityDef.newColors = null;
+            entityDef.modifiedColours = null;
             entityDef.combatLevel = 0;
             entityDef.standAnim = 808;
             entityDef.walkAnim = 819;
@@ -1191,14 +1191,14 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.name = "Durial321";
             entityDef.models = new int[] { 187, 214, 246, 6669, 35817, 6659, 3704, 5409, 9347, 13307, 9638, 9642 };
             entityDef.originalColors = new int[] { 926, 6798 };
-            entityDef.newColors = new int[] { 22464, 5186 };
+            entityDef.modifiedColours = new int[] { 22464, 5186 };
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { null, "Attack", null, null, null };
             entityDef.combatLevel = 115;
             entityDef.standAnim = 808;
             entityDef.walkAnim = 819;
-            entityDef.npcWidth = 300; //WIDTH
-            entityDef.npcHeight = 300; // HEIGHT
+            entityDef.heightScale = 300; //WIDTH
+            entityDef.widthScale = 300; // HEIGHT
         }
 
         //dark pets
@@ -1209,7 +1209,7 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Talk-to", null, "Sync", "Open-Shop", null };
             entityDef.originalColors = null;
-            entityDef.newColors = null;
+            entityDef.modifiedColours = null;
             entityDef.combatLevel = 0;
             entityDef.standAnim = 7939;
             entityDef.walkAnim = 7939;
@@ -1224,12 +1224,12 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.actions = new String[5];
             entityDef.actions = new String[] {"Talk-to", null, "Pick-Up", null, null };
             entityDef.originalColors = null;
-            entityDef.newColors = null;
+            entityDef.modifiedColours = null;
             entityDef.combatLevel = 100;
             entityDef.standAnim = 808;
             entityDef.walkAnim = 819;
-            entityDef.npcWidth = 75; //WIDTH
-            entityDef.npcHeight = 75; // HEIGH
+            entityDef.heightScale = 75; //WIDTH
+            entityDef.widthScale = 75; // HEIGH
             entityDef.size = 1;
         }
 
@@ -1250,11 +1250,11 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.combatLevel = 732;
             entityDef.models = new int[] { 35023 };
             entityDef.standAnim = 7950;
-            entityDef.onMinimap = true;
+            entityDef.isMinimapVisible = true;
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { null, null, null, null, null };
-            entityDef.npcWidth = 100;
-            entityDef.npcHeight = 100;
+            entityDef.heightScale = 100;
+            entityDef.widthScale = 100;
         }
         if (i == 8028) {
             entityDef.custom = true;
@@ -1262,11 +1262,11 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.combatLevel = 732;
             entityDef.models = new int[] { 35023 };
             entityDef.standAnim = 7948;
-            entityDef.onMinimap = true;
+            entityDef.isMinimapVisible = true;
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { null, "Attack", null, null, null };
-            entityDef.npcWidth = 100;
-            entityDef.npcHeight = 100;
+            entityDef.heightScale = 100;
+            entityDef.widthScale = 100;
         }
         if (i == 1257) {
             entityDef.custom = true;
@@ -1274,15 +1274,12 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.combatLevel = 1;
             entityDef.standAnim = 4472;
             entityDef.walkAnim = 4473;
-            entityDef.onMinimap = true;
+            entityDef.isMinimapVisible = true;
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { null, "Attack", null, null, null };
-            entityDef.npcWidth = 400;
-            entityDef.npcHeight = 400;
+            entityDef.heightScale = 400;
+            entityDef.widthScale = 400;
         }
-        /*
-        * Christmas
-        **/
         if (i == 8054) {
             entityDef.custom = true;
             entityDef.name = "Gingerbread Man";
@@ -1290,7 +1287,7 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.models = new int[] { 49472 };
             entityDef.standAnim = -1;
             entityDef.walkAnim = 819;
-            entityDef.onMinimap = true;
+            entityDef.isMinimapVisible = true;
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { null, "Attack", null, null, null };
             entityDef.size = 2;
@@ -1305,8 +1302,8 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.actions = new String[5];
             entityDef.actions = new String[] {"Talk-to", null, "Pick-Up", null, null };
             entityDef.size = 2;
-            entityDef.npcWidth = 75;
-            entityDef.npcHeight = 75;
+            entityDef.heightScale = 75;
+            entityDef.widthScale = 75;
         }
 
         if (i == 4852) {
@@ -1318,8 +1315,8 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.actions = new String[5];
             entityDef.actions = new String[] {"Talk-to", null, "Pick-Up", null, null };
             entityDef.size = 2;
-            entityDef.npcWidth = 75;
-            entityDef.npcHeight = 75;
+            entityDef.heightScale = 75;
+            entityDef.widthScale = 75;
         }
 
         if (i == 4850) {
@@ -1331,8 +1328,8 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.actions = new String[5];
             entityDef.actions = new String[] {"Talk-to", null, "Pick-Up", null, null };
             entityDef.size = 2;
-            entityDef.npcWidth = 50;
-            entityDef.npcHeight = 50;
+            entityDef.heightScale = 50;
+            entityDef.widthScale = 50;
         }
 
         if (i == 5507) {
@@ -1342,11 +1339,11 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.models = new int[] { 49473, 36100 };
             entityDef.standAnim = 808;
             entityDef.walkAnim = 819;
-            entityDef.onMinimap = true;
+            entityDef.isMinimapVisible = true;
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { null, "Attack", null, null, null };
-            entityDef.npcWidth = 75;
-            entityDef.npcHeight = 75;
+            entityDef.heightScale = 75;
+            entityDef.widthScale = 75;
             entityDef.size = 2;
         }
 
@@ -1359,8 +1356,8 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.combatLevel = 75;
             entityDef.standAnim = 1421;
             entityDef.walkAnim = 1422;
-            entityDef.npcWidth = 75; //WIDTH
-            entityDef.npcHeight = 75; // HEIGHT
+            entityDef.heightScale = 75; //WIDTH
+            entityDef.widthScale = 75; // HEIGHT
             entityDef.size = 1;
         }
 
@@ -1371,7 +1368,7 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Talk-to", null, null, null, null };
             entityDef.originalColors = null;
-            entityDef.newColors = null;
+            entityDef.modifiedColours = null;
             entityDef.combatLevel = 0;
             entityDef.standAnim = 808;
             entityDef.walkAnim = 819;
@@ -1384,12 +1381,12 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { null, "Attack", null, null, null };
             entityDef.originalColors = null;
-            entityDef.newColors = null;
+            entityDef.modifiedColours = null;
             entityDef.combatLevel = 126;
             entityDef.standAnim = 808;
             entityDef.walkAnim = 819;
-            entityDef.npcWidth = 25; //WIDTH
-            entityDef.npcHeight = 25; // HEIGH
+            entityDef.heightScale = 25; //WIDTH
+            entityDef.widthScale = 25; // HEIGH
             entityDef.size = 1;
         }
 
@@ -1400,38 +1397,38 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { null, "Attack", null, null, null };
             entityDef.originalColors = null;
-            entityDef.newColors = null;
+            entityDef.modifiedColours = null;
             entityDef.combatLevel = 126;
             entityDef.standAnim = 808;
             entityDef.walkAnim = 819;
-            entityDef.npcWidth = 150; //WIDTH
-            entityDef.npcHeight = 150; // HEIGH
+            entityDef.heightScale = 150; //WIDTH
+            entityDef.widthScale = 150; // HEIGH
             entityDef.size = 4;
         }
         if (i == 7118) {
             entityDef.custom = true;
             entityDef.name = "Maniacal Monkey";
             entityDef.combatLevel = 0;
-            entityDef.npcWidth = 120; //WIDTH
-            entityDef.npcHeight = 120; // HEIGH
+            entityDef.heightScale = 120; //WIDTH
+            entityDef.widthScale = 120; // HEIGH
             entityDef.actions = new String[] { "Talk-to", null, "Pick-Up", null, null };
         }
         if (i == 1467) {
             entityDef.custom = true;
             entityDef.name = "Zombie Monkey";
             entityDef.combatLevel = 0;
-            entityDef.npcWidth = 120; //WIDTH
-            entityDef.npcHeight = 120; // HEIGH
+            entityDef.heightScale = 120; //WIDTH
+            entityDef.widthScale = 120; // HEIGH
             entityDef.actions = new String[] { "Talk-to", null, "Pick-Up", null, null };
         }
         if (i == 2315) {
             entityDef.custom = true;
             entityDef.name = "Santa";
-            entityDef.models = new int[] { 189, 217, 253, 28983, 28981, 28978, 28979, 28989/*, 29016*/ };
+            entityDef.models = new int[] { 189, 217, 253, 28983, 28981, 28978, 28979, 28989 };
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Talk-to", null, null, null, null };
             entityDef.originalColors = new int[] { 8741, 25238, 7073, 10297, 9104, 906 };
-            entityDef.newColors = new int[] { 5210, 7333, 7467, 5206, 7452, 8596 };
+            entityDef.modifiedColours = new int[] { 5210, 7333, 7467, 5206, 7452, 8596 };
             entityDef.combatLevel = 0;
             entityDef.standAnim = 808;
             entityDef.walkAnim = 819;
@@ -1440,8 +1437,8 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.custom = true;
             entityDef.name = "Baby Red dragon";
             entityDef.combatLevel = 0;
-            entityDef.npcWidth = 40; //WIDTH
-            entityDef.npcHeight = 40; // HEIGH
+            entityDef.heightScale = 40; //WIDTH
+            entityDef.widthScale = 40; // HEIGH
             entityDef.size = 2;
             entityDef.actions = new String[]{"Talk-to", null, "Pick-Up", null, null};
         }
@@ -1449,8 +1446,8 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.custom = true;
             entityDef.name = "Baby Green dragon";
             entityDef.combatLevel = 0;
-            entityDef.npcWidth = 40; //WIDTH
-            entityDef.npcHeight = 40; // HEIGH
+            entityDef.heightScale = 40; //WIDTH
+            entityDef.widthScale = 40; // HEIGH
             entityDef.size = 2;
             entityDef.actions = new String[]{"Talk-to", null, "Pick-Up", null, null};
         }
@@ -1458,8 +1455,8 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.custom = true;
             entityDef.name = "Baby Black dragon";
             entityDef.combatLevel = 0;
-            entityDef.npcWidth = 40; //WIDTH
-            entityDef.npcHeight = 40; // HEIGH
+            entityDef.heightScale = 40; //WIDTH
+            entityDef.widthScale = 40; // HEIGH
             entityDef.size = 2;
             entityDef.actions = new String[]{"Talk-to", null, "Pick-Up", null, null};
         }
@@ -1467,8 +1464,8 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.custom = true;
             entityDef.name = "Baby Blue dragon";
             entityDef.combatLevel = 0;
-            entityDef.npcWidth = 40; //WIDTH
-            entityDef.npcHeight = 40; // HEIGH
+            entityDef.heightScale = 40; //WIDTH
+            entityDef.widthScale = 40; // HEIGH
             entityDef.size = 2;
             entityDef.actions = new String[]{"Talk-to", null, "Pick-Up", null, null};
         }
@@ -1480,9 +1477,9 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.standAnim = 5022;
             entityDef.walkAnim = 5022;
             entityDef.size = 1;
-            entityDef.onMinimap = false;
-            entityDef.npcWidth = 50; //WIDTH
-            entityDef.npcHeight = 50; // HEIGH
+            entityDef.isMinimapVisible = false;
+            entityDef.heightScale = 50; //WIDTH
+            entityDef.widthScale = 50; // HEIGH
             entityDef.actions = new String[5];
             entityDef.actions = new String[] { "Talk-to", null, "Pick-Up", null, null };
         }
@@ -1491,8 +1488,8 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.name = "Primio";
             entityDef.combatLevel = 0;
             entityDef.standAnim = 10947;
-            entityDef.npcWidth = 120; //WIDTH
-            entityDef.npcHeight = 120; // HEIGH
+            entityDef.heightScale = 120; //WIDTH
+            entityDef.widthScale = 120; // HEIGH
             entityDef.size = 3;
             entityDef.actions = new String[]{"Talk-to", null, "Pick-Up", null, null};
         }
@@ -1504,16 +1501,16 @@ public final class NpcDefinition implements RSNPCComposition {
         if(i==10532) {
             entityDef.custom = true;
             entityDef.combatLevel = 982;
-            entityDef.onMinimap = true;
-            entityDef.npcWidth = 75;
-            entityDef.npcHeight = 75;
+            entityDef.isMinimapVisible = true;
+            entityDef.heightScale = 75;
+            entityDef.widthScale = 75;
         }
         if(i==10531){
             entityDef.custom = true;
             entityDef.combatLevel = 982;
-            entityDef.onMinimap = true;
-            entityDef.npcWidth = 75;
-            entityDef.npcHeight = 75;
+            entityDef.isMinimapVisible = true;
+            entityDef.heightScale = 75;
+            entityDef.widthScale = 75;
         }
         if(i==7144){
             entityDef.custom = true;
@@ -1524,10 +1521,12 @@ public final class NpcDefinition implements RSNPCComposition {
             entityDef.headIcon = 6;
         }
         if(i==7145){
+            entityDef.name = "Demonic Gorilla";
             entityDef.custom = true;
             entityDef.headIcon = 1;
         }
         if(i==7146){
+            entityDef.name = "Demonic Gorilla";
             entityDef.custom = true;
             entityDef.headIcon = 2;
         }
@@ -1570,7 +1569,9 @@ public final class NpcDefinition implements RSNPCComposition {
                 entityDef.walkAnim = 2943;
                 break;
         }
-        return entityDef;
+         */
+        cache.put(npcDefinition, i);
+        return npcDefinition;
     }
 
     public static int totalAmount;
@@ -1597,45 +1598,13 @@ public final class NpcDefinition implements RSNPCComposition {
         }
     }
 
-    public static void unpackConfig(FileArchive streamLoader) {
-        stream = new Buffer(streamLoader.readFile("npc.dat"));
-        Buffer stream = new Buffer(streamLoader.readFile("npc.idx"));
-        totalAmount = stream.readUShort();
-        streamIndices = new int[totalAmount];
-        int i = 2;
-        for (int j = 0; j < totalAmount; j++) {
-            streamIndices[j] = i;
-            i += stream.readUShort();
-        }
-
-        cache = new NpcDefinition[20];
-        for (int k = 0; k < 20; k++)
-            cache[k] = new NpcDefinition();
-        for (int index = 0; index < totalAmount; index++) {
-            NpcDefinition ed = lookup(index);
-            if (ed == null)
-                continue;
-            if (ed.name == null)
-                continue;
-        }
-/*        if (Configuration.dumpDataLists) {
-            NpcDefinitionDumper.dump();
-
-            TempWriter writer2 = new TempWriter("npc_fields");
-            FieldGenerator generator = new FieldGenerator(writer2::writeLine);
-            IntStream.range(0, 100_000).forEach(id -> {
-                try {
-                    NpcDefinition definition = NpcDefinition.lookup(id);
-                    generator.add(definition.name, id);
-                } catch (Exception e) {
-                }
-            });
-            writer2.close();
-        }*/
+    public static void unpackConfig() {
+        totalAmount = Js5List.configs.getGroupFileCount(Js5ConfigType.NPC) + 2_500;
     }
     public int category;
 
     private void readValues(Buffer buffer) {
+        int previousOpcode = -1;
         while (true) {
             int opcode = buffer.readUnsignedByte();
             if (opcode == 0)
@@ -1647,50 +1616,54 @@ public final class NpcDefinition implements RSNPCComposition {
                     models[j1] = buffer.readUShort();
 
             } else if (opcode == 2)
-                name = buffer.readString();
+                name = buffer.readNullTerminatedString();
             else if (opcode == 12)
                 size = buffer.readSignedByte();
             else if (opcode == 13)
                 standAnim = buffer.readUShort();
             else if (opcode == 14)
                 walkAnim = buffer.readUShort();
+            else if (opcode == 15)
+                buffer.readUShort();
+            else if (opcode == 16)
+                buffer.readUShort();
             else if (opcode == 17) {
                 walkAnim = buffer.readUShort();
-                rotate180AnimIndex = buffer.readUShort();
-                rotate90CWAnimIndex = buffer.readUShort();
-                rotate90CCWAnimIndex = buffer.readUShort();
-                if (rotate180AnimIndex == 65535) {
-                    rotate180AnimIndex = -1;
+                rotateBackAnim = buffer.readUShort();
+                walkLeftAnim = buffer.readUShort();
+                walkRightAnim = buffer.readUShort();
+                if (rotateBackAnim == 65535) {
+                    rotateBackAnim = -1;
                 }
-                if (rotate90CWAnimIndex == 65535) {
-                    rotate90CWAnimIndex = -1;
+                if (walkLeftAnim == 65535) {
+                    walkLeftAnim = -1;
                 }
-                if (rotate90CCWAnimIndex == 65535) {
-                    rotate90CCWAnimIndex = -1;
+                if (walkRightAnim == 65535) {
+                    walkRightAnim = -1;
                 }
             } else if (opcode == 18) {
                 category = buffer.readUShort();
             } else if (opcode >= 30 && opcode < 40) {
                 if (actions == null)
                     actions = new String[10];
-                actions[opcode - 30] = buffer.readString();
-                if (actions[opcode - 30].equalsIgnoreCase("hidden"))
+                actions[opcode - 30] = buffer.readNullTerminatedString();
+                if (actions[opcode - 30] != null && actions[opcode - 30].equalsIgnoreCase("hidden"))
                     actions[opcode - 30] = null;
             } else if (opcode == 40) {
                 int k = buffer.readUnsignedByte();
                 originalColors = new int[k];
-                newColors = new int[k];
+                modifiedColours = new int[k];
                 for (int k1 = 0; k1 < k; k1++) {
                     originalColors[k1] = buffer.readUShort();
-                    newColors[k1] = buffer.readUShort();
+                    modifiedColours[k1] = buffer.readUShort();
                 }
             } else if (opcode == 41) {
                 int k = buffer.readUnsignedByte();
-                originalTextures = new short[k];
-                newTextures = new short[k];
+                originalTextureColours = new short[k];
+                modifiedTextureColours = new short[k];
                 for (int k1 = 0; k1 < k; k1++) {
-                    originalTextures[k1] = (short) buffer.readUShort();
-                    newTextures[k1] = (short) buffer.readUShort();
+                    originalTextureColours[k1] = (short) buffer.readUShort();
+                    modifiedTextureColours[k1] = (short) buffer.readUShort();
                 }
 
             } else if (opcode == 60) {
@@ -1700,48 +1673,105 @@ public final class NpcDefinition implements RSNPCComposition {
                     chatheadModels[l1] = buffer.readUShort();
 
             } else if (opcode == 93)
-                onMinimap = false;
+                isMinimapVisible = false;
             else if (opcode == 95)
                 combatLevel = buffer.readUShort();
             else if (opcode == 97)
-                npcHeight = buffer.readUShort();
+                widthScale = buffer.readUShort();
             else if (opcode == 98)
-                npcWidth = buffer.readUShort();
+                heightScale = buffer.readUShort();
             else if (opcode == 99)
-                aBoolean93 = true;
+                hasRenderPriority = true;
             else if (opcode == 100)
                 ambient = buffer.readSignedByte();
             else if (opcode == 101)
                 contrast = buffer.readSignedByte();
-            else if (opcode == 102)
-                headIcon = buffer.readUShort();
-            else if (opcode == 103)
-                rotationSpeed = buffer.readUShort();
-            else if (opcode == 106 || opcode == 118) {
-                varbitId = buffer.readUShort();
-                if (varbitId == 65535)
-                    varbitId = -1;
-                varpIndex = buffer.readUShort();
-                if (varpIndex == 65535)
-                    varpIndex = -1;
-                int var3 = -1;
-                if (opcode == 118)
-                    var3 = buffer.readUShort();
-                int i1 = buffer.readUnsignedByte();
-                configs = new int[i1 + 2];
-                for (int i2 = 0; i2 <= i1; i2++) {
-                    configs[i2] = buffer.readUShort();
-                    if (configs[i2] == 65535)
-                        configs[i2] = -1;
+            else if (opcode == 102) {
+                int index = buffer.readUnsignedByte();
+                int var4 = 0;
+                int var5;
+                for(var5 = index; var5 != 0; var5 >>= 1) {
+                    ++var4;
                 }
-                configs[i1 + 1] = var3;
-            } else if (opcode == 107)
-                clickable = false;
+
+                headIconArchiveIds = new int[var4];
+                headIconSpriteIndex = new short[var4];
+
+                for(int var6 = 0; var6 < var4; ++var6) {
+                    if ((index & 1 << var6) == 0) {
+                        headIconArchiveIds[var6] = -1;
+                        headIconSpriteIndex[var6] = -1;
+                    } else {
+                        headIconArchiveIds[var6] = buffer.readShort();
+                        headIconSpriteIndex[var6] = (short)buffer.readShort();
+                    }
+                }
+            } else if (opcode == 103)
+                rotation = buffer.readUShort();
+            else if (opcode == 107) {
+                isInteractable = false;
+            } else if(opcode == 109) {
+                buffer.readByte();
+            } else if(opcode == 114) {
+                buffer.readShort();
+            } else if(opcode == 115) {
+                buffer.readShort();
+                buffer.readShort();
+                buffer.readShort();
+                buffer.readShort();
+            } else if(opcode == 116) {
+                buffer.readShort();
+            } else if(opcode == 117) {
+                buffer.readShort();
+                buffer.readShort();
+                buffer.readShort();
+                buffer.readShort();
+            } else if(opcode == 122) {
+                buffer.readByte();
+            } else if(opcode == 123) {
+                buffer.readByte();
+            } else if (opcode == 249) {
+                BufferExt.readStringIntParameters(buffer);
+            } else if (opcode == 106 || opcode == 118) {
+                varbit = buffer.readUShort();
+                if (varbit == 65535) {
+                    varbit = -1;
+                }
+
+                varp = buffer.readUShort();
+                if (varp == 65535) {
+                    varp = -1;
+                }
+                int index;
+                index = -1;
+                int var4, var5;
+                if (opcode == 118) {
+                    index = buffer.readUShort();
+                    if (index == 65535) {
+                        index = -1;
+                    }
+                }
+
+                var4 = buffer.readUnsignedByte();
+                transforms = new int[var4 + 2];
+
+                for(var5 = 0; var5 <= var4; ++var5) {
+                    transforms[var5] = buffer.readUShort();
+                    if (transforms[var5] == 65535) {
+                        transforms[var5] = -1;
+                    }
+                }
+
+                transforms[var4 + 1] = index;
+            } else {
+                System.out.println("Not found opcode = " + opcode + ", previous = " + previousOpcode);
+            }
+            previousOpcode = opcode;
         }
     }
 
     public Model method160() {
-        if (configs != null) {
+        if (transforms != null) {
             NpcDefinition entityDef = method161();
             if (entityDef == null)
                 return null;
@@ -1770,44 +1800,44 @@ public final class NpcDefinition implements RSNPCComposition {
 
         if (originalColors != null)
             for (int k = 0; k < originalColors.length; k++)
-                model.recolor(originalColors[k], newColors[k]);
+                model.recolor(originalColors[k], modifiedColours[k]);
 
 
-        if (originalTextures != null)
-            for (int k = 0; k < originalTextures.length; k++)
-                model.retexture(originalTextures[k], newTextures[k]);
+        if (originalTextureColours != null)
+            for (int k = 0; k < originalTextureColours.length; k++)
+                model.retexture(originalTextureColours[k], modifiedTextureColours[k]);
 
         return model;
     }
 
     public NpcDefinition method161() {
         int j = -1;
-        if (varbitId != -1 && varbitId <= 2113) {
-            VarBit varBit = VarBit.cache[varbitId];
+        if (varbit != -1 && varbit <= 2113) {
+            VarBit varBit = VarBit.cache[varbit];
             int k = varBit.anInt648;
             int l = varBit.anInt649;
             int i1 = varBit.anInt650;
             int j1 = Client.anIntArray1232[i1 - l];
             j = clientInstance.variousSettings[k] >> l & j1;
-        } else if (varpIndex != -1)
-            j = clientInstance.variousSettings[varpIndex];
+        } else if (varp != -1)
+            j = clientInstance.variousSettings[varp];
         int var3;
-        if (j >= 0 && j < configs.length)
-            var3 = configs[j];
+        if (j >= 0 && j < transforms.length)
+            var3 = transforms[j];
         else
-            var3 = configs[configs.length - 1];
+            var3 = transforms[transforms.length - 1];
         return var3 == -1 ? null : lookup(var3);
     }
 
     public Model getAnimatedModel(int j, int k, int ai[]) {
-        if (configs != null) {
+        if (transforms != null) {
             NpcDefinition entityDef = method161();
             if (entityDef == null)
                 return null;
             else
                 return entityDef.getAnimatedModel(j, k, ai);
         }
-        Model model = (Model) mruNodes.get(npcId);
+        Model model = (Model) mruNodes.get(id);
         if (model == null) {
             boolean flag = false;
             for (int i1 = 0; i1 < models.length; i1++)
@@ -1826,17 +1856,17 @@ public final class NpcDefinition implements RSNPCComposition {
                 model = new Model(aclass30_sub2_sub4_sub6s.length, aclass30_sub2_sub4_sub6s);
             if (originalColors != null) {
                 for (int k1 = 0; k1 < originalColors.length; k1++)
-                    model.recolor(originalColors[k1], newColors[k1]);
+                    model.recolor(originalColors[k1], modifiedColours[k1]);
 
             }
-            if (originalTextures != null) {
-                for (int i1 = 0; i1 < originalTextures.length; i1++)
-                    model.retexture(originalTextures[i1], newTextures[i1]);
+            if (originalTextureColours != null) {
+                for (int i1 = 0; i1 < originalTextureColours.length; i1++)
+                    model.retexture(originalTextureColours[i1], modifiedTextureColours[i1]);
             }
             model.generateBones();
             model.light(64 + ambient, 850 + contrast, -30, -50, -30, true);
             // model.method479(84 + anInt85, 1000 + anInt92, -90, -580, -90, true);
-            mruNodes.put(model, npcId);
+            mruNodes.put(model, id);
         }
         Model model_1 = Model.emptyModel;
         model_1.buildSharedSequenceModel(model, SeqFrame.noAnimationInProgress(k) & SeqFrame.noAnimationInProgress(j));
@@ -1844,8 +1874,8 @@ public final class NpcDefinition implements RSNPCComposition {
             model_1.mix(ai, j, k);
         else if (k != -1)
             model_1.interpolate(k);
-        if (npcHeight != 128 || npcWidth != 128)
-            model_1.scale(npcHeight, npcHeight, npcWidth);
+        if (widthScale != 128 || heightScale != 128)
+            model_1.scale(widthScale, widthScale, heightScale);
         model_1.calculateBoundsCylinder();
         model_1.groupedTriangleLabels = null;
         model_1.groupedVertexLabels = null;
@@ -1855,14 +1885,14 @@ public final class NpcDefinition implements RSNPCComposition {
     }
 
     public Model getAnimatedModelSkeletal(SequenceDefinition primary, SequenceDefinition secondary, int primaryTick, int secondaryTick) {
-        if (configs != null) {
+        if (transforms != null) {
             NpcDefinition entityDef = method161();
             if (entityDef == null)
                 return null;
             else
                 return entityDef.getAnimatedModelSkeletal(primary, secondary, primaryTick, secondaryTick);
         }
-        Model model = (Model) mruNodes.get(npcId);
+        Model model = (Model) mruNodes.get(id);
         if (model == null) {
             boolean flag = false;
             for (int i1 = 0; i1 < models.length; i1++)
@@ -1881,17 +1911,17 @@ public final class NpcDefinition implements RSNPCComposition {
                 model = new Model(aclass30_sub2_sub4_sub6s.length, aclass30_sub2_sub4_sub6s);
             if (originalColors != null) {
                 for (int k1 = 0; k1 < originalColors.length; k1++)
-                    model.recolor(originalColors[k1], newColors[k1]);
+                    model.recolor(originalColors[k1], modifiedColours[k1]);
 
             }
-            if (originalTextures != null) {
-                for (int i1 = 0; i1 < originalTextures.length; i1++)
-                    model.retexture(originalTextures[i1], newTextures[i1]);
+            if (originalTextureColours != null) {
+                for (int i1 = 0; i1 < originalTextureColours.length; i1++)
+                    model.retexture(originalTextureColours[i1], modifiedTextureColours[i1]);
             }
             model.generateBones();
             model.light(64 + ambient, 850 + contrast, -30, -50, -30, true);
             // model.method479(84 + anInt85, 1000 + anInt92, -90, -580, -90, true);
-            mruNodes.put(model, npcId);
+            mruNodes.put(model, id);
         }
         Model model_1 = Model.emptyModel;
         model_1.buildSharedSequenceModel(model, false);
@@ -1904,8 +1934,8 @@ public final class NpcDefinition implements RSNPCComposition {
                 model_1.playSkeletal(secondary, secondaryTick);
             }
         }
-        if (npcHeight != 128 || npcWidth != 128)
-            model_1.scale(npcHeight, npcHeight, npcWidth);
+        if (widthScale != 128 || heightScale != 128)
+            model_1.scale(widthScale, widthScale, heightScale);
         model_1.calculateBoundsCylinder();
         model_1.groupedTriangleLabels = null;
         model_1.groupedVertexLabels = null;
@@ -1916,37 +1946,37 @@ public final class NpcDefinition implements RSNPCComposition {
 
     private NpcDefinition() {
         custom = false;
-        rotate90CCWAnimIndex = -1;
-        varbitId = walkAnim;
-        rotate180AnimIndex = walkAnim;
-        varpIndex = walkAnim;
+        walkRightAnim = -1;
+        varbit = walkAnim;
+        rotateBackAnim = walkAnim;
+        varp = walkAnim;
         combatLevel = -1;
         anInt64 = 1834;
         walkAnim = -1;
         size = 1;
         headIcon = -1;
         standAnim = -1;
-        npcId = -1L;
-        rotationSpeed = 32;
-        rotate90CWAnimIndex = -1;
-        clickable = true;
-        npcWidth = 128;
-        onMinimap = true;
-        npcHeight = 128;
-        aBoolean93 = false;
+        id = -1;
+        rotation = 32;
+        walkLeftAnim = -1;
+        isInteractable = true;
+        heightScale = 128;
+        isMinimapVisible = true;
+        widthScale = 128;
+        hasRenderPriority = false;
     }
 
     @Override
     public String toString() {
         return "NpcDefinition{" +
-                "npcId=" + npcId +
+                "npcId=" + id +
                 ", combatLevel=" + combatLevel +
                 ", name='" + name + '\'' +
                 ", actions=" + Arrays.toString(actions) +
                 ", walkAnim=" + walkAnim +
                 ", size=" + size +
                 ", standAnim=" + standAnim +
-                ", childrenIDs=" + Arrays.toString(configs) +
+                ", childrenIDs=" + Arrays.toString(transforms) +
                 ", models=" + Arrays.toString(models) +
                 '}';
     }
@@ -2007,11 +2037,11 @@ public final class NpcDefinition implements RSNPCComposition {
         }
     }
 
-    public int rotate90CCWAnimIndex;
+    public int walkRightAnim;
     public static int anInt56;
-    public int varbitId;
-    public int rotate180AnimIndex;
-    public int varpIndex;
+    public int varbit;
+    public int rotateBackAnim;
+    public int varp;
     public static Buffer stream;
     public int combatLevel;
     public final int anInt64;
@@ -2019,27 +2049,28 @@ public final class NpcDefinition implements RSNPCComposition {
     public String actions[];
     public int walkAnim;
     public byte size;
-    public int[] newColors;
+    public int[] modifiedColours;
     public static int[] streamIndices;
     public int[] chatheadModels;
-    public int headIcon;
+    public int[] headIconArchiveIds;
+    public short[] headIconSpriteIndex;
+    public transient int headIcon;
     public int[] originalColors;
-    public short[] originalTextures, newTextures;
+    public short[] originalTextureColours, modifiedTextureColours;
     public int standAnim;
-    public long npcId;
-    public int rotationSpeed;
-    public static NpcDefinition[] cache;
+    public int id;
+    public int rotation;
     public static Client clientInstance;
-    public int rotate90CWAnimIndex;
-    public boolean clickable;
+    public int walkLeftAnim;
+    public boolean isInteractable;
     public int ambient;
-    public int npcWidth;
-    public boolean onMinimap;
-    public int configs[];
+    public int heightScale;
+    public boolean isMinimapVisible;
+    public int transforms[];
     public String description;
-    public int npcHeight;
+    public int widthScale;
     public int contrast;
-    public boolean aBoolean93;
+    public boolean hasRenderPriority;
     public int[] models;
     public static EvictingDualNodeHashTable mruNodes = new EvictingDualNodeHashTable(70);
     public int[] anIntArray76;
@@ -2104,12 +2135,12 @@ public final class NpcDefinition implements RSNPCComposition {
 
     @Override
     public boolean isInteractible() {
-        return clickable;
+        return isInteractable;
     }
 
     @Override
     public boolean isMinimapVisible() {
-        return onMinimap;
+        return isMinimapVisible;
     }
 
     @Override
@@ -2119,7 +2150,7 @@ public final class NpcDefinition implements RSNPCComposition {
 
     @Override
     public int getId() {
-        return (int) npcId;
+        return (int) id;
     }
 
     @Override
