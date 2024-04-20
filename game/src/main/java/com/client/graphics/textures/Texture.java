@@ -1,190 +1,193 @@
 package com.client.graphics.textures;
 
 import com.client.*;
+import com.client.cache.DualNode;
+import com.client.js5.disk.AbstractArchive;
 import net.runelite.rs.api.RSTexture;
 
-public class Texture extends Node implements RSTexture {
+public class Texture extends DualNode implements RSTexture {
 
     private static int[] animatedPixels;
 
-    public int averageRGB;
+    int averageRGB;
 
-    public boolean isTransparent = false;
+    boolean isTransparent;
 
-    private int[] fileIds;
+    int[] fileIds;
 
-    private int[] field2301;
+    int[] field2439;
 
-    private int[] field2296;
+    int[] field2440;
 
-    private int[] field2295;
+    int[] field2441;
 
-    public int animationDirection;
+    int animationDirection;
 
-    private int animationSpeed;
-    public int id;
-    public int[] pixels;
+    int animationSpeed;
 
-    public boolean isLoaded;
+    int[] pixels;
 
-    Texture(Buffer1 buffer) {
-        this.isLoaded = false;
-        int count = 0;
-        while(true) {
-            final int opcode = buffer.readUnsignedByte();
+    boolean isLoaded = false;
 
-            if (opcode == 0) {
-                break;
-            } else if (opcode == 1) {
-                id = buffer.readShort();
-            } else if (opcode == 2) {
-                isTransparent = buffer.readUnsignedByte() == 1;
-            } else if (opcode == 3) {
-                count = buffer.readUnsignedByte();
-            } else if (opcode == 4) {
-                fileIds = new int[count];
-                for (int index = 0; index < count; index++) {
-                    fileIds[index] = buffer.readShort();
-                }
-            } else if (opcode == 5 && count > 1) {
-                field2301 = new int[count -1];
-                for (int index = 0; index < count -1; index++) {
-                    field2301[index] = buffer.readUnsignedByte();
+    Texture(Buffer var1) {
+        this.averageRGB = var1.readUShort();
+        this.isTransparent = var1.readUnsignedByte() == 1;
+        int var2 = var1.readUnsignedByte();
+        if (var2 >= 1 && var2 <= 4) {
+            this.fileIds = new int[var2];
 
-                }
-            } else if (opcode == 6 && count > 1) {
-                field2296 = new int[count -1];
-                for (int index = 0; index < count -1; index++) {
-                    field2296[index] = buffer.readUnsignedByte();
-                }
-            } else if (opcode == 7) {
-                field2295 = new int[count];
-                for (int index = 0; index < count; index++) {
-                    field2295[index] = buffer.readInt();
-                }
-            } else if (opcode == 8) {
-                animationSpeed = buffer.readShort();
-            } else if (opcode == 9) {
-                animationDirection = buffer.readShort();
-            } else if (opcode == 10) {
-                averageRGB = buffer.read24Int();
+            int var3;
+            for(var3 = 0; var3 < var2; ++var3) {
+                this.fileIds[var3] = var1.readUShort();
             }
 
+            if (var2 > 1) {
+                this.field2439 = new int[var2 - 1];
 
+                for(var3 = 0; var3 < var2 - 1; ++var3) {
+                    this.field2439[var3] = var1.readUnsignedByte();
+                }
+            }
+
+            if (var2 > 1) {
+                this.field2440 = new int[var2 - 1];
+
+                for(var3 = 0; var3 < var2 - 1; ++var3) {
+                    this.field2440[var3] = var1.readUnsignedByte();
+                }
+            }
+
+            this.field2441 = new int[var2];
+
+            for(var3 = 0; var3 < var2; ++var3) {
+                this.field2441[var3] = var1.readInt();
+            }
+
+            this.animationDirection = var1.readUnsignedByte();
+            this.animationSpeed = var1.readUnsignedByte();
+            this.pixels = null;
+        } else {
+            throw new RuntimeException();
         }
-        this.pixels = null;
     }
 
-
-    Texture(Texture originalTexture, int newID) {
-        this.isLoaded = false;
-        int count = 0;
-                id = newID;
-                isTransparent = originalTexture.isTransparent;
-                count = originalTexture.fileIds.length;
-                fileIds = new int[count];
-                for (int index = 0; index < count; index++) {
-                    fileIds[index] = newID;
-                }
-                field2301 = new int[count -1];
-                for (int index = 0; index < count -1; index++) {
-                    field2301[index] = newID;
-                }
-                field2296 = new int[count -1];
-                for (int index = 0; index < count -1; index++) {
-                    field2296[index] = newID;
-                }
-                field2295 = new int[count];
-                for (int index = 0; index < count; index++) {
-                    field2295[index] = newID;
-                }
-
-                if (newID >= 126) {
-                    animationSpeed = originalTexture.animationSpeed;
-                    animationDirection = originalTexture.animationDirection;
-                } else {
-                    animationSpeed = 0;
-                    animationDirection = 0;
-                }
-                averageRGB = originalTexture.averageRGB;
-        this.pixels = null;
-    }
-
-    boolean load(double brightness, int textureSize, FileArchive textureArchive) {
-
-        for (int fileId : this.fileIds) {
-            if (textureArchive.readFile(fileId + ".dat") == null) {
+    boolean load(double var1, int var3, AbstractArchive var4) {
+        int var5;
+        for(var5 = 0; var5 < this.fileIds.length; ++var5) {
+            if (var4.getFileFlat(this.fileIds[var5]) == null) {
                 return false;
             }
         }
 
-        int pixelCount = textureSize * textureSize;
-        this.pixels = new int[pixelCount];
+        var5 = var3 * var3;
+        this.pixels = new int[var5];
 
-        for (int index = 0; index < this.fileIds.length; ++index) {
-            IndexedImage image = new IndexedImage(textureArchive, String.valueOf(this.fileIds[index]), 0);
-            image.setTransparency(255, 0, 255);
-            image.normalize();
+        for(int var6 = 0; var6 < this.fileIds.length; ++var6) {
+            int var8 = this.fileIds[var6];
+            byte[] var10 = var4.takeFileFlat(var8);
+            boolean var9;
+            if (var10 == null) {
+                var9 = false;
+            } else {
+                SpriteData.decode(var10);
+                var9 = true;
+            }
 
-            byte[] palettePixels = image.palettePixels;
-            int[] palette = image.palette;
-            int var10 = this.field2295[index];
-           
-            int var11;
-            int var12;
+            IndexedImage var7;
+            if (!var9) {
+                var7 = null;
+            } else {
+                IndexedImage var11 = new IndexedImage();
+                var11.width = SpriteData.spriteWidth;
+                var11.height = SpriteData.spriteHeight;
+                var11.xOffset = SpriteData.xOffsets[0];
+                var11.yOffset = SpriteData.yOffsets[0];
+                var11.subWidth = SpriteData.spriteWidths[0];
+                var11.subHeight = SpriteData.spriteHeights[0];
+                var11.palette = SpriteData.spritePalette;
+                var11.palettePixels = SpriteData.pixels[0];
+                SpriteData.xOffsets = null;
+                SpriteData.yOffsets = null;
+                SpriteData.spriteWidths = null;
+                SpriteData.spriteHeights = null;
+                SpriteData.spritePalette = null;
+                SpriteData.pixels = null;
+                var7 = var11;
+            }
+
+            var7.normalize();
+            var10 = var7.palettePixels;
+            int[] var18 = var7.palette;
+            int var12 = this.field2441[var6];
+            if ((var12 & -16777216) == 16777216) {
+            }
+
+            if ((var12 & -16777216) == 33554432) {
+            }
+
             int var13;
             int var14;
-            if ((var10 & -16777216) == 50331648) {
-                var11 = var10 & 16711935;
-                var12 = var10 >> 8 & 255;
+            int var15;
+            int var16;
+            if ((var12 & -16777216) == 50331648) {
+                var13 = var12 & 16711935;
+                var14 = var12 >> 8 & 255;
 
-                for (var13 = 0; var13 < palette.length; ++var13) {
-                    var14 = palette[var13];
-                    if (var14 >> 8 == (var14 & 65535)) {
-                        var14 &= 255;
-                        palette[var13] = var11 * var14 >> 8 & 16711935 | var12 * var14 & 65280;
+                for(var15 = 0; var15 < var18.length; ++var15) {
+                    var16 = var18[var15];
+                    if (var16 >> 8 == (var16 & '\uffff')) {
+                        var16 &= 255;
+                        var18[var15] = var13 * var16 >> 8 & 16711935 | var14 * var16 & '\uff00';
                     }
                 }
             }
 
-            for (var11 = 0; var11 < palette.length; ++var11) {
-                palette[var11] = Rasterizer3D.adjustBrightness(palette[var11], brightness);
+            for(var13 = 0; var13 < var18.length; ++var13) {
+                var18[var13] = Rasterizer3D.adjustBrightness(var18[var13], var1);
             }
 
-            if (index == 0) {
-                var11 = 0;
+            if (var6 == 0) {
+                var13 = 0;
             } else {
-                var11 = this.field2301[index - 1];
+                var13 = this.field2439[var6 - 1];
             }
 
-            if (var11 == 0) {
-                if (textureSize == image.subWidth) {
-                    for (var12 = 0; var12 < pixelCount; ++var12) {
-                        this.pixels[var12] = palette[palettePixels[var12] & 255];
+            if (var13 == 0) {
+                if (var3 == var7.subWidth) {
+                    for(var14 = 0; var14 < var5; ++var14) {
+                        this.pixels[var14] = var18[var10[var14] & 255];
                     }
-                } else if (image.subWidth == 64 && textureSize == 128) {
-                    var12 = 0;
+                } else if (var7.subWidth == 64 && var3 == 128) {
+                    var14 = 0;
 
-                    for (var13 = 0; var13 < textureSize; ++var13) {
-                        for (var14 = 0; var14 < textureSize; ++var14) {
-                            this.pixels[var12++] = palette[palettePixels[(var13 >> 1 << 6) + (var14 >> 1)] & 255];
+                    for(var15 = 0; var15 < var3; ++var15) {
+                        for(var16 = 0; var16 < var3; ++var16) {
+                            this.pixels[var14++] = var18[var10[(var15 >> 1 << 6) + (var16 >> 1)] & 255];
                         }
                     }
                 } else {
-                    if (image.subWidth != 128 || textureSize != 64) {
+                    if (var7.subWidth != 128 || var3 != 64) {
                         throw new RuntimeException();
                     }
 
-                    var12 = 0;
+                    var14 = 0;
 
-                    for (var13 = 0; var13 < textureSize; ++var13) {
-                        for (var14 = 0; var14 < textureSize; ++var14) {
-                            this.pixels[var12++] = palette[palettePixels[(var14 << 1) + (var13 << 1 << 7)] & 255];
+                    for(var15 = 0; var15 < var3; ++var15) {
+                        for(var16 = 0; var16 < var3; ++var16) {
+                            this.pixels[var14++] = var18[var10[(var16 << 1) + (var15 << 1 << 7)] & 255];
                         }
                     }
                 }
             }
 
+            if (var13 == 1) {
+            }
+
+            if (var13 == 2) {
+            }
+
+            if (var13 == 3) {
+            }
         }
 
         return true;
@@ -269,6 +272,8 @@ public class Texture extends Node implements RSTexture {
 
         }
     }
+
+
 
 
     private float textureU;

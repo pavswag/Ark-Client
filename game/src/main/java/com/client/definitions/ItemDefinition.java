@@ -138,9 +138,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
     }
 
 
-    private static void customItems(int itemId) {
-        ItemDefinition itemDef = lookup(itemId);
-
+    private static ItemDefinition customItems(ItemDefinition itemDef) {
+        int itemId = itemDef.id;
         switch (itemId) {
             case 6798:
                 itemDef.custom = true;
@@ -193,8 +192,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.interfaceOptions = new String[] { null, "Wield", "Read", null, "Drop" };
                 break;
             case 8232:
-                itemDef.custom = true;
                 itemDef.setDefaults();
+                itemDef.custom = true;
                 itemDef.name = "@red@lil' Nyx";
                 //itemDef.description = "The most powerful pet, see ::foepets for full list of perks.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
@@ -208,8 +207,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.yOffset2d = 83;
                 break;
             case 8230:
-                itemDef.custom = true;
                 itemDef.setDefaults();
+                itemDef.custom = true;
                 itemDef.name = "@gre@lil' Flying pumpkin";
                 //itemDef.description = "The most powerful pet, see ::foepets for full list of perks.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
@@ -223,8 +222,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.yOffset2d = -48;
                 break;
             case 8231:
-                itemDef.custom = true;
                 itemDef.setDefaults();
+                itemDef.custom = true;
                 itemDef.name = "@gre@lil' Jack-O-Kraken";
                 //itemDef.description = "The most powerful pet, see ::foepets for full list of perks.";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
@@ -5085,6 +5084,7 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.yOffset2d = 26;
                 break;
         }
+        return itemDef;
     }
 
     public transient boolean custom = false;
@@ -5095,19 +5095,30 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
 
         ItemDefinition itemDef = (ItemDefinition) cache.get(itemId);
         if (itemDef == null) {
+            if (Configuration.dumpDataLists && newCustomItems(itemId) != null) {
+                return newCustomItems(itemId);
+            }
             byte[] data = Js5List.configs.takeFile(Js5ConfigType.ITEM, itemId);
             itemDef = new ItemDefinition();
             itemDef.setDefaults();
             itemDef.id = itemId;
             if (data != null) {
-                itemDef.decode(new Buffer(data));
-                if (itemDef.noteTemplateId != -1) {
+                try {
+                    itemDef.decode(new Buffer(data));
+                } catch (Exception e) {
+                    System.out.println("Error coding item " + itemId + "[" + itemDef.name != null ? itemDef.name : "Null" + "]");
+                    e.printStackTrace();
+                }
+                if (itemDef.noteTemplateId != -1 && itemDef.noteLinkId != -1) {
                     itemDef.toNote();
                 }
                 cache.put(itemDef, itemId);
             }
         }
 
+        if (Configuration.dumpDataLists) {
+            itemDef = customItems(itemDef);
+        }
         return itemDef;
     }
 

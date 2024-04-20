@@ -3,7 +3,13 @@ package com.client.definitions;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.client.Client;
@@ -14,16 +20,32 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class DefinitionDumper {
-
+    private static final boolean dumpModels = false;
+    private static List<Integer> customModels = new ArrayList<>();
     public static void dumpDefs() {
         if (Configuration.dumpDataLists) {
             dumpCustomItems();
             dumpItems();
+            dumpCustomNpcs();
             dumpNpcs();
-            Client.instance.resourceProvider.dumpModels();
+            if(dumpModels)
+                Client.instance.resourceProvider.dumpModels();
+            moveCustomModels();
         }
     }
-
+    public static void moveCustomModels() {
+        customModels.forEach(model -> {
+            File map = new File("./temp/index1/" + model + ".gz");
+            if(map.exists()) {
+                try {
+                    Files.move(map.toPath(), Paths.get("./temp/custom_models/" + model + ".gz"), StandardCopyOption.REPLACE_EXISTING);
+                    System.out.println("Moved model " + model);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+    }
     public static void dumpNpcs() {
         Map<Integer, Npc> npcs = new HashMap<>();
         for (int i = 0; i < 100_000; i++) {
@@ -37,17 +59,56 @@ public class DefinitionDumper {
         }
         toJson(npcs, "./temp/npc_definitions.json");
     }
-    public static void dumpCustomItems() {
-        for(int i = 0; i < ItemDefinition.totalItems; i++) {
-            if(ItemDefinition.lookup(i).custom) {
-                if(ItemDefinition.lookup(i).name == null || ItemDefinition.lookup(i).name.equalsIgnoreCase("null"))
+    public static void dumpCustomNpcs() {
+        for(int i = 0; i < NpcDefinition.totalAmount; i++) {
+            NpcDefinition itemDefinition = NpcDefinition.lookup(i);
+            if(itemDefinition == null)
+                continue;
+            if(itemDefinition.custom) {
+                if(itemDefinition.name == null || itemDefinition.name.equalsIgnoreCase("null"))
                     continue;
-                String fileName = i + "-" + RSFont.removeOldSyntax(ItemDefinition.lookup(i).name).replace("\\", "-").replace("/", "-");
+                String fileName = i + "-" + RSFont.removeOldSyntax(itemDefinition.name).replace("\\", "-").replace("/", "-");
                 if(fileName.contains(">")) {
                     fileName = fileName.substring(fileName.indexOf(">") + 1);
                 }
+
                 System.out.println("Dumping " + fileName);
-                toJson(ItemDefinition.lookup(i), "./temp/items/" + fileName + ".json");
+                toJson(itemDefinition, "./temp/items/" + fileName + ".json");
+
+                if(itemDefinition.models != null) {
+                    for(int model: itemDefinition.models) {
+                        customModels.add(model);
+                    }
+                }
+            }
+        }
+    }
+    public static void dumpCustomItems() {
+        for(int i = 0; i < ItemDefinition.totalItems; i++) {
+            ItemDefinition itemDefinition = ItemDefinition.lookup(i);
+            if(itemDefinition == null)
+                continue;
+            if(itemDefinition.custom) {
+                if(itemDefinition.name == null || itemDefinition.name.equalsIgnoreCase("null"))
+                    continue;
+                String fileName = i + "-" + RSFont.removeOldSyntax(itemDefinition.name).replace("\\", "-").replace("/", "-");
+                if(fileName.contains(">")) {
+                    fileName = fileName.substring(fileName.indexOf(">") + 1);
+                }
+
+                System.out.println("Dumping " + fileName);
+                toJson(itemDefinition, "./temp/items/" + fileName + ".json");
+
+                if(itemDefinition.inventoryModel != -1)
+                    customModels.add(itemDefinition.inventoryModel);
+                if(itemDefinition.maleModel0 != -1)
+                    customModels.add(itemDefinition.maleModel0);
+                if(itemDefinition.maleModel1 != -1)
+                    customModels.add(itemDefinition.maleModel1);
+                if(itemDefinition.femaleModel0 != -1)
+                    customModels.add(itemDefinition.femaleModel0);
+                if(itemDefinition.femaleModel1 != -1)
+                    customModels.add(itemDefinition.femaleModel1);
             }
         }
     }

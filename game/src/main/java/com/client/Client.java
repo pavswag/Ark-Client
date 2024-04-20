@@ -2031,9 +2031,8 @@ public class Client extends GameEngine implements RSClient {
 		int regionID = ((regionX / 8) << 8) + (regionY / 8);
 
 		int song = Music.getMusicIdFromBoundary(Client.localPlayer.getAbsoluteX(), Client.localPlayer.getAbsoluteY());
-		if (song != lastSong) {
-			requestMusic(song);
-			lastSong = song;
+		if (song != StaticSound.musicTrackGroupId) {
+			StaticSound.playSong(song);
 		}
 	}
 
@@ -4536,11 +4535,11 @@ public class Client extends GameEngine implements RSClient {
 				anIntArray894[anInt893++] = k;
 			npc.anInt1540 = npc.desc.size;
 			npc.anInt1504 = npc.desc.rotationSpeed;
-			npc.walkAnimIndex = npc.desc.walkingAnimation;
+			npc.walkAnimIndex = npc.desc.walkAnim;
 			npc.turn180AnimIndex = npc.desc.rotate180AnimIndex;
 			npc.turn90CWAnimIndex = npc.desc.rotate90CWAnimIndex;
 			npc.turn90CCWAnimIndex = npc.desc.rotate90CCWAnimIndex;
-			npc.seqStandID = npc.desc.standingAnimation;
+			npc.seqStandID = npc.desc.standAnim;
 			npc.anInt1538 = 0;
 			npc.anInt1539 = 0;
 			npc.setPos(localPlayer.pathX[0] + i1, localPlayer.pathY[0] + l, j1 == 1);
@@ -8668,8 +8667,8 @@ public class Client extends GameEngine implements RSClient {
 								} else {
 									pushMessage("Id: " + id, 0, "");
 									pushMessage("Name: " + entity.name, 0, "");
-									pushMessage("Stand: " + entity.standingAnimation, 0, "");
-									pushMessage("Walk: " + entity.walkingAnimation, 0, "");
+									pushMessage("Stand: " + entity.standAnim, 0, "");
+									pushMessage("Walk: " + entity.walkAnim, 0, "");
 								}
 							} catch (ArrayIndexOutOfBoundsException | NumberFormatException exception) {
 								exception.printStackTrace();
@@ -9767,7 +9766,7 @@ public class Client extends GameEngine implements RSClient {
 				rsInterface.modelRotation1 = 150;
 				rsInterface.modelRotation2 = petNpcId == 1013 ? 150 : (int) (loopCycle / 40D * 256D) & 0x7ff;
 				int k;
-				SequenceDefinition animation = SequenceDefinition.get(npcDisplay.standingAnimation);
+				SequenceDefinition animation = SequenceDefinition.get(npcDisplay.standAnim);
 				k = animation.frameIDs[rsInterface.animationFrame];
 				Model model_2 = npcDisplay.getAnimatedModel(-1, k, null);
 				model_2.scale2((int) 1.5);
@@ -11839,11 +11838,11 @@ public class Client extends GameEngine implements RSClient {
 				npc.desc = NpcDefinition.lookup(stream.method436());
 				npc.anInt1540 = npc.desc.size;
 				npc.anInt1504 = npc.desc.rotationSpeed;
-				npc.walkAnimIndex = npc.desc.walkingAnimation;
+				npc.walkAnimIndex = npc.desc.walkAnim;
 				npc.turn180AnimIndex = npc.desc.rotate180AnimIndex;
 				npc.turn90CWAnimIndex = npc.desc.rotate90CWAnimIndex;
 				npc.turn90CCWAnimIndex = npc.desc.rotate90CCWAnimIndex;
-				npc.seqStandID = npc.desc.standingAnimation;
+				npc.seqStandID = npc.desc.standAnim;
 			}
 			if ((l & 4) != 0) {
 				npc.anInt1538 = stream.method434();
@@ -11979,8 +11978,8 @@ public class Client extends GameEngine implements RSClient {
 					String modelIds = Arrays.toString(entityDef.models);
 					String regColors = Arrays.toString(entityDef.originalColors);
 					String newColors = Arrays.toString(entityDef.newColors);
-					int standAnim = entityDef.standingAnimation;
-					int walkAnim = entityDef.walkingAnimation;
+					int standAnim = entityDef.standAnim;
+					int walkAnim = entityDef.walkAnim;
 					String name = entityDef.name;
 					System.out.println(name + modelIds);
 					pushMessage(name + ": " + modelIds, 0, "");
@@ -12354,6 +12353,7 @@ public class Client extends GameEngine implements RSClient {
 								AreaDefinition.definitions[count].init();
 							}
 						}
+						ItemDefinition.totalItems = Js5List.configs.getGroupFileCount(Js5ConfigType.ITEM) + 20_000;
 					}
 
 
@@ -12641,11 +12641,10 @@ public class Client extends GameEngine implements RSClient {
 				if (!Js5List.textures.isFullyLoaded()) {
 					drawLoadingText(90, "Loading textures - 0%");
 				} else {
-					FileArchive streamLoader = streamLoaderForName(2, "config");
-					FileArchive streamLoader_3 = streamLoaderForName(6, "textures");
-					TextureProvider textureProvider = new TextureProvider(streamLoader_3,streamLoader,20,Rasterizer3D.lowMem ? 64 : 128);
+					TextureProvider textureProvider = new TextureProvider(Js5List.textures, Js5List.sprites, 20, 0.80000000000000004D, Rasterizer3D.lowMem ? 64 : 128);
 					Rasterizer3D.setTextureLoader(textureProvider);
 					Rasterizer3D.setBrightness(0.80000000000000004D);
+					textureProvider.getLoadedPercentage();
 					drawLoadingText(100, "Loading textures");
 					Client.titleLoadingStage = 95;
 				}
@@ -13694,6 +13693,7 @@ public class Client extends GameEngine implements RSClient {
 
 
 	private void drawGameScreen() {
+		handleRegionChangeMusic();
 		if (fullscreenInterfaceID != -1 && loadingStage == 2) {
 			if (loadingStage == 2) {
 				try {
@@ -19247,7 +19247,6 @@ public class Client extends GameEngine implements RSClient {
 					currentRegionY = mapRegionY;
 					baseX = (currentRegionX - 6) * 8;
 					baseY = (currentRegionY - 6) * 8;
-					handleRegionChangeMusic();
 					inTutorialIsland = (currentRegionX / 8 == 48 || currentRegionX / 8 == 49) && currentRegionY / 8 == 48;
 					if (currentRegionX / 8 == 48 && currentRegionY / 8 == 148)
 						inTutorialIsland = true;

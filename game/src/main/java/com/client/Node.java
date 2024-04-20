@@ -43,7 +43,7 @@ public class Node implements RSNode {
 	public Node() {
 	}
 
-	public long key;
-	public Node previous;
-	public Node next;
+	public transient long key;
+	public transient Node previous;
+	public transient Node next;
 }

@@ -1,17 +1,17 @@
 package com.client.graphics.textures;
 
-import com.client.Buffer1;
-import com.client.Client;
-import com.client.Deque;
-import com.client.FileArchive;
+import com.client.*;
+import com.client.js5.disk.AbstractArchive;
 import net.runelite.rs.api.RSTexture;
 import net.runelite.rs.api.RSTextureProvider;
+
+import static com.client.Client.instance;
 
 public class TextureProvider implements RSTextureProvider, TextureLoader {
 
     private final Texture[] textures;
 
-    private Deque deque;
+    private NodeDeque deque = new NodeDeque();
 
     private int capacity;
 
@@ -21,49 +21,54 @@ public class TextureProvider implements RSTextureProvider, TextureLoader {
 
     private int textureSize;
 
-    private final FileArchive archive;
+    private final AbstractArchive archive;
 
-    public TextureProvider(FileArchive textureArchive, FileArchive configArchive, int capacity, int textureSize) {
-        deque = new Deque();
-        archive = textureArchive;
+    public TextureProvider(AbstractArchive textures, AbstractArchive var2, int capacity, double brightness, int size) {
+        this.archive = var2;
         this.capacity = capacity;
         this.remaining = this.capacity;
-        this.textureSize = textureSize;
-        int textureCount;
+        this.brightness = brightness;
+        this.textureSize = size;
+        int[] fileIds = textures.getGroupFileIds(0);
+        int texturesSize = fileIds.length;
+        this.textures = new Texture[textures.getGroupFileCount(0)];
 
-        Buffer1 stream = new Buffer1(configArchive.readFile("textures.dat"));
-        textureCount = stream.readUShort();
-
-        System.out.println("Loaded " + textureCount + " textures from textures.dat");
-        int newTextureCount = 0;
-        textures = new Texture[200];
-        for (int var9 = 0; var9 < 200; ++var9) {
-            if(stream.currentPosition >= stream.payload.length) {
-                newTextureCount = var9;
-                System.out.println("Ran out of payload on texture [" + var9 + "]");
-                break;
-            }
-            Texture text =  new Texture(stream);
-            textures[text.id] = text;
+        for(int index = 0; index < texturesSize; ++index) {
+            Buffer data = new Buffer(textures.takeFile(0, fileIds[index]));
+            this.textures[fileIds[index]] = new Texture(data);
         }
-        for (int i = newTextureCount; i < 162; i++) {//TODO When adding more textures, increase this value
-            Texture originalTexture = textures[40];
-            if (originalTexture != null) {
-                Texture text =  new Texture(originalTexture, i);
 
-                textures[text.id] = text;
-
-//                System.out.println("Loaded texture " + i + " - " + text.id);
-            }
-        }
         setMaxSize(128);
         setSize(128);
-
     }
+
+    public int getLoadedPercentage() {
+        int totalFiles = 0;
+        int loadedFiles = 0;
+        for (Texture texture : textures) {
+            if (texture != null && texture.fileIds != null) {
+                totalFiles += texture.fileIds.length;
+                for (int fileId : texture.fileIds) {
+                    if (archive.method6603(fileId)) {
+                        loadedFiles++;
+                    }
+                }
+            }
+        }
+        return totalFiles == 0 ? 0 : (loadedFiles * 100 / totalFiles);
+    }
+
 
     @Override
     public double getBrightness() {
         return brightness;
+    }
+
+    public static final void method2482(int var0) {
+        var0 = Math.max(Math.min(var0, 100), 0);
+        var0 = 100 - var0;
+        float var1 = 0.5F + (float)var0 / 200.0F;
+        Rasterizer3D.setBrightness((double) var1);
     }
 
     public void setBrightness(double brightness) {
@@ -106,6 +111,7 @@ public class TextureProvider implements RSTextureProvider, TextureLoader {
             }
 
             boolean hasLoaded = texture.load(brightness, textureSize, archive);
+
             if (hasLoaded) {
                 if (remaining == 0) {
                     Texture currentTexture = (Texture)deque.popHead();
@@ -143,7 +149,7 @@ public class TextureProvider implements RSTextureProvider, TextureLoader {
             }
         }
 
-        deque = new Deque();
+        deque = new NodeDeque();
         remaining = capacity;
     }
 
@@ -157,7 +163,6 @@ public class TextureProvider implements RSTextureProvider, TextureLoader {
     }
 
     public static final void method1307(int var0, int var1, int var2) {
-        Client instance = Client.getInstance();
         int var3;
         for(var3 = 0; var3 < 8; ++var3) {
             for(int var4 = 0; var4 < 8; ++var4) {
@@ -185,4 +190,8 @@ public class TextureProvider implements RSTextureProvider, TextureLoader {
             instance.tileHeights[var0][var1][var2] = instance.tileHeights[var0][var1 - 1][var2 - 1];
         }
     }
+
+
+
+
 }

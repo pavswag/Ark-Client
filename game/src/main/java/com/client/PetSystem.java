@@ -33,7 +33,7 @@ public class PetSystem {
         }
         this.name = entity.name;
         this.description = entity.description.getBytes();
-        animation = entity.standingAnimation;
+        animation = entity.standAnim;
         if (animationFrame >= SequenceDefinition.get(animation).delays.length - 1) {
             animationFrame = 0;
         }

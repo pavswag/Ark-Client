@@ -191,5 +191,16 @@ public class NodeDeque {
         var0.next.previous = var0;
         var0.previous.next = var0;
     }
+
+    public Node popHead() {
+        return removeLast();
+    }
+    public void insertHead(Node node) {
+        addFirst(node);
+    }
+
+    public void insertTail(Node node) {
+        addLast(node);
+    }
 }
 

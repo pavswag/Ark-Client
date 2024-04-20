@@ -4,14 +4,14 @@ import net.runelite.rs.api.RSIndexedSprite;
 
 public final class IndexedImage extends Rasterizer2D implements RSIndexedSprite {
 
-	public final int[] palette;
+	public int[] palette;
 	public byte palettePixels[];
 	public int subWidth;
 	public int subHeight;
 	public int xOffset;
 	public int yOffset;
 	public int width;
-	private int height;
+	public int height;
 
 	public void setTransparency(int transRed, int transGreen, int transBlue) {
 		for (int index = 0; index < palette.length; index++)
@@ -19,6 +19,7 @@ public final class IndexedImage extends Rasterizer2D implements RSIndexedSprite 
 				palette[index] = 0;
 	}
 
+	public IndexedImage() {}
 	public IndexedImage(FileArchive archive, String s, int i) {
 		Buffer image = new Buffer(archive.readFile(s + ".dat"));
 		Buffer meta = new Buffer(archive.readFile("index.dat"));

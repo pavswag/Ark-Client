@@ -16,7 +16,6 @@ public class BufferExt {
             boolean isString = buffer.readUnsignedByte() == 1;
             int key = buffer.read24Int();
             Object value;
-
             if (isString) {
                 value = buffer.readNullTerminatedString();
             } else {

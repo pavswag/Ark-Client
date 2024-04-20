@@ -5,11 +5,11 @@ import net.runelite.rs.api.RSDualNode;
 
 public class DualNode extends Node implements RSDualNode {
 
-    public long keyDual;
+    public transient long keyDual;
 
-    public DualNode previousDual;
+    public transient DualNode previousDual;
 
-    public DualNode nextDual;
+    public transient DualNode nextDual;
 
     public void removeDual() {
         if (this.nextDual != null) {
