@@ -13,6 +13,7 @@ import com.client.definitions.skeletal.ABW;
 import com.client.definitions.skeletal.SkaFSet;
 import com.client.definitions.skeletal.TO;
 import com.client.engine.impl.MouseHandler;
+import com.client.js5.Js5List;
 import com.client.util.math.Matrix4f;
 import com.client.utilities.ObjectKeyUtil;
 import com.displee.cache.index.Index;
@@ -188,7 +189,10 @@ public class Model extends Renderable implements RSModel {
 
         ModelHeader header = modelHeaders[file];
         if (header == null) {
-            Client.instance.resourceProvider.provide(0, file);
+            byte[] var3 = Js5List.models.takeFile(file, 0);
+            if(var3 != null) {
+                loadModel(var3, file);
+            }
             return null;
         } else {
             try {
@@ -205,7 +209,10 @@ public class Model extends Renderable implements RSModel {
 
         ModelHeader mdl = modelHeaders[file];
         if (mdl == null) {
-            Client.instance.resourceProvider.provide(0,file);
+            byte[] var3 = Js5List.models.takeFile(file, 0);
+            if(var3 != null) {
+                loadModel(var3, file);
+            }
             return false;
         } else {
             return true;
