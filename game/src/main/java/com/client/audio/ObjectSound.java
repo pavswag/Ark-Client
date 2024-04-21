@@ -46,7 +46,7 @@ public final class ObjectSound extends Node implements RSObjectSound {
 		ObjectDefinition var2 = this.obj.transform(); // L: 45
 		if (var2 != null) { // L: 46
 			this.soundEffectId = var2.ambientSoundId; // L: 47
-			this.field812 = Math.max(var2.soundDistance, 1) * 128; // L: 48
+			this.field812 = var2.soundDistance() * 128; // L: 48
 			this.field819 = var2.soundMin; // L: 49
 			this.field811 = var2.soundMax; // L: 50
 			this.soundEffectIds = var2.ambientSoundIds; // L: 51
@@ -78,7 +78,7 @@ public final class ObjectSound extends Node implements RSObjectSound {
 		object.maxX = (var6 + var1) * 128; // L: 77
 		object.maxY = (var7 + var2) * 128; // L: 78
 		object.soundEffectId = var3.ambientSoundId; // L: 79
-		object.field812 = Math.max(var3.soundDistance, 1) * 128; // L: 80
+		object.field812 = var3.soundDistance() * 128; // L: 80
 		object.field819 = var3.soundMin; // L: 81
 		object.field811 = var3.soundMax; // L: 82
 		object.soundEffectIds = var3.ambientSoundIds; // L: 83
@@ -94,7 +94,6 @@ public final class ObjectSound extends Node implements RSObjectSound {
 	} // L: 90
 
 	public static void updateObjectSounds(int var0, int var1, int var2, int var3) {
-		System.out.println("updateObjectSounds");
 		for (ObjectSound var4 = (ObjectSound) objectSounds.last(); var4 != null; var4 = (ObjectSound) objectSounds.previous()) { // L:
 			// 93
 			if (var4.soundEffectId != -1 || var4.soundEffectIds != null) { // L:
@@ -110,7 +109,6 @@ public final class ObjectSound extends Node implements RSObjectSound {
 				} else if (var2 < var4.y) { // L: 99
 					var5 += var4.y - var2;
 				}
-				System.out.println(var0 + " vs " + var4.plane + " - PLANE");
 				if (var5 - 64 <= var4.field812 && Configuration.areaSoundEffectVolume != 0 && var0 == var4.plane) { // L:
 					// 100
 					var5 -= 64; // L: 111

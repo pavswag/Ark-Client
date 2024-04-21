@@ -280,6 +280,7 @@ public class StaticSound {
 						var11 = var6 >> 8;
 						var12 = var6 >> 4 & 7;
 						soundEffectIds[soundEffectCount] = var11;
+						System.out.println("playAnimationSound - " + var11);
 						queuedSoundEffectLoops[soundEffectCount] = var12;
 						queuedSoundEffectDelays[soundEffectCount] = 0;
 						soundEffects[soundEffectCount] = null;
@@ -316,6 +317,7 @@ public class StaticSound {
 
 						var11 = var6 >> 8;
 						var12 = var6 >> 4 & 7;
+						System.out.println("playSkeletalSounds - " + var11);
 						soundEffectIds[soundEffectCount] = var11;
 						queuedSoundEffectLoops[soundEffectCount] = var12;
 						queuedSoundEffectDelays[soundEffectCount] = 0;

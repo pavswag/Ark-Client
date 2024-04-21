@@ -13577,10 +13577,9 @@ public class Client extends GameEngine implements RSClient {
 				SequenceDefinition secondarySeq = SequenceDefinition.get(entity.secondarySeqID);
 				if (secondarySeq.isSkeletalAnimation()) {
 					++entity.secondarySeqFrame;
-					entity.playSkeletalSounds(secondarySeq, entity.secondarySeqFrame, entity.x, entity.y);
 					int skeletalLength = secondarySeq.getSkeletalLength();
 					if (entity.secondarySeqFrame < skeletalLength) {
-
+						entity.playSkeletalSounds(secondarySeq, entity.secondarySeqFrame, entity.x, entity.y);
 					} else {
 						entity.secondarySeqFrame -= secondarySeq.getFrameStep();
 						++entity.animationLoops;
@@ -13595,6 +13594,7 @@ public class Client extends GameEngine implements RSClient {
 						if (entity.secondarySeqFrame >= secondarySeq.getFrameCount()) {
 							entity.secondarySeqFrame = 0;
 						}
+						entity.playSkeletalSounds(secondarySeq, entity.secondarySeqFrame, entity.x, entity.y);
 					}
 				} else {
 					entity.secondarySeqCycle++;
@@ -13615,6 +13615,7 @@ public class Client extends GameEngine implements RSClient {
 						entity.secondarySeqCycle = 1;
 						entity.secondarySeqFrame = 0;
 					}
+					entity.playAnimationSound(secondarySeq, entity.secondarySeqFrame, entity.x, entity.y);
 				}
 			}
 
@@ -13672,16 +13673,16 @@ public class Client extends GameEngine implements RSClient {
 				SequenceDefinition primarySeq = SequenceDefinition.get(entity.primarySeqID);
 				if (primarySeq.isSkeletalAnimation()) {
 					++entity.primarySeqFrame;
-					entity.playSkeletalSounds(primarySeq, entity.primarySeqFrame, entity.x, entity.y);
 					int skeletalLength = primarySeq.getSkeletalLength();
 					if (entity.primarySeqFrame < skeletalLength) {
+						entity.playSkeletalSounds(primarySeq, entity.primarySeqFrame, entity.x, entity.y);
 					} else {
 						entity.primarySeqFrame -= primarySeq.getFrameStep();
 						++entity.animationLoops;
 						if (entity.animationLoops >= primarySeq.getLoopCount()) {
 							entity.primarySeqID = -1;
 						} else if (entity.primarySeqFrame >= 0 && entity.primarySeqFrame < skeletalLength) {
-
+							entity.playSkeletalSounds(primarySeq, entity.primarySeqFrame, entity.x, entity.y);
 						} else {
 							entity.primarySeqID = -1;
 						}
@@ -13706,6 +13707,7 @@ public class Client extends GameEngine implements RSClient {
 						if (entity.nextAnimationFrame < 0 || entity.nextAnimationFrame >= primarySeq.getFrameCount())
 							entity.nextAnimationFrame = entity.primarySeqFrame;
 					}
+					entity.playAnimationSound(primarySeq, entity.primarySeqFrame, entity.x, entity.y);
 				}
 				entity.dynamic = primarySeq.isStretches();
 			}

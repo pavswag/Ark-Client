@@ -1027,6 +1027,13 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 	public int ambientSoundId;
 	public int soundRetain;
 	public int soundDistance;
+	public int soundDistance() {
+		if(soundDistance <= 0) {
+			System.out.println("[" + id + "] has a sound distance off [" + soundDistance + "]");
+			return 1;
+		}
+		return soundDistance;
+	}
 	private Map<Integer, Object> params = null;
 
 	public void decode(Buffer buffer) {
@@ -1153,8 +1160,10 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 				supportItems = buffer.readUnsignedByte();
 			} else if (opcode == 78) {
 				ambientSoundId = buffer.readUShort(); // ambient sound id
-				soundDistance = buffer.readUnsignedByte();
-				soundRetain = buffer.readUnsignedByte();
+				soundDistance = buffer.readShort();
+				//soundRetain = buffer.readUnsignedByte();
+				if(soundRetain > soundDistance)
+					soundDistance = soundRetain;
 			} else if (opcode == 79) {
 				soundMin = buffer.readUShort();
 				soundMax = buffer.readUShort();
