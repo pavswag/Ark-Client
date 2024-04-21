@@ -1,30 +1,32 @@
 package com.client;
 
 import com.client.js5.disk.AbstractArchive;
+import lombok.ToString;
 
+@ToString
 public class GraphicsDefaults {
 
-    public int compass = -1;
+    public int compass = 169;
 
-    public int field4588 = -1;
+    public int field4588 = 424;
 
-    public int mapScenes = -1;
+    public int mapScenes = 317;
 
-    public int headIconsPk = -1;
+    public int headIconsPk = 439;
 
-    public int headIconArchive = -1;
+    public int headIconArchive = 440;
 
-    public int field4587 = -1;
+    public int field4587 = 441;
 
-    public int field4591 = -1;
+    public int field4591 = 442;
 
-    public int field4589 = -1;
+    public int field4589 = 299;
 
-    public int field4590 = -1;
+    public int field4590 = 300;
 
-    public int field4586 = -1;
+    public int field4586 = 317;
 
-    public int field4592 = -1;
+    public int field4592 = 423;
 
 
     public void decode(AbstractArchive archive) {

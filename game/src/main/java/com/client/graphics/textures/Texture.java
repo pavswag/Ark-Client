@@ -27,6 +27,8 @@ public class Texture extends DualNode implements RSTexture {
 
     int[] pixels;
 
+    int id;
+
     boolean isLoaded = false;
 
     Texture(Buffer var1) {
@@ -69,6 +71,40 @@ public class Texture extends DualNode implements RSTexture {
         } else {
             throw new RuntimeException();
         }
+    }
+
+    Texture(Texture originalTexture, int newID) {
+        this.isLoaded = false;
+        int count = 0;
+        id = newID;
+        isTransparent = originalTexture.isTransparent;
+        count = originalTexture.fileIds.length;
+        fileIds = new int[count];
+        for (int index = 0; index < count; index++) {
+            fileIds[index] = newID;
+        }
+        field2439 = new int[count -1];
+        for (int index = 0; index < count -1; index++) {
+            field2439[index] = newID;
+        }
+        field2440 = new int[count -1];
+        for (int index = 0; index < count -1; index++) {
+            field2440[index] = newID;
+        }
+        field2441 = new int[count];
+        for (int index = 0; index < count; index++) {
+            field2441[index] = newID;
+        }
+
+        if (newID >= 126) {
+            animationSpeed = originalTexture.animationSpeed;
+            animationDirection = originalTexture.animationDirection;
+        } else {
+            animationSpeed = 0;
+            animationDirection = 0;
+        }
+        averageRGB = originalTexture.averageRGB;
+        this.pixels = null;
     }
 
     boolean load(double var1, int var3, AbstractArchive var4) {

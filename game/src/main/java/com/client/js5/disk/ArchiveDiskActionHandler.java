@@ -4,13 +4,16 @@ import com.client.NodeDeque;
 import net.runelite.rs.api.RSArchiveDiskActionHandler;
 
 public class ArchiveDiskActionHandler implements Runnable, RSArchiveDiskActionHandler {
-
     public static NodeDeque requestQueue;
+
     public static NodeDeque responseQueue;
+
     public static Object lock;
+
     public static int numPendingActions = 0;
+
     static boolean flag;
-    
+
     static {
         requestQueue = new NodeDeque();
         responseQueue = new NodeDeque();
@@ -23,72 +26,62 @@ public class ArchiveDiskActionHandler implements Runnable, RSArchiveDiskActionHa
         try {
             while (true) {
                 ArchiveDiskAction var1;
-                synchronized(requestQueue) {
+                synchronized (requestQueue) {
                     var1 = (ArchiveDiskAction)requestQueue.last();
                 }
-
                 if (var1 != null) {
                     if (var1.type == 0) {
                         var1.archiveDisk.write((int)var1.key, var1.data, var1.data.length);
-                        synchronized(requestQueue) {
+                        synchronized (requestQueue) {
                             var1.remove();
                         }
                     } else if (var1.type == 1) {
                         var1.data = var1.archiveDisk.read((int)var1.key);
-                        synchronized(requestQueue) {
+                        synchronized (requestQueue) {
                             responseQueue.addFirst(var1);
                         }
                     }
-
-                    synchronized(lock) {
+                    synchronized (lock) {
                         if ((flag || numPendingActions <= 1) && requestQueue.method2028()) {
                             numPendingActions = 0;
                             lock.notifyAll();
                             return;
                         }
-
                         numPendingActions = 600;
                     }
-                } else {
-                    sleep(100L);
-                    synchronized(lock) {
-                        if ((flag || numPendingActions <= 1) && requestQueue.method2028()) {
-                            numPendingActions = 0;
-                            lock.notifyAll();
-                            return;
-                        }
-
-                        --numPendingActions;
+                    continue;
+                }
+                sleep(100L);
+                synchronized (lock) {
+                    if ((flag || numPendingActions <= 1) && requestQueue.method2028()) {
+                        numPendingActions = 0;
+                        lock.notifyAll();
+                        return;
                     }
+                    numPendingActions--;
                 }
             }
         } catch (Exception var13) {
             var13.printStackTrace();
+            return;
         }
     }
 
     public static final void sleep(long var0) {
-        if (var0 > 0L) {
+        if (var0 > 0L)
             if (0L == var0 % 10L) {
                 long var2 = var0 - 1L;
-
                 try {
                     Thread.sleep(var2);
-                } catch (InterruptedException var8) {
-                }
-
+                } catch (InterruptedException interruptedException) {}
                 try {
                     Thread.sleep(1L);
-                } catch (InterruptedException var7) {
-                }
+                } catch (InterruptedException interruptedException) {}
             } else {
                 try {
                     Thread.sleep(var0);
-                } catch (InterruptedException var6) {
-                }
+                } catch (InterruptedException interruptedException) {}
             }
-
-        }
     }
 
     public static void processPendingActions() {
@@ -99,39 +92,31 @@ public class ArchiveDiskActionHandler implements Runnable, RSArchiveDiskActionHa
                 thread.start();
                 thread.setPriority(5);
             }
-
             numPendingActions = 600;
             flag = false;
         }
     }
 
     public static void waitForPendingArchiveDiskActions() {
-        synchronized(ArchiveDiskActionHandler.lock) {
-            if (ArchiveDiskActionHandler.numPendingActions != 0) {
-                ArchiveDiskActionHandler.numPendingActions = 1;
-
+        synchronized (lock) {
+            if (numPendingActions != 0) {
+                numPendingActions = 1;
                 try {
-                    ArchiveDiskActionHandler.lock.wait();
-                } catch (InterruptedException ignored) {
-                }
+                    lock.wait();
+                } catch (InterruptedException interruptedException) {}
             }
-
         }
     }
 
     public static void processArchiveDiskActions() {
-        while(true) {
+        while (true) {
             ArchiveDiskAction var1;
-            synchronized(requestQueue) {
-                var1 = (ArchiveDiskAction) responseQueue.removeLast();
+            synchronized (requestQueue) {
+                var1 = (ArchiveDiskAction)responseQueue.removeLast();
             }
-
-            if (null == var1) {
+            if (null == var1)
                 return;
-            }
-
             var1.js5Archive.processArchiveData(var1.archiveDisk, (int)var1.key, var1.data, false);
         }
     }
-
 }

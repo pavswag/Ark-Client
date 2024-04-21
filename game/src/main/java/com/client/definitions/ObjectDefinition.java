@@ -18,7 +18,7 @@ public final class ObjectDefinition implements RSObjectComposition {
 
 
 	private int clipType;
-
+	public transient boolean custom;
 	public static ObjectDefinition lookup(int i) {
 		if (i > streamIndices.length)
 			i = streamIndices.length - 2;
@@ -43,6 +43,7 @@ public final class ObjectDefinition implements RSObjectComposition {
 		switch (i) {
 			case 46539:
 				objectDef.actions = new String[]{null, "Collect", null, null, null};
+				objectDef.custom = true;
 				break;
 
 			case 33285:
@@ -50,42 +51,50 @@ public final class ObjectDefinition implements RSObjectComposition {
 				objectDef.name = "Stairs";
 				objectDef.description = "Stairway to heaven.";
 				objectDef.actions = new String[]{ null, "Climb", null, null, null};
+				objectDef.custom = true;
 				break;
 			case 2079:
 				objectDef.name = "Offline Reward Chest";
 				objectDef.description = "Offline Reward Chest.";
 				objectDef.actions = new String[]{ null, "Open", null, null, null};
+				objectDef.custom = true;
 				break;
 			case 26645:
 				objectDef.name = "Resource Area";
 				objectDef.description = "Resource Area.";
 				objectDef.actions = new String[]{ null, "Enter", null, null, null};
+				objectDef.custom = true;
 				break;
 			case 30386:
 				objectDef.name = "Fightcaves Portal";
 				objectDef.description = "Fightcaves Portal.";
 				objectDef.actions = new String[]{ null, "Enter", "Inferno", null, null};
+				objectDef.custom = true;
 				break;
 			case 22772:
 				objectDef.name = "Hunter & Herblore";
 				objectDef.description = "Hunter & Herblore XP Stall.";
 				objectDef.actions = new String[]{ null, "Steal From", null, null, null};
+				objectDef.custom = true;
 				break;
 			case 31934:
 			case 34687:
 				objectDef.name = "Demon Hunter & Slayer";
 				objectDef.description = "Demon Hunter & Slayer statue.";
 				objectDef.actions = new String[]{ null, "Attune", null, null, null};
+				objectDef.custom = true;
 				break;
 
 			case 30645:
 				objectDef.name = "Santa's Sleigh";
 				objectDef.description = "Santa's Sleigh.";
 				objectDef.actions = new String[]{ null, null, null, null, null};
-				objectDef.mapscene = -1;
+				objectDef.mapSceneID = -1;
+				objectDef.custom = true;
 				break;
 			case 31619:
 				objectDef.actions = new String[]{ null, "Access", null, null, null};
+				objectDef.custom = true;
 				break;
 			case 15311:
 			case 15313:
@@ -94,200 +103,246 @@ public final class ObjectDefinition implements RSObjectComposition {
 				objectDef.name = "Presents";
 				objectDef.description = "Presents.";
 				objectDef.actions = new String[]{ null, null, null, null, null};
-				objectDef.mapscene = -1;
+				objectDef.mapSceneID = -1;
+				objectDef.custom = true;
 				break;
 			case 15305:
 				objectDef.name = "Christmas Tree";
 				objectDef.description = "Christmas Tree.";
 				objectDef.actions = new String[]{ null, null, null, null, null};
-				objectDef.mapscene = -1;
+				objectDef.mapSceneID = -1;
 				objectDef.sizeX = 3;
 				objectDef.sizeY = 3;
-				objectDef.scaleZ = 340; // Width
-				objectDef.scaleX = 500; // Thickness
-				objectDef.scaleY = 400; // Height
+				objectDef.modelSizeY = 340; // Width
+				objectDef.modelSizeX = 500; // Thickness
+				objectDef.modelSizeZ = 400; // Height
+				objectDef.custom = true;
 				break;
 			case 15319:
 				objectDef.name = "Santa's Sack";
 				objectDef.description = "Santa's Sack.";
 				objectDef.actions = new String[]{ null, null, null, null, null};
-				objectDef.mapscene = -1;
+				objectDef.mapSceneID = -1;
+				objectDef.custom = true;
 				break;
 			case 41126:
 			case 41128:
 			case 41130:
 				objectDef.actions = new String[]{ null, null, null, null, null};
+				objectDef.custom = true;
 				break;
 			case 36201: // Raids 1 lobby entrance
 				objectDef.actions = new String[]{ "Enter", null, null, null, null};
+				objectDef.custom = true;
 				break;
 			case 36062:
 				objectDef.description = "Teleports you anywhere around ArkCane.";
 				objectDef.actions = new String[] { "Activate", "Previous Location", null, null, null };
+				objectDef.custom = true;
 				break;
 			case 4152:
 				objectDef.name = "Skilling Portal";
 				objectDef.description = "Teleports you to various skilling areas.";
 				objectDef.actions = new String[] { "Teleport", null, null, null, null };
+				objectDef.custom = true;
 				break;
 			case 1206:
 				objectDef.name = "Hespori Vines";
 				objectDef.description = "The vines of Hespori.";
 				objectDef.actions = new String[] { "Pick", null, null, null, null };
+				objectDef.custom = true;
 				break;
 			case 33222:
 				objectDef.name = "Burning Ore";
 				objectDef.description = "I should try heating this up.";
 				objectDef.actions = new String[] { "Mine", null, null, null, null };
+				objectDef.custom = true;
 				break;
 			case 8880:
 				objectDef.name = "Tool Box";
 				objectDef.description = "Useful tools for resources in the area.";
 				objectDef.actions = new String[] { "Take-tools", null, null, null, null };
+				objectDef.custom = true;
 				break;
 			case 29771:
 				objectDef.name = "Tools";
 				objectDef.description = "Useful tools for resources in the area.";
 				objectDef.actions = new String[] { null , null, null, null, null };
+				objectDef.custom = true;
 				break;
 			case 33223:
 				objectDef.name = "Enchanted stone";
 				objectDef.description = "A fragile ancient stone.";
 				objectDef.actions = new String[] { "Mine", null, null, null, null };
+				objectDef.custom = true;
 				break;
 
 			case 33311:
 				objectDef.name = "Fire";
 				objectDef.description = "Looks very hot.";
 				objectDef.actions = new String[] { "Burn-essence", "Burn-runes", null, null, null };
+				objectDef.custom = true;
 				break;
 			case 12768:
 				objectDef.name = "@gre@Nature Chest";
 				objectDef.description = "Requires a Hespori key to open.";
+				objectDef.custom = true;
 				break;
 			case 37743: // nightmare good flower
-				objectDef.animation = 8617;
+				objectDef.animationId = 8617;
+				objectDef.custom = true;
 				break;
 			case 37740: // nightmare bad flower
-				objectDef.animation = 8623;
+				objectDef.animationId = 8623;
+				objectDef.custom = true;
 				break;
 			case 37738: // nightmare spore spawn
-				objectDef.animation = 8630;
+				objectDef.animationId = 8630;
+				objectDef.custom = true;
 				break;
 			case 35914:
 				objectDef.name = "Ahrim The Blighted";
 				objectDef.actions = new String[] { "Awaken", null, null, null, null };
+				objectDef.custom = true;
 				break;
 			case 9362:
 				objectDef.name = "Dharok The Wretched";
 				objectDef.actions = new String[] { "Awaken", null, null, null, null };
+				objectDef.custom = true;
 				break;
 			case 14766:
 				objectDef.name = "Verac The Defiled";
 				objectDef.actions = new String[] { "Awaken", null, null, null, null };
+				objectDef.custom = true;
 				break;
 			case 9360:
 				objectDef.name = "Torag The Corrupted";
 				objectDef.actions = new String[] { "Awaken", null, null, null, null };
+				objectDef.custom = true;
 				break;
 			case 28723:
 				objectDef.name = "Karil The Tainted";
 				objectDef.actions = new String[] { "Awaken", null, null, null, null };
+				objectDef.custom = true;
 				break;
 			case 31716:
 				objectDef.name = "Guthan The Infested";
 				objectDef.actions = new String[] { "Awaken", null, null, null, null };
+				objectDef.custom = true;
 				break;
 			case 31622:
 				objectDef.name = "Tournament Entrance";
 				objectDef.actions = new String[] { "Enter", "Check Players", "Check Active", null, null };
+				objectDef.custom = true;
 				break;
 			case 30943:
 				objectDef.actions = new String[] { "Upgrade", null, null, null, null };
+				objectDef.custom = true;
 				break;
 			case 31624:
 				objectDef.name = "@pur@Platinum Altar";
+				objectDef.custom = true;
 				break;
 			case 29064:
 				objectDef.name = "ArkCane Leaderboards";
 				objectDef.actions = new String[] { "View", null, null, null, null };
+				objectDef.custom = true;
 				break;
 			case 32508:
 				objectDef.name = "Hunllef's Chest";
 				objectDef.actions = new String[] { "Unlock", null, null, null, null };
+				objectDef.custom = true;
 				break;
 			case 6097:
 				objectDef.actions = new String[] { "Donate", null, null, null, null };
+				objectDef.custom = true;
 				break;
 			case 14888:
 				objectDef.name = "Jewelry Oven";
+				objectDef.custom = true;
 				break;
 			case 40949:
 				objectDef.name = "Furnace";
 				objectDef.actions = new String[] { "Smelt", null, null, null, null };
+				objectDef.custom = true;
 				break;
 			case 43749:
 				objectDef.name = "Legendary Zone Barrier";
 				objectDef.actions = new String[] { "Pass", null, null, null, null };
-				objectDef.interactType = false;
+				objectDef.solid = false;
 				objectDef.contouredGround = true;
 				objectDef.sizeY = 1;
 				objectDef.description = "A Barrier Protecting Legendary Zone Access.";
+				objectDef.custom = true;
 				break;
 			case 43751:
 				objectDef.name = "Diamond Zone Barrier";
 				objectDef.actions = new String[] { "Pass", null, null, null, null };
-				objectDef.interactType = false;
+				objectDef.solid = false;
 				objectDef.contouredGround = true;
 				objectDef.sizeY = 1;
 				objectDef.description = "A Barrier Protecting Diamond Zone Access.";
+				objectDef.custom = true;
 				break;
 			case 29165:
 				objectDef.name = "Coin Stack";
 				objectDef.actions = new String[] { null, "Steal From", null, null, null };
+				objectDef.custom = true;
 				break;
 			case 13681:
 				objectDef.name = "Animal Cage";
 				objectDef.actions = new String[] { null, null, null, null, null };
+				objectDef.custom = true;
 				break;
 			case 30720:
 				objectDef.name = "@red@Corrupt Chest";
 				objectDef.actions = new String[] { "Open", null, null, null, null };
+				objectDef.custom = true;
 				break;
 			case 34662:
 				objectDef.actions = new String[] { "Open", "Teleport", null, null, null };
+				objectDef.custom = true;
 				break;
 			case 12202:
 				objectDef.actions = new String[] { "Dig", null, null, null, null };
+				objectDef.custom = true;
 				break;
 			case 30107:
 				objectDef.name = "Raids Reward Chest";
 				objectDef.actions = new String[] { "Open", null, null, null, null };
+				objectDef.custom = true;
 				break;
 			case 36197:
 				objectDef.name = "Home Teleport";
+				objectDef.custom = true;
 
 				break;
 			case 10562:
 				objectDef.actions = new String[] { "Open", null, null, null, null };
+				objectDef.custom = true;
 				break;
 			case 8207:
 				objectDef.actions = new String[] { "Care-To", null, null, null, null };
 				objectDef.name = "Herb Patch";
+				objectDef.custom = true;
 				break;
 			case 8720:
 				objectDef.name = "Vote shop";
+				objectDef.custom = true;
 				break;
 			case 8210:
 				objectDef.actions = new String[] { "Rake", null, null, null, null };
 				objectDef.name = "Herb Patch";
+				objectDef.custom = true;
 				break;
 			case 29150:
 				objectDef.actions = new String[] { "Venerate", null, null, null, null };
+				objectDef.custom = true;
 				break;
 			case 6764:
 				objectDef.name = null;
 				objectDef.actions = new String[] { null, null, null, null, null };
+				objectDef.custom = true;
 				break;
 			case 8139:
 			case 8140:
@@ -295,29 +350,36 @@ public final class ObjectDefinition implements RSObjectComposition {
 			case 8142:
 				objectDef.actions = new String[] { "Inspect", null, null, null, null };
 				objectDef.name = "Herbs";
+				objectDef.custom = true;
 				break;
 			case 2341:
 				objectDef.actions = new String[] { null, null, null, null, null };
+				objectDef.custom = true;
 				break;
 			case 14217:
 				objectDef.actions = new String[5];
+				objectDef.custom = true;
 				break;
 			case 3840:
 				objectDef.actions = new String[5];
 				objectDef.actions[0] = "Fill";
 				objectDef.actions[1] = "Empty-From";
 				objectDef.name = "Compost Bin";
+				objectDef.custom = true;
 				break;
 			case 172:
 				objectDef.name = "Ckey chest";
+				objectDef.custom = true;
 				break;
 			case 31925:
 				objectDef.name = "Max Island";
 				objectDef.actions = new String[] { "Tele to", null, null, null, null };
+				objectDef.custom = true;
 				break;
 			case 2996:
 				objectDef.name = "Vote Chest";
 				objectDef.actions = new String[] { "Unlock", null, null, null, null };
+				objectDef.custom = true;
 				break;
 
 			case 12309:
@@ -326,11 +388,13 @@ public final class ObjectDefinition implements RSObjectComposition {
 				objectDef.actions[1] = "Buy gloves";
 				objectDef.actions[2] = null;
 				objectDef.name = "Chest";
+				objectDef.custom = true;
 				break;
 			case 32572:
 				objectDef.actions = new String[5];
 				objectDef.actions[0] = "Bank";
 				objectDef.name = "Group chest";
+				objectDef.custom = true;
 				break;
 			case 1750:
 				objectDef.objectModels = new int[] { 8131, };
@@ -339,11 +403,13 @@ public final class ObjectDefinition implements RSObjectComposition {
 				objectDef.sizeY = 2;
 				objectDef.ambient = 25;
 				objectDef.actions = new String[] { "Chop down", null, null, null, null };
-				objectDef.mapscene = 3;
+				objectDef.mapSceneID = 3;
+				objectDef.custom = true;
 				break;
 
 			case 26782:
 				objectDef.actions = new String[] { "Recharge", null, null, null, null };
+				objectDef.custom = true;
 				break;
 
 			case 20845:
@@ -351,8 +417,9 @@ public final class ObjectDefinition implements RSObjectComposition {
 				objectDef.name = "Jack-o-Lantern";
 				objectDef.sizeX = 3;
 				objectDef.sizeY = 3;
-				objectDef.animation = 0;
+				objectDef.animationId = 0;
 				objectDef.description = "A Jack-o-Lantern.";
+				objectDef.custom = true;
 				break;
 
 			case 1751:
@@ -362,27 +429,33 @@ public final class ObjectDefinition implements RSObjectComposition {
 				objectDef.sizeY = 3;
 				objectDef.ambient = 25;
 				objectDef.actions = new String[] { "Chop down", null, null, null, null };
-				objectDef.mapscene = 1;
+				objectDef.mapSceneID = 1;
+				objectDef.custom = true;
 				break;
 
 			case 7814:
 				objectDef.actions = new String[] { "Teleport", null, null, null, null };
+				objectDef.custom = true;
 				break;
 
 			case 8356:
 				objectDef.actions = new String[] { "Teleport", "Mt. Quidamortem", null, null, null };
+				objectDef.custom = true;
 				break;
 
 			case 28900:
 				objectDef.actions = new String[] { "Teleport", "Recharge Crystals", null, null, null };
+				objectDef.custom = true;
 				break;
 			case 26740:
 				objectDef.name = "Player Outlast";
 				objectDef.actions = new String[] { "Join", "Setup", null, null, null };
+				objectDef.custom = true;
 				break;
 
 			case 28837:
 				objectDef.actions = new String[] { "Set Destination", null, null, null, null };
+				objectDef.custom = true;
 				break;
 
 			case 26742:
@@ -394,29 +467,34 @@ public final class ObjectDefinition implements RSObjectComposition {
 			case 26748:
 			case 26749:
 				objectDef = ObjectDefinition.lookup(26741);
+				objectDef.custom = true;
 				break;
 
 			case 7811:
 				objectDef.name = "District Supplies";
 				objectDef.actions = new String[] { "Blood Money", "Free", "Quick-Sets", null, null };
+				objectDef.custom = true;
 				break;
 			case 10061:
 			case 10060:
 				objectDef.name = "Trading Post";
 				objectDef.actions = new String[] { "Bank", "Open", "Collect", null, null };
+				objectDef.custom = true;
 				break;
 			case 13287:
 				objectDef.name = "Storage chest (UIM)";
 				objectDef.description = "A chest to store items for UIM.";
+				objectDef.custom = true;
 				break;
 			case 1752:
 				objectDef.objectModels = new int[] { 4146, };
 				objectDef.name = "Hollow tree";
 				objectDef.ambient = 25;
 				objectDef.actions = new String[] { "Chop down", null, null, null, null };
-				objectDef.recolorToReplace = new int[] { 13592, 10512, };
-				objectDef.recolorToFind = new int[] { 7056, 6674, };
-				objectDef.mapscene = 0;
+				objectDef.modifiedColours = new int[] { 13592, 10512, };
+				objectDef.originalColours = new int[] { 7056, 6674, };
+				objectDef.mapSceneID = 0;
+				objectDef.custom = true;
 				break;
 			case 4873:
 				objectDef.name = "Wilderness Lever";
@@ -424,45 +502,57 @@ public final class ObjectDefinition implements RSObjectComposition {
 				objectDef.sizeY = 3;
 				objectDef.ambient = 25;
 				objectDef.actions = new String[] { "Enter Deep Wildy", null, null, null, null };
-				objectDef.mapscene = 3;
+				objectDef.mapSceneID = 3;
+				objectDef.custom = true;
 				break;
 			case 2544:
 				objectDef.name = "Dagannoth Manhole";
+				objectDef.custom = true;
 				break;
 			case 29345:
 				objectDef.name = "Training Teleports Portal";
 				objectDef.actions = new String[] { "Teleport", null, null, null, null };
+				objectDef.custom = true;
 				break;
 			case 29346:
 				objectDef.name = "Wilderness Teleports Portal";
 				objectDef.actions = new String[] { "Teleport", null, null, null, null };
+				objectDef.custom = true;
 				break;
 			case 29347:
 				objectDef.name = "Boss Teleports Portal";
 				objectDef.actions = new String[] { "Teleport", null, null, null, null };
+				objectDef.custom = true;
 				break;
 			case 29349:
 				objectDef.name = "Mini-Game Teleports Portal";
 				objectDef.actions = new String[] { "Teleport", null, null, null, null };
+				objectDef.custom = true;
 				break;
 			case 7127:
 				objectDef.name = "Leaderboards";
 				objectDef.actions = new String[] { "Open", "Wins", "Kills", "KDR", null };
+				objectDef.custom = true;
 				break;
 			case 4155:
 				objectDef.name = "Zul Andra Portal";
+				objectDef.custom = true;
 				break;
 			case 2123:
 				objectDef.name = "Mt. Quidamortem Slayer Dungeon";
+				objectDef.custom = true;
 				break;
 			case 4150:
 				objectDef.name = "Warriors Guild Mini-game Portal";
+				objectDef.custom = true;
 				break;
 			case 11803:
 				objectDef.name = "Donator Slayer Dungeon";
+				objectDef.custom = true;
 				break;
 			case 4151:
 				objectDef.name = "Barrows Mini-game Portal";
+				objectDef.custom = true;
 				break;
 			case 1753:
 				objectDef.objectModels = new int[] { 8157, };
@@ -471,16 +561,18 @@ public final class ObjectDefinition implements RSObjectComposition {
 				objectDef.sizeY = 3;
 				objectDef.ambient = 25;
 				objectDef.actions = new String[] { "Chop down", null, null, null, null };
-				objectDef.mapscene = 3;
+				objectDef.mapSceneID = 3;
+				objectDef.custom = true;
 				break;
 
 			case 6943:
 				objectDef.objectModels = new int[] { 1270, };
 				objectDef.name = "Bank booth";
-				objectDef.blocksProjectile = false;
+				objectDef.impenetrable = false;
 				objectDef.ambient = 25;
 				objectDef.contrast = 25;
 				objectDef.actions = new String[] { null, "Bank", "Collect", null, null };
+				objectDef.custom = true;
 				break;
 
 			case 25016:
@@ -488,15 +580,17 @@ public final class ObjectDefinition implements RSObjectComposition {
 			case 25018:
 			case 25029:
 				objectDef.actions = new String[] { "Push-Through", null, null, null, null };
+				objectDef.custom = true;
 				break;
 
 			case 19038:
 				objectDef.actions = new String[] { null, null, null, null, null };
 				objectDef.sizeX = 3;
 				objectDef.sizeY = 3;
-				objectDef.scaleZ = 500; // Width
-				objectDef.scaleX = 500; // Thickness
-				objectDef.scaleY = 400; // Height
+				objectDef.modelSizeY = 500; // Width
+				objectDef.modelSizeX = 500; // Thickness
+				objectDef.modelSizeZ = 400; // Height
+				objectDef.custom = true;
 				break;
 
 			case 18826:
@@ -504,9 +598,10 @@ public final class ObjectDefinition implements RSObjectComposition {
 			case 18818:
 				objectDef.sizeX = 3;
 				objectDef.sizeY = 3;
-				objectDef.scaleZ = 200; // Width
-				objectDef.scaleX = 200; // Thickness
-				objectDef.scaleY = 100; // Height
+				objectDef.modelSizeY = 200; // Width
+				objectDef.modelSizeX = 200; // Thickness
+				objectDef.modelSizeZ = 100; // Height
+				objectDef.custom = true;
 				break;
 
 			case 27777:
@@ -514,18 +609,20 @@ public final class ObjectDefinition implements RSObjectComposition {
 				objectDef.actions = new String[] { "Travel to CrabClaw Isle", null, null, null, null };
 				objectDef.sizeX = 1;
 				objectDef.sizeY = 1;
-				objectDef.scaleZ = 80; // Width
-				objectDef.scaleX = 80; // Thickness
-				objectDef.scaleY = 250; // Height
+				objectDef.modelSizeY = 80; // Width
+				objectDef.modelSizeX = 80; // Thickness
+				objectDef.modelSizeZ = 250; // Height
+				objectDef.custom = true;
 				break;
 			case 13641:
 				objectDef.name = "Teleportation Device";
 				objectDef.actions = new String[] { "Quick-Teleport", null, null, null, null };
 				objectDef.sizeX = 1;
 				objectDef.sizeY = 1;
-				objectDef.scaleZ = 80; // Width
-				objectDef.scaleX = 80; // Thickness
-				objectDef.scaleY = 250; // Height
+				objectDef.modelSizeY = 80; // Width
+				objectDef.modelSizeX = 80; // Thickness
+				objectDef.modelSizeZ = 250; // Height
+				objectDef.custom = true;
 				break;
 
 			case 29333:
@@ -533,8 +630,9 @@ public final class ObjectDefinition implements RSObjectComposition {
 				objectDef.actions = new String[] { "Open", null, "Collect", null, null };
 				objectDef.objectModels = new int[] { 60884 };
 				objectDef.ambient = 25;
-				objectDef.mergeNormals = false;
+				objectDef.nonFlatShading = false;
 				objectDef.description = "Buy and sell items with players here!";
+				objectDef.custom = true;
 				break;
 
 			case 11700:
@@ -542,22 +640,24 @@ public final class ObjectDefinition implements RSObjectComposition {
 				objectDef.name = "Venom";
 				objectDef.sizeX = 3;
 				objectDef.sizeY = 3;
-				objectDef.interactType = false;
+				objectDef.solid = false;
 				objectDef.contouredGround = true;
-				objectDef.animation = 1261;
-				objectDef.recolorToFind = new int[] { 31636 };
-				objectDef.recolorToReplace = new int[] { 10543 };
-				objectDef.scaleX = 160;
-				objectDef.scaleY = 160;
-				objectDef.scaleZ = 160;
+				objectDef.animationId = 1261;
+				objectDef.originalColours = new int[] { 31636 };
+				objectDef.modifiedColours = new int[] { 10543 };
+				objectDef.modelSizeX = 160;
+				objectDef.modelSizeZ = 160;
+				objectDef.modelSizeY = 160;
 				objectDef.actions = new String[5];
+				objectDef.custom = true;
 				// objectDef.description = new String(
 				// "It's a cloud of venomous smoke that is extremely toxic.");
 				break;
 
 			case 11601: // 11601
-				objectDef.textureFind = new short[] { 2 };
-				objectDef.textureReplace = new short[] { 46 };
+				objectDef.originalTextureColours = new short[] { 2 };
+				objectDef.modifiedTextureColours = new short[] { 46 };
+				objectDef.custom = true;
 				break;
 
 			case 43708:
@@ -566,22 +666,26 @@ public final class ObjectDefinition implements RSObjectComposition {
 			case 43707:
 				objectDef.actions = new String[] { "Craft", null, null, null, null };
 				objectDef.description = "It's a runecrafting guardian.";
+				objectDef.custom = true;
 				break;
 			case 32541:
 				objectDef.name = "Xeric's Trials";
 				objectDef.actions = new String[] { "Challenge", null, null, null, null };
 				objectDef.description = "It's a Xeric's Champion cape.";
+				objectDef.custom = true;
 				break;
 
 			case 43703:
 				objectDef.actions = new String[] { "Attune", null, null, null, null };
 				objectDef.description = "It's a Mining guardian.";
+				objectDef.custom = true;
 				break;
 
 			case 31984:
 				objectDef.name = "Benji's Pet Dragon";
 				objectDef.actions = new String[] { null, null, null, null, null };
 				objectDef.description = "Use bones on me and gain double XP while I eat.";
+				objectDef.custom = true;
 				break;
 
 
@@ -590,12 +694,13 @@ public final class ObjectDefinition implements RSObjectComposition {
 				objectDef.description = "A Powerup Pill.";
 				objectDef.actions = new String[]{ "Consume", null, null, null, null};
 				objectDef.objectModels = new int[] { 47106 };
-				objectDef.mapscene = 28;
+				objectDef.mapSceneID = 28;
 				objectDef.sizeX = 1;
 				objectDef.sizeY = 1;
-				objectDef.scaleZ = 25; // Width
-				objectDef.scaleX = 25; // Thickness
-				objectDef.scaleY = 25; // Height
+				objectDef.modelSizeY = 25; // Width
+				objectDef.modelSizeX = 25; // Thickness
+				objectDef.modelSizeZ = 25; // Height
+				objectDef.custom = true;
 				break;
 
 			case 33494:
@@ -603,15 +708,17 @@ public final class ObjectDefinition implements RSObjectComposition {
 				objectDef.description = "A Medi Pack.";
 				objectDef.actions = new String[]{ "Consume", null, null, null, null};
 				objectDef.objectModels = new int[] { 47105 };
-				objectDef.mapscene = 29;
+				objectDef.mapSceneID = 29;
 				objectDef.sizeX = 1;
 				objectDef.sizeY = 1;
-				objectDef.scaleZ = 25; // Width
-				objectDef.scaleX = 25; // Thickness
-				objectDef.scaleY = 25; // Height
+				objectDef.modelSizeY = 25; // Width
+				objectDef.modelSizeX = 25; // Thickness
+				objectDef.modelSizeZ = 25; // Height
+				objectDef.custom = true;
 				break;
 
 			case 13616:
+				objectDef.custom = true;
 				objectDef.name = "Valentine's Portal";
 				objectDef.description = "Valentine's Portal.";
 				objectDef.objectModels = new int[] { 65133, 11231 };
@@ -624,7 +731,7 @@ public final class ObjectDefinition implements RSObjectComposition {
 			if (objectDef.name == null || objectDef.name.equalsIgnoreCase("null"))
 				objectDef.name = "test";
 
-			objectDef.isInteractive = true;
+			objectDef.interactive = true;
 		}
 		return objectDef;
 	}
@@ -642,7 +749,7 @@ public final class ObjectDefinition implements RSObjectComposition {
 						+ output.replaceAll(", \"\"]", ", \"Examine\"]").replaceAll("\"\"", "null")
 						.replace("[\"null\"]", "[null, null, null, null, \"Examine\"]")
 						.replaceAll(", \"Remove\"", ", \"Remove\", \"Examine\"")
-						+ "	\n		\"width\": " + def.scaleZ + "\n	},";
+						+ "	\n		\"width\": " + def.modelSizeY + "\n	},";
 				fw.write(finalOutput.replaceAll("\"name\": \"null\",", "\"name\": null,"));
 				fw.write(System.getProperty("line.separator"));
 			}
@@ -654,44 +761,46 @@ public final class ObjectDefinition implements RSObjectComposition {
 	}
 	private void setDefaults() {
 		objectModels = null;
+		custom = false;
 		objectTypes = null;
+		soundRetain = -1;
 		clipType = -256;
 		name = null;
 		description = null;
-		recolorToFind = null;
-		recolorToReplace = null;
-		textureFind = null;
-		textureReplace = null;
+		originalColours = null;
+		modifiedColours = null;
+		originalTextureColours = null;
+		modifiedTextureColours = null;
 		sizeX = 1;
 		sizeY = 1;
-		interactType = true;
-		blocksProjectile = true;
-		isInteractive = false;
+		solid = true;
+		impenetrable = true;
+		interactive = false;
 		contouredGround = false;
-		mergeNormals = false;
-		occludes = false;
-		animation = -1;
+		nonFlatShading = false;
+		modelClipped = false;
+		animationId = -1;
 		decorDisplacement = 16;
 		ambient = 0;
 		contrast = 0;
 		actions = null;
-		minimapFunction = -1;
-		mapscene = -1;
-		inverted = false;
-		castsShadow = true;
-		scaleX = 128;
-		scaleY = 128;
-		scaleZ = 128;
-		surroundings = 0;
-		translateX = 0;
-		translateY = 0;
-		translateZ = 0;
-		obstructsGround = false;
-		removeClipping = false;
+		mapAreaId = -1;
+		mapSceneID = -1;
+		isRotated = false;
+		clipped = true;
+		modelSizeX = 128;
+		modelSizeZ = 128;
+		modelSizeY = 128;
+		clipMask = 0;
+		offsetX = 0;
+		offsetZ = 0;
+		offsetY = 0;
+		obstructive = false;
+		isHollow = false;
 		supportItems = -1;
-		varbitID = -1;
-		varpID = -1;
-		configs = null;
+		varbit = -1;
+		varp = -1;
+		transforms = null;
 	}
 
 	public void method574(OnDemandFetcher class42_sub1) {
@@ -750,8 +859,8 @@ public final class ObjectDefinition implements RSObjectComposition {
 		Model model = model(type, frameId, orientation, primary, tick);
 		if (model == null)
 			return null;
-		if (contouredGround || mergeNormals)
-			model = new Model(contouredGround, mergeNormals, model);
+		if (contouredGround || nonFlatShading)
+			model = new Model(contouredGround, nonFlatShading, model);
 		if (contouredGround) {
 			int y = (aY + bY + cY + dY) / 4;
 			for (int vertex = 0; vertex < model.verticesCount; vertex++) {
@@ -781,22 +890,22 @@ public final class ObjectDefinition implements RSObjectComposition {
 
 	public ObjectDefinition transform() {
 		int i = -1;
-		if (varpID != -1) {
-			VarBit varBit = VarBit.cache[varpID];
+		if (varp != -1) {
+			VarBit varBit = VarBit.cache[varp];
 			int j = varBit.anInt648;
 			int k = varBit.anInt649;
 			int l = varBit.anInt650;
 			int i1 = Client.anIntArray1232[l - k];
 			i = clientInstance.variousSettings[j] >> k & i1;
-		} else if (varbitID != -1)
-			i = clientInstance.variousSettings[varbitID];
+		} else if (varbit != -1)
+			i = clientInstance.variousSettings[varbit];
 		int var3;
-		if(configs == null)
+		if(transforms == null)
 			return null;
-		if (i >= 0 && i < configs.length)
-			var3 = configs[i];
+		if (i >= 0 && i < transforms.length)
+			var3 = transforms[i];
 		else
-			var3 = configs[configs.length - 1];
+			var3 = transforms[transforms.length - 1];
 		return var3 == -1 ? null : lookup(var3);
 	}
 
@@ -813,7 +922,7 @@ public final class ObjectDefinition implements RSObjectComposition {
 			}
 			if (objectModels == null)
 				return null;
-			boolean flag1 = inverted ^ (l > 3);
+			boolean flag1 = isRotated ^ (l > 3);
 			int k1 = objectModels.length;
 			for (int i2 = 0; i2 < k1; i2++) {
 				int l2 = objectModels[i2];
@@ -855,7 +964,7 @@ public final class ObjectDefinition implements RSObjectComposition {
 			}
 //			System.out.println("j = " + j);
 			int j2 = objectModels[i1];
-			boolean flag3 = inverted ^ (l > 3);
+			boolean flag3 = isRotated ^ (l > 3);
 			if (flag3)
 				j2 += 0x10000;
 			model = (Model) baseModels.get(j2);
@@ -869,12 +978,12 @@ public final class ObjectDefinition implements RSObjectComposition {
 			}
 		}
 		boolean flag;
-		flag = scaleX != 128 || scaleY != 128 || scaleZ != 128;
+		flag = modelSizeX != 128 || modelSizeZ != 128 || modelSizeY != 128;
 		boolean flag2;
-		flag2 = translateX != 0 || translateY != 0 || translateZ != 0;
-		Model model_3 = new Model(recolorToFind == null,
+		flag2 = offsetX != 0 || offsetZ != 0 || offsetY != 0;
+		Model model_3 = new Model(originalColours == null,
 				SeqFrame.noAnimationInProgress(animation_id), l == 0 && animation_id == -1 && !flag
-				&& !flag2, textureFind == null, model);
+				&& !flag2, originalTextureColours == null, model);
 
 		if (animation_id != -1 || primary != null) {
 			if (primary != null && primary.isSkeletalAnimation()) {
@@ -892,23 +1001,23 @@ public final class ObjectDefinition implements RSObjectComposition {
 		while (l-- > 0)
 			model_3.rotate90Degrees();
 
-		if (recolorToFind != null) {
-			for (int k2 = 0; k2 < recolorToFind.length; k2++)
-				model_3.recolor(recolorToFind[k2],
-						recolorToReplace[k2]);
+		if (originalColours != null) {
+			for (int k2 = 0; k2 < originalColours.length; k2++)
+				model_3.recolor(originalColours[k2],
+						modifiedColours[k2]);
 
 		}
-		if (textureFind != null) {
-			for (int k2 = 0; k2 < textureFind.length; k2++)
-				model_3.retexture(textureFind[k2],
-						textureReplace[k2]);
+		if (originalTextureColours != null) {
+			for (int k2 = 0; k2 < originalTextureColours.length; k2++)
+				model_3.retexture(originalTextureColours[k2],
+						modifiedTextureColours[k2]);
 
 		}
 		if (flag)
-			model_3.scale(scaleX, scaleZ, scaleY);
+			model_3.scale(modelSizeX, modelSizeY, modelSizeZ);
 		if (flag2)
-			model_3.offsetBy(translateX, translateY, translateZ);
-		model_3.light(85 + ambient, 768 + contrast, -50, -10, -50, !mergeNormals);
+			model_3.offsetBy(offsetX, offsetZ, offsetY);
+		model_3.light(85 + ambient, 768 + contrast, -50, -10, -50, !nonFlatShading);
 		if (supportItems == 1)
 			model_3.itemDropHeight = model_3.modelBaseY;
 
@@ -924,13 +1033,13 @@ public final class ObjectDefinition implements RSObjectComposition {
 	}
 
 	public int category;
-	public int[] soundEffectIds;
-	private int ambientSoundId;
-	private boolean randomAnimStart;
+	public int[] ambientSoundIds;
+	private boolean randomizeAnimStart;
 	public int soundMin;
 	public int soundMax;
-	public int soundId;
-	public int soundRange;
+	public int ambientSoundId;
+	public int soundRetain;
+	public int soundDistance;
 	private Map<Integer, Object> params = null;
 
 	public void decode(Buffer buffer) {
@@ -976,25 +1085,25 @@ public final class ObjectDefinition implements RSObjectComposition {
 			} else if (opcode == 15) {
 				sizeY = buffer.readUnsignedByte();
 			} else if (opcode == 17) {
-				interactType = false;
-				blocksProjectile = false;
+				solid = false;
+				impenetrable = false;
 			} else if (opcode == 18) {
-				blocksProjectile = false;
+				impenetrable = false;
 			} else if (opcode == 19) {
-				isInteractive = (buffer.readUnsignedByte() == 1);
+				interactive = (buffer.readUnsignedByte() == 1);
 			} else if (opcode == 21) {
 				contouredGround = true;
 			} else if (opcode == 22) {
-				mergeNormals = true;
+				nonFlatShading = true;
 			} else if (opcode == 23) {
-				occludes = true;
+				modelClipped = true;
 			} else if (opcode == 24) {
-				animation = buffer.readUShort();
-				if (animation == 0xFFFF) {
-					animation = -1;
+				animationId = buffer.readUShort();
+				if (animationId == 0xFFFF) {
+					animationId = -1;
 				}
 			} else if (opcode == 27) {
-				interactType = true;
+				solid = true;
 			} else if (opcode == 28) {
 				decorDisplacement = buffer.readUnsignedByte();
 			} else if (opcode == 29) {
@@ -1011,57 +1120,58 @@ public final class ObjectDefinition implements RSObjectComposition {
 				}
 			} else if (opcode == 40) {
 				int len = buffer.readUnsignedByte();
-				recolorToFind = new int[len];
-				recolorToReplace = new int[len];
+				originalColours = new int[len];
+				modifiedColours = new int[len];
 				for (int i = 0; i < len; i++) {
-					recolorToFind[i] = buffer.readUShort();
-					recolorToReplace[i] = buffer.readUShort();
+					originalColours[i] = buffer.readUShort();
+					modifiedColours[i] = buffer.readUShort();
 				}
 			} else if (opcode == 41) {
 				int len = buffer.readUnsignedByte();
-				textureFind = new short[len];
-				textureReplace = new short[len];
+				originalTextureColours = new short[len];
+				modifiedTextureColours = new short[len];
 				for (int i = 0; i < len; i++) {
-					textureFind[i] = (short) buffer.readUShort();
-					textureReplace[i] = (short) buffer.readUShort();
+					originalTextureColours[i] = (short) buffer.readUShort();
+					modifiedTextureColours[i] = (short) buffer.readUShort();
 				}
 			}/* else if (opcode == 60) {
 				minimapFunction = buffer.readUShort();
 			}*/ else if (opcode == 61) {
 				category = buffer.readUShort();
 			} else if (opcode == 62) {
-				inverted = true;
+				isRotated = true;
 			} else if (opcode == 64) {
-				castsShadow = false;
+				clipped = false;
 			} else if (opcode == 65) {
-				scaleX = buffer.readUShort();
+				modelSizeX = buffer.readUShort();
 			} else if (opcode == 66) {
-				scaleY = buffer.readUShort();
+				modelSizeZ = buffer.readUShort();
 			} else if (opcode == 67) {
-				scaleZ = buffer.readUShort();
+				modelSizeY = buffer.readUShort();
 			} else if (opcode == 68) {
-				mapscene = buffer.readUShort();
+				mapSceneID = buffer.readUShort();
 			} else if (opcode == 69) {
-				surroundings = buffer.readUnsignedByte();
+				clipMask = buffer.readUnsignedByte();
 			} else if (opcode == 70) {
-				translateX = buffer.readSignedWord();
+				offsetX = buffer.readSignedWord();
 			} else if (opcode == 71) {
-				translateY = buffer.readSignedWord();
+				offsetZ = buffer.readSignedWord();
 			} else if (opcode == 72) {
-				translateZ = buffer.readSignedWord();
+				offsetY = buffer.readSignedWord();
 			} else if (opcode == 73) {
-				obstructsGround = true;
+				obstructive = true;
 			} else if (opcode == 74) {
-				removeClipping = true;
+				isHollow = true;
 			} else if (opcode == 75) {
 				supportItems = buffer.readUnsignedByte();
 			} else if (opcode == 78) {
-				soundId = buffer.readUShort(); // ambient sound id
-				soundRange = buffer.readUnsignedByte();
+				ambientSoundId = buffer.readUShort(); // ambient sound id
+				soundDistance = buffer.readUnsignedByte();
+				soundRetain = buffer.readUnsignedByte();
 			} else if (opcode == 79) {
 				soundMin = buffer.readUShort();
 				soundMax = buffer.readUShort();
-				soundRange = buffer.readUShort();
+				soundDistance = buffer.readUShort();
 
 				int length = buffer.readUnsignedByte();
 				int[] anims = new int[length];
@@ -1070,24 +1180,26 @@ public final class ObjectDefinition implements RSObjectComposition {
 				{
 					anims[index] = buffer.readUShort();
 				}
-				soundEffectIds = anims;
+				ambientSoundIds = anims;
 			} else if (opcode == 81) {
 				clipType = stream.readUnsignedByte() * 65536;
 			} else if (opcode == 82) {
-				minimapFunction = buffer.readUShort();
+				mapAreaId = buffer.readUShort();
 			} else if (opcode == 89) {
-				randomAnimStart = true;
+				randomizeAnimStart = true;
+			} else if(opcode == 90) {
+				buffer.readUnsignedByte();
 			} else if (opcode == 77 || opcode == 92) {
-				varpID = buffer.readUShort();
+				varp = buffer.readUShort();
 
-				if (varpID == 0xFFFF) {
-					varpID = -1;
+				if (varp == 0xFFFF) {
+					varp = -1;
 				}
 
-				varbitID = buffer.readUShort();
+				varbit = buffer.readUShort();
 
-				if (varbitID == 0xFFFF) {
-					varbitID = -1;
+				if (varbit == 0xFFFF) {
+					varbit = -1;
 				}
 
 				int value = -1;
@@ -1102,14 +1214,14 @@ public final class ObjectDefinition implements RSObjectComposition {
 
 				int len = buffer.readUnsignedByte();
 
-				configs = new int[len + 2];
+				transforms = new int[len + 2];
 				for (int i = 0; i <= len; ++i) {
-					configs[i] = buffer.readUShort();
-					if (configs[i] == 0xFFFF) {
-						configs[i] = -1;
+					transforms[i] = buffer.readUShort();
+					if (transforms[i] == 0xFFFF) {
+						transforms[i] = -1;
 					}
 				}
-				configs[len + 1] = value;
+				transforms[len + 1] = value;
 			} else if (opcode == 249) {
 				int length = buffer.readUnsignedByte();
 
@@ -1138,18 +1250,18 @@ public final class ObjectDefinition implements RSObjectComposition {
 		}
 
 		if (name != null && !name.equals("null")) {
-			isInteractive = objectModels != null && (objectTypes == null || objectTypes[0] == 10);
+			interactive = objectModels != null && (objectTypes == null || objectTypes[0] == 10);
 			if (actions != null)
-				isInteractive = true;
+				interactive = true;
 		}
 
-		if (removeClipping) {
-			interactType = false;
-			blocksProjectile = false;
+		if (isHollow) {
+			solid = false;
+			impenetrable = false;
 		}
 
 		if (supportItems == -1) {
-			supportItems = interactType ? 1 : 0;
+			supportItems = solid ? 1 : 0;
 		}
 	}
 
@@ -1159,54 +1271,54 @@ public final class ObjectDefinition implements RSObjectComposition {
 		type = -1;
 	}
 
-	private short[] textureFind;
-	private short[] textureReplace;
-	public boolean obstructsGround;
+	private short[] originalTextureColours;
+	private short[] modifiedTextureColours;
+	public boolean obstructive;
 	@SuppressWarnings("unused")
 	private int contrast;
 	@SuppressWarnings("unused")
 	private int ambient;
-	private int translateX;
+	private int offsetX;
 	public String name;
-	private int scaleZ;
+	private int modelSizeY;
 	private static final Model[] aModelArray741s = new Model[4];
 	public int sizeX;
-	private int translateY;
-	public int minimapFunction;
-	private int[] recolorToReplace;
-	private int scaleX;
-	public int varbitID;
-	private boolean inverted;
+	private int offsetZ;
+	public int mapAreaId;
+	private int[] modifiedColours;
+	private int modelSizeX;
+	public int varbit;
+	private boolean isRotated;
 	public static boolean lowMem;
 	private static Buffer stream;
 	public int type;
 	public static int[] streamIndices;
-	public boolean blocksProjectile;
-	public int mapscene;
-	public int configs[];
+	public boolean impenetrable;
+	public int mapSceneID;
+	public int transforms[];
 	public int supportItems;
 	public int sizeY;
 	public boolean contouredGround;
-	public boolean occludes;
+	public boolean modelClipped;
 	public static Client clientInstance;
-	private boolean removeClipping;
-	public boolean interactType;
-	public int surroundings;
-	private boolean mergeNormals;
+	private boolean isHollow;
+	public boolean solid;
+	public int clipMask;
+	private boolean nonFlatShading;
 	private static int cacheIndex;
-	private int scaleY;
+	private int modelSizeZ;
 	public int[] objectModels;
-	public int varpID;
+	public int varp;
 	public int decorDisplacement;
 	private int[] objectTypes;
 	public String description;
-	public boolean isInteractive;
-	public boolean castsShadow;
+	public boolean interactive;
+	public boolean clipped;
 	public static EvictingDualNodeHashTable models = new EvictingDualNodeHashTable(30);
-	public int animation;
+	public int animationId;
 	private static ObjectDefinition[] cache;
-	private int translateZ;
-	private int[] recolorToFind;
+	private int offsetY;
+	private int[] originalColours;
 	public static EvictingDualNodeHashTable baseModels = new EvictingDualNodeHashTable(500);
 	public String actions[];
 	private boolean field2118 = false;
@@ -1349,6 +1461,10 @@ public final class ObjectDefinition implements RSObjectComposition {
 
 	@Override
 	public void setInteractType(int interactType) {
+
+	}
+
+	public void setSolid(int interactType) {
 
 	}
 
@@ -1587,6 +1703,14 @@ public final class ObjectDefinition implements RSObjectComposition {
 		return new int[0];
 	}
 
+	public void setAmbientSoundIds(int[] soundEffectIds) {
+
+	}
+
+	public int[] getAmbientSoundIds() {
+		return new int[0];
+	}
+
 	@Override
 	public void setMapIconId(int mapIconId) {
 
@@ -1628,13 +1752,13 @@ public final class ObjectDefinition implements RSObjectComposition {
 	}
 
 	public boolean hasSound() {
-		if (this.configs == null) {
-			return this.soundId != -1 || this.soundEffectIds != null;
+		if (this.transforms == null) {
+			return this.ambientSoundId != -1 || this.ambientSoundIds != null;
 		} else {
-			for (int transform : this.configs) {
+			for (int transform : this.transforms) {
 				if (transform != -1) {
 					ObjectDefinition var2 = lookup(transform);
-					if (var2.soundId != -1 || var2.soundEffectIds != null) {
+					if (var2.ambientSoundId != -1 || var2.ambientSoundIds != null) {
 						return true;
 					}
 				}

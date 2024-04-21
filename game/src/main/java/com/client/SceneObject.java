@@ -123,8 +123,8 @@ final class SceneObject extends Renderable {
 			}
 		}
 		ObjectDefinition class46 = ObjectDefinition.lookup(anInt1610);
-		anInt1601 = class46.varpID;
-		anInt1602 = class46.varbitID;
-		anIntArray1600 = class46.configs;
+		anInt1601 = class46.varp;
+		anInt1602 = class46.varbit;
+		anIntArray1600 = class46.transforms;
 	}
 }

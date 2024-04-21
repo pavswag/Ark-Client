@@ -6,8 +6,8 @@ import net.runelite.rs.api.RSArchiveLoader;
 import java.util.ArrayList;
 
 public class ArchiveLoader implements RSArchiveLoader {
-
     public static ArrayList<ArchiveLoader> archiveLoaders = new ArrayList<>(10);
+
     public static int archiveLoadersDone;
 
     final Js5Archive js5Archive;
@@ -24,16 +24,10 @@ public class ArchiveLoader implements RSArchiveLoader {
 
     public boolean isLoaded() {
         this.loadedCount = 0;
-
-        for(int groupCount = 0; groupCount < this.groupCount; ++groupCount) {
-            if (!this.js5Archive.isGroupIdsValid(groupCount) || this.js5Archive.isGroupValid(groupCount)) {
-                ++this.loadedCount;
-            }
+        for (int groupCount = 0; groupCount < this.groupCount; groupCount++) {
+            if (!this.js5Archive.isGroupIdsValid(groupCount) || this.js5Archive.isGroupValid(groupCount))
+                this.loadedCount++;
         }
-
-        return this.loadedCount >= this.groupCount;
+        return (this.loadedCount >= this.groupCount);
     }
-
-
-
 }

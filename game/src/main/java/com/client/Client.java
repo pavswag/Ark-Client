@@ -46,6 +46,7 @@ import com.client.js5.Js5List;
 import com.client.js5.Js5System;
 import com.client.js5.disk.ArchiveDiskActionHandler;
 import com.client.js5.net.JagexNetThread;
+import com.client.js5.util.ArchiveLoader;
 import com.client.js5.util.Js5ConfigType;
 import com.client.menu.MenuEntry;
 import com.client.accounts.AccountManager;
@@ -1798,7 +1799,7 @@ public class Client extends GameEngine implements RSClient {
 			incompleteAnimables.removeAll();
 			projectiles.removeAll();
 
-			unlinkMRUNodes();
+			release();
 			scene.initToNull();
 			System.gc();
 			load_objects();
@@ -2014,7 +2015,7 @@ public class Client extends GameEngine implements RSClient {
 		}
 	}
 
-	public void unlinkMRUNodes() {
+	public void release() {
 		ObjectDefinition.baseModels.clear();
 		ObjectDefinition.models.clear();
 		NpcDefinition.mruNodes.clear();
@@ -2022,6 +2023,19 @@ public class Client extends GameEngine implements RSClient {
 		ItemDefinition.sprites.clear();
 		Player.mruNodes.clear();
 		GraphicsDefinition.aMRUNodes_415.clear();
+		((TextureProvider) Rasterizer3D.textureLoader).clear();
+		Js5List.models.clearFiles();
+		Js5List.soundEffects.clearFiles();
+		Js5List.textures.clearFiles();
+		Js5List.musicTracks.clearFiles();
+		Js5List.musicJingles.clearFiles();
+		Js5List.sprites.clearFiles();
+		Js5List.binary.clearFiles();
+		Js5List.dbtableindex.clearFiles();
+		Js5List.animations.clearFiles();
+		Js5List.skeletons.clearFiles();
+		Js5List.clientScript.clearFiles();
+		Js5List.maps.clearFiles();
 	}
 
 	private int lastSong = 0;
@@ -2077,7 +2091,7 @@ public class Client extends GameEngine implements RSClient {
 				if (i3 != 0) {
 
 					int objId = ObjectKeyUtil.getObjectId(i3);
-					int j3 = ObjectDefinition.lookup(objId).minimapFunction;
+					int j3 = ObjectDefinition.lookup(objId).mapAreaId;
 					if (objId == 42781 || objId == 42742) {
 						j3 = 6;
 					}
@@ -4453,6 +4467,8 @@ public class Client extends GameEngine implements RSClient {
 		prayClicked = false;
 		loginScreenState = LoginScreenState.LOGIN;
 
+		ArchiveDiskActionHandler.waitForPendingArchiveDiskActions();
+
 		captcha = null;
 		captchaInput = "";
 		firstLoginMessage = "";
@@ -4468,7 +4484,7 @@ public class Client extends GameEngine implements RSClient {
 		}
 		// myUsername = "";
 		// myPassword = "";
-		unlinkMRUNodes();
+		release();
 		scene.initToNull();
 		for (int i = 0; i < 4; i++)
 			collisionMaps[i].setDefault();
@@ -4764,8 +4780,8 @@ public class Client extends GameEngine implements RSClient {
 			int k4 = 24624 + l * 4 + (103 - i) * 512 * 4;
 			int i5 = ObjectKeyUtil.getObjectId(id);
 			ObjectDefinition class46_2 = ObjectDefinition.lookup(i5);
-			if (class46_2.mapscene != -1) {
-				IndexedImage background_2 = mapScenes[class46_2.mapscene];
+			if (class46_2.mapSceneID != -1) {
+				IndexedImage background_2 = mapScenes[class46_2.mapSceneID];
 				if (background_2 != null) {
 					int i6 = (class46_2.sizeX * 4 - background_2.subWidth) / 2;
 					int j6 = (class46_2.sizeY * 4 - background_2.subHeight) / 2;
@@ -4834,16 +4850,16 @@ public class Client extends GameEngine implements RSClient {
 
 			int l3 = ObjectKeyUtil.getObjectId(id);
 			ObjectDefinition class46_1 = ObjectDefinition.lookup(l3);
-			if (class46_1.mapscene != -1) {
-				if (class46_1.mapscene < mapScenes.length) {
-					IndexedImage background_1 = mapScenes[class46_1.mapscene];
+			if (class46_1.mapSceneID != -1) {
+				if (class46_1.mapSceneID < mapScenes.length) {
+					IndexedImage background_1 = mapScenes[class46_1.mapSceneID];
 					if (background_1 != null) {
 						int j5 = (class46_1.sizeX * 4 - background_1.subWidth) / 2;
 						int k5 = (class46_1.sizeY * 4 - background_1.subHeight) / 2;
 						background_1.draw(48 + l * 4 + j5, 48 + (104 - i - class46_1.sizeY) * 4 + k5);
 					}
 				} else if (Configuration.developerMode) {
-					System.err.println("Missing map scene: " + class46_1.mapscene);
+					System.err.println("Missing map scene: " + class46_1.mapSceneID);
 				}
 			} else if (j3 == 9) {
 				int l4 = 0xeeeeee;
@@ -4868,11 +4884,11 @@ public class Client extends GameEngine implements RSClient {
 		if (id != 0) {
 			int j2 = ObjectKeyUtil.getObjectId(id);
 			ObjectDefinition class46 = ObjectDefinition.lookup(j2);
-			if (class46.mapscene > 100) {
-				class46.mapscene = 1;
+			if (class46.mapSceneID > 100) {
+				class46.mapSceneID = 1;
 			}
-			if (class46.mapscene != -1) {
-				IndexedImage background = mapScenes[class46.mapscene];
+			if (class46.mapSceneID != -1) {
+				IndexedImage background = mapScenes[class46.mapSceneID];
 				if (background != null) {
 					int i4 = (class46.sizeX * 4 - background.subWidth) / 2;
 					int j4 = (class46.sizeY * 4 - background.subHeight) / 2;
@@ -5797,7 +5813,7 @@ public class Client extends GameEngine implements RSClient {
 					i2 = class46.sizeY;
 					j2 = class46.sizeX;
 				}
-				int k2 = class46.surroundings;
+				int k2 = class46.clipMask;
 				if (orientation != 0) {
 					k2 = (k2 << orientation & 0xf) + (k2 >> 4 - orientation);
 				}
@@ -7856,7 +7872,7 @@ public class Client extends GameEngine implements RSClient {
 			j = l;
 			if (k1 == 2) {
 				ObjectDefinition class46 = ObjectDefinition.lookup(l1);
-				if (class46.configs != null) {
+				if (class46.transforms != null) {
 					class46 = class46.transform();
 				}
 				if (class46 == null) {
@@ -8069,8 +8085,20 @@ public class Client extends GameEngine implements RSClient {
 				socketStream.close();
 		} catch (Exception _ex) {
 		}
+		ArchiveDiskActionHandler.waitForPendingArchiveDiskActions();
+		try {
+			Signlink.cacheData.close();
+
+			for (int var3 = 0; var3 < 22; ++var3) {
+				Signlink.cacheIndexes[var3].close();
+			}
+
+			Signlink.cacheMasterIndex.close();
+			Signlink.uid.close();
+		} catch (Exception exception) {
+			exception.printStackTrace();
+		}
 		socketStream = null;
-		stopMidi();
 //		if (mouseDetection != null)
 //			mouseDetection.running = false;
 		mapBack = null;
@@ -12172,7 +12200,7 @@ public class Client extends GameEngine implements RSClient {
 
 	}
 
-	private static GraphicsDefaults spriteIds;
+	public static GraphicsDefaults spriteIds;
 	public static String fontFilter() {
 		if (Configuration.newFonts) {
 			return "_2";
@@ -12186,7 +12214,6 @@ public class Client extends GameEngine implements RSClient {
 	@SneakyThrows
 	public void load() {
 		System.out.println("Load#" + Client.titleLoadingStage);
-		int loadingProgress;
 		if (Client.titleLoadingStage == 0) {
 
 			getDocumentBaseHost();
@@ -12233,8 +12260,7 @@ public class Client extends GameEngine implements RSClient {
 			titleLoadingStage = 40;
 
 		} else if (Client.titleLoadingStage == 40) {
-			byte var24 = 0;
-			loadingProgress = var24 + Js5List.animations.percentage() * 4 / 100;
+			int loadingProgress = Js5List.animations.percentage() * 4 / 100;
 			loadingProgress += Js5List.sprites.percentage() * 4 / 100;
 			loadingProgress += Js5List.configs.percentage() * 2 / 100;
 			loadingProgress += Js5List.interfaces.percentage() * 2 / 100;
@@ -12251,7 +12277,6 @@ public class Client extends GameEngine implements RSClient {
 			loadingProgress += Js5List.musicSamples.percentage() * 2 / 100;
 			loadingProgress += Js5List.musicPatches.percentage() * 2 / 100;
 			loadingProgress += Js5List.dbtableindex.percentage() / 100;
-
 			if (loadingProgress != 96) {
 				if (loadingProgress != 0) {
 					drawLoadingText(30, "Checking for updates - " + loadingProgress + "%");
@@ -12268,8 +12293,9 @@ public class Client extends GameEngine implements RSClient {
 				Js5System.init(Js5List.musicJingles, "Music Jingles");
 				Js5System.init(Js5List.musicSamples, "Music Samples");
 				Js5System.init(Js5List.musicPatches, "Music Patches");
+				spriteIds = new GraphicsDefaults();
 				drawLoadingText(30, "Loaded update list");
-				Client.titleLoadingStage = 45;
+				titleLoadingStage = 45;
 			}
 		} else if (Client.titleLoadingStage == 45) {
 
@@ -12370,7 +12396,7 @@ public class Client extends GameEngine implements RSClient {
 
 					FileArchive streamLoader = streamLoaderForName(2, "config");
 					ObjectDefinition.init(streamLoader);
-					NpcDefinition.unpackConfig();
+					NpcDefinition.init(spriteIds.headIconArchive);
 					IDK.unpackConfig(streamLoader);
 					GraphicsDefinition.unpackConfig(streamLoader);
 					Varp.unpackConfig(streamLoader);
@@ -12703,6 +12729,7 @@ public class Client extends GameEngine implements RSClient {
 				try {
 					logger.info("titleLoadingStage == 150");
 					setGameState(GameState.LOGIN_SCREEN);
+					isLoading = false;
 					long clientLoadStart = System.currentTimeMillis();
 					DefinitionDumper.dumpDefs();
 
@@ -18560,9 +18587,9 @@ public class Client extends GameEngine implements RSClient {
 				if (group == 0) {
 					scene.removeWallObject(x, z, y);
 					ObjectDefinition objectDef = ObjectDefinition.lookup(id);
-					if (objectDef.interactType)
+					if (objectDef.solid)
 						collisionMaps[z].removeObject(orientation, objectType,
-								objectDef.blocksProjectile, x, y);
+								objectDef.impenetrable, x, y);
 				}
 				if (group == 1)
 					scene.removeWallDecoration(y, z, x);
@@ -18573,14 +18600,14 @@ public class Client extends GameEngine implements RSClient {
 							|| x + objectDef.sizeY > 103
 							|| y + objectDef.sizeY > 103)
 						return;
-					if (objectDef.interactType)
+					if (objectDef.solid)
 						collisionMaps[z].removeObject(orientation, objectDef.sizeX, x,
-								y, objectDef.sizeY, objectDef.blocksProjectile);
+								y, objectDef.sizeY, objectDef.impenetrable);
 				}
 				if (group == 3) {
 					scene.removeGroundDecoration(z, y, x);
 					ObjectDefinition objectDef = ObjectDefinition.lookup(id);
-					if (objectDef.interactType && objectDef.isInteractive)
+					if (objectDef.solid && objectDef.interactive)
 						collisionMaps[z].removeFloorDecoration(y, x);
 				}
 			}
@@ -20665,7 +20692,18 @@ public class Client extends GameEngine implements RSClient {
 		} else {
 			callbacks.drawInterface(WidgetID.RESIZABLE_VIEWPORT_OLD_SCHOOL_BOX_GROUP_ID, Collections.emptyList());
 		}
+
+
+		if (Client.isLoading && jagexNetThread.method1968(true, false) == 0) {
+			Client.isLoading = false;
+		}
+
+		if (Client.isLoading) {
+			Rasterizer2D.fillRectangle(0, 0, canvasWidth, canvasHeight, 0);
+			drawLoadingMessage("Loading - please wait.");
+		}
 	}
+	public static boolean isLoading = true;
 
 	public void clearTopInterfaces() {
 		stream.createFrame(130);
@@ -20696,6 +20734,8 @@ public class Client extends GameEngine implements RSClient {
 		experienceCounter = 0;
 		sounds = new int[50];
 		soundLoops = new int[50];
+		ArchiveLoader.archiveLoaders = new ArrayList<>(10);
+		ArchiveLoader.archiveLoadersDone = 0;
 		soundType = new int[50];
 		soundDelay = new int[50];
 		soundVolume = new int[50];

@@ -45,11 +45,11 @@ public final class ObjectSound extends Node implements RSObjectSound {
 		int var1 = this.soundEffectId; // L: 44
 		ObjectDefinition var2 = this.obj.transform(); // L: 45
 		if (var2 != null) { // L: 46
-			this.soundEffectId = var2.soundId; // L: 47
-			this.field812 = var2.soundRange * 128; // L: 48
+			this.soundEffectId = var2.ambientSoundId; // L: 47
+			this.field812 = var2.soundDistance * 128; // L: 48
 			this.field819 = var2.soundMin; // L: 49
 			this.field811 = var2.soundMax; // L: 50
-			this.soundEffectIds = var2.soundEffectIds; // L: 51
+			this.soundEffectIds = var2.ambientSoundIds; // L: 51
 		} else {
 			this.soundEffectId = -1; // L: 54
 			this.field812 = 0; // L: 55
@@ -76,11 +76,11 @@ public final class ObjectSound extends Node implements RSObjectSound {
 		}
 		object.maxX = (var6 + var1) * 128; // L: 77
 		object.maxY = (var7 + var2) * 128; // L: 78
-		object.soundEffectId = var3.soundId; // L: 79
-		object.field812 = var3.soundRange * 128; // L: 80
+		object.soundEffectId = var3.ambientSoundId; // L: 79
+		object.field812 = var3.soundDistance * 128; // L: 80
 		object.field819 = var3.soundMin; // L: 81
 		object.field811 = var3.soundMax; // L: 82
-		object.soundEffectIds = var3.soundEffectIds; // L: 83
+		object.soundEffectIds = var3.ambientSoundIds; // L: 83
 		if (var3.getTransforms() != null) { // L: 84
 			object.obj = var3; // L: 85
 			object.set(); // L: 86

@@ -26,6 +26,7 @@ public class DefinitionDumper {
         if (Configuration.dumpDataLists) {
             dumpCustomItems();
             dumpItems();
+            dumpCustomObjects();
             dumpCustomNpcs();
             dumpNpcs();
             if(dumpModels)
@@ -75,7 +76,7 @@ public class DefinitionDumper {
 
                 fileName = fileName.trim();
 
-                System.out.println("Dumping " + fileName);
+                System.out.println("Dumping npc " + fileName);
                 toJson(npcDefinition, "./temp/npcs/" + fileName + ".json");
 
                 if(npcDefinition.models != null) {
@@ -83,6 +84,28 @@ public class DefinitionDumper {
                         customModels.add(model);
                     }
                 }
+            }
+        }
+    }
+    public static void dumpCustomObjects() {
+        for(int i = 0; i < ObjectDefinition.totalObjects; i++) {
+            ObjectDefinition objectDefinition = ObjectDefinition.lookup(i);
+            if(objectDefinition == null)
+                continue;
+            if(objectDefinition.custom) {
+                if(objectDefinition.name == null || objectDefinition.name.equalsIgnoreCase("null"))
+                    continue;
+                String fileName = i + "-" + RSFont.removeOldSyntax(objectDefinition.name).replace("\\", "-").replace("/", "-");
+                if(fileName.contains(">")) {
+                    fileName = fileName.substring(fileName.indexOf(">") + 1);
+                }
+
+                System.out.println("Dumping object " + fileName);
+                toJson(objectDefinition, "./temp/objects/" + fileName + ".json");
+
+                if(objectDefinition.objectModels != null)
+                    for(int model: objectDefinition.objectModels)
+                        customModels.add(model);
             }
         }
     }
@@ -99,7 +122,7 @@ public class DefinitionDumper {
                     fileName = fileName.substring(fileName.indexOf(">") + 1);
                 }
 
-                System.out.println("Dumping " + fileName);
+                System.out.println("Dumping item " + fileName);
                 toJson(itemDefinition, "./temp/items/" + fileName + ".json");
 
                 if(itemDefinition.inventoryModel != -1)
