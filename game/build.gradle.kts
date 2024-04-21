@@ -16,6 +16,10 @@ dependencies {
     implementation("com.dorkbox:Notify:3.7")
     implementation("com.google.code.gson:gson:2.8.9")
 
+    // https://mvnrepository.com/artifact/org.locationtech.jts/jts-core
+    implementation("org.locationtech.jts:jts-core:1.19.0")
+
+
     // https://github.com/aschoerk/reflections8
     implementation("net.oneandone.reflections8:reflections8:0.11.7")
 

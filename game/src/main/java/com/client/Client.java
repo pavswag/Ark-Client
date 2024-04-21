@@ -2039,13 +2039,18 @@ public class Client extends GameEngine implements RSClient {
 
 	private int lastSong = 0;
 	public void handleRegionChangeMusic() {
-		final int regionX = Client.localPlayer.getAbsoluteX() >> 3;
-		final int regionY = Client.localPlayer.getAbsoluteY() >> 3;
-		int regionID = ((regionX / 8) << 8) + (regionY / 8);
+		RegionMusic regionMusic = RegionMusic.forPosition(localPlayer.getWorldLocation().getRegionID());
+		if(regionMusic != null) {
+			StaticSound.playSong(regionMusic.getMusicId());
+		} else {
+			final int regionX = Client.localPlayer.getAbsoluteX() >> 3;
+			final int regionY = Client.localPlayer.getAbsoluteY() >> 3;
+			int regionID = ((regionX / 8) << 8) + (regionY / 8);
 
-		int song = Music.getMusicIdFromBoundary(Client.localPlayer.getAbsoluteX(), Client.localPlayer.getAbsoluteY());
-		if (song != StaticSound.musicTrackGroupId) {
-			StaticSound.playSong(song);
+			int song = Music.getMusicIdFromBoundary(Client.localPlayer.getAbsoluteX(), Client.localPlayer.getAbsoluteY());
+			if (song != -1 && song != StaticSound.musicTrackGroupId) {
+				StaticSound.playSong(song);
+			}
 		}
 	}
 
@@ -12723,6 +12728,7 @@ public class Client extends GameEngine implements RSClient {
 			} else if (Client.titleLoadingStage == 140) {
 				drawLoadingText(99, "Loaded world map");
 				setConfigButtonsAtStartup();
+				RegionMusic.load();
 				Client.titleLoadingStage = 150;
 			} else if (Client.titleLoadingStage == 150) {
 				try {

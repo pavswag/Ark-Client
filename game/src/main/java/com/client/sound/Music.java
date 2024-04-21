@@ -19,6 +19,7 @@ public class Music {
     private int mapRegion;
     private int order;
     private boolean members;
+    private String name;
 
     public Music(int x1, int y1, int x2, int y2, int musicId, int mapRegion, int order, boolean members) {
         this.x1 = x1;
@@ -39,6 +40,6 @@ public class Music {
             }
         }
 
-        return 0;
+        return -1;
     }
 }
