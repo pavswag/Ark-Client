@@ -328,7 +328,7 @@ public class StaticSound {
 		}
 	}
 
-	public static void playJingle(int var0, int var1) {
+	public static void playJingle(int var0) {
 		if (Configuration.musicVolume != 0 && var0 != -1) { // L:
 			StaticSound.method2410(StaticSound.archive11, var0, 0, Configuration.musicVolume, false); // L:
 			// 3779
@@ -458,6 +458,7 @@ public class StaticSound {
 
 		if (!Configuration.disableLoginScreenMusic) {
 			Js5Archive var11 = StaticSound.archive6;
+
 			int var8 = var11.getGroupId("scape main");
 			int var9 = var11.getFileId(var8, "");
 			StaticSound.musicPlayerStatus = 1;

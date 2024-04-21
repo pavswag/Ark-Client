@@ -185,7 +185,6 @@ public class Client extends GameEngine implements RSClient {
 		return anInt1104 > 0;
 	}
 
-	public static int[] regions;
 	public static int region;
 
 	public DevConsole devConsole = new DevConsole();
@@ -1828,8 +1827,8 @@ public class Client extends GameEngine implements RSClient {
 
 			if (!isDynamicRegion) {
 				for (int i3 = 0; i3 < k2; i3++) {
-					int i4 = (mapCoordinates[i3] >> 8) * 64 - baseX;
-					int k5 = (mapCoordinates[i3] & 0xff) * 64 - baseY;
+					int i4 = (regions[i3] >> 8) * 64 - baseX;
+					int k5 = (regions[i3] & 0xff) * 64 - baseY;
 
 					byte abyte0[] = terrainData[i3];
 
@@ -1841,8 +1840,8 @@ public class Client extends GameEngine implements RSClient {
 				}
 
 				for (int j4 = 0; j4 < k2; j4++) {
-					int l5 = (mapCoordinates[j4] >> 8) * 64 - baseX;
-					int k7 = (mapCoordinates[j4] & 0xff) * 64 - baseY;
+					int l5 = (regions[j4] >> 8) * 64 - baseX;
+					int k7 = (regions[j4] & 0xff) * 64 - baseY;
 					byte abyte2[] = terrainData[j4];
 					if (abyte2 == null && currentRegionY < 800) {
 						StaticSound.playPcmPlayers();
@@ -1862,8 +1861,8 @@ public class Client extends GameEngine implements RSClient {
 				for (int i6 = 0; i6 < k2; i6++) {
 					byte abyte1[] = objectData[i6];
 					if (abyte1 != null) {
-						int l8 = (mapCoordinates[i6] >> 8) * 64 - baseX;
-						int k9 = (mapCoordinates[i6] & 0xff) * 64 - baseY;
+						int l8 = (regions[i6] >> 8) * 64 - baseX;
+						int k9 = (regions[i6] & 0xff) * 64 - baseY;
 						StaticSound.playPcmPlayers();
 						currentMapRegion.loadObjectsInScene(l8, collisionMaps, k9, scene, abyte1);
 					}
@@ -1882,8 +1881,8 @@ public class Client extends GameEngine implements RSClient {
 								int j10 = l7 >> 14 & 0x3ff;
 								int l10 = l7 >> 3 & 0x7ff;
 								int j11 = (j10 / 8 << 8) + l10 / 8;
-								for (int l11 = 0; l11 < mapCoordinates.length; l11++) {
-									if (mapCoordinates[l11] != j11 || terrainData[l11] == null)
+								for (int l11 = 0; l11 < regions.length; l11++) {
+									if (regions[l11] != j11 || terrainData[l11] == null)
 										continue;
 									currentMapRegion.loadMapChunk(i9, l9, collisionMaps, k4 * 8, (j10 & 7) * 8,
 											terrainData[l11], (l10 & 7) * 8, j3, j6 * 8);
@@ -1919,8 +1918,8 @@ public class Client extends GameEngine implements RSClient {
 								int xCoord = chunkBits >> 14 & 0x3ff;
 								int yCoord = chunkBits >> 3 & 0x7ff;
 								int mapRegion = (xCoord / 8 << 8) + yCoord / 8;
-								for (int k12 = 0; k12 < mapCoordinates.length; k12++) {
-									if (mapCoordinates[k12] != mapRegion || objectData[k12] == null)
+								for (int k12 = 0; k12 < regions.length; k12++) {
+									if (regions[k12] != mapRegion || objectData[k12] == null)
 										continue;
 									currentMapRegion.loadMapChunk(z, rotation, collisionMaps, x * 8, (xCoord & 7) * 8,
 											terrainData[k12], (yCoord & 7) * 8, plane, y * 8);
@@ -5128,8 +5127,8 @@ public class Client extends GameEngine implements RSClient {
 			byte abyte0[] = objectData[j];
 			if (abyte0 != null) {
 				try {
-					int k = (mapCoordinates[j] >> 8) * 64 - baseX;
-					int l = (mapCoordinates[j] & 0xff) * 64 - baseY;
+					int k = (regions[j] >> 8) * 64 - baseX;
+					int l = (regions[j] & 0xff) * 64 - baseY;
 					if (isDynamicRegion) {
 						k = 10;
 						l = 10;
@@ -8123,7 +8122,7 @@ public class Client extends GameEngine implements RSClient {
 		stream = null;
 		aStream_847 = null;
 		inStream = null;
-		mapCoordinates = null;
+		regions = null;
 		terrainData = null;
 		objectData = null;
 		terrainIndices = null;
@@ -19290,14 +19289,14 @@ public class Client extends GameEngine implements RSClient {
 						}
 						terrainData = new byte[regionCount][];
 						objectData = new byte[regionCount][];
-						mapCoordinates = new int[regionCount];
+						regions = new int[regionCount];
 						terrainIndices = new int[regionCount];
 						objectIndices = new int[regionCount];
 						regionCount = 0;
 						List<Integer> mapFiles = Lists.newArrayList();
 						for (int x = (currentRegionX - 6) / 8; x <= (currentRegionX + 6) / 8; x++) {
 							for (int y = (currentRegionY - 6) / 8; y <= (currentRegionY + 6) / 8; y++) {
-								mapCoordinates[regionCount] = (x << 8) + y;
+								regions[regionCount] = (x << 8) + y;
 								if (inTutorialIsland
 										&& (y == 49 || y == 149 || y == 147 || x == 50 || x == 49 && y == 47)) {
 									terrainIndices[regionCount] = -1;
@@ -19348,11 +19347,11 @@ public class Client extends GameEngine implements RSClient {
 						}
 						terrainData = new byte[totalLegitChunks][];
 						objectData = new byte[totalLegitChunks][];
-						mapCoordinates = new int[totalLegitChunks];
+						regions = new int[totalLegitChunks];
 						terrainIndices = new int[totalLegitChunks];
 						objectIndices = new int[totalLegitChunks];
 						for (int idx = 0; idx < totalLegitChunks; idx++) {
-							int region = mapCoordinates[idx] = totalChunks[idx];
+							int region = regions[idx] = totalChunks[idx];
 							int localX = region >> 8 & 0xff;
 							int localY = region & 0xff;
 							int terrainMapId = terrainIndices[idx] = resourceProvider.getMapFiles(0, localY, localX);
@@ -19489,17 +19488,8 @@ public class Client extends GameEngine implements RSClient {
 
 				case 174:
 					int id = inStream.readUShort();
-
-					StaticSound.playJingle(id, 0);
-					int type = inStream.readUnsignedByte();
-					int delay = inStream.readUShort();
-					if (soundEffectVolume != 0 && type != 0 && soundCount < 50) {
-						sound[soundCount] = id;
-						soundType[soundCount] = type;
-						soundDelay[soundCount] = delay;
-						// aClass26Array1468[soundCount] = null;
-						soundCount++;
-					}
+					if(id != -1)
+						StaticSound.playJingle(id);
 					incomingPacket = -1;
 					return true;
 
@@ -21254,7 +21244,7 @@ public class Client extends GameEngine implements RSClient {
 	private final int[] anIntArray1229;
 	private CollisionMap[] collisionMaps;
 	public static int anIntArray1232[];
-	private int[] mapCoordinates;
+	private int[] regions;
 	private int[] terrainIndices;
 	private int[] objectIndices;
 	private int anInt1237;

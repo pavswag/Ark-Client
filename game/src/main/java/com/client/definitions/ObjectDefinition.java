@@ -889,8 +889,6 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 		} else if (varbit != -1)
 			i = clientInstance.variousSettings[varbit];
 		int var3;
-		if(transforms == null)
-			return null;
 		if (i >= 0 && i < transforms.length)
 			var3 = transforms[i];
 		else
@@ -1734,7 +1732,7 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 
 	@Override
 	public int[] getTransforms() {
-		return new int[0];
+		return transforms;
 	}
 
 	public boolean hasSound() {
