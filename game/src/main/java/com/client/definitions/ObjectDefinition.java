@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.client.*;
+import com.client.cache.DualNode;
+import com.client.js5.Js5List;
+import com.client.js5.util.Js5ConfigType;
 import lombok.ToString;
 import net.runelite.api.IterableHashTable;
 import net.runelite.rs.api.RSBuffer;
@@ -14,33 +17,31 @@ import net.runelite.rs.api.RSObjectComposition;
 import org.apache.commons.lang3.StringUtils;
 
 @ToString
-public final class ObjectDefinition implements RSObjectComposition {
+public final class ObjectDefinition extends DualNode implements RSObjectComposition {
 
 
 	private int clipType;
 	public transient boolean custom;
-	public static ObjectDefinition lookup(int i) {
-		if (i > streamIndices.length)
-			i = streamIndices.length - 2;
 
-/*		if (i == 25913 || i == 25916 || i == 25917)
-			i = 15552;*/
+	public static EvictingDualNodeHashTable cache = new EvictingDualNodeHashTable(64);
+	public static ObjectDefinition lookup(int i) {
 
 		if (i == 1753 || i == 1751 || i == 1752 || i == 12605 || i == 1750 || i == 11812 || i == 11811 || i == 11817 || i == 11947 || i == 11815 || i == 12600 || i == 11814 || i == 12599 || i == 11813 || i == 12598) {
 			i = 13424;
 		}
-		for (int j = 0; j < 20; j++)
-			if (cache[j].type == i)
-				return cache[j];
+		ObjectDefinition objectDef = (ObjectDefinition) cache.get(i);
+		if (objectDef == null) {
+			objectDef = new ObjectDefinition();
+			objectDef.id = i;
+			objectDef.setDefaults();
+			byte[] data = Js5List.configs.takeFile(Js5ConfigType.OBJECT, i);
+			if(data != null) {
+				objectDef.decode(new Buffer(data));
+				cache.put(objectDef, i);
+			}
+		}
 
-		cacheIndex = (cacheIndex + 1) % 20;
-		ObjectDefinition objectDef = cache[cacheIndex];
-		stream.pos = streamIndices[i];
-		objectDef.type = i;
-		objectDef.setDefaults();
-		objectDef.decode(stream);
-
-		switch (i) {
+		/*switch (i) {
 			case 46539:
 				objectDef.actions = new String[]{null, "Collect", null, null, null};
 				objectDef.custom = true;
@@ -269,7 +270,7 @@ public final class ObjectDefinition implements RSObjectComposition {
 			case 43749:
 				objectDef.name = "Legendary Zone Barrier";
 				objectDef.actions = new String[] { "Pass", null, null, null, null };
-				objectDef.solid = false;
+				objectDef.solid = 0;
 				objectDef.contouredGround = true;
 				objectDef.sizeY = 1;
 				objectDef.description = "A Barrier Protecting Legendary Zone Access.";
@@ -278,7 +279,7 @@ public final class ObjectDefinition implements RSObjectComposition {
 			case 43751:
 				objectDef.name = "Diamond Zone Barrier";
 				objectDef.actions = new String[] { "Pass", null, null, null, null };
-				objectDef.solid = false;
+				objectDef.solid = 0;
 				objectDef.contouredGround = true;
 				objectDef.sizeY = 1;
 				objectDef.description = "A Barrier Protecting Diamond Zone Access.";
@@ -640,7 +641,7 @@ public final class ObjectDefinition implements RSObjectComposition {
 				objectDef.name = "Venom";
 				objectDef.sizeX = 3;
 				objectDef.sizeY = 3;
-				objectDef.solid = false;
+				objectDef.solid = 0;
 				objectDef.contouredGround = true;
 				objectDef.animationId = 1261;
 				objectDef.originalColours = new int[] { 31636 };
@@ -725,13 +726,13 @@ public final class ObjectDefinition implements RSObjectComposition {
 				objectDef.actions = new String[]{ null, "Enter", null, null, null};
 				break;
 
-		}
+		}*/
 		if (Client.debugModels) {
 
 			if (objectDef.name == null || objectDef.name.equalsIgnoreCase("null"))
 				objectDef.name = "test";
 
-			objectDef.interactive = true;
+			objectDef.interactive = 1;
 		}
 		return objectDef;
 	}
@@ -744,7 +745,7 @@ public final class ObjectDefinition implements RSObjectComposition {
 				ObjectDefinition def = ObjectDefinition.lookup(i);
 				String output = "[\"" + StringUtils.join(def.actions, "\", \"") + "\"],";
 
-				String finalOutput = "	{\n" + "		\"id\": " + def.type + ",\n		" + "\"name\": \"" + def.name
+				String finalOutput = "	{\n" + "		\"id\": " + def.id + ",\n		" + "\"name\": \"" + def.name
 						+ "\",\n		\"models\": " + Arrays.toString(def.objectModels) + ",\n		\"actions\": "
 						+ output.replaceAll(", \"\"]", ", \"Examine\"]").replaceAll("\"\"", "null")
 						.replace("[\"null\"]", "[null, null, null, null, \"Examine\"]")
@@ -773,9 +774,9 @@ public final class ObjectDefinition implements RSObjectComposition {
 		modifiedTextureColours = null;
 		sizeX = 1;
 		sizeY = 1;
-		solid = true;
+		solid = 1;
 		impenetrable = true;
-		interactive = false;
+		interactive = 0;
 		contouredGround = false;
 		nonFlatShading = false;
 		modelClipped = false;
@@ -813,26 +814,14 @@ public final class ObjectDefinition implements RSObjectComposition {
 	public static void nullLoader() {
 		baseModels = null;
 		models = null;
-		streamIndices = null;
 		cache = null;
-		stream = null;
 	}
 
 	public static int totalObjects;
 
-	public static void init(FileArchive streamLoader) {
-		stream = new Buffer(streamLoader.readFile("loc.dat"));
-		Buffer stream = new Buffer(streamLoader.readFile("loc.idx"));
-		totalObjects = stream.readUShort();
-		streamIndices = new int[totalObjects];
-		int i = 2;
-		for (int j = 0; j < totalObjects; j++) {
-			streamIndices[j] = i;
-			i += stream.readUShort();
-		}
-		cache = new ObjectDefinition[20];
-		for (int k = 0; k < 20; k++)
-			cache[k] = new ObjectDefinition();
+	public static void init() {
+		totalObjects = Js5List.configs.getGroupFileCount(Js5ConfigType.OBJECT);
+		System.out.println("Loaded [" + totalObjects + "] Object Definitions.");
 	}
 
 	public boolean modelTypeCached(int i) {
@@ -842,13 +831,13 @@ public final class ObjectDefinition implements RSObjectComposition {
 			if (i != 10)
 				return true;
 			boolean flag1 = true;
-			Model model = (Model) ObjectDefinition.models.get(type);
+			Model model = (Model) ObjectDefinition.models.get(id);
 			for (int k = 0; k < objectModels.length; k++)
 				flag1 &= Model.isCached(objectModels[k] & 0xffff);
 
 			return flag1;
 		}
-		Model model = (Model) ObjectDefinition.models.get(type);
+		Model model = (Model) ObjectDefinition.models.get(id);
 		for (int j = 0; j < objectTypes.length; j++)
 			if (objectTypes[j] == i)
 				return Model.isCached(objectModels[j] & 0xffff);
@@ -915,7 +904,7 @@ public final class ObjectDefinition implements RSObjectComposition {
 		if (objectTypes == null) {
 			if (j != 10)
 				return null;
-			l1 = (long) ((type << 6) + l) + ((long) (animation_id + 1) << 32);
+			l1 = (long) ((id << 6) + l) + ((long) (animation_id + 1) << 32);
 			Model model_1 = (Model) models.get(l1);
 			if (model_1 != null) {
 				return model_1;
@@ -954,7 +943,7 @@ public final class ObjectDefinition implements RSObjectComposition {
 
 			if (i1 == -1)
 				return null;
-			l1 = (long) ((type << 8) + (i1 << 3) + l) + ((long) (animation_id + 1) << 32);
+			l1 = (long) ((id << 8) + (i1 << 3) + l) + ((long) (animation_id + 1) << 32);
 			Model model_2 = (Model) models.get(l1);
 			if (model_2 != null) {
 				return model_2;
@@ -1064,7 +1053,7 @@ public final class ObjectDefinition implements RSObjectComposition {
 					}
 				}
 			} else if (opcode == 2) {
-				name = buffer.readString();
+				name = buffer.readNullTerminatedString();
 			}/*else if (type == 3) {
 					description = stream.readString();
 			}*/ else if (opcode == 5) {
@@ -1085,12 +1074,12 @@ public final class ObjectDefinition implements RSObjectComposition {
 			} else if (opcode == 15) {
 				sizeY = buffer.readUnsignedByte();
 			} else if (opcode == 17) {
-				solid = false;
+				solid = 0;
 				impenetrable = false;
 			} else if (opcode == 18) {
 				impenetrable = false;
 			} else if (opcode == 19) {
-				interactive = (buffer.readUnsignedByte() == 1);
+				interactive = (buffer.readUnsignedByte());
 			} else if (opcode == 21) {
 				contouredGround = true;
 			} else if (opcode == 22) {
@@ -1103,7 +1092,7 @@ public final class ObjectDefinition implements RSObjectComposition {
 					animationId = -1;
 				}
 			} else if (opcode == 27) {
-				solid = true;
+				solid = 1;
 			} else if (opcode == 28) {
 				decorDisplacement = buffer.readUnsignedByte();
 			} else if (opcode == 29) {
@@ -1114,8 +1103,8 @@ public final class ObjectDefinition implements RSObjectComposition {
 				if (actions == null) {
 					actions = new String[5];
 				}
-				actions[opcode - 30] = buffer.readString();
-				if (actions[opcode - 30].equalsIgnoreCase("Hidden")) {
+				actions[opcode - 30] = buffer.readNullTerminatedString();
+				if (actions[opcode - 30] != null && actions[opcode - 30].equalsIgnoreCase("Hidden")) {
 					actions[opcode - 30] = null;
 				}
 			} else if (opcode == 40) {
@@ -1182,7 +1171,7 @@ public final class ObjectDefinition implements RSObjectComposition {
 				}
 				ambientSoundIds = anims;
 			} else if (opcode == 81) {
-				clipType = stream.readUnsignedByte() * 65536;
+				clipType = buffer.readUnsignedByte() * 65536;
 			} else if (opcode == 82) {
 				mapAreaId = buffer.readUShort();
 			} else if (opcode == 89) {
@@ -1250,25 +1239,25 @@ public final class ObjectDefinition implements RSObjectComposition {
 		}
 
 		if (name != null && !name.equals("null")) {
-			interactive = objectModels != null && (objectTypes == null || objectTypes[0] == 10);
+			interactive = objectModels != null && (objectTypes == null || objectTypes[0] == 10) ? 1 : 0;
 			if (actions != null)
-				interactive = true;
+				interactive = 1;
 		}
 
 		if (isHollow) {
-			solid = false;
+			solid = 0;
 			impenetrable = false;
 		}
 
 		if (supportItems == -1) {
-			supportItems = solid ? 1 : 0;
+			supportItems = solid;
 		}
 	}
 
 	public static EvictingDualNodeHashTable ObjectDefinition_cachedEntities = new EvictingDualNodeHashTable(30);
 
 	private ObjectDefinition() {
-		type = -1;
+		id = -1;
 	}
 
 	private short[] originalTextureColours;
@@ -1290,9 +1279,7 @@ public final class ObjectDefinition implements RSObjectComposition {
 	public int varbit;
 	private boolean isRotated;
 	public static boolean lowMem;
-	private static Buffer stream;
-	public int type;
-	public static int[] streamIndices;
+	public int id;
 	public boolean impenetrable;
 	public int mapSceneID;
 	public int transforms[];
@@ -1302,7 +1289,7 @@ public final class ObjectDefinition implements RSObjectComposition {
 	public boolean modelClipped;
 	public static Client clientInstance;
 	private boolean isHollow;
-	public boolean solid;
+	public int solid;
 	public int clipMask;
 	private boolean nonFlatShading;
 	private static int cacheIndex;
@@ -1312,11 +1299,10 @@ public final class ObjectDefinition implements RSObjectComposition {
 	public int decorDisplacement;
 	private int[] objectTypes;
 	public String description;
-	public boolean interactive;
+	public int interactive;
 	public boolean clipped;
 	public static EvictingDualNodeHashTable models = new EvictingDualNodeHashTable(30);
 	public int animationId;
-	private static ObjectDefinition[] cache;
 	private int offsetY;
 	private int[] originalColours;
 	public static EvictingDualNodeHashTable baseModels = new EvictingDualNodeHashTable(500);
@@ -1351,7 +1337,7 @@ public final class ObjectDefinition implements RSObjectComposition {
 
 	@Override
 	public int getId() {
-		return type;
+		return id;
 	}
 
 	@Override

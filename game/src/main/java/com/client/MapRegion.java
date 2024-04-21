@@ -492,7 +492,7 @@ public final class MapRegion {
 		int mean = center + east + northEast + north >> 2;
 
 		long key = (long) ((long) rotation << 20 | (long) type << 14 | ((long) y << 7 | x) + 0x40000000);
-		if (!definition.interactive)
+		if (definition.interactive == 0)
 			key |= ~0x7fffffffffffffffL;
 		if(definition.supportItems == 1) {
 			key |= 0x400000L;
@@ -500,7 +500,7 @@ public final class MapRegion {
 		key |= (long) id << 32;
 		byte config = (byte) ((rotation << 6) + type);
 		if (type == 22) {
-			if (lowMem && !definition.interactive && !definition.obstructive) {
+			if (lowMem && definition.interactive == 0 && !definition.obstructive) {
 				return;
 			}
 			Object obj;
@@ -512,7 +512,7 @@ public final class MapRegion {
 						true);
 			}
 			scene.addGroundDecoration(z, mean, y, ((Renderable) (obj)), config, key, x);
-			if (definition.solid && definition.interactive && class11 != null) {
+			if (definition.solid == 1 && definition.interactive != 0 && class11 != null) {
 				class11.block(x, y);
 			}
 			return;
@@ -564,7 +564,7 @@ public final class MapRegion {
 					}
 				}
 			}
-			if (definition.solid && class11 != null) {
+			if (definition.solid == 1 && class11 != null) {
 				class11.method212(definition.impenetrable, definition.sizeX, definition.sizeY, x, y, rotation);
 			}
 			return;
@@ -581,7 +581,7 @@ public final class MapRegion {
 			if (type <= 17 && type != 13 && z > 0) {
 				anIntArrayArrayArray135[z][x][y] |= 0x924;
 			}
-			if (definition.solid && class11 != null) {
+			if (definition.solid == 1 && class11 != null) {
 				class11.method212(definition.impenetrable, definition.sizeX, definition.sizeY,
 						x, y, rotation);
 			}
@@ -630,7 +630,7 @@ public final class MapRegion {
 					anIntArrayArrayArray135[z][x][y] |= 0x492;
 				}
 			}
-			if (definition.solid && class11 != null) {
+			if (definition.solid == 1 && class11 != null) {
 				class11.method211(y, rotation, x, type, definition.impenetrable);
 			}
 			if (definition.decorDisplacement != 16) {
@@ -659,7 +659,7 @@ public final class MapRegion {
 					shading[z][x][y] = 50;
 				}
 			}
-			if (definition.solid && class11 != null) {
+			if (definition.solid == 1 && class11 != null) {
 				class11.method211(y, rotation, x, type, definition.impenetrable);
 			}
 			return;
@@ -694,7 +694,7 @@ public final class MapRegion {
 					anIntArrayArrayArray135[z][x][y] |= 0x249;
 				}
 			}
-			if (definition.solid && class11 != null) {
+			if (definition.solid == 1 && class11 != null) {
 				class11.method211(y, rotation, x, type, definition.impenetrable);
 			}
 			if (definition.decorDisplacement != 16) {
@@ -723,7 +723,7 @@ public final class MapRegion {
 					shading[z][x][y] = 50;
 				}
 			}
-			if (definition.solid && class11 != null) {
+			if (definition.solid == 1 && class11 != null) {
 				class11.method211(y, rotation, x, type, definition.impenetrable);
 			}
 			return;
@@ -737,7 +737,7 @@ public final class MapRegion {
 						true);
 			}
 			scene.addTiledObject(key, config, mean, 1, ((Renderable) (obj6)), 1, z, 0, y, x);
-			if (definition.solid && class11 != null) {
+			if (definition.solid == 1 && class11 != null) {
 				class11.method212(definition.impenetrable, definition.sizeX, definition.sizeY,
 						x, y, rotation);
 			}
@@ -1107,7 +1107,7 @@ public final class MapRegion {
 		ObjectDefinition definition = ObjectDefinition.lookup(j1);
 
 		long key = (long) ((long) rotation << 20 | (long) type << 14 | ((long) regionY << 7 | regionX) + 0x40000000);
-		if (!definition.interactive)
+		if (definition.interactive == 0)
 			key |= ~0x7fffffffffffffffL;
 
 		if(definition.supportItems == 1) {
@@ -1129,7 +1129,7 @@ public final class MapRegion {
 				obj = new SceneObject(j1, rotation, 22, i2, j2, l1, k2, definition.animationId, true);
 			}
 			worldController.addGroundDecoration(k1, l2, regionY, ((Renderable) (obj)), byte1, key, regionX);
-			if (definition.solid && definition.interactive) {
+			if (definition.solid == 1 && definition.interactive != 0) {
 				class11.block(regionX, regionY);
 			}
 			return;
@@ -1157,7 +1157,7 @@ public final class MapRegion {
 				}
 				worldController.addTiledObject(key, byte1, l2, i5, ((Renderable) (obj1)), k4, k1, j5, regionY, regionX);
 			}
-			if (definition.solid) {
+			if (definition.solid == 1) {
 				class11.method212(definition.impenetrable, definition.sizeX, definition.sizeY, regionX, regionY, rotation);
 			}
 			return;
@@ -1170,7 +1170,7 @@ public final class MapRegion {
 				obj2 = new SceneObject(j1, rotation, type, i2, j2, l1, k2, definition.animationId, true);
 			}
 			worldController.addTiledObject(key, byte1, l2, 1, ((Renderable) (obj2)), 1, k1, 0, regionY, regionX);
-			if (definition.solid) {
+			if (definition.solid == 1) {
 				class11.method212(definition.impenetrable, definition.sizeX, definition.sizeY, regionX, regionY, rotation);
 			}
 			return;
@@ -1184,7 +1184,7 @@ public final class MapRegion {
 			}
 			worldController.addWallObject(anIntArray152[rotation], ((Renderable) (obj3)), key, regionY, byte1, regionX, null,
 					l2, 0, k1);
-			if (definition.solid) {
+			if (definition.solid == 1) {
 				class11.method211(regionY, rotation, regionX, type, definition.impenetrable);
 			}
 			return;
@@ -1198,7 +1198,7 @@ public final class MapRegion {
 			}
 			worldController.addWallObject(anIntArray140[rotation], ((Renderable) (obj4)), key, regionY, byte1, regionX, null,
 					l2, 0, k1);
-			if (definition.solid) {
+			if (definition.solid == 1) {
 				class11.method211(regionY, rotation, regionX, type, definition.impenetrable);
 			}
 			return;
@@ -1216,7 +1216,7 @@ public final class MapRegion {
 			}
 			worldController.addWallObject(anIntArray152[rotation], ((Renderable) (obj11)), key, regionY, byte1, regionX,
 					((Renderable) (obj12)), l2, anIntArray152[j3], k1);
-			if (definition.solid) {
+			if (definition.solid == 1) {
 				class11.method211(regionY, rotation, regionX, type, definition.impenetrable);
 			}
 			return;
@@ -1230,7 +1230,7 @@ public final class MapRegion {
 			}
 			worldController.addWallObject(anIntArray140[rotation], ((Renderable) (obj5)), key, regionY, byte1, regionX, null,
 					l2, 0, k1);
-			if (definition.solid) {
+			if (definition.solid == 1) {
 				class11.method211(regionY, rotation, regionX, type, definition.impenetrable);
 			}
 			return;
@@ -1243,7 +1243,7 @@ public final class MapRegion {
 				obj6 = new SceneObject(j1, rotation, type, i2, j2, l1, k2, definition.animationId, true);
 			}
 			worldController.addTiledObject(key, byte1, l2, 1, ((Renderable) (obj6)), 1, k1, 0, regionY, regionX);
-			if (definition.solid) {
+			if (definition.solid == 1) {
 				class11.method212(definition.impenetrable, definition.sizeX, definition.sizeY, regionX, regionY, rotation);
 			}
 			return;
@@ -1390,7 +1390,7 @@ public final class MapRegion {
 					int i_262_ = i_258_ + i_250_;
 					if (i_261_ > 0 && i_262_ > 0 && i_261_ < 103 && i_262_ < 103) {
 						ObjectDefinition class46 = ObjectDefinition.lookup(i_252_);
-						if (i_260_ != 22 || !lowMem || class46.interactive || class46.obstructive) {
+						if (i_260_ != 22 || !lowMem || class46.interactive != 0 || class46.obstructive) {
 							bool &= class46.modelCached();
 							bool_255_ = true;
 						}

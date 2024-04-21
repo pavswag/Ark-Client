@@ -25,13 +25,15 @@ public class DefinitionDumper {
     public static void dumpDefs() {
         if (Configuration.dumpDataLists) {
             dumpCustomItems();
+            moveCustomModels();
             dumpItems();
             dumpCustomObjects();
+            moveCustomModels();
             dumpCustomNpcs();
+            moveCustomModels();
             dumpNpcs();
             if(dumpModels)
                 Client.instance.resourceProvider.dumpModels();
-            moveCustomModels();
         }
     }
     public static void moveCustomModels() {
@@ -46,6 +48,7 @@ public class DefinitionDumper {
                 }
             }
         });
+        customModels.clear();
     }
     public static void dumpNpcs() {
         Map<Integer, Npc> npcs = new HashMap<>();

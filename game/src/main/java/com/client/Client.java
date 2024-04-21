@@ -12395,7 +12395,7 @@ public class Client extends GameEngine implements RSClient {
 
 
 					FileArchive streamLoader = streamLoaderForName(2, "config");
-					ObjectDefinition.init(streamLoader);
+					ObjectDefinition.init();
 					NpcDefinition.init(spriteIds.headIconArchive);
 					IDK.unpackConfig(streamLoader);
 					GraphicsDefinition.unpackConfig(streamLoader);
@@ -18587,7 +18587,7 @@ public class Client extends GameEngine implements RSClient {
 				if (group == 0) {
 					scene.removeWallObject(x, z, y);
 					ObjectDefinition objectDef = ObjectDefinition.lookup(id);
-					if (objectDef.solid)
+					if (objectDef.solid == 1)
 						collisionMaps[z].removeObject(orientation, objectType,
 								objectDef.impenetrable, x, y);
 				}
@@ -18600,14 +18600,14 @@ public class Client extends GameEngine implements RSClient {
 							|| x + objectDef.sizeY > 103
 							|| y + objectDef.sizeY > 103)
 						return;
-					if (objectDef.solid)
+					if (objectDef.solid == 1)
 						collisionMaps[z].removeObject(orientation, objectDef.sizeX, x,
 								y, objectDef.sizeY, objectDef.impenetrable);
 				}
 				if (group == 3) {
 					scene.removeGroundDecoration(z, y, x);
 					ObjectDefinition objectDef = ObjectDefinition.lookup(id);
-					if (objectDef.solid && objectDef.interactive)
+					if (objectDef.solid == 1 && objectDef.interactive != 0)
 						collisionMaps[z].removeFloorDecoration(y, x);
 				}
 			}
