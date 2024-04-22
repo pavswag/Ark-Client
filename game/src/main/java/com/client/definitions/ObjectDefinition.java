@@ -1160,14 +1160,14 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 				supportItems = buffer.readUnsignedByte();
 			} else if (opcode == 78) {
 				ambientSoundId = buffer.readUShort(); // ambient sound id
-				soundDistance = buffer.readShort();
-				//soundRetain = buffer.readUnsignedByte();
-				if(soundRetain > soundDistance)
-					soundDistance = soundRetain;
+				soundDistance = buffer.readUnsignedByte();
+				soundRetain = buffer.readUnsignedByte();
 			} else if (opcode == 79) {
 				soundMin = buffer.readUShort();
 				soundMax = buffer.readUShort();
-				soundDistance = buffer.readUShort();
+				soundDistance = buffer.readUnsignedByte();
+
+				soundRetain = buffer.readUnsignedByte();
 
 				int length = buffer.readUnsignedByte();
 				int[] anims = new int[length];
@@ -1178,7 +1178,7 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 				}
 				ambientSoundIds = anims;
 			} else if (opcode == 81) {
-				clipType = buffer.readUnsignedByte() * 65536;
+				clipType = buffer.readUnsignedByte() * 256;
 			} else if (opcode == 82) {
 				mapAreaId = buffer.readUShort();
 			} else if (opcode == 89) {
