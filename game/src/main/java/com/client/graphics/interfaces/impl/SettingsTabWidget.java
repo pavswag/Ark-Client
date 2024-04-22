@@ -87,11 +87,11 @@ public class SettingsTabWidget extends RSInterface {
 
 	public static void audioSettings(RSInterface audio, TextDrawingArea[] tda) {
 		addConfigButton(42531, 42530, 0, 1,  "Interfaces/audio/SPRITE", 32, 32, "Toggle Music", 0, 1, 1088);
-		musicVolumeSlider = slider(MUSIC_SLIDER, 0, 10, 37, 54, 3);
+		musicVolumeSlider = slider(MUSIC_SLIDER, 0, 255, 37, 54, 3);
 		addConfigButton(42533, 42530, 3, 4,  "Interfaces/audio/SPRITE",     32, 32, "Toggle Sounds", 0, 1, 1086);
-		soundVolumeSlider = slider(SOUND_SLIDER, 0, 10, 37, 54, 4);
+		soundVolumeSlider = slider(SOUND_SLIDER, 0, 255, 37, 54, 4);
 		addConfigButton(42535, 42530, 5, 6,  "Interfaces/audio/SPRITE", 32, 32, "Toggle Area sounds", 0, 1, 1087);
-		areaSoundVolumeSlider = slider(AREA_SOUND_SLIDER, 0, 10, 37, 54, 5);
+		areaSoundVolumeSlider = slider(AREA_SOUND_SLIDER, 0, 255, 37, 54, 5);
 
 		audio.totalChildren(7);
 		int childNum = 0;
