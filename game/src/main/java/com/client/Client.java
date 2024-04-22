@@ -242,24 +242,6 @@ public class Client extends GameEngine implements RSClient {
 	@SneakyThrows
 	public Model loadModelData(int id) {
 		return Model.getModel(id);
-		/*assert isClientThread() : "Model Data must be loaded on client thread";
-		Model modelData = (Model) this.tmpModelDataCache.get(id);
-		synchronized (modelLoaderLock) {
-			if (modelData == null) {
-				modelData = Model.getModel(id);
-				while (!Model.isCached(id)) {
-					processOnDemandQueue();
-					modelLoaderLock.wait(2);
-				}
-
-				if (modelData == null) {
-					return null;
-				}
-				System.out.println("Found model data for model " + id);
-				this.tmpModelDataCache.put(modelData, id);
-			}
-		}
-		return modelData;*/
 	}
 
 	@Override
@@ -4604,8 +4586,6 @@ public class Client extends GameEngine implements RSClient {
 
 		processOnDemandQueue();
 		processMusic();
-		// method49();
-		// handleSounds();
 	}
 
 	public void method47(boolean flag) {

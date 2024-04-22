@@ -615,7 +615,7 @@ public final class OnDemandFetcher extends OnDemandFetcherParent implements Runn
 	public String statusString;
 	private int writeLoopCycle;
 	private long openSocketTime;
-	private int[] mapIndices3;
+	public int[] mapIndices3;
 	private final byte[] ioBuffer;
 	public int onDemandCycle;
 	private final byte[][] fileStatus;
@@ -625,7 +625,7 @@ public final class OnDemandFetcher extends OnDemandFetcherParent implements Runn
 	private int expectedSize;
 	private int[] anIntArray1348;
 	public int anInt1349;
-	private int[] mapIndices2;
+	public int[] mapIndices2;
 	private int filesLoaded;
 	private boolean running;
 	private OutputStream outputStream;
