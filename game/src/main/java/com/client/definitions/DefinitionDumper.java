@@ -16,6 +16,7 @@ import com.client.Client;
 import com.client.Configuration;
 import com.client.RSFont;
 import com.client.definitions.server.ItemDef;
+import com.client.graphics.textures.Texture;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.commons.io.FileUtils;
@@ -25,6 +26,8 @@ public class DefinitionDumper {
     private static final boolean dumpMaps = false;
 
     private static final boolean dumpRegions = true;
+
+    private static final boolean dumpTextures = true;
     private static List<Integer> customModels = new ArrayList<>();
     public static void dumpDefs() {
         File file = new File("./temp/item-sprites/");
@@ -40,6 +43,21 @@ public class DefinitionDumper {
             dumpCustomNpcs();
             moveCustomModels();
             dumpNpcs();
+        }
+        if(dumpTextures) {
+            for(int i = 0; i < Client.instance.getTextureProvider().getTextures().length; i++) {
+                int[] pixels = null;
+                try {
+                    pixels = Client.instance.getTextureProvider().load(i);
+                } catch (Exception e) {
+                    continue;
+                }
+                if(pixels == null)
+                    continue;
+                Texture texture = (Texture) Client.instance.getTextureProvider().getTextures()[i];
+
+                toJson(texture, "./temp/textures/" + i + ".json");
+            }
         }
         if(dumpModels)
             Client.instance.resourceProvider.dumpModels();

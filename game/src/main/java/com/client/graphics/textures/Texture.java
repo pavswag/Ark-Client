@@ -25,11 +25,11 @@ public class Texture extends DualNode implements RSTexture {
 
     int animationSpeed;
 
-    int[] pixels;
+    transient int[] pixels;
 
     int id;
 
-    boolean isLoaded = false;
+    transient boolean isLoaded = false;
 
     Texture(Buffer var1) {
         this.averageRGB = var1.readUShort();
@@ -312,8 +312,8 @@ public class Texture extends DualNode implements RSTexture {
 
 
 
-    private float textureU;
-    private float textureV;
+    private transient float textureU;
+    private transient float textureV;
 
     public float getU() {
         return textureU;
