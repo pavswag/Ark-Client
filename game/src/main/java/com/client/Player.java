@@ -11,7 +11,7 @@ import com.client.definitions.SeqFrame;
 import com.client.definitions.SequenceDefinition;
 import com.client.definitions.ItemDefinition;
 import com.client.definitions.NpcDefinition;
-import com.client.definitions.GraphicsDefinition;
+import com.client.definitions.SpotAnimation;
 import net.runelite.api.*;
 import net.runelite.api.Point;
 import net.runelite.api.coords.LocalPoint;
@@ -42,7 +42,7 @@ public final class Player extends Entity implements RSPlayer {
 				graphicObject.remove();
 				continue;
 			}
-			GraphicsDefinition spotAnim = GraphicsDefinition.cache[graphicObject.getId()];
+			SpotAnimation spotAnim = SpotAnimation.lookup(graphicObject.getId());
 			Model model_2 = spotAnim.getModel();
 			if (model_2 != null) {
 				SequenceDefinition seq = spotAnim.animationSequence;

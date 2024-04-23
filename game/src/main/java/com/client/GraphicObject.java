@@ -1,6 +1,6 @@
 package com.client;
 
-import com.client.definitions.GraphicsDefinition;
+import com.client.definitions.SpotAnimation;
 import com.client.definitions.SequenceDefinition;
 import net.runelite.api.Animation;
 import net.runelite.api.coords.LocalPoint;
@@ -17,7 +17,7 @@ class GraphicObject extends Renderable implements RSGraphicsObject {
 	protected SequenceDefinition sequenceDefinition;
 	public GraphicObject(int plane, int j, int l, int definitionId, int height, int k1, int xPos) {
 		gfxId = definitionId;
-		gfxToDisplay = GraphicsDefinition.cache[definitionId];
+		gfxToDisplay = SpotAnimation.lookup(definitionId);
 		sequenceDefinition = getDisplayedAnimation();
 		this.gfxHeightLevel = plane;
 		x = xPos;
@@ -105,7 +105,7 @@ class GraphicObject extends Renderable implements RSGraphicsObject {
 	public int z;
 	public final int gfxDisplayCycle;
 	public boolean isFinished;
-	private GraphicsDefinition gfxToDisplay;
+	private SpotAnimation gfxToDisplay;
 	private int frame;
 	private int cycle;
 
@@ -133,7 +133,7 @@ class GraphicObject extends Renderable implements RSGraphicsObject {
 	@Override
 	public void setId(int id) {
 		this.gfxId = id;
-		this.gfxToDisplay = GraphicsDefinition.fetch(id);
+		this.gfxToDisplay = SpotAnimation.lookup(id);
 		this.sequenceDefinition = this.gfxToDisplay.animationSequence;
 	}
 	@Override

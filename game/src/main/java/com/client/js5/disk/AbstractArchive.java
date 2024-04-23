@@ -407,7 +407,11 @@ public abstract class AbstractArchive {
         int var4 = this.fileNameHashTables[var3].get(StringUtils.hashString(var2));
         return (var4 >= 0);
     }
-
+    public byte[] takeFileByNames(int var1, String var2) {
+        var2 = var2.toLowerCase();
+        int var4 = this.fileNameHashTables[var1].get(StringUtils.hashString(var2));
+        return takeFile(var1, var4);
+    }
     public byte[] takeFileByNames(String var1, String var2) {
         var1 = var1.toLowerCase();
         var2 = var2.toLowerCase();

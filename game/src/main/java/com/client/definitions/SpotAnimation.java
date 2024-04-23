@@ -5,61 +5,37 @@ import java.io.FileWriter;
 import java.util.Arrays;
 
 import com.client.*;
+import com.client.cache.DualNode;
+import com.client.js5.Js5List;
+import com.client.js5.util.Js5ConfigType;
 
-public final class GraphicsDefinition {
+public final class SpotAnimation extends DualNode {
 
-	public static void unpackConfig(FileArchive streamLoader) {
-		Buffer stream = new Buffer(streamLoader.readFile("spotanim.dat"));
-		int length = stream.readUShort();
-		if (cache == null)
-			cache = new GraphicsDefinition[length + 15000];
-		for (int j = 0; j < length; j++) {
-			if (cache[j] == null) {
-				cache[j] = new GraphicsDefinition();
+	public static EvictingDualNodeHashTable cached = new EvictingDualNodeHashTable(64);
+
+	public static SpotAnimation lookup(int id) {
+		SpotAnimation data = (SpotAnimation) SpotAnimation.cached.get(id);
+		if (data == null) {
+			byte[] var2 = Js5List.configs.takeFile(Js5ConfigType.SPOTANIM, id);
+			data = new SpotAnimation();
+			data.id = id;
+			if (var2 != null) {
+				data.readValues(new Buffer(var2));
 			}
-			if (j == 65535) {
-				j = -1;
-			}
-			cache[j].id = j;
-			cache[j].setDefault();
-			cache[j].readValues(stream);
+
+			cached.put(data, id);
 		}
-		cache[2267] = new GraphicsDefinition();
+		return data;
+	}
+	public static void unpackConfig() {
+		/*cache[2267] = new GraphicsDefinition();
 		cache[2267].id = 2267;
 		cache[2267].modelId = 60036;
 		cache[2267].animationId = 328;
-		cache[2267].animationSequence = SequenceDefinition.get(cache[2267].animationId);
+		cache[2267].animationSequence = SequenceDefinition.get(cache[2267].animationId);*/
 
-		if (Configuration.dumpDataLists) {
-			gfxDump();
-		}
 	}
 
-	public static void gfxDump() {
-		try {
-			BufferedWriter fw = new BufferedWriter(new FileWriter("./temp/gfx_list.txt"));
-			for (int i = 0; i < cache.length; i++) {
-				GraphicsDefinition item = cache[i];
-				if (item == null)
-					continue;
-				fw.write("case " + i + ":");
-				fw.write(System.getProperty("line.separator"));
-
-				fw.write("gfx.anIntArray409 = \"" + Arrays.toString(item.recolorToReplace) + "\";");
-				fw.write(System.getProperty("line.separator"));
-
-				fw.write("gfx.modelId = \"" + item.modelId + "\";");
-				fw.write(System.getProperty("line.separator"));
-
-				fw.write("break;");
-				fw.write(System.getProperty("line.separator"));
-				fw.write(System.getProperty("line.separator"));
-			}
-			fw.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 	public short[] textureReplace;
 	public short[] textureFind;
 
@@ -104,18 +80,7 @@ public final class GraphicsDefinition {
 		}
 	}
 
-	
-	public static GraphicsDefinition fetch(int modelId) {
-		for (GraphicsDefinition anim : cache) {
-			if (anim == null) {
-				continue;
-			}
-			if (anim.modelId == modelId) {
-				return anim;
-			}
-		}
-		return null;
-	}
+
 
 	public Model getModel() {
 		Model model = (Model) aMRUNodes_415.get(id);
@@ -147,7 +112,7 @@ public final class GraphicsDefinition {
 		modelShadow = 0;
 	}
 
-	public GraphicsDefinition() {
+	public SpotAnimation() {
 		anInt400 = 9;
 		animationId = -1;
 		recolorToFind = new int[6];
@@ -165,7 +130,6 @@ public final class GraphicsDefinition {
 	}
 
 	public final int anInt400;
-	public static GraphicsDefinition cache[];
 	public int id;
 	private int modelId;
 	public int animationId;

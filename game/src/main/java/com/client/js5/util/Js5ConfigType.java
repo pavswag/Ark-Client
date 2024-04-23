@@ -23,6 +23,8 @@ public enum Js5ConfigType {
     AREA(35,"Areas"),
     DBROW(38,"Database Rows"),
     DBTABLE(39,"Database Tables"),
+    CUSTOM_ITEM_SPRITES(40,"Custom Item Sprites"),
+    CUSTOM_SPRITES(41,"Custom Sprites"),
     ;
 
     private final int id;

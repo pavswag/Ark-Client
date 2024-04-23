@@ -12,6 +12,7 @@ import com.client.engine.impl.MouseHandler;
 import com.client.js5.Js5List;
 import com.client.sign.Signlink;
 import com.client.utilities.FileUtils;
+import lombok.SneakyThrows;
 import net.runelite.rs.api.RSSpritePixels;
 
 public class Sprite extends Rasterizer2D implements RSSpritePixels {
@@ -40,6 +41,25 @@ public class Sprite extends Rasterizer2D implements RSSpritePixels {
 		this.drawOffsetX = offsetX;
 		this.drawOffsetY = offsetY;
 		this.myPixels = pixels;
+
+		Color color = Color.MAGENTA;
+		setTransparency(color.getRed(), color.getGreen(), color.getBlue());
+	}
+
+	@SneakyThrows
+	public Sprite(int width, int height, int offsetX, int offsetY, byte[] pixels) {
+		Image image = Toolkit.getDefaultToolkit().createImage(pixels);
+		this.myWidth = width;
+		this.myHeight = height;
+		this.maxHeight = height;
+		this.maxWidth = width;
+		this.drawOffsetX = offsetX;
+		this.drawOffsetY = offsetY;
+		this.myPixels = new int[width * height];
+
+
+		PixelGrabber pixelgrabber = new PixelGrabber(image, 0, 0, width, height, myPixels, 0, width);
+		pixelgrabber.grabPixels();
 
 		Color color = Color.MAGENTA;
 		setTransparency(color.getRed(), color.getGreen(), color.getBlue());

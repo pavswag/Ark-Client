@@ -1,6 +1,6 @@
 package com.client;
 
-import com.client.definitions.GraphicsDefinition;
+import com.client.definitions.SpotAnimation;
 import com.client.definitions.SeqFrame;
 import net.runelite.api.Actor;
 import net.runelite.api.coords.LocalPoint;
@@ -72,7 +72,7 @@ final class Projectile extends Renderable implements RSProjectile {
 	public Projectile(int initialSlope, int endHeight, int creationCycle, int destructionCycle, int initialDistance, int startZ, int startHeight,
 					  int y, int x, int target, int gfxMoving) {
 		gfxid = gfxMoving;
-		projectileGFX = GraphicsDefinition.cache[gfxMoving];
+		projectileGFX = SpotAnimation.lookup(gfxMoving);
 		projectileZ = startZ;
 		projectileX = x;
 		projectileY = y;
@@ -125,7 +125,7 @@ final class Projectile extends Renderable implements RSProjectile {
 	private final int initialSlope;
 	private final int initialDistance;
 	public final int target;
-	private final GraphicsDefinition projectileGFX;
+	private final SpotAnimation projectileGFX;
 	private int gfxStage;
 	private int gfxTickOfCurrentStage;
 	public int turnValue;

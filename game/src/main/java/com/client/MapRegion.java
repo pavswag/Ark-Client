@@ -875,7 +875,7 @@ public final class MapRegion {
 		for (int i2 = 0; i2 < 8; i2++) { //Add clipping
 			for (int j2 = 0; j2 < 8; j2++)
 				if (l + i2 > 0 && l + i2 < 103 && l1 + j2 > 0 && l1 + j2 < 103)
-					clips[k1].clipData[l + i2][l1 + j2] &= 0xfeffffff;
+					clips[k1].adjacencies[l + i2][l1 + j2] &= 0xfeffffff;
 
 		}
 
@@ -899,7 +899,7 @@ public final class MapRegion {
 			for (int j1 = 0; j1 < 64; j1++) {
 				for (int k1 = 0; k1 < 64; k1++)
 					if (j + j1 > 0 && j + j1 < 103 && i + k1 > 0 && i + k1 < 103)
-						aclass11[i1].clipData[j + j1][i + k1] &= 0xfeffffff;
+						aclass11[i1].adjacencies[j + j1][i + k1] &= 0xfeffffff;
 			}
 
 		}
@@ -922,15 +922,6 @@ public final class MapRegion {
 				int opcode = buffer.readUShort();
 				if (opcode == 0) {
 					if (level == 0) {
-						/*int baseHeight = interpolatedNoise(seed + 932731, y + 556238, 4) - 128 + (interpolatedNoise(10294 + seed + 932731, y + 556238, 2) - 128 >> 1) + (interpolatedNoise(seed + 932731, y + 556238, 1) - 128 >> 2);
-						baseHeight = (int)((double)baseHeight * 0.3D) + 35;
-						if (baseHeight < 10) {
-							baseHeight = 10;
-						} else if (baseHeight > 60) {
-							baseHeight = 60;
-						}
-
-						tileHeights[0][z][x] = -baseHeight * 8;*/
 						tileHeights[0][z][x] = -calculateVertexHeight(0xe3b7b + z + seed, 0x87cce + x + y) * 8;
 					} else {
 						tileHeights[level][z][x] = tileHeights[level - 1][z][x] - 240;

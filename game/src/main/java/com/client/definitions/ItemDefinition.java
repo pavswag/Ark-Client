@@ -5339,9 +5339,9 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 return null;
             }
         }
-        if (itemDef.customSpriteLocation != null)
+        if (itemDef.customSpriteLocation != -1)
         {
-            return new Sprite(itemDef.customSpriteLocation);
+            return SpriteCache.lookup(itemDef.customSpriteLocation);
         }
         Sprite enabledSprite = new Sprite(32, 32);
         int centerX = Rasterizer3D.originViewX;
@@ -5604,11 +5604,11 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
     }
 
     public void createCustomSprite(String img) {
-        customSpriteLocation = getCustomSprite(img);
+        //customSpriteLocation = img;
     }
 
     public void createSmallCustomSprite(String img) {
-        customSmallSpriteLocation = getCustomSprite(img);
+        customSmallSpriteLocation = img;
     }
 
 
@@ -5619,8 +5619,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
         return spriteData;
     }
 
-    public byte[] customSpriteLocation;
-    public byte[] customSmallSpriteLocation;
+    public int customSpriteLocation;
+    public String customSmallSpriteLocation;
 
 
     public Model getEquippedModel(int gender) {
@@ -5666,7 +5666,7 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
     }
 
     private void setDefaults() {
-        customSpriteLocation = null;
+        customSpriteLocation = -1;
         custom = false;
         customSmallSpriteLocation = null;
         equipActions = new String[]{"Remove", null, "Operate", null, null};
@@ -6051,6 +6051,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 placeholderLink = buffer.readUShort();
             else if (opcode == 149) {
                 placeholderTemplate = buffer.readUShort();
+            } else if(opcode == 248) {
+                customSpriteLocation = buffer.readInt();
             } else if (opcode == 249) {
                 params = BufferExt.readStringIntParameters(buffer);
             }

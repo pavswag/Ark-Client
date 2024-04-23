@@ -27,6 +27,10 @@ public class DefinitionDumper {
     private static final boolean dumpRegions = true;
     private static List<Integer> customModels = new ArrayList<>();
     public static void dumpDefs() {
+        File file = new File("./temp/item-sprites/");
+        for(File o : file.listFiles()) {
+            System.out.println(o.getName().replace(".png", "") + ",");
+        }
         if (Configuration.dumpDataLists) {
             dumpCustomItems();
             moveCustomModels();
@@ -65,14 +69,14 @@ public class DefinitionDumper {
                     System.out.println("l" + name);
                     System.out.println("m" + name);
                     File source=new File("./temp/index4/" + landscape  +".gz");
-                    File destination=new File("./temp/maps/" + regionID + "/m" + name + ".gz");
+                    File destination=new File("./temp/maps/" + "l" + name + ".gz");
                     try {
                         FileUtils.copyFile(source, destination);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                     source=new File("./temp/index4/" + loc  +".gz");
-                    destination=new File("./temp/maps/" + regionID + "/l" + name + ".gz");
+                    destination=new File("./temp/maps/" + "m" + name + ".gz");
                     try {
                         FileUtils.copyFile(source, destination);
                     } catch (IOException e) {
@@ -203,6 +207,19 @@ public class DefinitionDumper {
         ItemDefinition[] itemDefinitions = new ItemDefinition[ItemDefinition.totalItems];
         for(int i = 0; i < ItemDefinition.totalItems; i++) {
             itemDefinitions[i] = ItemDefinition.lookup(i);
+            if(itemDefinitions[i] != null) {
+                if (itemDefinitions[i].customSpriteLocation != -1) {
+                    System.out.println(itemDefinitions[i].id + ",");
+                    /*File source=new File("./temp/item-sprites-old/" + itemDefinitions[i].customSpriteLocation );
+                    File destination=new File("./temp/item-sprites/" + itemDefinitions[i].id + ".png" );
+                    try {
+                        FileUtils.copyFile(source, destination);
+                        System.out.println("Sorting custom image [" + itemDefinitions[i].customSpriteLocation + "]");
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }*/
+                }
+            }
         }
         toJson(itemDefinitions, "./temp/item_definitions.json");
     }

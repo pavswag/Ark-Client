@@ -4,6 +4,7 @@ import com.client.Client;
 import com.client.Rasterizer2D;
 import com.client.Sprite;
 import com.client.definitions.ItemDefinition;
+import com.client.definitions.SpriteCache;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -68,9 +69,9 @@ public class WheelOfFortune {
 
         for (int i = 0; i < items.length; i++) {
             Sprite itemSprite = ItemDefinition.getSprite(items[i], 1, 0);
-            if (ItemDefinition.lookup(items[i]).customSpriteLocation != null)
+            if (ItemDefinition.lookup(items[i]).customSpriteLocation != -1)
             {
-                itemSprite = new Sprite(ItemDefinition.lookup(items[i]).customSpriteLocation);
+                itemSprite = SpriteCache.lookup(ItemDefinition.lookup(items[i]).customSpriteLocation);
             }
             if (itemSprite == null) {
                 break;

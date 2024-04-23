@@ -1774,6 +1774,27 @@ public class Client extends GameEngine implements RSClient {
 		try {
 			setGameState(GameState.LOADING);
 
+			boolean var1 = true;
+			int var2;
+			for (var2 = 0; var2 < regionLandArchives.length; var2++) {
+				if (regionLandArchives[var2] == null && regionLandIds[var2] != -1) {
+					regionLandArchives[var2] = Js5List.maps.getFile(regionLandIds[var2], 0);
+					if (regionLandArchives[var2] == null) {
+						var1 = false;
+					}
+				}
+				if (regionMapArchives[var2] == null && regionLocIds[var2] != -1) {
+					try {
+						regionMapArchives[var2] = Js5List.maps.getFile(regionLocIds[var2], 0);
+						if (regionMapArchives[var2] == null) {
+							var1 = false;
+						}
+					} catch (Throwable e) {
+						log.info("Missing xteas for region: {}", regions[var2]);
+					}
+				}
+			}
+
 			StaticSound.playPcmPlayers();
 			anInt985 = -1;
 			StaticSound.resetSoundCount();
@@ -1797,7 +1818,7 @@ public class Client extends GameEngine implements RSClient {
 			StaticSound.playPcmPlayers();
 			currentMapRegion = new MapRegion(tileFlags, tileHeights);
 			ObjectSound.clearObjectSounds();
-			int k2 = terrainData.length;
+			int k2 = regionLandArchives.length;
 
 			/*
 			 * int k18 = 62; for (int A = 0; A < k2; A++) for (int B = 0; B < 2000; B++) if
@@ -1812,7 +1833,7 @@ public class Client extends GameEngine implements RSClient {
 					int i4 = (regions[i3] >> 8) * 64 - baseX;
 					int k5 = (regions[i3] & 0xff) * 64 - baseY;
 
-					byte abyte0[] = terrainData[i3];
+					byte abyte0[] = regionLandArchives[i3];
 
 					if (abyte0 != null) {
 						StaticSound.playPcmPlayers();
@@ -1824,7 +1845,7 @@ public class Client extends GameEngine implements RSClient {
 				for (int j4 = 0; j4 < k2; j4++) {
 					int l5 = (regions[j4] >> 8) * 64 - baseX;
 					int k7 = (regions[j4] & 0xff) * 64 - baseY;
-					byte abyte2[] = terrainData[j4];
+					byte abyte2[] = regionLandArchives[j4];
 					if (abyte2 == null && currentRegionY < 800) {
 						StaticSound.playPcmPlayers();
 						currentMapRegion.initiateVertexHeights(k7, 64, 64, l5);
@@ -1841,7 +1862,7 @@ public class Client extends GameEngine implements RSClient {
 				stream.createFrame(0);
 
 				for (int i6 = 0; i6 < k2; i6++) {
-					byte abyte1[] = objectData[i6];
+					byte abyte1[] = regionMapArchives[i6];
 					if (abyte1 != null) {
 						int l8 = (regions[i6] >> 8) * 64 - baseX;
 						int k9 = (regions[i6] & 0xff) * 64 - baseY;
@@ -1864,10 +1885,10 @@ public class Client extends GameEngine implements RSClient {
 								int l10 = l7 >> 3 & 0x7ff;
 								int j11 = (j10 / 8 << 8) + l10 / 8;
 								for (int l11 = 0; l11 < regions.length; l11++) {
-									if (regions[l11] != j11 || terrainData[l11] == null)
+									if (regions[l11] != j11 || regionLandArchives[l11] == null)
 										continue;
 									currentMapRegion.loadMapChunk(i9, l9, collisionMaps, k4 * 8, (j10 & 7) * 8,
-											terrainData[l11], (l10 & 7) * 8, j3, j6 * 8);
+											regionLandArchives[l11], (l10 & 7) * 8, j3, j6 * 8);
 									break;
 								}
 
@@ -1901,10 +1922,10 @@ public class Client extends GameEngine implements RSClient {
 								int yCoord = chunkBits >> 3 & 0x7ff;
 								int mapRegion = (xCoord / 8 << 8) + yCoord / 8;
 								for (int k12 = 0; k12 < regions.length; k12++) {
-									if (regions[k12] != mapRegion || objectData[k12] == null)
+									if (regions[k12] != mapRegion || regionMapArchives[k12] == null)
 										continue;
 									currentMapRegion.loadMapChunk(z, rotation, collisionMaps, x * 8, (xCoord & 7) * 8,
-											terrainData[k12], (yCoord & 7) * 8, plane, y * 8);
+											regionLandArchives[k12], (yCoord & 7) * 8, plane, y * 8);
 
 									break;
 								}
@@ -1976,18 +1997,6 @@ public class Client extends GameEngine implements RSClient {
 			i2 = 49;
 			l2 = 50;
 		}
-		for (int l3 = k; l3 <= j1; l3++) {
-			for (int j5 = i2; j5 <= l2; j5++)
-				if (l3 == k || l3 == j1 || j5 == i2 || j5 == l2) {
-					int j7 = resourceProvider.getMapFiles(0, j5, l3);
-					if (j7 != -1)
-						resourceProvider.method560(j7, 3);
-					int k8 = resourceProvider.getMapFiles(1, j5, l3);
-					if (k8 != -1)
-						resourceProvider.method560(k8, 3);
-				}
-
-		}
 		setGameState(GameState.LOGGED_IN);
 		StaticSound.playPcmPlayers();
 		if (drawCallbacks != null) {
@@ -2003,7 +2012,7 @@ public class Client extends GameEngine implements RSClient {
 		ItemDefinition.models.clear();
 		ItemDefinition.sprites.clear();
 		Player.mruNodes.clear();
-		GraphicsDefinition.aMRUNodes_415.clear();
+		SpotAnimation.aMRUNodes_415.clear();
 		((TextureProvider) Rasterizer3D.textureLoader).clear();
 		Js5List.models.clearFiles();
 		Js5List.soundEffects.clearFiles();
@@ -5101,15 +5110,15 @@ public class Client extends GameEngine implements RSClient {
 	}
 
 	private int getMapLoadingState() {
-		for (int i = 0; i < terrainData.length; i++) {
-			if (terrainData[i] == null && terrainIndices[i] != -1)
+		for (int i = 0; i < regionLandArchives.length; i++) {
+			if (regionLandArchives[i] == null && regionLandIds[i] != -1)
 				return -1;
-			if (objectData[i] == null && objectIndices[i] != -1)
+			if (regionMapArchives[i] == null && regionLocIds[i] != -1)
 				return -2;
 		}
 		boolean flag = true;
-		for (int j = 0; j < terrainData.length; j++) {
-			byte abyte0[] = objectData[j];
+		for (int j = 0; j < regionLandArchives.length; j++) {
+			byte abyte0[] = regionMapArchives[j];
 			if (abyte0 != null) {
 				try {
 					int k = (regions[j] >> 8) * 64 - baseX;
@@ -5120,8 +5129,8 @@ public class Client extends GameEngine implements RSClient {
 					}
 					flag &= MapRegion.method189(k, abyte0, l);
 				} catch (Exception e) {
-					if (objectIndices[j] != -1)
-						System.err.println("Error on map file: " + objectIndices[j]);
+					if (regionLocIds[j] != -1)
+						System.err.println("Error on map file: " + regionLocIds[j]);
 					e.printStackTrace();
 				}
 			}
@@ -5219,20 +5228,20 @@ public class Client extends GameEngine implements RSClient {
 					fetchMusic = true;
 				}
 				if (onDemandData.dataType == 3 && loadingStage == 1) {
-					for (int i = 0; i < terrainData.length; i++) {
-						if (terrainIndices[i] == onDemandData.ID) {
-							if (terrainData[i] == null)
-								terrainData[i] = onDemandData.buffer;
+					for (int i = 0; i < regionLandArchives.length; i++) {
+						if (regionLandIds[i] == onDemandData.ID) {
+							if (regionLandArchives[i] == null)
+								regionLandArchives[i] = onDemandData.buffer;
 							if (onDemandData.buffer == null)
-								terrainIndices[i] = -1;
+								regionLandIds[i] = -1;
 							break;
 						}
-						if (objectIndices[i] != onDemandData.ID)
+						if (regionLocIds[i] != onDemandData.ID)
 							continue;
-						if (objectData[i] == null)
-							objectData[i] = onDemandData.buffer;
+						if (regionMapArchives[i] == null)
+							regionMapArchives[i] = onDemandData.buffer;
 						if (onDemandData.buffer == null)
-							objectIndices[i] = -1;
+							regionLocIds[i] = -1;
 						break;
 					}
 
@@ -8108,10 +8117,10 @@ public class Client extends GameEngine implements RSClient {
 		aStream_847 = null;
 		inStream = null;
 		regions = null;
-		terrainData = null;
-		objectData = null;
-		terrainIndices = null;
-		objectIndices = null;
+		regionLandArchives = null;
+		regionMapArchives = null;
+		regionLandIds = null;
+		regionLocIds = null;
 		tileHeights = null;
 		tileFlags = null;
 		scene = null;
@@ -8175,8 +8184,7 @@ public class Client extends GameEngine implements RSClient {
 		IDK.cache = null;
 		RSInterface.interfaceCache = null;
 		DummyClass.cache = null;
-		GraphicsDefinition.cache = null;
-		GraphicsDefinition.aMRUNodes_415 = null;
+		SpotAnimation.aMRUNodes_415 = null;
 		Varp.cache = null;
 		Player.mruNodes = null;
 		Rasterizer3D.clear();
@@ -8681,20 +8689,6 @@ public class Client extends GameEngine implements RSClient {
 									pushMessage("Name: " + entity.name, 0, "");
 									pushMessage("Stand: " + entity.standAnim, 0, "");
 									pushMessage("Walk: " + entity.walkAnim, 0, "");
-								}
-							} catch (ArrayIndexOutOfBoundsException | NumberFormatException exception) {
-								exception.printStackTrace();
-							}
-						}
-						if (inputString.startsWith("::gfxid")) {
-							try {
-								GraphicsDefinition anim = GraphicsDefinition
-										.fetch(Integer.parseInt(inputString.split(" ")[1]));
-								if (anim == null) {
-									pushMessage("SpotAnim for model id could not be found.", 0, "");
-								} else {
-									pushMessage("Model: " + anim.getModelId() + ", Index/Id: " + anim.getId(), 0,
-											"");
 								}
 							} catch (ArrayIndexOutOfBoundsException | NumberFormatException exception) {
 								exception.printStackTrace();
@@ -11498,7 +11492,7 @@ public class Client extends GameEngine implements RSClient {
 		bigY[l3++] = localY;
 		boolean flag1 = false;
 		int j4 = bigX.length;
-		int ai[][] = collisionMaps[plane].clipData;
+		int ai[][] = collisionMaps[plane].adjacencies;
 		while (i4 != l3) {
 			j3 = bigX[i4];
 			k3 = bigY[i4];
@@ -12382,7 +12376,7 @@ public class Client extends GameEngine implements RSClient {
 					ObjectDefinition.init();
 					NpcDefinition.init(spriteIds.headIconArchive);
 					IDK.unpackConfig(streamLoader);
-					GraphicsDefinition.unpackConfig(streamLoader);
+					SpotAnimation.unpackConfig();
 					Varp.unpackConfig(streamLoader);
 					VarBit.unpackConfig(streamLoader);
 					loadPlayerData();
@@ -13611,7 +13605,7 @@ public class Client extends GameEngine implements RSClient {
 				if(graphicObject.getId() != -1 && loopCycle >= graphicObject.getCycle()) {
 					if(graphicObject.getFrame() < 0)
 						graphicObject.setFrame(0);
-					SequenceDefinition gfxSeq = GraphicsDefinition.cache[graphicObject.getId()].animationSequence;
+					SequenceDefinition gfxSeq = SpotAnimation.lookup(graphicObject.getId()).animationSequence;
 					if(gfxSeq == null) {
 						graphicObject.remove();
 						continue;
@@ -14241,15 +14235,15 @@ public class Client extends GameEngine implements RSClient {
 												if (itemDef.customSmallSpriteLocation != null)
 												{
 													itemSprite = new Sprite(itemDef.customSmallSpriteLocation);
-												} else if (itemDef.customSpriteLocation != null)
+												} else if (itemDef.customSpriteLocation != -1)
 												{
-													itemSprite = new Sprite(itemDef.customSpriteLocation);
+													itemSprite = SpriteCache.lookup(itemDef.customSpriteLocation);
 												}
 											} else {
 												itemSprite = ItemDefinition.getSprite(j9, class9_1.inventoryAmounts[i3], l9);
-												if (itemDef.customSpriteLocation != null)
+												if (itemDef.customSpriteLocation != -1)
 												{
-													itemSprite = new Sprite(itemDef.customSpriteLocation);
+													itemSprite = SpriteCache.lookup(itemDef.customSpriteLocation);
 												}
 											}
 
@@ -15877,17 +15871,17 @@ public class Client extends GameEngine implements RSClient {
 			} else {
 				aTextDrawingArea_1271.method385(0xffff00, "Current Region: 0" + mapx + ", 0" + mapy, 55, 5);
 			}
-			for (int num = 0; num < terrainIndices.length; num++) {
-				int[] flo = terrainIndices;
+			for (int num = 0; num < regionLandIds.length; num++) {
+				int[] flo = regionLandIds;
 				aTextDrawingArea_1271.method385(0xffff00, "Floor map: " + Arrays.toString(flo), 69, 5);
 			}
-			for (int num = 0; num < objectIndices.length; num++) {
-				int[] obj = objectIndices;
+			for (int num = 0; num < regionLocIds.length; num++) {
+				int[] obj = regionLocIds;
 				aTextDrawingArea_1271.method385(0xffff00, "Object map: " + Arrays.toString(obj), 83, 5);
 				// output: "Object map: "[1, 3, 5, 7, 9]"
 			}
 
-			aTextDrawingArea_1271.method385(0xffff00, "Map Data: " + terrainIndices[0] + ".dat", 97, 5);
+			aTextDrawingArea_1271.method385(0xffff00, "Map Data: " + regionLandIds[0] + ".dat", 97, 5);
 			aTextDrawingArea_1271.method385(0xffff00, "Fps: " + super.fps, 111, 5);
 			aTextDrawingArea_1271.method385(0xffff00, "Memory Used: " + j1/1024 + "MB", 125, 5);
 			aTextDrawingArea_1271.method385(0xffff00,
@@ -19275,11 +19269,11 @@ public class Client extends GameEngine implements RSClient {
 							for (int y = (currentRegionY - 6) / 8; y <= (currentRegionY + 6) / 8; y++)
 								regionCount++;
 						}
-						terrainData = new byte[regionCount][];
-						objectData = new byte[regionCount][];
+						regionLandArchives = new byte[regionCount][];
+						regionMapArchives = new byte[regionCount][];
 						regions = new int[regionCount];
-						terrainIndices = new int[regionCount];
-						objectIndices = new int[regionCount];
+						regionLandIds = new int[regionCount];
+						regionLocIds = new int[regionCount];
 						regionCount = 0;
 						List<Integer> mapFiles = Lists.newArrayList();
 						for (int x = (currentRegionX - 6) / 8; x <= (currentRegionX + 6) / 8; x++) {
@@ -19287,27 +19281,17 @@ public class Client extends GameEngine implements RSClient {
 								regions[regionCount] = (x << 8) + y;
 								if (inTutorialIsland
 										&& (y == 49 || y == 149 || y == 147 || x == 50 || x == 49 && y == 47)) {
-									terrainIndices[regionCount] = -1;
-									objectIndices[regionCount] = -1;
+									regionLandIds[regionCount] = -1;
+									regionLocIds[regionCount] = -1;
 									regionCount++;
 								} else {
-									int map = terrainIndices[regionCount] = resourceProvider.getMapFiles(0, y, x);
-									if (map != -1) {
-										resourceProvider.provide(3, map);
-										mapFiles.add(map);
-									}
-									int landscape = objectIndices[regionCount] = resourceProvider.getMapFiles(1, y, x);
-									if (landscape != -1) {
-										resourceProvider.provide(3, landscape);
-										mapFiles.add(landscape);
-									}
-									regionCount++;
+									int id = y + (x << 8);
+									regions[regionCount] = id;
+									regionLandIds[regionCount] = Js5List.maps.getGroupId("m" + x + "_" + y);
+									regionLocIds[regionCount] = Js5List.maps.getGroupId("l" + x + "_" + y);
+									++regionCount;
 								}
 							}
-						}
-
-						if (Configuration.developerMode) {
-							System.out.println("Map files: " + mapFiles.toString());
 						}
 					}
 					if (incomingPacket == 241) {
@@ -19333,21 +19317,17 @@ public class Client extends GameEngine implements RSClient {
 								}
 							}
 						}
-						terrainData = new byte[totalLegitChunks][];
-						objectData = new byte[totalLegitChunks][];
+						regionLandArchives = new byte[totalLegitChunks][];
+						regionMapArchives = new byte[totalLegitChunks][];
 						regions = new int[totalLegitChunks];
-						terrainIndices = new int[totalLegitChunks];
-						objectIndices = new int[totalLegitChunks];
+						regionLandIds = new int[totalLegitChunks];
+						regionLocIds = new int[totalLegitChunks];
 						for (int idx = 0; idx < totalLegitChunks; idx++) {
 							int region = regions[idx] = totalChunks[idx];
-							int localX = region >> 8 & 0xff;
-							int localY = region & 0xff;
-							int terrainMapId = terrainIndices[idx] = resourceProvider.getMapFiles(0, localY, localX);
-							if (terrainMapId != -1)
-								resourceProvider.provide(3, terrainMapId);
-							int objectMapId = objectIndices[idx] = resourceProvider.getMapFiles(1, localY, localX);
-							if (objectMapId != -1)
-								resourceProvider.provide(3, objectMapId);
+							int constructedRegionX = region >> 8 & 0xff;
+							int constructedRegionY = region & 0xff;
+							regionLandIds[totalLegitChunks] = Js5List.maps.getGroupId("m" + constructedRegionX + "_" + constructedRegionY);
+							regionLocIds[totalLegitChunks] = Js5List.maps.getGroupId("l" + constructedRegionX + "_" + constructedRegionY);
 						}
 					}
 					int dx = baseX - previousAbsoluteX;
@@ -21188,7 +21168,7 @@ public class Client extends GameEngine implements RSClient {
 	private int[] anIntArray1180;
 	private int[] anIntArray1181;
 	private int[] anIntArray1182;
-	private byte[][] terrainData;
+	private byte[][] regionLandArchives;
 	private int camAngleYY;
 	private static int viewRotation;
 	private int anInt1186;
@@ -21233,8 +21213,8 @@ public class Client extends GameEngine implements RSClient {
 	private CollisionMap[] collisionMaps;
 	public static int anIntArray1232[];
 	private int[] regions;
-	private int[] terrainIndices;
-	private int[] objectIndices;
+	private int[] regionLandIds;
+	private int[] regionLocIds;
 	private int anInt1237;
 	private int anInt1238;
 	public final int anInt1239 = 100;
@@ -21243,7 +21223,7 @@ public class Client extends GameEngine implements RSClient {
 	private int atInventoryInterface;
 	private int atInventoryIndex;
 	private int atInventoryInterfaceType;
-	private byte[][] objectData;
+	private byte[][] regionMapArchives;
 	private int tradeMode;
 	private int gameMode;
 	private int anInt1249;

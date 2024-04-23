@@ -751,7 +751,7 @@ public final class Buffer extends Cacheable implements RSBuffer {
 
     @Override
     public String readStringCp1252NullTerminated() {
-        return null;
+        return readNullTerminatedString();
     }
 
 
