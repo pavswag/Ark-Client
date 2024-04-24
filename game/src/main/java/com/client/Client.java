@@ -1972,20 +1972,9 @@ public class Client extends GameEngine implements RSClient {
 			e.printStackTrace();
 		}
 		ObjectDefinition.baseModels.clear();
-		if (lowMem && Signlink.cache_dat != null) {
-			int j = resourceProvider.getVersionCount(0);
-			for (int i1 = 0; i1 < j; i1++) {
-				int l1 = resourceProvider.getModelIndex(i1);
-				if ((l1 & 0x79) == 0)
-					Model.resetModel(i1);
-			}
-
-		}
 		stream.createFrame(210);
 		stream.writeInt(0x3f008edd);
 		System.gc();
-
-		resourceProvider.method566();
 
 		int k = (currentRegionX - 6) / 8 - 1;
 		int j1 = (currentRegionX + 6) / 8 + 1;
@@ -4479,7 +4468,6 @@ public class Client extends GameEngine implements RSClient {
 		GameTimerHandler.getSingleton().stopAll();
 		Preferences.save();
 		frameMode(false);
-		requestMusic(SoundConstants.SCAPE_RUNE);
 		if (informationFile.isUsernameRemembered()) {
 			if (localPlayer.getDisplayedRights().size() > 0) {
 				AccountManager.add(myUsername, myPassword, localPlayer.getDisplayedRights().get(0).crownId());
@@ -4580,7 +4568,6 @@ public class Client extends GameEngine implements RSClient {
 			doCycleLoggedOut();
 		}
 
-		processOnDemandQueue();
 		processMusic();
 	}
 
@@ -5085,7 +5072,7 @@ public class Client extends GameEngine implements RSClient {
 			if (j != 0 && System.currentTimeMillis() - longStartTime > 0x57e40L) {
 				Signlink.reporterror(
 						myUsername + " glcfb " + aLong1215 + "," + j + "," + lowMem + "," + decompressors[0] + ","
-								+ resourceProvider.getNodeCount() + "," + plane + "," + currentRegionX + "," + currentRegionY);
+								 + plane + "," + currentRegionX + "," + currentRegionY);
 				longStartTime = System.currentTimeMillis();
 			}
 		}
@@ -5185,57 +5172,6 @@ public class Client extends GameEngine implements RSClient {
 			}
 		}
 		return s;
-	}
-
-	private void processOnDemandQueue() {
-		if(resourceProvider == null)
-			return;
-		do {
-			OnDemandData onDemandData;
-			do {
-				onDemandData = resourceProvider.getNextNode();
-				if (onDemandData == null)
-					return;
-				if (onDemandData.dataType == 0) {
-					try {
-						Model.loadModel(onDemandData.buffer, onDemandData.ID);
-						needDrawTabArea = true;
-						if (backDialogID != -1)
-							inputTaken = true;
-					} catch (Exception e) {
-						System.out.println("Error loading model " + onDemandData.ID);
-					}
-				}
-				if (onDemandData.dataType == 1 && onDemandData.buffer != null)
-					Frame.load(onDemandData.ID, onDemandData.buffer);
-				if (onDemandData.dataType == 2 && onDemandData.ID == nextSong && onDemandData.buffer != null) {
-//					System.out.println("got music to play.");
-					music_payload = new byte[onDemandData.buffer.length];
-					System.arraycopy(onDemandData.buffer, 0, music_payload, 0, music_payload.length);
-					fetchMusic = true;
-				}
-				if (onDemandData.dataType == 3 && loadingStage == 1) {
-					for (int i = 0; i < regionLandArchives.length; i++) {
-						if (regionLandIds[i] == onDemandData.ID) {
-							if (regionLandArchives[i] == null)
-								regionLandArchives[i] = onDemandData.buffer;
-							if (onDemandData.buffer == null)
-								regionLandIds[i] = -1;
-							break;
-						}
-						if (regionLocIds[i] != onDemandData.ID)
-							continue;
-						if (regionMapArchives[i] == null)
-							regionMapArchives[i] = onDemandData.buffer;
-						if (onDemandData.buffer == null)
-							regionLocIds[i] = -1;
-						break;
-					}
-
-				}
-			} while (onDemandData.dataType != 93 || !resourceProvider.method564(onDemandData.ID));
-			//MapRegion.passiveRequestGameObjectModels(new Buffer(onDemandData.buffer), resourceProvider);
-		} while (true);
 	}
 
 	public void calcFlamesPosition() {
@@ -8089,13 +8025,11 @@ public class Client extends GameEngine implements RSClient {
 		cacheSprite4 = null;
 		cacheInterface = null;
 		mouseDetection = null;
-		resourceProvider.disable();
 		mapIcon7 = null;
 		mapIcon8 = null;
 		mapIcon6 = null;
 		mapIcon5 = null;
 		mapIcon9 = null;
-		resourceProvider = null;
 		aStream_834 = null;
 
 		menuManager.stop();
@@ -8184,8 +8118,6 @@ public class Client extends GameEngine implements RSClient {
 	public void printDebug() {
 		System.out.println("============");
 		System.out.println("flame-cycle:" + anInt1208);
-		if (resourceProvider != null)
-			System.out.println("Od-cycle:" + resourceProvider.onDemandCycle);
 		System.out.println("loop-cycle:" + loopCycle);
 		System.out.println("draw-cycle:" + anInt1061);
 		System.out.println("ptype:" + incomingPacket);
@@ -8873,11 +8805,6 @@ public class Client extends GameEngine implements RSClient {
 							}
 							if (inputString.equals("::lag"))
 								printDebug();
-							if (inputString.equals("::prefetchmusic")) {
-								for (int j1 = 0; j1 < resourceProvider.getVersionCount(2); j1++)
-									resourceProvider.method563((byte) 1, 2, j1);
-
-							}
 
 							if (inputString.startsWith("::interface")) {
 								if (localPlayer.displayName.equalsIgnoreCase("Noah")) {
@@ -12245,10 +12172,6 @@ public class Client extends GameEngine implements RSClient {
 				titleLoadingStage = 45;
 			}
 		} else if (Client.titleLoadingStage == 45) {
-
-			resourceProvider = new OnDemandFetcher();
-			FileArchive streamLoader_6 = streamLoaderForName(5, "update list");
-			resourceProvider.start(streamLoader_6, this);
 			StaticSound.setup(!Client.lowMem, Js5List.soundEffects, Js5List.musicTracks, Js5List.musicJingles, Js5List.musicSamples, Js5List.musicPatches);
 			drawLoadingText(35, "Prepared sound engine");
 			Client.titleLoadingStage = 50;
@@ -17397,17 +17320,7 @@ public class Client extends GameEngine implements RSClient {
 		music_volume = musicVolume = finalVolume;
 	}
 
-	final synchronized void requestMusic(int musicId) {
-		setVolumeMusic(Preferences.getPreferences().musicEnabled && getGameState().equals(GameState.LOGIN_SCREEN) ? 5 : Preferences.getPreferences().musicVolume);
-		if (musicIsntNull()) {
-			nextSong = musicId;
-			resourceProvider.provide(2, nextSong);
-			music_volume = musicVolume;
-			anInt139 = -1;
-			repeatMusic = true;
-			fadeDuration = 100;//default value of -1
-		}
-	}
+
 
 	public static final void method891(boolean bool) {
 		method853(0, null, bool);
@@ -21048,7 +20961,6 @@ public class Client extends GameEngine implements RSClient {
 	private final int[] myAppearance;
 	private int mouseInvInterfaceIndex;
 	private int lastActiveInvInterface;
-	public OnDemandFetcher resourceProvider;
 	public int currentRegionX;
 	public int currentRegionY;
 	private int mapIconAmount;
@@ -22889,9 +22801,7 @@ public class Client extends GameEngine implements RSClient {
 
 	@Override
 	public int[] getMapRegions() {
-		if(resourceProvider == null)
-			return null;
-		return resourceProvider.getMapIndices1();
+		return regions;
 	}
 
 	@Override

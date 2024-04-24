@@ -59,48 +59,16 @@ public class DefinitionDumper {
                 toJson(texture, "./temp/textures/" + i + ".json");
             }
         }
-        if(dumpModels)
-            Client.instance.resourceProvider.dumpModels();
-        if(dumpMaps)
-            Client.instance.resourceProvider.dumpMaps();
         if(dumpRegions) {
             regionsToDumpAndConvert.forEach(regionID -> {
-                File parent = new File("./temp/maps/" + regionID + "/");
-                if(parent.exists())
-                    parent.mkdirs();
-                int landscape = -1;
-                int loc = -1;
-                for(int i = 0; i < Client.instance.resourceProvider.getMapIndices1().length; i++) {
-                    if(Client.instance.resourceProvider.getMapIndices1()[i] == regionID) {
-                        landscape = Client.instance.resourceProvider.mapIndices2[i];
-                        loc = Client.instance.resourceProvider.mapIndices3[i];
-                    }
-                }
-                if(landscape != -1 && loc != -1) {
                     System.out.println("--");
                     System.out.println("Region[" + regionID + "]");
-                    System.out.println("Original files = [" + landscape + "/" + loc + "]");
                     int regionX = regionID >> 8;
                     int regionY = regionID & 255;
                     String name = "_" + regionX + "_" + regionY;
                     System.out.println("New names:");
                     System.out.println("l" + name);
                     System.out.println("m" + name);
-                    File source=new File("./temp/index4/" + landscape  +".gz");
-                    File destination=new File("./temp/maps/" + "l" + name + ".gz");
-                    try {
-                        FileUtils.copyFile(source, destination);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    source=new File("./temp/index4/" + loc  +".gz");
-                    destination=new File("./temp/maps/" + "m" + name + ".gz");
-                    try {
-                        FileUtils.copyFile(source, destination);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
             });
         }
     }

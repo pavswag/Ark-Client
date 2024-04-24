@@ -89,24 +89,6 @@ public final class Frame {
 		}
 	}
 
-	public static Frame method531(int i) {
-		try {
-			String s = "";
-			int file = 0;
-			int k = 0;
-			s = Integer.toHexString(i);
-			file = Integer.parseInt(s.substring(0, s.length() - 4), 16);
-			k = Integer.parseInt(s.substring(s.length() - 4), 16);
-			if(animationlist[file].length == 0) {
-				clientInstance.resourceProvider.provide(1, file);
-				return null;
-			}
-			return animationlist[file][k];
-		} catch(Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
 
 	public static void nullLoader() {
 		animationlist = null;
