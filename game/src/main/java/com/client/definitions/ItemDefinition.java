@@ -5652,16 +5652,15 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
             primaryModel_.offsetBy(0, maleOffset, 0);
         if (gender == 1 && femaleOffset != 0)
             primaryModel_.offsetBy(0, femaleOffset, 0);
+            if (modifiedColours != null) {
+                for (int i1 = 0; i1 < modifiedColours.length; i1++)
+                    primaryModel_.recolor(modifiedColours[i1], originalColours[i1]);
 
-        if (modifiedColours != null) {
-            for (int i1 = 0; i1 < modifiedColours.length; i1++)
-                primaryModel_.recolor(modifiedColours[i1], originalColours[i1]);
-
-        }
-        if (modifiedTextureColours != null) {
-            for (int i1 = 0; i1 < modifiedTextureColours.length; i1++)
-                primaryModel_.retexture(modifiedTextureColours[i1], originalTextureColours[i1]);
-        }
+            }
+            if (modifiedTextureColours != null) {
+                for (int i1 = 0; i1 < modifiedTextureColours.length; i1++)
+                    primaryModel_.retexture(modifiedTextureColours[i1], originalTextureColours[i1]);
+            }
         return primaryModel_;
     }
 

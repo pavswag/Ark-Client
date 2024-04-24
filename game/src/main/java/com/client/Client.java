@@ -3380,25 +3380,12 @@ public class Client extends GameEngine implements RSClient {
 	}
 
 	public void method33(int i) {
-		if (i > Varp.cacheSize)
-			return;
 
-		if (Varp.cache[i] == null)
-			return;
-
-		int j = Varp.cache[i].anInt709;
+		int j = VariablePlayer.lookup(i).type;
 		if (j == 0)
 			return;
 		int k = variousSettings[i];
 		if (j == 1) {
-//			if (k == 1)
-//				Rasterizer.setBrightness(0.90000000000000002D);
-//			if (k == 2)
-//				Rasterizer.setBrightness(0.80000000000000004D);
-//			if (k == 3)
-//				Rasterizer.setBrightness(0.69999999999999996D);
-//			if (k == 4)
-//				Rasterizer.setBrightness(0.59999999999999998D);
 			ItemDefinition.sprites.clear();
 			welcomeScreenRaised = true;
 		}
@@ -4509,8 +4496,8 @@ public class Client extends GameEngine implements RSClient {
 		aBoolean1031 = true;
 		for (int j = 0; j < 7; j++) {
 			myAppearance[j] = -1;
-			for (int k = 0; k < IDK.length; k++) {
-				if (IDK.cache[k].nonSelectable || IDK.cache[k].bodyPartId != j + (aBoolean1047 ? 0 : 7))
+			for (int k = 0; k < IdentityKit.length; k++) {
+				if (IdentityKit.lookup(k).validStyle || IdentityKit.lookup(k).bodyPartId != j + (aBoolean1047 ? 0 : 7))
 					continue;
 				myAppearance[j] = k;
 				break;
@@ -4697,10 +4684,10 @@ public class Client extends GameEngine implements RSClient {
 			if (i2 != -1) {
 				do {
 					if (j1 == 0 && --i2 < 0)
-						i2 = IDK.length - 1;
-					if (j1 == 1 && ++i2 >= IDK.length)
+						i2 = IdentityKit.length - 1;
+					if (j1 == 1 && ++i2 >= IdentityKit.length)
 						i2 = 0;
-				} while (IDK.cache[i2].nonSelectable || IDK.cache[i2].bodyPartId != k + (aBoolean1047 ? 0 : 7));
+				} while (IdentityKit.lookup(i2).validStyle || IdentityKit.lookup(i2).bodyPartId != k + (aBoolean1047 ? 0 : 7));
 				myAppearance[k] = i2;
 				aBoolean1031 = true;
 			}
@@ -8181,11 +8168,11 @@ public class Client extends GameEngine implements RSClient {
 		ObjectDefinition.nullLoader();
 		NpcDefinition.nullLoader();
 		ItemDefinition.clear();
-		IDK.cache = null;
+		IdentityKit.cached.clear();
+		VariablePlayer.cached.clear();
 		RSInterface.interfaceCache = null;
 		DummyClass.cache = null;
 		SpotAnimation.aMRUNodes_415 = null;
-		Varp.cache = null;
 		Player.mruNodes = null;
 		Rasterizer3D.clear();
 		SceneGraph.destructor();
@@ -8768,12 +8755,6 @@ public class Client extends GameEngine implements RSClient {
 							pushMessage("You haved toggled Orbs", 0, "");
 							needDrawTabArea = true;
 						}
-						if (inputString.equals("::uint")) {
-							TextDrawingArea aTextDrawingArea_1273 = new TextDrawingArea(true, "q8_full" + fontFilter(), titleStreamLoader);
-							TextDrawingArea aclass30_sub2_sub1_sub4s[] = { smallText, XPFONT, aTextDrawingArea_1271, aTextDrawingArea_1273 };
-							FileArchive streamLoader_1 = streamLoaderForName(3, "interface");FileArchive streamLoader_2 = streamLoaderForName(4, "2d graphics");
-							RSInterface.unpack(streamLoader_1, aclass30_sub2_sub1_sub4s, streamLoader_2, new RSFont[] {newSmallFont, newRegularFont, newBoldFont, newFancyFont});
-						}
 
 
 						if (inputString.equals("::hd")) {
@@ -8948,18 +8929,6 @@ public class Client extends GameEngine implements RSClient {
 								}
 							}
 
-							if (inputString.equals("::packrsi") && (j == 13 || j == 10)) {
-								// TextDrawingArea aTextDrawingArea_1273 = new
-								// TextDrawingArea(true, "q8_full" + fontFilter(),
-								// titleStreamLoader);
-								TextDrawingArea aclass30_sub2_sub1_sub4s[] = { smallText, aTextDrawingArea_1271,
-										chatTextDrawingArea, aTextDrawingArea_1273 };
-								FileArchive streamLoader_1 = streamLoaderForName(3, "interface"
-								);
-								FileArchive streamLoader_2 = streamLoaderForName(4, "2d graphics");
-								RSInterface.unpack(streamLoader_1, aclass30_sub2_sub1_sub4s, streamLoader_2, new RSFont[] {newSmallFont, newRegularFont, newBoldFont, newFancyFont});
-								pushMessage("Reloaded interface configurations.", 0, "");
-							}
 
 							if (inputString.equals("::tt")) {
 								pushMessage("Test", 5, "");
@@ -9836,7 +9805,7 @@ public class Client extends GameEngine implements RSClient {
 			if (aBoolean1031) {
 				for (int k1 = 0; k1 < 7; k1++) {
 					int l1 = myAppearance[k1];
-					if (l1 >= 0 && !IDK.cache[l1].method537())
+					if (l1 >= 0 && !IdentityKit.lookup(l1).method537())
 						return;
 				}
 
@@ -9846,7 +9815,7 @@ public class Client extends GameEngine implements RSClient {
 				for (int j2 = 0; j2 < 7; j2++) {
 					int k2 = myAppearance[j2];
 					if (k2 >= 0)
-						aclass30_sub2_sub4_sub6s[i2++] = IDK.cache[k2].method538();
+						aclass30_sub2_sub4_sub6s[i2++] = IdentityKit.lookup(k2).method538();
 				}
 
 				Model model = new Model(i2, aclass30_sub2_sub4_sub6s);
@@ -12371,14 +12340,10 @@ public class Client extends GameEngine implements RSClient {
 					Model.init();
 					Client.titleLoadingStage = 80;
 
-
-					FileArchive streamLoader = streamLoaderForName(2, "config");
 					ObjectDefinition.init();
 					NpcDefinition.init(spriteIds.headIconArchive);
-					IDK.unpackConfig(streamLoader);
+					IdentityKit.unpackConfig();
 					SpotAnimation.unpackConfig();
-					Varp.unpackConfig(streamLoader);
-					VarBit.unpackConfig(streamLoader);
 					loadPlayerData();
 				}
 			} else if (Client.titleLoadingStage == 80) {
@@ -16463,10 +16428,10 @@ public class Client extends GameEngine implements RSClient {
 				}
 				if (instruction == 14) {
 					int index = script[counter++];
-					VarBit bits = VarBit.cache[index];
-					int setting = bits.anInt648;
-					int low = bits.anInt649;
-					int high = bits.anInt650;
+					VariableBits bits = VariableBits.lookup(index);
+					int setting = bits.baseVar;
+					int low = bits.startBit;
+					int high = bits.endBit;
 					int mask = anIntArray1232[high - low];
 					value = variousSettings[setting] >> low & mask;
 				}

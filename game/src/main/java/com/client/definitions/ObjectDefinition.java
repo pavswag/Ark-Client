@@ -880,10 +880,10 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 	public ObjectDefinition transform() {
 		int i = -1;
 		if (varp != -1) {
-			VarBit varBit = VarBit.cache[varp];
-			int j = varBit.anInt648;
-			int k = varBit.anInt649;
-			int l = varBit.anInt650;
+			VariableBits varBit = VariableBits.lookup(varp);
+			int j = varBit.baseVar;
+			int k = varBit.startBit;
+			int l = varBit.endBit;
 			int i1 = Client.anIntArray1232[l - k];
 			i = clientInstance.variousSettings[j] >> k & i1;
 		} else if (varbit != -1)

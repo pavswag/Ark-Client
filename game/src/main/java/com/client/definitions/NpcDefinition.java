@@ -1814,11 +1814,11 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
 
     public NpcDefinition method161() {
         int j = -1;
-        if (varbit != -1 && varbit <= 2113) {
-            VarBit varBit = VarBit.cache[varbit];
-            int k = varBit.anInt648;
-            int l = varBit.anInt649;
-            int i1 = varBit.anInt650;
+        if (varbit != -1) {
+            VariableBits varBit = VariableBits.lookup(varbit);
+            int k = varBit.baseVar;
+            int l = varBit.startBit;
+            int i1 = varBit.endBit;
             int j1 = Client.anIntArray1232[i1 - l];
             j = clientInstance.variousSettings[k] >> l & j1;
         } else if (varp != -1)

@@ -2,7 +2,7 @@ package com.client;
 
 import com.client.definitions.ObjectDefinition;
 import com.client.definitions.SequenceDefinition;
-import com.client.definitions.VarBit;
+import com.client.definitions.VariableBits;
 
 final class SceneObject extends Renderable {
 	private int animationFrame;
@@ -32,11 +32,11 @@ final class SceneObject extends Renderable {
 	 */
 	private ObjectDefinition method457() {
 		int i = -1;
-		if (anInt1601 != -1 && anInt1601 < VarBit.cache.length) {
-			VarBit varBit = VarBit.cache[anInt1601];
-			int k = varBit.anInt648;
-			int l = varBit.anInt649;
-			int i1 = varBit.anInt650;
+		if (anInt1601 != -1) {
+			VariableBits varBit = VariableBits.lookup(anInt1601);
+			int k = varBit.baseVar;
+			int l = varBit.startBit;
+			int i1 = varBit.endBit;
 			int j1 = Client.anIntArray1232[i1 - l];
 			i = clientInstance.variousSettings[k] >> l & j1;
 		} else if (anInt1602 != -1
