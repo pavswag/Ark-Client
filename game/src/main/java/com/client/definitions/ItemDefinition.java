@@ -5648,6 +5648,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 Model[] models = {primaryModel_, model_2};
                 primaryModel_ = new Model(2, models);
             }
+        if(primaryModel_ == null)
+            return null;
         if (gender == 0 && maleOffset != 0)
             primaryModel_.offsetBy(0, maleOffset, 0);
         if (gender == 1 && femaleOffset != 0)
