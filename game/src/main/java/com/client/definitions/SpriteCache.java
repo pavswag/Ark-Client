@@ -7,6 +7,9 @@ import com.client.cache.DualNode;
 import com.client.js5.Js5List;
 import com.client.js5.util.Js5ConfigType;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public final class SpriteCache extends DualNode {
 
     public int id;
@@ -17,6 +20,9 @@ public final class SpriteCache extends DualNode {
     public String name = "null";
     public byte[] pixels;
     public Sprite sprite;
+
+
+    public static Map<Integer, String> spriteMap = new HashMap<>();
 
     public static EvictingDualNodeHashTable cached = new EvictingDualNodeHashTable(100);
     public static EvictingDualNodeHashTable cachedSizes = new EvictingDualNodeHashTable(100);

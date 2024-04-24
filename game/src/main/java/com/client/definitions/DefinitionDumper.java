@@ -17,22 +17,27 @@ import com.client.Configuration;
 import com.client.RSFont;
 import com.client.definitions.server.ItemDef;
 import com.client.graphics.textures.Texture;
+import com.client.sign.Signlink;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
 
 public class DefinitionDumper {
     private static final boolean dumpModels = false;
     private static final boolean dumpMaps = false;
 
-    private static final boolean dumpRegions = true;
+    private static final boolean dumpRegions = false;
 
-    private static final boolean dumpTextures = true;
+    private static final boolean dumpTextures = false;
+    private static final boolean dumpSprites = false;
     private static List<Integer> customModels = new ArrayList<>();
+    private static int widgetSpriteId = 0;
     public static void dumpDefs() {
-        File file = new File("./temp/item-sprites/");
-        for(File o : file.listFiles()) {
-            System.out.println(o.getName().replace(".png", "") + ",");
+        if(dumpSprites) {
+            File base = new File(Signlink.getCacheDirectory() + "sprites/");
+            dumpSprite(base);
+            toJson(SpriteCache.spriteMap, "./temp/widget-sprites.json");
         }
         if (Configuration.dumpDataLists) {
             dumpCustomItems();
@@ -70,6 +75,21 @@ public class DefinitionDumper {
                     System.out.println("l" + name);
                     System.out.println("m" + name);
             });
+        }
+    }
+    @SneakyThrows
+    private static void dumpSprite(File file) {
+        for(File f : file.listFiles()) {
+            if(f.isDirectory()) {
+                dumpSprite(f);
+            } else {
+                if(f.getName().contains(".png")) {
+                    SpriteCache.spriteMap.put(widgetSpriteId, f.getAbsolutePath().substring(f.getAbsolutePath().indexOf("sprites") + 8));
+                    FileUtils.copyFile(f, new File("./temp/widget-sprites/" + widgetSpriteId + ".png"));
+                    widgetSpriteId++;
+                    System.out.println("Processed Sprite [" + f.getAbsolutePath().substring(f.getAbsolutePath().indexOf("sprites") + 8) + "]");
+                }
+            }
         }
     }
     private static List<Integer> regionsToDumpAndConvert = List.of(

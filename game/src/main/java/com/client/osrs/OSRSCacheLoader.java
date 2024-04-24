@@ -38,10 +38,7 @@ public class OSRSCacheLoader {
         seqDefs = SeqDefs.load(cacheWrapper);
         seqBaseDefs = SeqBaseDefs.load(cacheWrapper);
         seqFrameDefs = SeqFrameDefs.load(cacheWrapper, seqBaseDefs);
-        osrsSprite = new OsrsSprite();
-        osrsSprite.startup();
         Script.loadScripts(cacheWrapper);
-        System.out.println("Loaded " + osrsSprite.cacheSize() + " OSRS Sprites.");
         System.out.println("Loaded osrs sequence: " + cacheWrapper.isOSRS() + " | " + seqDefs.getDefinitions().length + " and " + seqFrameDefs.getDefinitions().size() + " and " + seqBaseDefs.getDefinitions().size());
     }
 
