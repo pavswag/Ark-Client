@@ -313,8 +313,11 @@ public final class Player extends Entity implements RSPlayer {
 				if (i3 >= 512) {
 					Model model_4 = ItemDefinition.lookup(i3 - 512)
 							.getEquippedModel(myGender);
-					if (model_4 != null)
+					if (model_4 != null) {
 						aclass30_sub2_sub4_sub6s[j2++] = model_4;
+					} else {
+						return null;
+					}
 				}
 			}
 
