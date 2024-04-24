@@ -20,6 +20,7 @@ public final class SpriteCache extends DualNode {
 
     public static EvictingDualNodeHashTable cached = new EvictingDualNodeHashTable(100);
     public static EvictingDualNodeHashTable cachedSizes = new EvictingDualNodeHashTable(100);
+    public static EvictingDualNodeHashTable oldschoolSpriteCache = new EvictingDualNodeHashTable(100);
 
     public static Sprite lookup(int id) {
         SpriteCache image = (SpriteCache)SpriteCache.cached.get(id);
@@ -41,7 +42,7 @@ public final class SpriteCache extends DualNode {
     public static SpriteCache metaData(int id) {
         SpriteCache image = (SpriteCache)SpriteCache.cached.get(id);
         if (image == null) {
-            byte[] data = Js5List.configs.takeFile(Js5ConfigType.CUSTOM_SPRITES, id);
+            byte[] data = Js5List.configs.takeFile(Js5ConfigType.OSRS_SPRITES, id);
             image = new SpriteCache();
             image.id = id;
             if (data != null) {
@@ -52,10 +53,28 @@ public final class SpriteCache extends DualNode {
         return image;
     }
 
+
+    public static Sprite lookupOldschoolSprite(int id) {
+        SpriteCache image = (SpriteCache)SpriteCache.oldschoolSpriteCache.get(id);
+        if (image == null) {
+            byte[] data = Js5List.configs.takeFile(Js5ConfigType.OSRS_SPRITES, id);
+            image = new SpriteCache();
+            image.id = id;
+            if (data != null) {
+                image.decode(new Buffer(data),true);
+            } else {
+                System.out.println("Missing Sprite: " + id);
+                return Sprite.EMPTY_SPRITE;
+            }
+            oldschoolSpriteCache.put(image, id);
+        }
+        return image.sprite;
+    }
+
     public static SpriteCache lookupMetaData(int id) {
         SpriteCache image = (SpriteCache)SpriteCache.cachedSizes.get(id);
         if (image == null) {
-            byte[] data = Js5List.configs.takeFile(Js5ConfigType.CUSTOM_SPRITES, id);
+            byte[] data = Js5List.configs.takeFile(Js5ConfigType.OSRS_SPRITES, id);
             image = new SpriteCache();
             image.id = id;
             if (data != null) {

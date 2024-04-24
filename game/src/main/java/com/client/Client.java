@@ -22096,7 +22096,7 @@ public class Client extends GameEngine implements RSClient {
 	}
 
 	public Sprite getOldSchoolSprite(int spriteId) {
-		return (Sprite) spriteOverrides.getOrDefault(spriteId, OSRSCacheLoader.getOsrsSprite().getSprite(spriteId));
+		return (Sprite) spriteOverrides.getOrDefault(spriteId, SpriteCache.lookupOldschoolSprite(spriteId));
 	}
 	@Override
 	public RSSpritePixels getSprites(IndexDataBase source, int archiveId, int fileId) {
