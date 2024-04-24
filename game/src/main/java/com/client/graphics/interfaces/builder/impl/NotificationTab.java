@@ -12,8 +12,8 @@ import java.util.Map;
 public class NotificationTab extends InterfaceBuilder {
 
     public static NotificationTab instance = new NotificationTab();
-    private static final Sprite BG = new Sprite("/notifications_tab/bg");
-    private static final Sprite BUTTON_UNDERLAY = new Sprite("/notifications_tab/button");
+    private static final Sprite BG = new Sprite("notifications_tab/bg");
+    private static final Sprite BUTTON_UNDERLAY = new Sprite("notifications_tab/button");
 
     public static final int ALWAYS_SHOW_UNTRADABLES_BUTTON_ID = 42_669;
 

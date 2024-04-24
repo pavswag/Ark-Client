@@ -84,7 +84,7 @@ public class DefinitionDumper {
                 dumpSprite(f);
             } else {
                 if(f.getName().contains(".png")) {
-                    SpriteCache.spriteMap.put(widgetSpriteId, f.getAbsolutePath().substring(f.getAbsolutePath().indexOf("sprites") + 8));
+                    SpriteCache.spriteMap.put(widgetSpriteId, f.getAbsolutePath().substring(f.getAbsolutePath().indexOf("sprites") + 8).replace(".png", ""));
                     FileUtils.copyFile(f, new File("./temp/widget-sprites/" + widgetSpriteId + ".png"));
                     widgetSpriteId++;
                     System.out.println("Processed Sprite [" + f.getAbsolutePath().substring(f.getAbsolutePath().indexOf("sprites") + 8) + "]");

@@ -25,6 +25,7 @@ public enum Js5ConfigType {
     DBTABLE(39,"Database Tables"),
     CUSTOM_ITEM_SPRITES(40,"Custom Item Sprites"),
     OSRS_SPRITES(41,"Oldschool Sprites"),
+    WIDGET_SPRITES(42,"Widget Sprites"),
     ;
 
     private final int id;

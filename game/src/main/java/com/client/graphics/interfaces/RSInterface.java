@@ -3380,7 +3380,7 @@ public class RSInterface implements RSWidget {
 			return sprite;
 		}
 		try {
-			sprite = new Sprite("/Attack/" + id + s);
+			sprite = new Sprite("Attack/" + id + s);
 			aMRUNodes_238.put(sprite, l);
 		} catch (Exception exception) {
 			return null;

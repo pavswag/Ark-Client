@@ -2,10 +2,15 @@ package com.client.definitions;
 
 import com.client.Buffer;
 import com.client.EvictingDualNodeHashTable;
+import com.client.RegionMusic;
 import com.client.Sprite;
 import com.client.cache.DualNode;
 import com.client.js5.Js5List;
 import com.client.js5.util.Js5ConfigType;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,11 +27,12 @@ public final class SpriteCache extends DualNode {
     public Sprite sprite;
 
 
-    public static Map<Integer, String> spriteMap = new HashMap<>();
+    public static Map<Integer, String> spriteMap = new HashMap<Integer, String>();
 
     public static EvictingDualNodeHashTable cached = new EvictingDualNodeHashTable(100);
     public static EvictingDualNodeHashTable cachedSizes = new EvictingDualNodeHashTable(100);
     public static EvictingDualNodeHashTable oldschoolSpriteCache = new EvictingDualNodeHashTable(100);
+    public static EvictingDualNodeHashTable widgetSpriteCache = new EvictingDualNodeHashTable(100);
 
     public static Sprite lookup(int id) {
         SpriteCache image = (SpriteCache)SpriteCache.cached.get(id);
@@ -58,7 +64,44 @@ public final class SpriteCache extends DualNode {
         }
         return image;
     }
+    @SneakyThrows
+    public static void load() {
+        ObjectMapper om = new ObjectMapper();
+        TypeReference<HashMap<Integer,String>> typeRef
+                = new TypeReference<HashMap<Integer,String>>() {};
+        spriteMap =  om.readValue(RegionMusic.class.getResourceAsStream("/widget-sprites.json"), typeRef);
+        System.out.println("Loaded [" + spriteMap.size() + "] OG Sprites.");
+    }
 
+    public static Sprite lookupWidgetSprite(String img) {
+        int id = -1;
+        if(spriteMap == null || spriteMap.isEmpty()) {
+            load();
+        }
+        try {
+            id = spriteMap.entrySet().stream().filter(it -> it.getValue().equalsIgnoreCase(img)).findAny().get().getKey();
+        } catch (Exception e) {
+
+        }
+        if(id == -1)
+            return null;
+        SpriteCache image = (SpriteCache)SpriteCache.widgetSpriteCache.get(id);
+        if (image == null) {
+            byte[] data = Js5List.configs.takeFile(Js5ConfigType.WIDGET_SPRITES, id);
+            image = new SpriteCache();
+            image.id = id;
+            if (data != null) {
+                image.decode(new Buffer(data),true);
+            } else {
+                System.out.println("Missing Sprite: " + id);
+                return Sprite.EMPTY_SPRITE;
+            }
+            if(image.sprite.myWidth < 1)
+                return null;
+            widgetSpriteCache.put(image, id);
+        }
+        return image.sprite;
+    }
 
     public static Sprite lookupOldschoolSprite(int id) {
         SpriteCache image = (SpriteCache)SpriteCache.oldschoolSpriteCache.get(id);

@@ -8,6 +8,7 @@ import java.util.Hashtable;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
+import com.client.definitions.SpriteCache;
 import com.client.engine.impl.MouseHandler;
 import com.client.js5.Js5List;
 import com.client.sign.Signlink;
@@ -245,24 +246,21 @@ public class Sprite extends Rasterizer2D implements RSSpritePixels {
 			System.out.println(_ex);
 		}
 	}
+	public static Sprite getSprite(String img) {
+		return SpriteCache.lookupWidgetSprite(img);
+	}
 	public Sprite(String img) {
-		try {
-			Image image =  Toolkit.getDefaultToolkit().getImage(Signlink.getCacheDirectory() + "sprites/" + img.toLowerCase() + ".png");
-			ImageIcon sprite = new ImageIcon(image);
-			myWidth = sprite.getIconWidth();
-			myHeight = sprite.getIconHeight();
-			maxWidth = myWidth;
-			maxHeight = myHeight;
-			drawOffsetX = 0;
-			drawOffsetY = 0;
-			myPixels = new int[myWidth * myHeight];
-			PixelGrabber pixelgrabber = new PixelGrabber(image, 0, 0, myWidth, myHeight, myPixels, 0, myWidth);
-			pixelgrabber.grabPixels();
-			image = null;
-			setTransparency(255, 0, 255);
-		} catch (Exception _ex) {
-			System.out.println(_ex);
-		}
+		Sprite sprite = getSprite(img);
+		if(sprite == null)
+			return;
+		maxWidth = sprite.maxWidth;
+		myWidth = sprite.myWidth;
+		maxHeight = sprite.maxHeight;
+		myHeight = sprite.myHeight;
+		drawOffsetX = sprite.drawOffsetX;
+		drawOffsetY = sprite.drawOffsetY;
+		myPixels = sprite.myPixels;
+		advancedSprite = sprite.advancedSprite;
 	}
 
 	public Sprite(Image image) {

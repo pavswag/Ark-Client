@@ -6,9 +6,9 @@ import com.client.graphics.interfaces.builder.InterfaceBuilder;
 
 public class PlayerPartyInterface extends InterfaceBuilder {
 
-    private final Sprite background = new Sprite("/Clan Chat/SPRITE 37");
-    private final Sprite button = new Sprite("/Clan Chat/Sprite 6");
-    private final Sprite divider = new Sprite("/Clan Chat/Sprite 4");
+    private final Sprite background = new Sprite("Clan Chat/SPRITE 37");
+    private final Sprite button = new Sprite("Clan Chat/Sprite 6");
+    private final Sprite divider = new Sprite("Clan Chat/Sprite 4");
 
     public PlayerPartyInterface() {
         super(30_370);

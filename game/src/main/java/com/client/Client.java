@@ -3979,93 +3979,6 @@ public class Client extends GameEngine implements RSClient {
 	Sprite[] sideIcons = new Sprite[15];
 	Sprite[] redStones = new Sprite[6];
 
-	Sprite hpBarSprite = new Sprite("bars/hp");
-	Sprite prayerBarSprite = new Sprite("bars/prayer");
-
-	private void drawHpBar(int xOffset,int yOffset) {
-		try {
-			int offsetX = xOffset;
-			int offsetY = yOffset;
-			int offsetX2 = 0;
-			int offsetWidth = 0;
-			if (Client.instance.isResized()) {
-				offsetX = canvasWidth - 246;
-				offsetY = canvasHeight - 337;
-				if (!showTabComponents) {
-					offsetX = canvasWidth - 46;
-					offsetY = canvasHeight - 337;
-				}
-				// if (changeTabArea) {
-				offsetX += 2;
-				offsetY -= 30;
-				offsetX2 -= 3;
-				offsetWidth -= 6;
-				if (canvasWidth >= 1000)
-					offsetY += 36;
-				// }
-			}
-			int level = currentLevels[3];
-			int max = maximumLevels[3];
-			if (max == 0)
-				max = 1;
-			if (level > max)
-				level = max;
-			int percent = level * 100 / max;
-			int toPixels = -250 * percent / 100;
-			TextDrawingArea.drawRectangle(offsetX + 12, offsetY + 43, offsetWidth + 18, 250, 0x771111);
-			TextDrawingArea.drawTransparentBox(offsetX + 12, offsetY + 43, offsetWidth + 18, 250, 0x000000, 125);
-			TextDrawingArea.drawTransparentBox(offsetX + 12, offsetY + 293 + toPixels, offsetWidth + 18,
-					250 * percent / 100, 0xaa0000, 100);
-			newSmallFont.drawCenteredString(Integer.toString(currentLevels[3]), offsetX2 + offsetX + 21, offsetY + 74,
-					0xffffff, 1);
-			hpBarSprite.drawSprite(offsetX2 + offsetX + 14, offsetY + 45);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	private void drawPrayerBar(int xOffset,int yOffset) {
-		try {
-			int offsetX = xOffset;
-			int offsetY = yOffset;
-			int offsetX2 = 0;
-			int offsetWidth = 0;
-			if (Client.instance.isResized()) {
-				offsetX = canvasWidth - 247;
-				offsetY = canvasHeight - 337;
-				if (!showTabComponents) {
-					offsetX = canvasWidth - 47;
-					offsetY = canvasHeight - 337;
-				}
-				// if (changeTabArea) {
-				offsetX -= 193;
-				offsetY -= 30;
-				offsetX2 -= 3;
-				offsetWidth -= 6;
-				if (canvasWidth >= 1000)
-					offsetY += 36;
-				// }
-			}
-
-
-			int level = currentLevels[5];
-			int max = maximumLevels[5];
-			if (max == 0)
-				max = 1;
-			int percent = level * 100 / max;
-			int toPixels = -250 * percent / 100;
-			TextDrawingArea.drawRectangle(offsetX + 222, offsetY + 43, offsetWidth + 18, 250, 0x118963);
-			TextDrawingArea.drawTransparentBox(offsetX + 222, offsetY + 43, offsetWidth + 18, 250, 0x000000, 125);
-			TextDrawingArea.drawTransparentBox(offsetX + 222, offsetY + 293 + toPixels, offsetWidth + 18,
-					250 * percent / 100, 0x00d9b3, 100);
-			newSmallFont.drawCenteredString(Integer.toString(level), offsetX2 + offsetX + 231, offsetY + 74, 0xffffff,
-					1);
-			prayerBarSprite.drawSprite(offsetX2 + offsetX + 224, offsetY + 45);
-			sendFrame126(currentLevels[5]+"/"+ maximumLevels[5], 22499);
-			// System.out.println(gameScreenWidth);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 	private void drawTabs(int xOffset,int yOffset) {
 		if (!isResized()) {
 			final int[][] sideIconCoordinates = new int[][] {
@@ -4233,6 +4146,8 @@ public class Client extends GameEngine implements RSClient {
 		}
 
 		if (openInterfaceID == 25650) {
+			if(grandExchangeSprite4 == null)
+				grandExchangeSprite4 = new Sprite("Grand Exchange/4");
 			if (!isResized()) {
 				grandExchangeSprite4.drawSprite1(29 + xOffset, 37 + yOffset, 162 + (int) (50 * Math.sin(loopCycle / 15.0)));
 			} else {
@@ -5639,7 +5554,6 @@ public class Client extends GameEngine implements RSClient {
 	public Sprite logo, loginBackground;
 
 
-
 	public void drawLoadingText(int percentage, String s) {
 		loadingProgress = percentage;
 		aString1049 = s;
@@ -5649,9 +5563,8 @@ public class Client extends GameEngine implements RSClient {
 			super.drawInitial(percentage, s + " " + (percentage) + "%",false);
 			return;
 		}
-
-		Sprite background = new Sprite("loginscreen/background");
-		background.drawAdvancedSprite(0, 0);
+		if(loginBackground != null)
+			loginBackground.drawAdvancedSprite(0, 0);
 		int x = 765 / 2 - 543 / 2;
 		int y = 475 - 20 + 8;
 		int width = 540;
@@ -12089,7 +12002,7 @@ public class Client extends GameEngine implements RSClient {
 	public void load() {
 		System.out.println("Load#" + Client.titleLoadingStage);
 		if (Client.titleLoadingStage == 0) {
-
+			DefinitionDumper.dumpDefs();
 			getDocumentBaseHost();
 			variousSettings[304] = 1;
 			if (Signlink.cache_dat != null) {
@@ -12279,51 +12192,8 @@ public class Client extends GameEngine implements RSClient {
 				++loadingProgress;
 				++loadingProgress;
 				++loadingProgress;
-				donatorOrb = new Sprite("orbs/promo_orb");
-				donatorOrbHover = new Sprite("orbs/promo_orb_hover");
-
-				utilityOrb = new Sprite("orbs/utility_orb");
-				utilityOrbHover = new Sprite("orbs/utility_orb_hover");
-
-				questOrb = new Sprite("orbs/quest_orb");
-				questOrbHover = new Sprite("orbs/quest_hover_orb");
-
-				knowOrb = new Sprite("orbs/event_orb");
-				knowOrbHover = new Sprite("orbs/event_orb_hover");
 
 				FileArchive streamLoader_2 = streamLoaderForName(4, "2d graphics");
-				mapIcon7 = new Sprite(streamLoader_2, "mapfunction", 1);
-				mapIcon8 = new Sprite(streamLoader_2, "mapfunction", 51);
-				mapIcon6 = new Sprite(streamLoader_2, "mapfunction", 74);
-				mapIcon5 = new Sprite(streamLoader_2, "mapfunction", 5);
-				mapIcon9 = new Sprite(streamLoader_2, "mapfunction", 56);
-				multiOverlay = new Sprite(streamLoader_2, "overlay_multiway", 0);
-
-				eventIcon = new Sprite(streamLoader_2, "mapfunction", 72);
-				bankDivider = new Sprite("bank_divider");
-				// Login
-				// Login
-				loginAsset0 = new Sprite("loginscreen2/677");//username hover
-				loginAsset1 = new Sprite("loginscreen2/677");//password hover
-				loginAsset2 = new Sprite("loginscreen2/676");//Account Name Background
-
-				loginAsset4 = new Sprite("loginscreen2/60");//World switcher hover.
-				loginAsset5 = new Sprite("loginscreen2/61");//World switcher hover.
-
-				loginAsset6 = new Sprite("loginscreen2/58");//Login Button
-				loginAsset7 = new Sprite("loginscreen2/59");//Login Button
-
-				loginAsset8 = new Sprite("loginscreen2/674");//Account Delete
-				loginAsset9 = new Sprite("loginscreen2/675");//Account Delete
-				loginAsset10 = new Sprite("loginscreen2/676");//Account Hover
-				loginAsset11 = new Sprite("loginscreen2/186");//Discord Icon
-				loginAsset12 = new Sprite("loginscreen2/187");//Discord Icon
-				loginAsset13 = new Sprite("loginscreen2/178");//Remember me check
-				loginAsset14 = new Sprite("loginscreen2/180");//Remember me check
-				loginAsset15 = new Sprite("loginscreen2/188");//Music Control
-				loginAsset16 = new Sprite("loginscreen2/189");//Music Control
-				loginScreenBackground = new Sprite("/loginscreen2/57");
-				loginScreenBackgroundCaptcha = new Sprite("/loginscreen/captcha_background");
 				++loadingProgress;
 
 				++loadingProgress;
@@ -12350,6 +12220,8 @@ public class Client extends GameEngine implements RSClient {
 						cacheSprite[i] = new Sprite("Sprites/" + i);
 					}
 					xpSprite = new Sprite("medal");
+					xpbg1 = new Sprite("487");
+					xpbg2 = new Sprite("488");
 					for (int i = 0; i < inputSprites.length; i++)
 						inputSprites[i] = new Sprite("Interfaces/Inputfield/SPRITE " + (i + 1));
 
@@ -12370,6 +12242,52 @@ public class Client extends GameEngine implements RSClient {
 						smallXpSprites[index] = new Sprite("expdrop/" + index);
 
 					}
+					// Login
+					// Login
+					loginAsset0 = new Sprite("loginscreen2/677");//username hover
+					loginAsset1 = new Sprite("loginscreen2/677");//password hover
+					loginAsset2 = new Sprite("loginscreen2/676");//Account Name Background
+
+					loginAsset4 = new Sprite("loginscreen2/60");//World switcher hover.
+					loginAsset5 = new Sprite("loginscreen2/61");//World switcher hover.
+
+					loginAsset6 = new Sprite("loginscreen2/58");//Login Button
+					loginAsset7 = new Sprite("loginscreen2/59");//Login Button
+
+					loginAsset8 = new Sprite("loginscreen2/674");//Account Delete
+					loginAsset9 = new Sprite("loginscreen2/675");//Account Delete
+					loginAsset10 = new Sprite("loginscreen2/676");//Account Hover
+					loginAsset11 = new Sprite("loginscreen2/186");//Discord Icon
+					loginAsset12 = new Sprite("loginscreen2/187");//Discord Icon
+					loginAsset13 = new Sprite("loginscreen2/178");//Remember me check
+					loginAsset14 = new Sprite("loginscreen2/180");//Remember me check
+					loginAsset15 = new Sprite("loginscreen2/188");//Music Control
+					loginAsset16 = new Sprite("loginscreen2/189");//Music Control
+					loginScreenBackground = new Sprite("loginscreen2/57");
+					System.out.println(loginScreenBackground.myWidth + " -------");
+					loginScreenBackgroundCaptcha = new Sprite("loginscreen/captcha_background");
+					loginBackground = new Sprite("loginscreen/background");
+					donatorOrb = new Sprite("orbs/promo_orb");
+					donatorOrbHover = new Sprite("orbs/promo_orb_hover");
+
+					utilityOrb = new Sprite("orbs/utility_orb");
+					utilityOrbHover = new Sprite("orbs/utility_orb_hover");
+
+					questOrb = new Sprite("orbs/quest_orb");
+					questOrbHover = new Sprite("orbs/quest_hover_orb");
+
+					knowOrb = new Sprite("orbs/event_orb");
+					knowOrbHover = new Sprite("orbs/event_orb_hover");
+
+					mapIcon7 = new Sprite(streamLoader_2, "mapfunction", 1);
+					mapIcon8 = new Sprite(streamLoader_2, "mapfunction", 51);
+					mapIcon6 = new Sprite(streamLoader_2, "mapfunction", 74);
+					mapIcon5 = new Sprite(streamLoader_2, "mapfunction", 5);
+					mapIcon9 = new Sprite(streamLoader_2, "mapfunction", 56);
+					multiOverlay = new Sprite(streamLoader_2, "overlay_multiway", 0);
+
+					eventIcon = new Sprite(streamLoader_2, "mapfunction", 72);
+					bankDivider = new Sprite("bank_divider");
 
 					for (int c1 = 0; c1 <= 3; c1++)
 						chatButtons[c1] = new Sprite(streamLoader_2, "chatbuttons", c1);
@@ -13813,11 +13731,7 @@ public class Client extends GameEngine implements RSClient {
 
 	public int dropdownInversionFlag;
 
-	public Sprite grandExchangeSprite0 = new Sprite("Grand Exchange/0"),
-			grandExchangeSprite1 = new Sprite("Grand Exchange/1"),
-			grandExchangeSprite2 = new Sprite("Grand Exchange/2"),
-			grandExchangeSprite3 = new Sprite("Grand Exchange/3"),
-			grandExchangeSprite4 = new Sprite("Grand Exchange/4");
+	public Sprite grandExchangeSprite4;
 
 	private int interfaceDrawY;
 	public boolean interfaceText = false;
@@ -17062,8 +16976,8 @@ public class Client extends GameEngine implements RSClient {
 	}
 
 	public Sprite xpSprite;
-	public Sprite xpbg1 = new Sprite("487");
-	public Sprite xpbg2 = new Sprite("488");
+	public Sprite xpbg1;
+	public Sprite xpbg2;
 
 	private Queue<ExperienceDrop> experienceDrops = new LinkedList<>();
 

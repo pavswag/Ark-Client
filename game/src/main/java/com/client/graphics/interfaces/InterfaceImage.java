@@ -23,9 +23,7 @@ public class InterfaceImage extends RSInterface {
         return this.mainSprite;
     }
 
-    public InterfaceImage addExtraSprite(int spriteId, String sprite) {
-        return addExtraSprite(spriteId, new Sprite(sprite));
-    }
+
 
     public InterfaceImage addExtraSprite(int spriteId, Sprite sprite) {
         if (this.extraSprites == null)
@@ -45,9 +43,6 @@ public class InterfaceImage extends RSInterface {
         return this;
     }
 
-    public InterfaceImage(int interfaceId, String mainSpriteName) {
-        this(interfaceId, new Sprite(mainSpriteName));
-    }
 
     public InterfaceImage(int interfaceId, Sprite mainSprite) {
         this.id = this.parentID = interfaceId;
