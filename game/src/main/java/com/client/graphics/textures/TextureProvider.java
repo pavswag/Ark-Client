@@ -31,23 +31,12 @@ public class TextureProvider implements RSTextureProvider, TextureLoader {
         this.textureSize = size;
         int[] fileIds = textures.getGroupFileIds(0);
         int texturesSize = fileIds.length;
-        this.textures = new Texture[textures.getGroupFileCount(0) + 75];
+        this.textures = new Texture[textures.getGroupFileCount(0)];
         int newTextureCount = 0;
         for(int index = 0; index < texturesSize; ++index) {
             Buffer data = new Buffer(textures.takeFile(0, fileIds[index]));
             this.textures[fileIds[index]] = new Texture(data);
             newTextureCount = index;
-        }
-
-        for (int i = newTextureCount; i < 162; i++) {//TODO When adding more textures, increase this value
-            Texture originalTexture = this.textures[40];
-            if (originalTexture != null) {
-                Texture text =  new Texture(originalTexture, i);
-
-                this.textures[text.id] = text;
-
-//                System.out.println("Loaded texture " + i + " - " + text.id);
-            }
         }
         setMaxSize(128);
         setSize(128);

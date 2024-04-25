@@ -1523,12 +1523,12 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 
 	@Override
 	public int getAnimationId() {
-		return 0;
+		return animationId;
 	}
 
 	@Override
 	public void setAnimationId(int animationId) {
-
+		this.animationId = animationId;
 	}
 
 	@Override

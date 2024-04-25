@@ -27,7 +27,7 @@ public class DefinitionDumper {
     private static final boolean dumpModels = false;
     private static final boolean dumpMaps = false;
 
-    private static final boolean dumpRegions = false;
+    private static final boolean dumpRegions = true;
 
     private static final boolean dumpTextures = false;
     private static final boolean dumpSprites = false;
@@ -103,7 +103,10 @@ public class DefinitionDumper {
             6722,
             11343,
             8534,
-            9783);
+            9783,
+            12075,
+            12074
+    );
     public static void moveCustomModels() {
         customModels.forEach(model -> {
             File map = new File("./temp/index1/" + model + ".gz");
@@ -212,36 +215,22 @@ public class DefinitionDumper {
     public static void dumpItems() {
         ItemDefinition[] itemDefinitions = new ItemDefinition[ItemDefinition.totalItems];
         for(int i = 0; i < ItemDefinition.totalItems; i++) {
-            itemDefinitions[i] = ItemDefinition.lookup(i);
-            if(itemDefinitions[i] != null) {
-                if (itemDefinitions[i].customSpriteLocation != -1) {
-                    System.out.println(itemDefinitions[i].id + ",");
-                    /*File source=new File("./temp/item-sprites-old/" + itemDefinitions[i].customSpriteLocation );
-                    File destination=new File("./temp/item-sprites/" + itemDefinitions[i].id + ".png" );
-                    try {
-                        FileUtils.copyFile(source, destination);
-                        System.out.println("Sorting custom image [" + itemDefinitions[i].customSpriteLocation + "]");
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }*/
-                }
-            }
+            ItemDefinition definition = ItemDefinition.lookup(i);
+            itemDefinitions[i] = definition;
+            toJson(definition, "./dump/items/" + i + "_" + definition.getName() + ".json");
         }
-        toJson(itemDefinitions, "./temp/item_definitions.json");
+        toJson(itemDefinitions, "./dump/item_definitions.json");
     }
 
+    @SneakyThrows
     private static <T> void toJson(T t, String filePath) {
         Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
         String prettyJson = prettyGson.toJson(t);
         BufferedWriter bw;
-        try {
-            bw = new BufferedWriter(new FileWriter(filePath));
-            bw.write(prettyJson);
-            bw.flush();
-            bw.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        bw = new BufferedWriter(new FileWriter(filePath));
+        bw.write(prettyJson);
+        bw.flush();
+        bw.close();
     }
 
     private static class Npc {
