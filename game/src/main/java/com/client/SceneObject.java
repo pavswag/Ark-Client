@@ -100,7 +100,7 @@ final class SceneObject extends Renderable {
 	}
 
 	public SceneObject(int i, int j, int k, int l, int i1, int j1, int k1,
-					   int l1, boolean flag) {
+					   int l1, boolean randomFrame) {
 		anInt1610 = i;
 		anInt1611 = k;
 		anInt1612 = j;
@@ -113,7 +113,7 @@ final class SceneObject extends Renderable {
 				seq = SequenceDefinition.get(l1);
 				animationFrame = 0;
 				cycleDelay = Client.loopCycle;
-				if (flag && seq.frameStep != -1) {
+				if (randomFrame && seq.frameStep != -1) {
 					animationFrame = (int) (Math.random() * seq.frameCount);
 					cycleDelay -= (int) (Math.random() * seq
 							.getDuration(animationFrame));

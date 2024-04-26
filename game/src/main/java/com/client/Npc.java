@@ -83,7 +83,7 @@ public final class Npc extends Entity implements RSNPC {
 					if (seq != null && seq.isSkeletalAnimation()) {
 						model_3.playSkeletal(seq, graphicObject.getFrame());
 					} else {
-						model_3.generateBones();
+						model_3.prepareSkeleton();
 						model_3.interpolate(spotAnim.animationSequence.frameIDs[graphicObject.getFrame()]);
 					}
 				}

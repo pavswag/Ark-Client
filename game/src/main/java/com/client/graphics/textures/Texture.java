@@ -2,6 +2,7 @@ package com.client.graphics.textures;
 
 import com.client.*;
 import com.client.cache.DualNode;
+import com.client.js5.Js5List;
 import com.client.js5.disk.AbstractArchive;
 import net.runelite.rs.api.RSTexture;
 
@@ -9,21 +10,21 @@ public class Texture extends DualNode implements RSTexture {
 
     private static int[] animatedPixels;
 
-    int averageRGB;
+    public int averageRGB;
 
-    boolean isTransparent;
+    public boolean isTransparent;
 
-    int[] fileIds;
+    public int[] fileIds;
 
     int[] field2439;
 
     int[] field2440;
 
-    int[] field2441;
+    public int[] field2441;
 
-    int animationDirection;
+    public int animationDirection;
 
-    int animationSpeed;
+    public int animationSpeed;
 
     transient int[] pixels;
 
@@ -34,46 +35,47 @@ public class Texture extends DualNode implements RSTexture {
     Texture(Buffer var1) {
         this.averageRGB = var1.readUShort();
         this.isTransparent = var1.readUnsignedByte() == 1;
-        int var2 = var1.readUnsignedByte();
-        if (var2 >= 1 && var2 <= 4) {
-            this.fileIds = new int[var2];
+        int fileCount = var1.readUnsignedByte();
+        if (fileCount >= 1 && fileCount <= 4) {
+            this.fileIds = new int[fileCount];
 
             int var3;
-            for(var3 = 0; var3 < var2; ++var3) {
+            for(var3 = 0; var3 < fileCount; ++var3) {
                 this.fileIds[var3] = var1.readUShort();
             }
 
-            if (var2 > 1) {
-                this.field2439 = new int[var2 - 1];
+            if (fileCount > 1) {
+                this.field2439 = new int[fileCount - 1];
 
-                for(var3 = 0; var3 < var2 - 1; ++var3) {
+                for(var3 = 0; var3 < fileCount - 1; ++var3) {
                     this.field2439[var3] = var1.readUnsignedByte();
                 }
             }
 
-            if (var2 > 1) {
-                this.field2440 = new int[var2 - 1];
+            if (fileCount > 1) {
+                this.field2440 = new int[fileCount - 1];
 
-                for(var3 = 0; var3 < var2 - 1; ++var3) {
+                for(var3 = 0; var3 < fileCount - 1; ++var3) {
                     this.field2440[var3] = var1.readUnsignedByte();
                 }
             }
 
-            this.field2441 = new int[var2];
+            this.field2441 = new int[fileCount];
 
-            for(var3 = 0; var3 < var2; ++var3) {
+            for(var3 = 0; var3 < fileCount; ++var3) {
                 this.field2441[var3] = var1.readInt();
             }
 
             this.animationDirection = var1.readUnsignedByte();
             this.animationSpeed = var1.readUnsignedByte();
             this.pixels = null;
+            this.customTexture = averageRGB == 26715;
         } else {
             throw new RuntimeException();
         }
     }
 
-    Texture(Texture originalTexture, int newID) {
+    public Texture(Texture originalTexture, int newID) {
         this.isLoaded = false;
         int count = 0;
         id = newID;
@@ -106,12 +108,22 @@ public class Texture extends DualNode implements RSTexture {
         averageRGB = originalTexture.averageRGB;
         this.pixels = null;
     }
+    private boolean customTexture = false;
+
+    public Texture() {
+
+    }
 
     boolean load(double var1, int var3, AbstractArchive var4) {
         int var5;
         for(var5 = 0; var5 < this.fileIds.length; ++var5) {
-            if (var4.getFileFlat(this.fileIds[var5]) == null) {
-                return false;
+            if(customTexture) {
+                if(Js5List.configs.getFile(43, fileIds[var5]) == null)
+                    return false;
+            } else {
+                if (var4.getFileFlat(this.fileIds[var5]) == null) {
+                    return false;
+                }
             }
         }
 
@@ -120,7 +132,13 @@ public class Texture extends DualNode implements RSTexture {
 
         for(int var6 = 0; var6 < this.fileIds.length; ++var6) {
             int var8 = this.fileIds[var6];
-            byte[] var10 = var4.takeFileFlat(var8);
+            byte[] var10 = null;
+            if(customTexture) {
+                //var10 = Js5List.configs.getFile(43, fileIds[var5]);
+                var10 = var4.takeFileFlat(var8);
+            } else {
+                var10 = var4.takeFileFlat(var8);
+            }
             boolean var9;
             if (var10 == null) {
                 var9 = false;
@@ -203,6 +221,8 @@ public class Texture extends DualNode implements RSTexture {
                     }
                 } else {
                     if (var7.subWidth != 128 || var3 != 64) {
+                        System.out.println("var7.subWidth = " + var7.subWidth);
+                        System.out.println("var3 = " + var3);
                         throw new RuntimeException();
                     }
 

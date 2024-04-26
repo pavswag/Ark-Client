@@ -4048,7 +4048,7 @@ public class RSInterface implements RSWidget {
 			return model;
 		Model model_1 = new Model(true, SeqFrame.noAnimationInProgress(k) & SeqFrame.noAnimationInProgress(j), false, model);
 		if (k != -1 || j != -1)
-			model_1.generateBones();
+			model_1.prepareSkeleton();
 		if (k != -1)
 			model_1.interpolate(k);
 		if (j != -1)

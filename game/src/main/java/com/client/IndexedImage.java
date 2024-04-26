@@ -61,6 +61,10 @@ public final class IndexedImage extends Rasterizer2D implements RSIndexedSprite 
 
 	}
 
+	public IndexedImage(Buffer buffer) {
+
+	}
+
 	public void normalize() {
 		if (subWidth != width || subHeight != height) { // L: 18
 			byte[] pixels = new byte[width * height]; // L: 19
@@ -200,42 +204,42 @@ public final class IndexedImage extends Rasterizer2D implements RSIndexedSprite 
 
 	}
 
-	private void draw(int i, int raster[], byte image[], int destStep, int destIndex, int width, int sourceIndex, int ai1[], int sourceStep) {
+	private void draw(int height, int raster[], byte palettePixels[], int destStep, int destIndex, int width, int sourceIndex, int palette[], int sourceStep) {
 		int minX = -(width >> 2);
 		width = -(width & 3);
-		for (int y = -i; y < 0; y++) {
+		for (int y = -height; y < 0; y++) {
 			for (int x = minX; x < 0; x++) {
 
-				byte pixel = image[sourceIndex++];
+				byte pixel = palettePixels[sourceIndex++];
 
 				if (pixel != 0) {
-					raster[destIndex++] = ai1[pixel & 0xff];
+					raster[destIndex++] = palette[pixel & 0xff];
 				} else {
 					destIndex++;
 				}
-				pixel = image[sourceIndex++];
+				pixel = palettePixels[sourceIndex++];
 				if (pixel != 0) {
-					raster[destIndex++] = ai1[pixel & 0xff];
+					raster[destIndex++] = palette[pixel & 0xff];
 				} else {
 					destIndex++;
 				}
-				pixel = image[sourceIndex++];
+				pixel = palettePixels[sourceIndex++];
 				if (pixel != 0) {
-					raster[destIndex++] = ai1[pixel & 0xff];
+					raster[destIndex++] = palette[pixel & 0xff];
 				} else {
 					destIndex++;
 				}
-				pixel = image[sourceIndex++];
+				pixel = palettePixels[sourceIndex++];
 				if (pixel != 0) {
-					raster[destIndex++] = ai1[pixel & 0xff];
+					raster[destIndex++] = palette[pixel & 0xff];
 				} else {
 					destIndex++;
 				}
 			}
 			for (int x = width; x < 0; x++) {
-				byte pixel = image[sourceIndex++];
+				byte pixel = palettePixels[sourceIndex++];
 				if (pixel != 0) {
-					raster[destIndex++] = ai1[pixel & 0xff];
+					raster[destIndex++] = palette[pixel & 0xff];
 				} else {
 					destIndex++;
 				}

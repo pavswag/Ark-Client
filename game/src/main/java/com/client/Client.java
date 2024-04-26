@@ -84,7 +84,6 @@ import com.client.skillorbs.SkillOrbs;
 import com.client.sound.Music;
 import com.client.sound.Sound;
 import com.client.sound.SoundType;
-import com.client.soundeffects.SoundConstants;
 import com.client.soundeffects.SoundEffects;
 import com.client.soundeffects.SoundPlayer;
 import com.client.ui.DevConsole;
@@ -9669,7 +9668,7 @@ public class Client extends GameEngine implements RSClient {
 						// model.method476(Legs2[0], Legs2[anIntArray990[l2]]);
 					}
 
-				model.generateBones();
+				model.prepareSkeleton();
 				model.interpolate(SequenceDefinition.get(localPlayer.seqStandID).frameIDs[0]);
 				model.light(64, 1300, 0, -570, 0, true);
 				class9.anInt233 = 5;
@@ -9694,7 +9693,7 @@ public class Client extends GameEngine implements RSClient {
 							characterDisplay.recolor(anIntArray1204[0], anIntArray1204[characterDesignColours[l2]]);
 					}
 				int staticFrame = localPlayer.seqStandID;
-				characterDisplay.generateBones();
+				characterDisplay.prepareSkeleton();
 				characterDisplay.interpolate(SequenceDefinition.get(staticFrame).frameIDs[0]);
 				// characterDisplay.method479(64, 850, -30, -50, -30, true);
 				rsInterface.anInt233 = 5;
@@ -12001,9 +12000,9 @@ public class Client extends GameEngine implements RSClient {
 	static int titleLoadingStage;
 	@SneakyThrows
 	public void load() {
+		//DefinitionDumper.dumpCustomText();
 		System.out.println("Load#" + Client.titleLoadingStage);
 		if (Client.titleLoadingStage == 0) {
-			DefinitionDumper.dumpDefs();
 			getDocumentBaseHost();
 			variousSettings[304] = 1;
 			if (Signlink.cache_dat != null) {

@@ -978,7 +978,7 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 				model_3.buildSharedSequenceModel(model, false);
 				model_3.playSkeletal(primary, tick);
 			} else if (animation_id != -1) {
-				model_3.generateBones();
+				model_3.prepareSkeleton();
 				model_3.interpolate(animation_id);
 			}
 		}

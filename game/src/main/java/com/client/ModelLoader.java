@@ -150,7 +150,7 @@ public class ModelLoader {
 
         if (var14 == 1)
         {
-            def.triangleAlpha = new byte[var10];
+            def.faceTransparencies = new byte[var10];
         }
 
         if (var15 == 1)
@@ -268,7 +268,7 @@ public class ModelLoader {
 
             if (var14 == 1)
             {
-                def.triangleAlpha[var51] = var5.readSignedByte();
+                def.faceTransparencies[var51] = var5.readSignedByte();
             }
 
             if (var15 == 1)
@@ -477,7 +477,7 @@ public class ModelLoader {
 
         if (var14 == 1)
         {
-            def.triangleAlpha = new byte[var10];
+            def.faceTransparencies = new byte[var10];
         }
 
         if (var15 == 1)
@@ -601,7 +601,7 @@ public class ModelLoader {
 
             if (var14 == 1)
             {
-                def.triangleAlpha[var40] = var7.readSignedByte();
+                def.faceTransparencies[var40] = var7.readSignedByte();
             }
 
             if (var15 == 1)
@@ -860,7 +860,7 @@ public class ModelLoader {
 
         if (var14 == 1)
         {
-            def.triangleAlpha = new byte[var10];
+            def.faceTransparencies = new byte[var10];
         }
 
         if (var15 == 1)
@@ -956,7 +956,7 @@ public class ModelLoader {
 
             if (var14 == 1)
             {
-                def.triangleAlpha[var49] = var5.readSignedByte();
+                def.faceTransparencies[var49] = var5.readSignedByte();
             }
 
             if (var15 == 1)
@@ -1167,7 +1167,7 @@ public class ModelLoader {
 
         if (var14 == 1)
         {
-            def.triangleAlpha = new byte[var10];
+            def.faceTransparencies = new byte[var10];
         }
 
         if (var15 == 1)
@@ -1269,7 +1269,7 @@ public class ModelLoader {
 
             if (var14 == 1)
             {
-                def.triangleAlpha[var38] = var7.readSignedByte();
+                def.faceTransparencies[var38] = var7.readSignedByte();
             }
 
             if (var15 == 1)

@@ -1865,7 +1865,7 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
                 for (int i1 = 0; i1 < originalTextureColours.length; i1++)
                     model.retexture(originalTextureColours[i1], modifiedTextureColours[i1]);
             }
-            model.generateBones();
+            model.prepareSkeleton();
             model.light(64 + ambient, 850 + contrast, -30, -50, -30, true);
             // model.method479(84 + anInt85, 1000 + anInt92, -90, -580, -90, true);
             mruNodes.put(model, id);
@@ -1920,7 +1920,7 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
                 for (int i1 = 0; i1 < originalTextureColours.length; i1++)
                     model.retexture(originalTextureColours[i1], modifiedTextureColours[i1]);
             }
-            model.generateBones();
+            model.prepareSkeleton();
             model.light(64 + ambient, 850 + contrast, -30, -50, -30, true);
             // model.method479(84 + anInt85, 1000 + anInt92, -90, -580, -90, true);
             mruNodes.put(model, id);

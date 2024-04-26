@@ -51,7 +51,7 @@ public final class Player extends Entity implements RSPlayer {
 				if (seq != null && seq.isSkeletalAnimation()) {
 					model_3.playSkeletal(seq, graphicObject.getFrame());
 				} else {
-					model_3.generateBones();
+					model_3.prepareSkeleton();
 					model_3.interpolate(spotAnim.animationSequence.frameIDs[graphicObject.getFrame()]);
 				}
 
@@ -331,7 +331,7 @@ public final class Player extends Entity implements RSPlayer {
 								Client.anIntArray1204[anIntArray1700[j3]]);
 				}
 
-			model_1.generateBones();
+			model_1.prepareSkeleton();
 			 model_1.light(64, 850, -30, -50, -30, true);
 			//model_1.method479(84, 1000, -90, -580, -90, true);
 			mruNodes.put(model_1, l);

@@ -26,6 +26,7 @@ public enum Js5ConfigType {
     CUSTOM_ITEM_SPRITES(40,"Custom Item Sprites"),
     OSRS_SPRITES(41,"Oldschool Sprites"),
     WIDGET_SPRITES(42,"Widget Sprites"),
+    CUSTOM_TEXTURE_SPRITES(43,"Custom Texture Sprites"),
     ;
 
     private final int id;

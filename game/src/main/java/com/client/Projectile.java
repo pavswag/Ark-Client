@@ -55,7 +55,7 @@ final class Projectile extends Renderable implements RSProjectile {
 		}
 		Model model_1 = new Model(true, SeqFrame.noAnimationInProgress(j), false, model);
 		if (j != -1) {
-			model_1.generateBones();
+			model_1.prepareSkeleton();
 			model_1.interpolate(j);
 			model_1.groupedTriangleLabels = null;
 			model_1.groupedVertexLabels = null;

@@ -47,7 +47,7 @@ class GraphicObject extends Renderable implements RSGraphicsObject {
 		int frame = (this.frame < animationSequence.frameIDs.length) ? animationSequence.frameIDs[this.frame] : -1;
 		Model model_1 = new Model(true, Frame.noAnimationInProgress(frame), false, model);
 		if (!isFinished) {
-			model_1.generateBones();
+			model_1.prepareSkeleton();
 			model_1.interpolate(frame);
 			model_1.groupedTriangleLabels = null;
 			model_1.groupedVertexLabels = null;

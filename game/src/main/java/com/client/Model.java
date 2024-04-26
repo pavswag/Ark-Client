@@ -251,7 +251,7 @@ public class Model extends Renderable implements RSModel {
                     trianglesCount += build.trianglesCount;
                     texturesCount += build.texturesCount;
                     typeFlag |= build.drawType != null;
-                    alphaFlag |= build.triangleAlpha != null;
+                    alphaFlag |= build.faceTransparencies != null;
                     if (build.renderPriorities != null) {
                         priorityFlag = true;
                     } else {
@@ -286,7 +286,7 @@ public class Model extends Renderable implements RSModel {
                 renderPriorities = new byte[trianglesCount];
 
             if (alphaFlag)
-                triangleAlpha = new byte[trianglesCount];
+                faceTransparencies = new byte[trianglesCount];
 
             if (tSkinFlag)
                 triangleData = new int[trianglesCount];
@@ -325,8 +325,8 @@ public class Model extends Renderable implements RSModel {
                             else
                                 renderPriorities[trianglesCount] = build.renderPriorities[face];
 
-                        if (alphaFlag && build.triangleAlpha != null)
-                            triangleAlpha[trianglesCount] = build.triangleAlpha[face];
+                        if (alphaFlag && build.faceTransparencies != null)
+                            faceTransparencies[trianglesCount] = build.faceTransparencies[face];
 
                         if (tSkinFlag && build.triangleData != null)
                             triangleData[trianglesCount] = build.triangleData[face];
@@ -401,7 +401,7 @@ public class Model extends Renderable implements RSModel {
                     if (facePriority != build.facePriority)
                         priorityFlag = true;
                 }
-                alphaFlag |= build.triangleAlpha != null;
+                alphaFlag |= build.faceTransparencies != null;
                 colorFlag |= build.colors != null;
                 textureFlag |= build.materials != null;
                 coordinateFlag |= build.textures != null;
@@ -425,7 +425,7 @@ public class Model extends Renderable implements RSModel {
             renderPriorities = new byte[trianglesCount];
 
         if (alphaFlag)
-            triangleAlpha = new byte[trianglesCount];
+            faceTransparencies = new byte[trianglesCount];
 
         if (textureFlag)
             materials = new short[trianglesCount];
@@ -471,8 +471,8 @@ public class Model extends Renderable implements RSModel {
                         drawType[trianglesCount] = build.drawType[face];
                     }
 
-                    if (alphaFlag && build.triangleAlpha != null) {
-                        triangleAlpha[trianglesCount] = build.triangleAlpha[face];
+                    if (alphaFlag && build.faceTransparencies != null) {
+                        faceTransparencies[trianglesCount] = build.faceTransparencies[face];
                     }
 
                     if (priorityFlag)
@@ -560,16 +560,16 @@ public class Model extends Renderable implements RSModel {
         }
 
         if (alphaFlag) {
-            triangleAlpha = model.triangleAlpha;
+            faceTransparencies = model.faceTransparencies;
         } else {
-            triangleAlpha = new byte[trianglesCount];
-            if (model.triangleAlpha == null) {
+            faceTransparencies = new byte[trianglesCount];
+            if (model.faceTransparencies == null) {
                 for (int l = 0; l < trianglesCount; l++) {
-                    triangleAlpha[l] = 0;
+                    faceTransparencies[l] = 0;
                 }
 
             } else {
-                System.arraycopy(model.triangleAlpha, 0, triangleAlpha, 0, trianglesCount);
+                System.arraycopy(model.faceTransparencies, 0, faceTransparencies, 0, trianglesCount);
             }
         }
         vertexData = model.vertexData;
@@ -639,7 +639,7 @@ public class Model extends Renderable implements RSModel {
         verticesX = model.verticesX;
         verticesZ = model.verticesZ;
         colors = model.colors;
-        triangleAlpha = model.triangleAlpha;
+        faceTransparencies = model.faceTransparencies;
         renderPriorities = model.renderPriorities;
         facePriority = model.facePriority;
         trianglesX = model.trianglesX;
@@ -687,18 +687,18 @@ public class Model extends Renderable implements RSModel {
         }
 
         if (replaceAlpha) {
-            triangleAlpha = model.triangleAlpha;
+            faceTransparencies = model.faceTransparencies;
         } else {
             if (sharedTriangleAlpha.length < trianglesCount) {
                 sharedTriangleAlpha = new byte[trianglesCount + 100];
             }
-            triangleAlpha = sharedTriangleAlpha;
-            if (model.triangleAlpha == null) {
+            faceTransparencies = sharedTriangleAlpha;
+            if (model.faceTransparencies == null) {
                 for (int face = 0; face < trianglesCount; face++) {
-                    triangleAlpha[face] = 0;
+                    faceTransparencies[face] = 0;
                 }
             } else {
-                System.arraycopy(model.triangleAlpha, 0, triangleAlpha, 0, trianglesCount);
+                System.arraycopy(model.faceTransparencies, 0, faceTransparencies, 0, trianglesCount);
             }
         }
 
@@ -855,7 +855,7 @@ public class Model extends Renderable implements RSModel {
                 var11.trianglesZ = this.trianglesZ;
                 var11.drawType = this.drawType;
                 var11.renderPriorities = this.renderPriorities;
-                var11.triangleAlpha = this.triangleAlpha;
+                var11.faceTransparencies = this.faceTransparencies;
                 var11.textures = this.textures;
                 var11.colors = this.colors;
                 var11.materials = this.materials;
@@ -963,7 +963,7 @@ public class Model extends Renderable implements RSModel {
         }
     }
 
-    public void generateBones() {
+    public void prepareSkeleton() {
         if (vertexData != null) {
             int ai[] = new int[256];
             int j = 0;
@@ -1108,19 +1108,19 @@ public class Model extends Renderable implements RSModel {
             }
             return;
         }
-        if (animationType == 5 && groupedTriangleLabels != null && triangleAlpha != null) {
+        if (animationType == 5 && groupedTriangleLabels != null && faceTransparencies != null) {
             for (int k3 : skin) {
                 if (k3 < groupedTriangleLabels.length) {
                     int[] ai4 = groupedTriangleLabels[k3];
                     for (int i6 : ai4) {
-                        int i = (triangleAlpha[i6] & 255) + x * 8;
+                        int i = (faceTransparencies[i6] & 255) + x * 8;
 
                         if (i < 0) {
                             i = 0;
                         } else if (i > 255) {
                             i = 255;
                         }
-                        this.triangleAlpha[i6] = (byte) i;
+                        this.faceTransparencies[i6] = (byte) i;
                     }
                 }
             }
@@ -1225,21 +1225,21 @@ public class Model extends Renderable implements RSModel {
         SeqBase base = skaFSet.seqBase;
         for (int baseIndex = 0; baseIndex < base.getLength(); baseIndex++) {
             int type = base.getTypes()[baseIndex];
-            if (type == 5 && skaFSet.tt != null && skaFSet.tt[baseIndex] != null && skaFSet.tt[baseIndex][0] != null && groupedTriangleLabels != null && triangleAlpha != null) {
+            if (type == 5 && skaFSet.tt != null && skaFSet.tt[baseIndex] != null && skaFSet.tt[baseIndex][0] != null && groupedTriangleLabels != null && faceTransparencies != null) {
                 TO TO = skaFSet.tt[baseIndex][0];
                 int[] vertexLabels = base.getGroupLabels()[baseIndex];
                 for (int label : vertexLabels) {
                     if (label < groupedTriangleLabels.length) {
                         int[] triangleLabels = groupedTriangleLabels[label];
                         for (int triangleIndex : triangleLabels) {
-                            int alpha = (int) ((float) (this.triangleAlpha[triangleIndex] & 255) + TO.gv(tick) * 255.0F);
+                            int alpha = (int) ((float) (this.faceTransparencies[triangleIndex] & 255) + TO.gv(tick) * 255.0F);
                             if (alpha < 0) {
                                 alpha = 0;
                             } else if (alpha > 255) {
                                 alpha = 255;
                             }
 
-                            triangleAlpha[triangleIndex] = (byte) alpha;
+                            faceTransparencies[triangleIndex] = (byte) alpha;
                         }
                     }
                 }
@@ -1583,10 +1583,10 @@ public class Model extends Renderable implements RSModel {
             }
 
             byte var18;
-            if (this.triangleAlpha == null) {
+            if (this.faceTransparencies == null) {
                 var18 = 0;
             } else {
-                var18 = this.triangleAlpha[var16];
+                var18 = this.faceTransparencies[var16];
             }
 
             short var12;
@@ -1684,7 +1684,7 @@ public class Model extends Renderable implements RSModel {
             }
         }
 
-        this.generateBones();
+        this.prepareSkeleton();
         model.verticesCount = this.verticesCount;
         model.verticesX = this.verticesX;
         model.verticesY = this.verticesY;
@@ -1694,7 +1694,7 @@ public class Model extends Renderable implements RSModel {
         model.trianglesY = this.trianglesY;
         model.trianglesZ = this.trianglesZ;
         model.renderPriorities = this.renderPriorities;
-        model.triangleAlpha = this.triangleAlpha;
+        model.faceTransparencies = this.faceTransparencies;
         model.facePriority = this.facePriority;
         model.groupedVertexLabels = this.groupedVertexLabels;
         model.groupedTriangleLabels = this.groupedTriangleLabels;
@@ -1776,16 +1776,16 @@ public class Model extends Renderable implements RSModel {
             if(materials != null) {
                 if(player) {
                     //These checks are all important! - black triangle check
-                    if(triangleAlpha != null && colors != null) {
+                    if(faceTransparencies != null && colors != null) {
                         if(colors[face] == 0 && renderPriorities[face] == 0) {
                             if(drawType[face] == 2 && materials[face] == -1) {
-                                triangleAlpha[face] = (byte) 255;
+                                faceTransparencies[face] = (byte) 255;
                             }
                         }
-                    } else if(triangleAlpha == null) {
+                    } else if(faceTransparencies == null) {
                         if(colors[face] == 0 && renderPriorities[face] == 0) {
                             if(materials[face] == -1) {
-                                triangleAlpha = new byte[trianglesCount];
+                                faceTransparencies = new byte[trianglesCount];
                             }
                         }
                     }
@@ -2464,10 +2464,10 @@ public class Model extends Renderable implements RSModel {
             int triY = trianglesY[face];
             int triZ = trianglesZ[face];
             Rasterizer3D.textureOutOfDrawingBounds = hasAnEdgeToRestrict[face];
-            if (triangleAlpha == null)
+            if (faceTransparencies == null)
                 Rasterizer3D.alpha = 0;
             else
-                Rasterizer3D.alpha = triangleAlpha[face] & 0xff;
+                Rasterizer3D.alpha = faceTransparencies[face] & 0xff;
 
             int type;
             if (drawType == null)
@@ -2763,7 +2763,7 @@ public class Model extends Renderable implements RSModel {
     public int colorsZ[];
     public int drawType[];
     public byte[] renderPriorities;
-    public byte triangleAlpha[];
+    public byte faceTransparencies[];
     public short colors[];
     public byte facePriority = 0;
     public int texturesCount;
@@ -2930,7 +2930,7 @@ public class Model extends Renderable implements RSModel {
 
     @Override
     public byte[] getFaceTransparencies() {
-        return triangleAlpha;
+        return faceTransparencies;
     }
 
     private int sceneId;
@@ -3269,7 +3269,7 @@ public class Model extends Renderable implements RSModel {
                     var11.colorsY = this.colorsY;
                     var11.colorsZ = this.colorsZ;
                     var11.renderPriorities = this.renderPriorities;
-                    var11.triangleAlpha = this.triangleAlpha;
+                    var11.faceTransparencies = this.faceTransparencies;
                     var11.textures = this.textures;
                     var11.materials = this.materials;
                     var11.facePriority = this.facePriority;

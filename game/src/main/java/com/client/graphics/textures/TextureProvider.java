@@ -5,6 +5,8 @@ import com.client.js5.disk.AbstractArchive;
 import net.runelite.rs.api.RSTexture;
 import net.runelite.rs.api.RSTextureProvider;
 
+import javax.swing.*;
+
 import static com.client.Client.instance;
 
 public class TextureProvider implements RSTextureProvider, TextureLoader {
@@ -32,14 +34,13 @@ public class TextureProvider implements RSTextureProvider, TextureLoader {
         int[] fileIds = textures.getGroupFileIds(0);
         int texturesSize = fileIds.length;
         this.textures = new Texture[textures.getGroupFileCount(0)];
-        int newTextureCount = 0;
         for(int index = 0; index < texturesSize; ++index) {
             Buffer data = new Buffer(textures.takeFile(0, fileIds[index]));
             this.textures[fileIds[index]] = new Texture(data);
-            newTextureCount = index;
         }
         setMaxSize(128);
         setSize(128);
+        System.out.println("Loaded [" + texturesSize + "] textures");
     }
 
     public int getLoadedPercentage() {

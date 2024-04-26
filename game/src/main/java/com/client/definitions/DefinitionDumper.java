@@ -27,13 +27,16 @@ public class DefinitionDumper {
     private static final boolean dumpModels = false;
     private static final boolean dumpMaps = false;
 
-    private static final boolean dumpRegions = true;
+    private static final boolean dumpRegions = false;
 
-    private static final boolean dumpTextures = false;
+    private static final boolean dumpTextures = true;
     private static final boolean dumpSprites = false;
     private static List<Integer> customModels = new ArrayList<>();
     private static int widgetSpriteId = 0;
     public static void dumpDefs() {
+        for(int i = 126; i <= 161; i++) {
+            dumpCustomTexture(i);
+        }
         if(dumpSprites) {
             File base = new File(Signlink.getCacheDirectory() + "sprites/");
             dumpSprite(base);
@@ -76,6 +79,27 @@ public class DefinitionDumper {
                     System.out.println("m" + name);
             });
         }
+    }
+    private static int spriteId = 5607;
+
+    public static void dumpCustomText() {
+        for(int i = 126; i <= 161; i++) {
+            System.out.println("Dumping texture " + i);
+            dumpCustomTexture(i);
+        }
+        spriteId = 5607;
+        System.exit(0);
+    }
+    public static void dumpCustomTexture(int id) {
+        Texture texture = new Texture();
+        texture.fileIds = new int[] {spriteId};
+        texture.averageRGB = 26715;
+        texture.field2441 = new int[] { 137 };
+        texture.isTransparent = true;
+        texture.animationDirection = 1;
+        texture.animationSpeed = 2;
+        toJson(texture, "./temp/textures/" + id + ".json");
+        spriteId++;
     }
     @SneakyThrows
     private static void dumpSprite(File file) {
