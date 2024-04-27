@@ -3,6 +3,7 @@ package com.client;
 import com.client.audio.StaticSound;
 import com.client.cache.IterableNodeHashTable;
 import com.client.definitions.HealthBarDefinition;
+import com.client.definitions.HitSplatDefinition;
 import com.client.definitions.SequenceDefinition;
 
 public class Entity extends Renderable {
@@ -79,12 +80,12 @@ public class Entity extends Renderable {
 		remaining_steps = 0;
 	}
 
-	public final void updateHitData(int j, int k, int l, int source) {
+	public final void updateHitData(int j, int k, int delay, int source) {
 		for (int i1 = 0; i1 < 4; i1++)
-			if (hitsLoopCycle[i1] <= l) {
-				hitArray[i1] = k;
-				hitMarkTypes[i1] = j;
-				hitsLoopCycle[i1] = l + 70;
+			if (hitSplatCycles[i1] <= delay) {
+				hitSplatValues[i1] = k;
+				hitSplatTypes[i1] = j;
+				hitSplatCycles[i1] = delay + 70;
 				hitSource[i1] = source - 32768;
 				return;
 			}
@@ -147,9 +148,11 @@ public class Entity extends Renderable {
 		height = 200;
 		seqStandID = -1;
 		standTurnAnimIndex = -1;
-		hitArray = new int[4];
-		hitMarkTypes = new int[4];
-		hitsLoopCycle = new int[4];
+		hitSplatValues = new int[4];
+		hitSplatTypes = new int[4];
+		hitSplatValues2 = new int[4];
+		hitSplatTypes2 = new int[4];
+		hitSplatCycles = new int[4];
 		hitSource = new int[4];
 		secondarySeqID = -1;
 		graphicId = -1;
@@ -179,9 +182,88 @@ public class Entity extends Renderable {
 	int seqStandID;
 	int standTurnAnimIndex;
 	int anInt1513;
-	final int[] hitArray;
-	final int[] hitMarkTypes;
-	final int[] hitsLoopCycle;
+
+	byte hitSplatCount;
+	final int[] hitSplatValues;
+	final int[] hitSplatTypes;
+	final int[] hitSplatValues2;
+	final int[] hitSplatTypes2;
+	final int[] hitSplatCycles;
+
+	final void addHitSplat(int type, int damage, int type2, int damage2, int cycle, int delay) {
+		boolean var7 = true;
+		boolean var8 = true;
+
+		int var9;
+		for (var9 = 0; var9 < 4; ++var9) {
+			if (this.hitSplatCycles[var9] > cycle) {
+				var7 = false;
+			} else {
+				var8 = false;
+			}
+		}
+
+		var9 = -1;
+		int var10 = -1;
+		int var11 = 0;
+		if (type >= 0) {
+			HitSplatDefinition var12 = HitSplatDefinition.getHitSplatDefinition(type);
+			var10 = var12.field2229;
+			var11 = var12.field2227;
+		}
+
+		int var14;
+		if (var8) {
+			if (var10 == -1) {
+				return;
+			}
+
+			var9 = 0;
+			var14 = 0;
+			if (var10 == 0) {
+				var14 = this.hitSplatCycles[0];
+			} else if (var10 == 1) {
+				var14 = this.hitSplatValues[0];
+			}
+
+			for (int var13 = 1; var13 < 4; ++var13) {
+				if (var10 == 0) {
+					if (this.hitSplatCycles[var13] < var14) {
+						var9 = var13;
+						var14 = this.hitSplatCycles[var13];
+					}
+				} else if (var10 == 1 && this.hitSplatValues[var13] < var14) {
+					var9 = var13;
+					var14 = this.hitSplatValues[var13];
+				}
+			}
+
+			if (var10 == 1 && var14 >= damage) {
+				return;
+			}
+		} else {
+			if (var7) {
+				this.hitSplatCount = 0;
+			}
+
+			for (var14 = 0; var14 < 4; ++var14) {
+				byte var15 = this.hitSplatCount;
+				this.hitSplatCount = (byte)((this.hitSplatCount + 1) % 4);
+				if (this.hitSplatCycles[var15] <= cycle) {
+					var9 = var15;
+					break;
+				}
+			}
+		}
+
+		if (var9 >= 0) {
+			this.hitSplatTypes[var9] = type;
+			this.hitSplatValues[var9] = damage;
+			this.hitSplatTypes2[var9] = type2;
+			this.hitSplatValues2[var9] = damage2;
+			this.hitSplatCycles[var9] = cycle + var11 + delay;
+		}
+	}
 
 	final int[] hitSource;
 	int secondarySeqID;

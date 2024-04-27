@@ -3543,7 +3543,7 @@ public class Client extends GameEngine implements RSClient {
 					}
 				}
 				for (int j1 = 0; j1 < 4; j1++)
-					if (((Entity) (obj)).hitsLoopCycle[j1] > loopCycle) {
+					if (((Entity) (obj)).hitSplatCycles[j1] > loopCycle) {
 						npcScreenPos(((Entity) (obj)), ((Entity) (obj)).height / 2);
 
 						if (spriteDrawX > -1) {
@@ -3557,25 +3557,25 @@ public class Client extends GameEngine implements RSClient {
 								spriteDrawX += 15;
 								spriteDrawY -= 10;
 							}
-							if (((Entity) (obj)).hitMarkTypes[j1] == 16) { // Heal hitsplat
+							if (((Entity) (obj)).hitSplatTypes[j1] == 16) { // Heal hitsplat
 								spriteDrawX += 1;
 								spriteDrawY -= 1;
 							}
 
 							if (entityTarget != null && ((entityTarget.target == obj && localPlayer.playerId == ((Entity) (obj)).hitSource[j1]) || obj == localPlayer)) {
-								hitMarks[((Entity) (obj)).hitMarkTypes[j1]].drawSprite(spriteDrawX - 12, spriteDrawY - 12);
+								hitMarks[((Entity) (obj)).hitSplatTypes[j1]].drawSprite(spriteDrawX - 12, spriteDrawY - 12);
 							} else {
-								int hitType = ((Entity) (obj)).hitMarkTypes[j1];
+								int hitType = ((Entity) (obj)).hitSplatTypes[j1];
 								if (hitType == 16) {
 									hitType = 8;
 								}
 								hitMarks[hitType+8].drawSprite(spriteDrawX - 12, spriteDrawY - 12);
 							}
 
-							smallText.drawText(0, String.valueOf(((Entity) (obj)).hitArray[j1]), spriteDrawY + 4,
+							smallText.drawText(0, String.valueOf(((Entity) (obj)).hitSplatValues[j1]), spriteDrawY + 4,
 									spriteDrawX);
 
-							smallText.drawText(0xffffff, String.valueOf(((Entity) (obj)).hitArray[j1]), spriteDrawY + 3,
+							smallText.drawText(0xffffff, String.valueOf(((Entity) (obj)).hitSplatValues[j1]), spriteDrawY + 3,
 									spriteDrawX - 1);
 
 						}
