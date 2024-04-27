@@ -20,12 +20,13 @@ import com.client.js5.Js5List;
 import com.client.js5.util.Js5ConfigType;
 import com.client.model.Npcs;
 import com.client.util.BufferExt;
+import lombok.ToString;
 import net.runelite.api.HeadIcon;
 import net.runelite.api.IterableHashTable;
 import net.runelite.rs.api.RSIterableNodeHashTable;
 import net.runelite.rs.api.RSNPCComposition;
 
-
+@ToString
 public final class NpcDefinition extends DualNode implements RSNPCComposition {
     public static EvictingDualNodeHashTable cache = new EvictingDualNodeHashTable(64);
     public transient boolean custom;
@@ -1968,20 +1969,7 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
         hasRenderPriority = false;
     }
 
-    @Override
-    public String toString() {
-        return "NpcDefinition{" +
-                "npcId=" + id +
-                ", combatLevel=" + combatLevel +
-                ", name='" + name + '\'' +
-                ", actions=" + Arrays.toString(actions) +
-                ", walkAnim=" + walkAnim +
-                ", size=" + size +
-                ", standAnim=" + standAnim +
-                ", childrenIDs=" + Arrays.toString(transforms) +
-                ", models=" + Arrays.toString(models) +
-                '}';
-    }
+
 
     public static void nullLoader() {
         mruNodes = null;

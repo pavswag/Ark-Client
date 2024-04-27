@@ -2,7 +2,7 @@ package com.client;
 
 import com.client.cache.DualNode;
 import com.client.cache.IterableNodeHashTable;
-import com.client.util.Queue;
+import com.client.util.IterableDualNodeQueue;
 import net.runelite.rs.api.RSDualNode;
 import net.runelite.rs.api.RSEvictingDualNodeHashTable;
 import net.runelite.rs.api.RSIterableDualNodeQueue;
@@ -10,7 +10,7 @@ import net.runelite.rs.api.RSIterableNodeHashTable;
 
 
 /**
- * A least-recently used cache of references, backed by a {@link HashTable} and a {@link Queue}.
+ * A least-recently used cache of references, backed by a {@link HashTable} and a {@link IterableDualNodeQueue}.
  */
 public final class EvictingDualNodeHashTable implements RSEvictingDualNodeHashTable {
 
@@ -25,7 +25,7 @@ public final class EvictingDualNodeHashTable implements RSEvictingDualNodeHashTa
 
     IterableNodeHashTable hashTable;
 
-    Queue deque = new Queue();
+    IterableDualNodeQueue deque = new IterableDualNodeQueue();
 
     public EvictingDualNodeHashTable(int var1) {
         this.capacity = var1;

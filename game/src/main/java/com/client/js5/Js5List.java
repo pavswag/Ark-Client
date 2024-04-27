@@ -1,6 +1,5 @@
 package com.client.js5;
 
-import com.client.js5.disk.AbstractArchive;
 import com.client.js5.disk.Js5Archive;
 import com.client.js5.util.Js5ConfigType;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +37,8 @@ public class Js5List {
 
     public static Js5Archive fonts;
 
+    public static Js5Archive widgetSprites;
+
     public static Js5Archive musicSamples;
 
     public static Js5Archive musicPatches;
@@ -48,7 +49,7 @@ public class Js5List {
 
     public static Js5Archive worldmap;
 
-    public static Js5Archive worldmapold;
+    public static Js5Archive osrsSprites;
 
     public static Js5Archive worldmapGround;
 

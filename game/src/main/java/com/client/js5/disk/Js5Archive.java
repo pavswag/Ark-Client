@@ -45,6 +45,7 @@ public class Js5Archive extends AbstractArchive implements RSArchive {
         this.index = js5ArchiveIndex.getId();
         this.verifyChecksums = verifyChecksums;
         this.prioritizeRequests = prioritizeRequests;
+        System.out.println(index + " - " + js5ArchiveIndex.getId() + " - " + js5ArchiveIndex.name());
         Client.jagexNetThread.updateArchiveIndex(this, this.index);
     }
 

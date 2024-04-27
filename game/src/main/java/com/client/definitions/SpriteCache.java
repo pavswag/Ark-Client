@@ -73,6 +73,19 @@ public final class SpriteCache extends DualNode {
         System.out.println("Loaded [" + spriteMap.size() + "] OG Sprites.");
     }
 
+    public static boolean widgetSpriteExists(String img) {
+        int id = -1;
+        if(spriteMap == null || spriteMap.isEmpty()) {
+            load();
+        }
+        try {
+            id = spriteMap.entrySet().stream().filter(it -> it.getValue().equalsIgnoreCase(img)).findAny().get().getKey();
+        } catch (Exception e) {
+
+        }
+        return id != -1;
+    }
+
     public static Sprite lookupWidgetSprite(String img) {
         int id = -1;
         if(spriteMap == null || spriteMap.isEmpty()) {
@@ -87,14 +100,15 @@ public final class SpriteCache extends DualNode {
             return null;
         SpriteCache image = (SpriteCache)SpriteCache.widgetSpriteCache.get(id);
         if (image == null) {
-            byte[] data = Js5List.configs.takeFile(Js5ConfigType.WIDGET_SPRITES, id);
+            byte[] data = Js5List.widgetSprites.takeFile(id, 0);
             image = new SpriteCache();
             image.id = id;
             if (data != null) {
                 image.decode(new Buffer(data),true);
+                System.out.println("Found sprite [" + img +"] with id [" + id + "]");
             } else {
                 System.out.println("Missing Sprite: " + id);
-                return Sprite.EMPTY_SPRITE;
+                return null;
             }
             if(image.sprite.myWidth < 1)
                 return null;
@@ -106,7 +120,7 @@ public final class SpriteCache extends DualNode {
     public static Sprite lookupOldschoolSprite(int id) {
         SpriteCache image = (SpriteCache)SpriteCache.oldschoolSpriteCache.get(id);
         if (image == null) {
-            byte[] data = Js5List.configs.takeFile(Js5ConfigType.OSRS_SPRITES, id);
+            byte[] data = Js5List.osrsSprites.takeFileFlat(id);
             image = new SpriteCache();
             image.id = id;
             if (data != null) {
@@ -115,6 +129,8 @@ public final class SpriteCache extends DualNode {
                 System.out.println("Missing Sprite: " + id);
                 return Sprite.EMPTY_SPRITE;
             }
+            if(image.sprite.myWidth < 1)
+                return null;
             oldschoolSpriteCache.put(image, id);
         }
         return image.sprite;

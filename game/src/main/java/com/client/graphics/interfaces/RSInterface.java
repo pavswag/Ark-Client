@@ -4,6 +4,7 @@ import com.client.*;
 import com.client.definitions.ItemDefinition;
 import com.client.definitions.NpcDefinition;
 import com.client.definitions.SeqFrame;
+import com.client.definitions.SpriteCache;
 import com.client.graphics.interfaces.impl.*;
 import com.client.graphics.interfaces.impl.health_hud.HealthHud;
 import com.client.graphics.interfaces.impl.notification.NotificationInterface;
@@ -3941,7 +3942,13 @@ public class RSInterface implements RSWidget {
 		if (sprite != null)
 			return sprite;
 		try {
+			if(s.startsWith("/"))
+				s = s.substring(1);
 			sprite = new Sprite(s + " " + i);
+			while(sprite.myPixels == null && SpriteCache.widgetSpriteExists(s + " " + i)) {
+				System.out.println("Sprite ["+  s + " " + i + "] loading");
+				sprite = new Sprite(s + " " + i);
+			}
 			sprite.spriteName = i + "-" + s;
 			aMRUNodes_238.put(sprite, l);
 		} catch (Exception exception) {

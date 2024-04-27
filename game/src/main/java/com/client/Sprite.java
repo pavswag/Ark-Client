@@ -251,8 +251,10 @@ public class Sprite extends Rasterizer2D implements RSSpritePixels {
 	}
 	public Sprite(String img) {
 		Sprite sprite = getSprite(img);
-		if(sprite == null)
+		if(sprite == null) {
+			myPixels = null;
 			return;
+		}
 		maxWidth = sprite.maxWidth;
 		myWidth = sprite.myWidth;
 		maxHeight = sprite.maxHeight;

@@ -17,13 +17,13 @@ public enum Js5ArchiveIndex {
     FONTS(13),
     MUSIC_SAMPLES(14),
     MUSIC_PATCHES(15),
-    WORLDMAP_OLD(16),
+    OSRS_SPRITES(16),
     ARCHIVE_17(17),
     WORLDMAP_GEOGRAPHY(18),
     WORLDMAP(19),
     WORLDMAP_GROUND(20),
     DBTABLEINDEX(21),
-    DATS(22);
+    WIDGET_SPRITES(22);
 
     private final int id;
 

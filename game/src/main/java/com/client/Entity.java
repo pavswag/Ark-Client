@@ -2,6 +2,7 @@ package com.client;
 
 import com.client.audio.StaticSound;
 import com.client.cache.IterableNodeHashTable;
+import com.client.definitions.HealthBarDefinition;
 import com.client.definitions.SequenceDefinition;
 
 public class Entity extends Renderable {
@@ -162,6 +163,7 @@ public class Entity extends Renderable {
 		turn180AnimIndex = -1;
 		turn90CWAnimIndex = -1;
 		turn90CCWAnimIndex = -1;
+		this.healthBars = new IterableNodeDeque();
 	}
 
 	public final int[] pathX;
@@ -236,4 +238,79 @@ public class Entity extends Renderable {
 	public void setTurnDirection(int turnDirection) {
 		this.turnDirection = turnDirection;
 	}
+
+
+	final void addHealthBar(int var1, int var2, int var3, int var4, int var5, int var6) {
+		HealthBarDefinition var8 = (HealthBarDefinition)HealthBarDefinition.cache.get((long)var1);
+		HealthBarDefinition var7;
+		if (var8 != null) {
+			var7 = var8;
+		} else {
+			var8 = HealthBarDefinition.lookup(var1);
+			var7 = var8;
+		}
+
+		var8 = var7;
+		HealthBar var14 = null;
+		HealthBar var10 = null;
+		int var11 = var7.int2;
+		int var12 = 0;
+
+		HealthBar var13;
+		for (var13 = (HealthBar)this.healthBars.last(); var13 != null; var13 = (HealthBar)this.healthBars.previous()) {
+			++var12;
+			if (var13.definition.field2061 == var8.field2061) {
+				var13.put(var2 + var4, var5, var6, var3);
+				return;
+			}
+
+			if (var13.definition.int1 <= var8.int1) {
+				var14 = var13;
+			}
+
+			if (var13.definition.int2 > var11) {
+				var10 = var13;
+				var11 = var13.definition.int2;
+			}
+		}
+
+		if (var10 != null || var12 < 4) {
+			var13 = new HealthBar(var8);
+			if (var14 == null) {
+				this.healthBars.addLast(var13);
+			} else {
+				IterableNodeDeque.IterableNodeDeque_addBefore(var13, var14);
+			}
+
+			var13.put(var2 + var4, var5, var6, var3);
+			if (var12 >= 4) {
+				var10.remove();
+			}
+
+		}
+	}
+
+	final void removeHealthBar(int var1) {
+		HealthBarDefinition var3 = (HealthBarDefinition)HealthBarDefinition.cache.get((long)var1);
+		HealthBarDefinition var2;
+		if (var3 != null) {
+			var2 = var3;
+		} else {
+			var3 = HealthBarDefinition.lookup(var1);
+			var3.field2061 = var1;
+			var2 = var3;
+		}
+
+		var3 = var2;
+
+		for (HealthBar var5 = (HealthBar)this.healthBars.last(); var5 != null; var5 = (HealthBar)this.healthBars.previous()) {
+			if (var3 == var5.definition) {
+				var5.remove();
+				return;
+			}
+		}
+
+	}
+
+	IterableNodeDeque healthBars;
 }

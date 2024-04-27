@@ -6,13 +6,13 @@ import net.runelite.rs.api.RSIterableDualNodeQueue;
 
 import java.util.Iterator;
 
-public class Queue implements Iterable, RSIterableDualNodeQueue {
+public class IterableDualNodeQueue implements Iterable, RSIterableDualNodeQueue {
 
     public DualNode sentinel = new DualNode();
 
     DualNode head;
 
-    public Queue() {
+    public IterableDualNodeQueue() {
         this.sentinel.previousDual = this.sentinel;
         this.sentinel.nextDual = this.sentinel;
     }

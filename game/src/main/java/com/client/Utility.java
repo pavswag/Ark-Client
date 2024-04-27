@@ -74,4 +74,15 @@ public class Utility {
         }
         return "Player";
     }
+
+    public static void IterableNodeDeque_addBefore(Node var0, Node var1) {
+        if (var0.next != null) {
+            var0.remove();
+        }
+
+        var0.next = var1;
+        var0.previous = var1.previous;
+        var0.next.previous = var0;
+        var0.previous.next = var0;
+    }
 }

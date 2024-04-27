@@ -149,7 +149,7 @@ public class Client extends GameEngine implements RSClient {
 		Sprite.start();
 		Signlink.storeid = 32;
         try {
-            Signlink.init(22);
+            Signlink.init(23);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -2010,7 +2010,7 @@ public class Client extends GameEngine implements RSClient {
 		Js5List.musicJingles.clearFiles();
 		Js5List.sprites.clearFiles();
 		Js5List.binary.clearFiles();
-		Js5List.dbtableindex.clearFiles();
+		//Js5List.dbtableindex.clearFiles();
 		Js5List.animations.clearFiles();
 		Js5List.skeletons.clearFiles();
 		Js5List.clientScript.clearFiles();
@@ -5563,8 +5563,7 @@ public class Client extends GameEngine implements RSClient {
 			super.drawInitial(percentage, s + " " + (percentage) + "%",false);
 			return;
 		}
-		if(loginBackground != null)
-			loginBackground.drawAdvancedSprite(0, 0);
+			new Sprite("loginscreen/background").drawAdvancedSprite(0, 0);
 		int x = 765 / 2 - 543 / 2;
 		int y = 475 - 20 + 8;
 		int width = 540;
@@ -5577,7 +5576,7 @@ public class Client extends GameEngine implements RSClient {
 		if (percentage >= 198) {
 			newBoldFont.drawCenteredString("Finished loading " + Configuration.CLIENT_TITLE, (765 / 2), y + height / 2, 0xffffff, 1);
 		} else {
-			newBoldFont.drawCenteredString("Loading " + Configuration.CLIENT_TITLE + " - Please wait - " + (percentage / 2) + "%", (765 / 2),
+			newBoldFont.drawCenteredString(s + " - Please wait - " + (percentage) + "%", (765 / 2),
 					y + height / 2, 0xffffff, 1);
 		}
 		rasterProvider.drawFull(0,0);
@@ -12039,13 +12038,16 @@ public class Client extends GameEngine implements RSClient {
 			Js5List.binary = Js5System.createJs5(Js5ArchiveIndex.BINARY, false, true, true, false);
 			Js5List.musicJingles = Js5System.createJs5(Js5ArchiveIndex.MUSIC_JINGLES, false, true, true, false);
 			Js5List.clientScript = Js5System.createJs5(Js5ArchiveIndex.CLIENTSCRIPT, false, true, true, false);
-			Js5List.fonts = Js5System.createJs5(Js5ArchiveIndex.FONTS, true, false, true, false);
 			Js5List.musicSamples = Js5System.createJs5(Js5ArchiveIndex.MUSIC_SAMPLES, false, true, true, false);
 			Js5List.musicPatches = Js5System.createJs5(Js5ArchiveIndex.MUSIC_PATCHES, false, true, true, false);
-			Js5List.dbtableindex = Js5System.createJs5(Js5ArchiveIndex.DBTABLEINDEX, false, true, true, true);
-			drawLoadingText(20, "Connecting to update server");
+			Js5List.osrsSprites = Js5System.createJs5(Js5ArchiveIndex.OSRS_SPRITES, false, true, true, false);
+			Js5List.archive17 = Js5System.createJs5(Js5ArchiveIndex.ARCHIVE_17, true, true, true, false);
+			//Js5List.dbtableindex = Js5System.createJs5(Js5ArchiveIndex.DBTABLEINDEX, false, true, true, true);
+			titleLoadingStage = 39;
+		} else if (Client.titleLoadingStage == 39) {
+			Js5List.widgetSprites = Js5System.createJs5(Js5ArchiveIndex.WIDGET_SPRITES, false, true, true, true);
+			drawLoadingText(39, "Connecting to update server");
 			titleLoadingStage = 40;
-
 		} else if (Client.titleLoadingStage == 40) {
 			int loadingProgress = Js5List.animations.percentage() * 4 / 100;
 			loadingProgress += Js5List.sprites.percentage() * 4 / 100;
@@ -12060,11 +12062,13 @@ public class Client extends GameEngine implements RSClient {
 			loadingProgress += Js5List.binary.percentage() * 2 / 100;
 			loadingProgress += Js5List.musicJingles.percentage() * 2 / 100;
 			loadingProgress += Js5List.clientScript.percentage() * 2 / 100;
-			loadingProgress += Js5List.fonts.percentage() * 2 / 100;
 			loadingProgress += Js5List.musicSamples.percentage() * 2 / 100;
 			loadingProgress += Js5List.musicPatches.percentage() * 2 / 100;
-			loadingProgress += Js5List.dbtableindex.percentage() / 100;
-			if (loadingProgress != 96) {
+			loadingProgress += Js5List.widgetSprites.percentage() * 2 / 100;
+			loadingProgress += Js5List.osrsSprites.percentage() * 2 / 100;
+			loadingProgress += Js5List.archive17.isLoading() && Js5List.archive17.isFullyLoaded() ? 1 : 0;
+			loadingProgress += 2;
+			if (loadingProgress != 100) {
 				if (loadingProgress != 0) {
 					drawLoadingText(30, "Checking for updates - " + loadingProgress + "%");
 				}
@@ -12080,7 +12084,10 @@ public class Client extends GameEngine implements RSClient {
 				Js5System.init(Js5List.musicJingles, "Music Jingles");
 				Js5System.init(Js5List.musicSamples, "Music Samples");
 				Js5System.init(Js5List.musicPatches, "Music Patches");
+				Js5System.init(Js5List.osrsSprites, "Dumped OSRS Sprites");
+				Js5System.init(Js5List.widgetSprites, "Widget Sprites");
 				spriteIds = new GraphicsDefaults();
+				spriteIds.decode(Js5List.archive17);
 				drawLoadingText(30, "Loaded update list");
 				titleLoadingStage = 45;
 			}
@@ -12143,13 +12150,12 @@ public class Client extends GameEngine implements RSClient {
 				Client.titleLoadingStage = 70;
 			} else if (Client.titleLoadingStage == 70) {
 				if (!Js5List.configs.isFullyLoaded()) {
-					drawLoadingText(60, "Loading config - " + Js5List.configs.loadPercent() + "%");
+					drawLoadingText(Js5List.configs.loadPercent(), "Loading config");
 				} else if (!Js5List.configs.isFullyLoaded()) {
-					drawLoadingText(60, "Loading config - " + (80 + Js5List.clientScript.loadPercent() / 6) + "%");
+					drawLoadingText((80 + Js5List.clientScript.loadPercent() / 6), "Loading scripts");
 				} else {
 					Js5List.initConfigSizes();
 					//ItemDefinition.members = isMembers;
-					//NpcDefinition.init(currrentRev <= 209, spriteIds.headIconArchive);
 
 					if (Js5List.configs.isFullyLoaded()) {
 						AreaDefinition.definitions = new AreaDefinition[Js5List.getConfigSize(Js5ConfigType.AREA)];
@@ -12184,35 +12190,19 @@ public class Client extends GameEngine implements RSClient {
 				}
 			} else if (Client.titleLoadingStage == 80) {
 				loadingProgress = 0;
-
-
-				++loadingProgress;
-				++loadingProgress;
-				++loadingProgress;
-				++loadingProgress;
-				++loadingProgress;
-				++loadingProgress;
-
-				FileArchive streamLoader_2 = streamLoaderForName(4, "2d graphics");
-				++loadingProgress;
-
-				++loadingProgress;
-				++loadingProgress;
-				++loadingProgress;
-				++loadingProgress;
-
-				++loadingProgress;
-
-				++loadingProgress;
-
-
-				++loadingProgress;
-
-				++loadingProgress;
-
-				if (loadingProgress < 14) {
-					drawLoadingText(70, "Loading sprites - " + loadingProgress * 100 / 13 + "%");
+				if(!Js5List.widgetSprites.isFullyLoaded()) {
+					loadingProgress += Js5List.widgetSprites.loadPercent();
 				} else {
+					loadingProgress += 100;
+				}
+				if(!Js5List.osrsSprites.isFullyLoaded()) {
+				}
+
+
+				if (loadingProgress < 100) {
+					drawLoadingText(loadingProgress, "Loading sprites");
+				} else {
+					FileArchive streamLoader_2 = streamLoaderForName(4, "2d graphics");
 					File[] file = new File(Signlink.getCacheDirectory() + "/sprites/sprites/").listFiles();
 					int size = file.length;
 					cacheSprite = new Sprite[size];
@@ -12264,9 +12254,7 @@ public class Client extends GameEngine implements RSClient {
 					loginAsset15 = new Sprite("loginscreen2/188");//Music Control
 					loginAsset16 = new Sprite("loginscreen2/189");//Music Control
 					loginScreenBackground = new Sprite("loginscreen2/57");
-					System.out.println(loginScreenBackground.myWidth + " -------");
 					loginScreenBackgroundCaptcha = new Sprite("loginscreen/captcha_background");
-					loginBackground = new Sprite("loginscreen/background");
 					donatorOrb = new Sprite("orbs/promo_orb");
 					donatorOrbHover = new Sprite("orbs/promo_orb_hover");
 
@@ -12303,8 +12291,6 @@ public class Client extends GameEngine implements RSClient {
 					}
 
 					RSFont.unpackImages(modIcons, clanIcons, iconPack);
-					mapEdge = new Sprite(streamLoader_2, "mapedge", 0);
-					mapEdge.method345();
 
 					try {
 						for (int k3 = 0; k3 < 188; k3++)
@@ -12375,6 +12361,7 @@ public class Client extends GameEngine implements RSClient {
 					} else {
 						mapBack = new Sprite("Gameframe317/fixed/mapBack");
 					}
+					System.out.println(mapBack.myWidth + "/" + mapBack.myHeight);
 					for (int pixelY = 0; pixelY < 33; pixelY++) {
 						int k6 = 999;
 						int i7 = 0;
@@ -12449,7 +12436,7 @@ public class Client extends GameEngine implements RSClient {
 				}
 			} else if (Client.titleLoadingStage == 90) {
 				if (!Js5List.textures.isFullyLoaded()) {
-					drawLoadingText(90, "Loading textures - 0%");
+					drawLoadingText(90, "Loading textures");
 				} else {
 					TextureProvider textureProvider = new TextureProvider(Js5List.textures, Js5List.sprites, 20, 0.80000000000000004D, Rasterizer3D.lowMem ? 64 : 128);
 					Rasterizer3D.setTextureLoader(textureProvider);
@@ -12519,6 +12506,10 @@ public class Client extends GameEngine implements RSClient {
 					DefinitionDumper.dumpDefs();
 
 					clientLoaded = true;
+
+					System.out.println(NpcDefinition.lookup(13_011));
+					System.out.println(NpcDefinition.lookup(13_016));
+					System.out.println(NpcDefinition.lookup(13485));
 
 					long clientLoadEnd = System.currentTimeMillis();
 					long clientLoadDifference = clientLoadEnd - clientLoadStart;

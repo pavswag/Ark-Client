@@ -305,12 +305,12 @@ public class JagexNetThread implements RSNetCache {
     public void updateArchiveIndex(Js5Archive var1, int var2) {
         if (var1.prioritizeRequests) {
             if (var2 <= this.field3589)
-                throw new RuntimeException("");
+                throw new RuntimeException("var2=" + var2 + "/field3589=" + field3589);
             if (var2 < this.field3592)
                 this.field3592 = var2;
         } else {
             if (var2 >= this.field3592)
-                throw new RuntimeException("");
+                throw new RuntimeException("var2=" + var2 + "/field3592=" + field3592);
             if (var2 > this.field3589)
                 this.field3589 = var2;
         }
