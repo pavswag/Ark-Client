@@ -96,9 +96,9 @@ public final class Player extends Entity implements RSPlayer {
 			}
 		}*/
 		if (aModel_1714 != null) {
-			if (Client.loopCycle >= anInt1708)
+			if (Client.cycle >= anInt1708)
 				aModel_1714 = null;
-			if (Client.loopCycle >= anInt1707 && Client.loopCycle < anInt1708) {
+			if (Client.cycle >= anInt1707 && Client.cycle < anInt1708) {
 				Model model_1 = aModel_1714;
 				model_1.offsetBy(anInt1711 - super.x, anInt1712 - anInt1709,
 						anInt1713 - super.y);

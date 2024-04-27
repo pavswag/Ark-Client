@@ -64,7 +64,7 @@ final class SceneObject extends Renderable {
 					frameId = seq.getSkeletalId();
 				}
 			} else {
-				int step = Client.loopCycle - cycleDelay;
+				int step = Client.cycle - cycleDelay;
 				if (step > 100 && seq.getFrameStep() > 0) {
 					step = 100;
 				}
@@ -81,7 +81,7 @@ final class SceneObject extends Renderable {
 					seq = null;
 					break;
 				}
-				cycleDelay = Client.loopCycle - step;
+				cycleDelay = Client.cycle - step;
 				if (seq != null) {
 					frameId = seq.isSkeletalAnimation() ? seq.getSkeletalId() : seq.getFrameIDs()[animationFrame];
 				}
@@ -112,7 +112,7 @@ final class SceneObject extends Renderable {
 			try {
 				seq = SequenceDefinition.get(l1);
 				animationFrame = 0;
-				cycleDelay = Client.loopCycle;
+				cycleDelay = Client.cycle;
 				if (randomFrame && seq.frameStep != -1) {
 					animationFrame = (int) (Math.random() * seq.frameCount);
 					cycleDelay -= (int) (Math.random() * seq

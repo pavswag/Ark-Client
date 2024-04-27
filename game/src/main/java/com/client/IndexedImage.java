@@ -1,5 +1,6 @@
 package com.client;
 
+import com.client.js5.disk.AbstractArchive;
 import net.runelite.rs.api.RSIndexedSprite;
 
 public final class IndexedImage extends Rasterizer2D implements RSIndexedSprite {
@@ -12,6 +13,41 @@ public final class IndexedImage extends Rasterizer2D implements RSIndexedSprite 
 	public int yOffset;
 	public int width;
 	public int height;
+
+	public static IndexedImage SpriteBuffer_getSprite(AbstractArchive var0, int var1, int var2) {
+		byte[] var4 = var0.takeFile(var1, var2);
+		boolean var3;
+		if (var4 == null) {
+			var3 = false;
+		} else {
+			SpriteData.decode(var4);
+			var3 = true;
+		}
+		IndexedImage var7;
+		if (!var3) {
+			var7 = null;
+		} else {
+			IndexedImage var11 = new IndexedImage();
+			var11.width = SpriteData.spriteWidth;
+			var11.height = SpriteData.spriteHeight;
+			var11.xOffset = SpriteData.xOffsets[0];
+			var11.yOffset = SpriteData.yOffsets[0];
+			var11.subWidth = SpriteData.spriteWidths[0];
+			var11.subHeight = SpriteData.spriteHeights[0];
+			var11.palette = SpriteData.spritePalette;
+			var11.palettePixels = SpriteData.pixels[0];
+			SpriteData.xOffsets = null;
+			SpriteData.yOffsets = null;
+			SpriteData.spriteWidths = null;
+			SpriteData.spriteHeights = null;
+			SpriteData.spritePalette = null;
+			SpriteData.pixels = null;
+			var7 = var11;
+		}
+
+		var7.normalize();
+		return var7;
+	}
 
 	public void setTransparency(int transRed, int transGreen, int transBlue) {
 		for (int index = 0; index < palette.length; index++)

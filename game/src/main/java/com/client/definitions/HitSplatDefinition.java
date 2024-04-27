@@ -1,8 +1,6 @@
 package com.client.definitions;
 
-import com.client.Buffer;
-import com.client.Client;
-import com.client.EvictingDualNodeHashTable;
+import com.client.*;
 import com.client.cache.DualNode;
 import com.client.js5.Js5List;
 import com.client.js5.util.Js5ConfigType;
@@ -179,4 +177,76 @@ public class HitSplatDefinition extends DualNode {
     )
     @Export("transformVarp")
     int transformVarp;
+
+
+    public Sprite method4048() {
+        if (this.field2228 < 0) {
+            return null;
+        } else {
+            Sprite var1 = (Sprite)sprites.get((long)this.field2228);
+            if (var1 != null) {
+                return var1;
+            } else {
+                var1 = Sprite.SpriteBuffer_getSprite(Js5List.sprites, this.field2228, 0);
+                if (var1 != null) {
+                    sprites.put(var1, (long)this.field2228);
+                }
+
+                return var1;
+            }
+        }
+    }
+    public Sprite method4049() {
+        if (this.field2239 < 0) {
+            return null;
+        } else {
+            Sprite var1 = (Sprite)sprites.get((long)this.field2239);
+            if (var1 != null) {
+                return var1;
+            } else {
+                var1 = Sprite.SpriteBuffer_getSprite(Js5List.sprites, this.field2239, 0);
+                if (var1 != null) {
+                    sprites.put(var1, (long)this.field2239);
+                }
+
+                return var1;
+            }
+        }
+    }
+
+    public Sprite method4050() {
+        if (this.field2236 < 0) {
+            return null;
+        } else {
+            Sprite var1 = (Sprite)sprites.get((long)this.field2236);
+            if (var1 != null) {
+                return var1;
+            } else {
+                var1 = Sprite.SpriteBuffer_getSprite(Js5List.sprites, this.field2236, 0);
+                if (var1 != null) {
+                    sprites.put(var1, (long)this.field2236);
+                }
+
+                return var1;
+            }
+        }
+    }
+
+    public Sprite method4062() {
+        if (this.field2231 < 0) {
+            return null;
+        } else {
+            Sprite var1 = (Sprite)sprites.get((long)this.field2231);
+            if (var1 != null) {
+                return var1;
+            } else {
+                var1 = Sprite.SpriteBuffer_getSprite(Js5List.sprites, this.field2231, 0);
+                if (var1 != null) {
+                    sprites.put(var1, (long)this.field2231);
+                }
+
+                return var1;
+            }
+        }
+    }
 }

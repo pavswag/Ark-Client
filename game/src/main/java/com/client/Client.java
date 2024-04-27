@@ -3250,7 +3250,7 @@ public class Client extends GameEngine implements RSClient {
 		updateNpcState(stream);
 		for (int k = 0; k < anInt839; k++) {
 			int l = anIntArray840[k];
-			if (npcs[l].anInt1537 != loopCycle) {
+			if (npcs[l].anInt1537 != cycle) {
 				callbacks.post(new NpcDespawned(npcs[l]));
 				callbacks.post(new NpcChanged(npcs[l], npcs[l].getComposition()));
 				npcs[l].desc = null;
@@ -3500,7 +3500,7 @@ public class Client extends GameEngine implements RSClient {
 						if (spriteDrawX > -1)
 							headIcons[entityDef_1.headIcon].drawSprite(spriteDrawX - 12, spriteDrawY - 30);
 					}
-					if (hintType == 1 && anInt1222 == npcIndices[j - playerCount] && loopCycle % 20 < 10) {
+					if (hintType == 1 && anInt1222 == npcIndices[j - playerCount] && cycle % 20 < 10) {
 						npcScreenPos(((Entity) (obj)), ((Entity) (obj)).height + 15);
 						if (spriteDrawX > -1)
 							headIconsHint[0].drawSprite(spriteDrawX - 12, spriteDrawY - 28);
@@ -3528,7 +3528,7 @@ public class Client extends GameEngine implements RSClient {
 							anIntArray978[anInt974] += 5;
 					}
 				}
-				if (((Entity) (obj)).loopCycleStatus > loopCycle) {
+				if (((Entity) (obj)).loopCycleStatus > cycle) {
 					try {
 						npcScreenPos(((Entity) (obj)), ((Entity) (obj)).height + 15);
 						if (spriteDrawX > -1) {
@@ -3542,40 +3542,35 @@ public class Client extends GameEngine implements RSClient {
 					} catch (Exception e) {
 					}
 				}
-				for (int j1 = 0; j1 < 4; j1++)
-					if (((Entity) (obj)).hitSplatCycles[j1] > loopCycle) {
+				for (int var76 = 0; var76 < 4; var76++)
+					if (((Entity) (obj)).hitSplatCycles[var76] > cycle) {
 						npcScreenPos(((Entity) (obj)), ((Entity) (obj)).height / 2);
-
 						if (spriteDrawX > -1) {
-							if (j1 == 1)
+							if (var76 == 1)
 								spriteDrawY -= 20;
-							if (j1 == 2) {
+							if (var76 == 2) {
 								spriteDrawX -= 15;
 								spriteDrawY -= 10;
 							}
-							if (j1 == 3) {
+							if (var76 == 3) {
 								spriteDrawX += 15;
 								spriteDrawY -= 10;
 							}
-							if (((Entity) (obj)).hitSplatTypes[j1] == 16) { // Heal hitsplat
-								spriteDrawX += 1;
-								spriteDrawY -= 1;
-							}
 
-							if (entityTarget != null && ((entityTarget.target == obj && localPlayer.playerId == ((Entity) (obj)).hitSource[j1]) || obj == localPlayer)) {
-								hitMarks[((Entity) (obj)).hitSplatTypes[j1]].drawSprite(spriteDrawX - 12, spriteDrawY - 12);
+							if (entityTarget != null && ((entityTarget.target == obj && localPlayer.playerId == ((Entity) (obj)).hitSource[var76]) || obj == localPlayer)) {
+								hitMarks[((Entity) (obj)).hitSplatTypes[var76]].drawSprite(spriteDrawX - 12, spriteDrawY - 12);
 							} else {
-								int hitType = ((Entity) (obj)).hitSplatTypes[j1];
+								int hitType = ((Entity) (obj)).hitSplatTypes[var76];
 								if (hitType == 16) {
 									hitType = 8;
 								}
 								hitMarks[hitType+8].drawSprite(spriteDrawX - 12, spriteDrawY - 12);
 							}
 
-							smallText.drawText(0, String.valueOf(((Entity) (obj)).hitSplatValues[j1]), spriteDrawY + 4,
+							smallText.drawText(0, String.valueOf(((Entity) (obj)).hitSplatValues[var76]), spriteDrawY + 4,
 									spriteDrawX);
 
-							smallText.drawText(0xffffff, String.valueOf(((Entity) (obj)).hitSplatValues[j1]), spriteDrawY + 3,
+							smallText.drawText(0xffffff, String.valueOf(((Entity) (obj)).hitSplatValues[var76]), spriteDrawY + 3,
 									spriteDrawX - 1);
 
 						}
@@ -4149,11 +4144,11 @@ public class Client extends GameEngine implements RSClient {
 			if(grandExchangeSprite4 == null)
 				grandExchangeSprite4 = new Sprite("Grand Exchange/4");
 			if (!isResized()) {
-				grandExchangeSprite4.drawSprite1(29 + xOffset, 37 + yOffset, 162 + (int) (50 * Math.sin(loopCycle / 15.0)));
+				grandExchangeSprite4.drawSprite1(29 + xOffset, 37 + yOffset, 162 + (int) (50 * Math.sin(cycle / 15.0)));
 			} else {
 				grandExchangeSprite4.drawSprite1((canvasWidth - 197) + xOffset,
 						(stackTabs() ? canvasHeight - 341 : canvasHeight - 305) + yOffset,
-						162 + (int) (50 * Math.sin(loopCycle / 15.0)));
+						162 + (int) (50 * Math.sin(cycle / 15.0)));
 			}
 		}
 	}
@@ -4420,7 +4415,7 @@ public class Client extends GameEngine implements RSClient {
 			}
 			Npc npc = npcs[k];
 			npcIndices[npcCount++] = k;
-			npc.anInt1537 = loopCycle;
+			npc.anInt1537 = cycle;
 			int l = stream.readBits(5);
 			if (l > 15)
 				l -= 32;
@@ -4452,7 +4447,7 @@ public class Client extends GameEngine implements RSClient {
 
 	@Override
 	public void processGameLoop() {
-		loopCycle++;
+		cycle++;
 		if(loggedIn) {
 			callbacks.tick();
 		}
@@ -4513,7 +4508,7 @@ public class Client extends GameEngine implements RSClient {
 			int k1 = player.y >> 7;
 			if (j1 < 0 || j1 >= 104 || k1 < 0 || k1 >= 104)
 				continue;
-			if (player.aModel_1714 != null && loopCycle >= player.anInt1707 && loopCycle < player.anInt1708) {
+			if (player.aModel_1714 != null && cycle >= player.anInt1707 && cycle < player.anInt1708) {
 				player.aBoolean1699 = false;
 				player.anInt1709 = getCenterHeight(plane, player.y, player.x);
 				scene.addToScenePlayerAsObject(plane, player.y, player, player.orientation, player.anInt1722, player.x,
@@ -5042,13 +5037,13 @@ public class Client extends GameEngine implements RSClient {
 		for (Projectile projectile = (Projectile) projectiles
 				.reverseGetFirst(); projectile != null; projectile = (Projectile) projectiles
 				.reverseGetNext())
-			if (projectile.projectileZ != plane || loopCycle > projectile.stopCycle)
+			if (projectile.projectileZ != plane || cycle > projectile.stopCycle)
 				projectile.remove();
-			else if (loopCycle >= projectile.startCycle) {
+			else if (cycle >= projectile.startCycle) {
 				if (projectile.target > 0) {
 					Npc npc = npcs[projectile.target - 1];
 					if (npc != null && npc.x >= 0 && npc.x < 13312 && npc.y >= 0 && npc.y < 13312)
-						projectile.calculateIncrements(loopCycle, npc.y,
+						projectile.calculateIncrements(cycle, npc.y,
 								getCenterHeight(projectile.projectileZ, npc.y, npc.x)
 										- projectile.endHeight,
 								npc.x);
@@ -5061,7 +5056,7 @@ public class Client extends GameEngine implements RSClient {
 					else
 						player = players[j];
 					if (player != null && player.x >= 0 && player.x < 13312 && player.y >= 0 && player.y < 13312)
-						projectile.calculateIncrements(loopCycle, player.y,
+						projectile.calculateIncrements(cycle, player.y,
 								getCenterHeight(projectile.projectileZ, player.y, player.x)
 										- projectile.endHeight,
 								player.x);
@@ -5131,8 +5126,8 @@ public class Client extends GameEngine implements RSClient {
 
 		System.arraycopy(anIntArray969, 1, anIntArray969, 0, c - 1);
 
-		anIntArray969[c - 1] = (int) (Math.sin(loopCycle / 14D) * 16D + Math.sin(loopCycle / 15D) * 14D
-				+ Math.sin(loopCycle / 16D) * 12D);
+		anIntArray969[c - 1] = (int) (Math.sin(cycle / 14D) * 16D + Math.sin(cycle / 15D) * 14D
+				+ Math.sin(cycle / 16D) * 12D);
 		if (anInt1040 > 0)
 			anInt1040 -= 4;
 		if (anInt1041 > 0)
@@ -5165,7 +5160,7 @@ public class Client extends GameEngine implements RSClient {
 		if (hintType != 2)
 			return;
 		calcEntityScreenPos((hintIconXpos - baseX << 7) + anInt937, hintIconFloorPos * 2, (hintIconYpos - baseY << 7) + anInt938);
-		if (spriteDrawX > -1 && loopCycle % 20 < 10)
+		if (spriteDrawX > -1 && cycle % 20 < 10)
 			headIconsHint[0].drawSprite(spriteDrawX - 12, spriteDrawY - 28);
 	}
 
@@ -8030,7 +8025,7 @@ public class Client extends GameEngine implements RSClient {
 	public void printDebug() {
 		System.out.println("============");
 		System.out.println("flame-cycle:" + anInt1208);
-		System.out.println("loop-cycle:" + loopCycle);
+		System.out.println("loop-cycle:" + cycle);
 		System.out.println("draw-cycle:" + anInt1061);
 		System.out.println("ptype:" + incomingPacket);
 		System.out.println("psize:" + packetSize);
@@ -9578,7 +9573,7 @@ public class Client extends GameEngine implements RSClient {
 				NpcDefinition npcDisplay = NpcDefinition.lookup(petNpcId);
 
 				rsInterface.modelRotation1 = 150;
-				rsInterface.modelRotation2 = petNpcId == 1013 ? 150 : (int) (loopCycle / 40D * 256D) & 0x7ff;
+				rsInterface.modelRotation2 = petNpcId == 1013 ? 150 : (int) (cycle / 40D * 256D) & 0x7ff;
 				int k;
 				SequenceDefinition animation = SequenceDefinition.get(npcDisplay.standAnim);
 				k = animation.frameIDs[rsInterface.animationFrame];
@@ -9640,7 +9635,7 @@ public class Client extends GameEngine implements RSClient {
 		}
 		if (j == 327) {
 			class9.modelRotation1 = 150;
-			class9.modelRotation2 = (int) (Math.sin(loopCycle / 40D) * 256D) & 0x7ff;
+			class9.modelRotation2 = (int) (Math.sin(cycle / 40D) * 256D) & 0x7ff;
 			if (aBoolean1031) {
 				for (int k1 = 0; k1 < 7; k1++) {
 					int l1 = myAppearance[k1];
@@ -9679,7 +9674,7 @@ public class Client extends GameEngine implements RSClient {
 		if (j == 328) {
 			RSInterface rsInterface = class9;
 			int verticleTilt = 150;
-			int animationSpeed = (int) (Math.sin(loopCycle / 40D) * 256D) & 0x7ff;
+			int animationSpeed = (int) (Math.sin(cycle / 40D) * 256D) & 0x7ff;
 			rsInterface.modelRotation1 = verticleTilt;
 			rsInterface.modelRotation2 = animationSpeed;
 			if (aBoolean1031) {
@@ -9729,7 +9724,7 @@ public class Client extends GameEngine implements RSClient {
 		}
 		if (j == 600) {
 			class9.message = reportAbuseInput;
-			if (loopCycle % 20 < 10) {
+			if (cycle % 20 < 10) {
 				class9.message += "|";
 				return;
 			} else {
@@ -11487,8 +11482,8 @@ public class Client extends GameEngine implements RSClient {
 				npc.anInt1545 = stream.readUnsignedByte();
 				npc.anInt1544 = stream.readUnsignedByte();
 				npc.anInt1546 = stream.readUnsignedByte();
-				npc.initiate_movement = stream.readUShort() + loopCycle;
-				npc.cease_movement = stream.readUShort() + loopCycle;
+				npc.initiate_movement = stream.readUShort() + cycle;
+				npc.cease_movement = stream.readUShort() + cycle;
 				npc.forceMovementDirection = stream.readUnsignedByte();
 				npc.method446();
 			}
@@ -11522,10 +11517,13 @@ public class Client extends GameEngine implements RSClient {
 			}
 			if ((l & 8) != 0) {
 				int damage = stream.readInt();
-				int j2 = stream.readByte();
+				int type = stream.readByte();
 				int source = stream.readInt();
-				npc.updateHitData(j2, damage, loopCycle, source);
-				Hitsplat hitSplat = new Hitsplat(Hitsplat.HitsplatType.fromInteger(j2), damage, loopCycle + 70);
+				int type2 = -1;
+				int damage2 = -1;
+				npc.addHitSplat(type, damage, type2, damage2, cycle, cycle + 70);
+				//npc.updateHitData(type, damage, loopCycle, source);
+				Hitsplat hitSplat = new Hitsplat(Hitsplat.HitsplatType.fromInteger(type), damage, cycle + 70);
 				Actor actor = null;
 				HitsplatApplied hitsplatApplied = new HitsplatApplied();
 				if(source > 32768) {
@@ -11540,7 +11538,7 @@ public class Client extends GameEngine implements RSClient {
 				hitsplatApplied.setHitsplat(hitSplat);
 				hitsplatApplied.setActor(npc);
 				Client.instance.getCallbacks().post(hitsplatApplied);
-				npc.loopCycleStatus = loopCycle + 300;
+				npc.loopCycleStatus = cycle + 300;
 				npc.currentHealth = stream.readInt();
 				npc.maxHealth = stream.readInt();
 				if (npc.currentHealth <= 0) {
@@ -11556,10 +11554,10 @@ public class Client extends GameEngine implements RSClient {
 					npc.graphicId = stream.readUShort();
 					int k1 = stream.readDWord();
 					npc.graphicHeight = k1 >> 16;
-					npc.graphic_cycle = loopCycle + (k1 & 0xffff);
+					npc.graphic_cycle = cycle + (k1 & 0xffff);
 					npc.graphicFrame = 0;
 					npc.currentAnimationTimeRemaining = 0;
-					if (npc.graphic_cycle > loopCycle)
+					if (npc.graphic_cycle > cycle)
 						npc.graphicFrame = -1;
 					if (npc.graphicId == 65535)
 						npc.graphicId = -1;
@@ -11620,10 +11618,13 @@ public class Client extends GameEngine implements RSClient {
 			}
 			if ((l & 0x40) != 0) {
 				int damage = stream.readInt();
-				int k2 = stream.readByte();
+				int type = stream.readByte();
 				int source = stream.readInt();
-				npc.updateHitData(k2, damage, loopCycle, source);
-				Hitsplat hitSplat = new Hitsplat(Hitsplat.HitsplatType.fromInteger(k2), damage, loopCycle + 70);
+				int type2 = -1;
+				int damage2 = -1;
+				npc.addHitSplat(type, damage, type2, damage2, cycle, cycle + 70);
+				//npc.updateHitData(type, damage, loopCycle, source);
+				Hitsplat hitSplat = new Hitsplat(Hitsplat.HitsplatType.fromInteger(type), damage, cycle + 70);
 				Actor actor = null;
 				HitsplatApplied hitsplatApplied = new HitsplatApplied();
 				if(source > 32768) {
@@ -11638,7 +11639,7 @@ public class Client extends GameEngine implements RSClient {
 				hitsplatApplied.setHitsplat(hitSplat);
 				hitsplatApplied.setActor(npc);
 				Client.instance.getCallbacks().post(hitsplatApplied);
-				npc.loopCycleStatus = loopCycle + 300;
+				npc.loopCycleStatus = cycle + 300;
 				npc.currentHealth = stream.readInt();
 				npc.maxHealth = stream.readInt();
 				if (npc.currentHealth <= 0) {
@@ -12781,7 +12782,7 @@ public class Client extends GameEngine implements RSClient {
 			}
 			playerIndices[playerCount++] = j;
 			Player player = players[j];
-			player.anInt1537 = loopCycle;
+			player.anInt1537 = cycle;
 			int k = stream.readBits(1);
 			if (k == 1)
 				anIntArray894[anInt893++] = j;
@@ -13139,9 +13140,9 @@ public class Client extends GameEngine implements RSClient {
 			entity.y = entity.pathY[0] * 128 + entity.anInt1540 * 64;
 			entity.method446();
 		}
-		if (entity.initiate_movement > loopCycle)
+		if (entity.initiate_movement > cycle)
 			method97(entity);
-		else if (entity.cease_movement >= loopCycle)
+		else if (entity.cease_movement >= cycle)
 			method98(entity);
 		else
 			method99(entity);
@@ -13150,7 +13151,7 @@ public class Client extends GameEngine implements RSClient {
 	}
 
 	public void method97(Entity entity) {
-		int i = entity.initiate_movement - loopCycle;
+		int i = entity.initiate_movement - cycle;
 		int j = entity.anInt1543 * 128 + entity.anInt1540 * 64;
 		int k = entity.anInt1545 * 128 + entity.anInt1540 * 64;
 		entity.x += (j - entity.x) / i;
@@ -13167,10 +13168,10 @@ public class Client extends GameEngine implements RSClient {
 	}
 
 	public void method98(Entity entity) {
-		if (entity.cease_movement == loopCycle || entity.primarySeqID == -1 || entity.primarySeqDelay != 0
+		if (entity.cease_movement == cycle || entity.primarySeqID == -1 || entity.primarySeqDelay != 0
 				|| entity.primarySeqCycle + 1 > SequenceDefinition.get(entity.primarySeqID).getDuration(entity.primarySeqFrame)) {
 			int i = entity.cease_movement - entity.initiate_movement;
-			int j = loopCycle - entity.initiate_movement;
+			int j = cycle - entity.initiate_movement;
 			int k = entity.anInt1543 * 128 + entity.anInt1540 * 64;
 			int l = entity.anInt1545 * 128 + entity.anInt1540 * 64;
 			int i1 = entity.anInt1544 * 128 + entity.anInt1540 * 64;
@@ -13399,7 +13400,7 @@ public class Client extends GameEngine implements RSClient {
 			Iterator ir = entity.spotAnims.iterator();
 			while(ir.hasNext()) {
 				EntitySpotAnim graphicObject = (EntitySpotAnim) ir.next();
-				if(graphicObject.getId() != -1 && loopCycle >= graphicObject.getCycle()) {
+				if(graphicObject.getId() != -1 && cycle >= graphicObject.getCycle()) {
 					if(graphicObject.getFrame() < 0)
 						graphicObject.setFrame(0);
 					SequenceDefinition gfxSeq = SpotAnimation.lookup(graphicObject.getId()).animationSequence;
@@ -13441,7 +13442,7 @@ public class Client extends GameEngine implements RSClient {
 					entity.primarySeqID = -1;
 				}
 				SequenceDefinition primarySeq = SequenceDefinition.get(entity.primarySeqID);
-				if (primarySeq.getMoveStyle() == 1 && entity.remaining_steps > 0 && entity.initiate_movement <= loopCycle && entity.cease_movement < loopCycle) {
+				if (primarySeq.getMoveStyle() == 1 && entity.remaining_steps > 0 && entity.initiate_movement <= cycle && entity.cease_movement < cycle) {
 					entity.primarySeqDelay = 1;
 					return;
 				}
@@ -13706,7 +13707,7 @@ public class Client extends GameEngine implements RSClient {
 			if (gfxObj.gfxHeightLevel != plane || gfxObj.isFinished) {
 				gfxObj.remove();
 			} else {
-					if (loopCycle >= gfxObj.gfxDisplayCycle) {
+					if (cycle >= gfxObj.gfxDisplayCycle) {
 						gfxObj.update(tickDelta);
 						if (gfxObj.isFinished) {
 							gfxObj.remove();
@@ -14904,7 +14905,7 @@ public class Client extends GameEngine implements RSClient {
 				Rasterizer2D.setDrawingArea(clipBottom, clipLeft, clipRight, clipTop);
 			}
 			if (rsInterface.id == 42000) {
-				cacheSprite2[76].flashSprite(24, 280, 200 + (int) (50 * Math.sin(loopCycle / 15.0)));
+				cacheSprite2[76].flashSprite(24, 280, 200 + (int) (50 * Math.sin(cycle / 15.0)));
 			}
 			if (rsInterface.id == 16244) {
 				if (MouseHandler.mouseX > 165 && MouseHandler.mouseX < 610 && MouseHandler.mouseY > 428 && MouseHandler.mouseY < 470) {
@@ -15084,8 +15085,8 @@ public class Client extends GameEngine implements RSClient {
 			player.anInt1545 = stream.method428();
 			player.anInt1544 = stream.method428();
 			player.anInt1546 = stream.method428();
-			player.initiate_movement = stream.method436() + loopCycle;
-			player.cease_movement = stream.readUShortA() + loopCycle;
+			player.initiate_movement = stream.method436() + cycle;
+			player.cease_movement = stream.readUShortA() + cycle;
 			player.forceMovementDirection = stream.method428();
 			player.method446();
 		}
@@ -15095,10 +15096,10 @@ public class Client extends GameEngine implements RSClient {
 				player.graphicId = stream.method434();
 				int k = stream.readDWord();
 				player.graphicHeight = k >> 16;
-				player.graphic_cycle = loopCycle + (k & 0xffff);
+				player.graphic_cycle = cycle + (k & 0xffff);
 				player.graphicFrame = 0;
 				player.currentAnimationTimeRemaining = 0;
-				if (player.graphic_cycle > loopCycle)
+				if (player.graphic_cycle > cycle)
 					player.graphicFrame = -1;
 				if (player.graphicId == 65535)
 					player.graphicId = -1;
@@ -15216,11 +15217,11 @@ public class Client extends GameEngine implements RSClient {
 			player.anInt1539 = stream.method434();
 		}
 		if ((i & 0x20) != 0) {
-			int k1 = stream.readUnsignedByte();
-			int k2 = stream.method426();
+			int damage = stream.readUnsignedByte();
+			int type = stream.method426();
 			int source = stream.readInt();
-			player.updateHitData(k2, k1, loopCycle, source);
-			player.loopCycleStatus = loopCycle + 300;
+			player.updateHitData(type, damage, cycle, source);
+			player.loopCycleStatus = cycle + 300;
 			player.currentHealth = stream.method427();
 			player.maxHealth = stream.readUnsignedByte();
 			if (player.currentHealth <= 0) {
@@ -15231,11 +15232,11 @@ public class Client extends GameEngine implements RSClient {
 			}
 		}
 		if ((i & 0x200) != 0) {
-			int l1 = stream.readUnsignedByte();
-			int l2 = stream.method428();
+			int damage = stream.readUnsignedByte();
+			int type = stream.method428();
 			int source = stream.readInt();
-			player.updateHitData(l2, l1, loopCycle, source);
-			player.loopCycleStatus = loopCycle + 300;
+			player.updateHitData(type, damage, cycle, source);
+			player.loopCycleStatus = cycle + 300;
 			player.currentHealth = stream.readUnsignedByte();
 			player.maxHealth = stream.method427();
 			if (player.currentHealth <= 0) {
@@ -16636,7 +16637,7 @@ public class Client extends GameEngine implements RSClient {
 				}
 			}
 
-			if (hintType != 0 && loopCycle % 20 < 10) {
+			if (hintType != 0 && cycle % 20 < 10) {
 				if (hintType == 1 && anInt1222 >= 0 && anInt1222 < npcs.length) {
 					Npc npc = npcs[anInt1222];
 					if (npc != null) {
@@ -16991,7 +16992,7 @@ public class Client extends GameEngine implements RSClient {
 		return 31744;
 	}
 	private void processExperienceCounter() {
-		if (loopCycle % 1 <= 1 && !experienceDrops.isEmpty()) {
+		if (cycle % 1 <= 1 && !experienceDrops.isEmpty()) {
 			Collection<ExperienceDrop> remove = new ArrayList<>();
 			for (ExperienceDrop drop : experienceDrops) {
 				drop.pulse();
@@ -17346,16 +17347,16 @@ public class Client extends GameEngine implements RSClient {
 			int j1 = stream.readBits(1);
 			if (j1 == 0) {
 				playerIndices[playerCount++] = i1;
-				player.anInt1537 = loopCycle;
+				player.anInt1537 = cycle;
 			} else {
 				int k1 = stream.readBits(2);
 				if (k1 == 0) {
 					playerIndices[playerCount++] = i1;
-					player.anInt1537 = loopCycle;
+					player.anInt1537 = cycle;
 					anIntArray894[anInt893++] = i1;
 				} else if (k1 == 1) {
 					playerIndices[playerCount++] = i1;
-					player.anInt1537 = loopCycle;
+					player.anInt1537 = cycle;
 					int l1 = stream.readBits(3);
 					player.moveInDir(false, l1);
 					int j2 = stream.readBits(1);
@@ -17363,7 +17364,7 @@ public class Client extends GameEngine implements RSClient {
 						anIntArray894[anInt893++] = i1;
 				} else if (k1 == 2) {
 					playerIndices[playerCount++] = i1;
-					player.anInt1537 = loopCycle;
+					player.anInt1537 = cycle;
 					int i2 = stream.readBits(3);
 					player.moveInDir(true, i2);
 					int k2 = stream.readBits(3);
@@ -17467,7 +17468,7 @@ public class Client extends GameEngine implements RSClient {
 				captcha.drawAdvancedSpriteCentered(382, 446);
 
 			newBoldFont.drawString(
-					captchaInput + ((loopCycle % 40 < 20) ? "|" : ""),
+					captchaInput + ((cycle % 40 < 20) ? "|" : ""),
 					(canvasWidth / 2) - 100, canvasHeight / 2 -15, 0xffffff, 0x191919, 255);
 
 
@@ -17483,12 +17484,12 @@ public class Client extends GameEngine implements RSClient {
 //			newBoldFont.drawString("Online!", 108,448,0x00ff00,0x191919, 255);
 
 			newBoldFont.drawString(
-					myUsername + ((loginScreenCursorPos == 0) & (loopCycle % 40 < 20) ? "|" : ""),
+					myUsername + ((loginScreenCursorPos == 0) & (cycle % 40 < 20) ? "|" : ""),
 					(canvasWidth / 2) - 20, canvasHeight / 2 - 50, 0xffffff, 0x191919, 255);
 			j += 15;
 			newBoldFont.drawString(
 					StringUtils.passwordAsterisks(getPassword())
-							+ ((loginScreenCursorPos == 1) & (loopCycle % 40 < 20) ? "|" : ""),
+							+ ((loginScreenCursorPos == 1) & (cycle % 40 < 20) ? "|" : ""),
 					(canvasWidth / 2) - 20, canvasHeight / 2 + 23, 0xffffff, 0x191919, 255);
 
 			int rememberYOffset = 6;
@@ -17822,8 +17823,8 @@ public class Client extends GameEngine implements RSClient {
 				Model model = class46.modelAt(j19, i20, i22, j22, k22, l22, -1, null, -1);
 				if (model != null) {
 					method130(k17 + 1, -1, 0, l20, j7, 0, plane, k4, l14 + 1);
-					player.anInt1707 = l14 + loopCycle;
-					player.anInt1708 = k17 + loopCycle;
+					player.anInt1707 = l14 + cycle;
+					player.anInt1708 = k17 + cycle;
 					player.aModel_1714 = model;
 					int i23 = class46.sizeX;
 					int j23 = class46.sizeY;
@@ -17874,7 +17875,7 @@ public class Client extends GameEngine implements RSClient {
 			if (i5 >= 0 && l7 >= 0 && i5 < 104 && l7 < 104) {
 				i5 = i5 * 128 + 64;
 				l7 = l7 * 128 + 64;
-				GraphicObject class30_sub2_sub4_sub3 = new GraphicObject(plane, loopCycle, j15, k10,
+				GraphicObject class30_sub2_sub4_sub3 = new GraphicObject(plane, cycle, j15, k10,
 						getCenterHeight(plane, l7, i5) - l12, l7, i5);
 				incompleteAnimables.insertHead(class30_sub2_sub4_sub3);
 			}
@@ -17936,10 +17937,10 @@ public class Client extends GameEngine implements RSClient {
 				x2 = x2 * 128 + 64;
 				y2 = y2 * 128 + 64;
 
-				Projectile projectile = new Projectile(initialSlope, endHeight, startDelay + loopCycle, speed + loopCycle,
+				Projectile projectile = new Projectile(initialSlope, endHeight, startDelay + cycle, speed + cycle,
 						frontOffset, plane, getCenterHeight(plane, y1, x1) - startHeight, y1, x1, target, gfxMoving);
 
-				projectile.calculateIncrements(startDelay + loopCycle, y2, getCenterHeight(plane, y2, x2) - endHeight, x2);
+				projectile.calculateIncrements(startDelay + cycle, y2, getCenterHeight(plane, y2, x2) - endHeight, x2);
 				projectiles.insertHead(projectile);
 			}
 		}
@@ -17965,16 +17966,16 @@ public class Client extends GameEngine implements RSClient {
 				int k1 = stream.readBits(1);
 				if (k1 == 0) {
 					npcIndices[npcCount++] = npcIndex;
-					npc.anInt1537 = loopCycle;
+					npc.anInt1537 = cycle;
 				} else {
 					int l1 = stream.readBits(2);
 					if (l1 == 0) {
 						npcIndices[npcCount++] = npcIndex;
-						npc.anInt1537 = loopCycle;
+						npc.anInt1537 = cycle;
 						anIntArray894[anInt893++] = npcIndex;
 					} else if (l1 == 1) {
 						npcIndices[npcCount++] = npcIndex;
-						npc.anInt1537 = loopCycle;
+						npc.anInt1537 = cycle;
 						int i2 = stream.readBits(3);
 						npc.moveInDir(false, i2);
 						int k2 = stream.readBits(1);
@@ -17982,7 +17983,7 @@ public class Client extends GameEngine implements RSClient {
 							anIntArray894[anInt893++] = npcIndex;
 					} else if (l1 == 2) {
 						npcIndices[npcCount++] = npcIndex;
-						npc.anInt1537 = loopCycle;
+						npc.anInt1537 = cycle;
 						int j2 = stream.readBits(3);
 						npc.moveInDir(true, j2);
 						int l2 = stream.readBits(3);
@@ -18394,7 +18395,7 @@ public class Client extends GameEngine implements RSClient {
 		method49(stream);
 		for (int k = 0; k < anInt839; k++) {
 			int l = anIntArray840[k];
-			if (players[l].anInt1537 != loopCycle)
+			if (players[l].anInt1537 != cycle)
 				players[l] = null;
 		}
 
@@ -20935,7 +20936,7 @@ public class Client extends GameEngine implements RSClient {
 	private boolean canMute;
 	private boolean isDynamicRegion;
 	private boolean inCutScene;
-	public static int loopCycle;
+	public static int cycle;
 	private static final String validUserPassChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!\"\243$%^&*()-_=+[{]};:'@#~,<.>/?\\| ";
 
 	private AbstractRasterProvider chatAreaGraphicsBuffer;
@@ -21162,13 +21163,13 @@ public class Client extends GameEngine implements RSClient {
 		if (child.displayAsterisks)
 			this.aTextDrawingArea_1271.method389(false, (xPosition + 4), child.textColor,
 					new StringBuilder().append("").append(StringUtils.passwordAsterisks(message))
-							.append(((!child.isInFocus ? 0 : 1) & (loopCycle % 40 < 20 ? 1 : 0)) != 0 ? "|" : "")
+							.append(((!child.isInFocus ? 0 : 1) & (cycle % 40 < 20 ? 1 : 0)) != 0 ? "|" : "")
 							.toString(),
 					(yPosition + (height / 2) + 6));
 		else
 			this.aTextDrawingArea_1271.method389(false, (xPosition + 4), child.textColor,
 					new StringBuilder().append("").append(message)
-							.append(((!child.isInFocus ? 0 : 1) & (loopCycle % 40 < 20 ? 1 : 0)) != 0 ? "|" : "")
+							.append(((!child.isInFocus ? 0 : 1) & (cycle % 40 < 20 ? 1 : 0)) != 0 ? "|" : "")
 							.toString(),
 					(yPosition + (height / 2) + 6));
 
@@ -22924,7 +22925,7 @@ public class Client extends GameEngine implements RSClient {
 
 	@Override
 	public int getGameCycle() {
-		return loopCycle;
+		return cycle;
 	}
 
 	@Override
@@ -23045,7 +23046,7 @@ public class Client extends GameEngine implements RSClient {
 		int y = this.currentRegionY;
 		x = x * 128 + 64;
 		y = y * 128 + 64;
-		RuneLiteObjectImpl runeLiteObject = new RuneLiteObjectImpl(this.plane, loopCycle, 0, 369, getCenterHeight(this.plane, y, x), y, x);
+		RuneLiteObjectImpl runeLiteObject = new RuneLiteObjectImpl(this.plane, cycle, 0, 369, getCenterHeight(this.plane, y, x), y, x);
 		getCallbacks().post(new GraphicsObjectCreated(runeLiteObject));
 		this.incompleteAnimables.insertHead(runeLiteObject);
 		updateGraphicObjects();

@@ -282,7 +282,7 @@ public class Rasterizer2D extends DualNode implements RSRasterizer2D {
         }
 
         float edge0 = -(r / 2f);
-        float edge1 = map((float) Math.sin(Client.loopCycle / 20f), -1, 1, edge0 + (r / 1.35f), r);
+        float edge1 = map((float) Math.sin(Client.cycle / 20f), -1, 1, edge0 + (r / 1.35f), r);
         for (int x = startX; x < endX; x++) {
             for (int y = startY; y < endY; y++) { // what did i have to get working again, texture animation? Yeah uhh, new boxes textures 96>100 not aniamting
                 int index = x + y * width;

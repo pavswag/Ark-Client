@@ -11,6 +11,7 @@ import javax.swing.ImageIcon;
 import com.client.definitions.SpriteCache;
 import com.client.engine.impl.MouseHandler;
 import com.client.js5.Js5List;
+import com.client.js5.disk.Js5Archive;
 import com.client.sign.Signlink;
 import com.client.utilities.FileUtils;
 import lombok.SneakyThrows;
@@ -102,6 +103,10 @@ public class Sprite extends Rasterizer2D implements RSSpritePixels {
 	public static final Sprite EMPTY_SPRITE = new Sprite();
 
 	public Sprite(){}
+
+	public static Sprite SpriteBuffer_getSprite(Js5Archive sprites, int field2236, int i) {
+		return getSprite(field2236, i);
+	}
 
 	public void highlight(int color) {
 		if (this == EMPTY_SPRITE) {
@@ -1428,20 +1433,18 @@ public class Sprite extends Rasterizer2D implements RSSpritePixels {
 	}
 	static Sprite generateImage() {
 		Sprite sprite = new Sprite();
-		sprite.maxWidth = SpriteData.spriteWidth;
-		sprite.maxHeight = SpriteData.spriteHeight;
 		sprite.myWidth = SpriteData.spriteWidth;
 		sprite.myHeight = SpriteData.spriteHeight;
 		sprite.drawOffsetX = SpriteData.xOffsets[0];
 		sprite.drawOffsetY = SpriteData.yOffsets[0];
-		sprite.width = SpriteData.spriteWidths[0];
-		sprite.height = SpriteData.spriteHeights[0];
+		sprite.maxWidth = SpriteData.spriteWidths[0];
+		sprite.maxHeight = SpriteData.spriteHeights[0];
 		int totalPixels = sprite.width * sprite.height;
 		byte[] pixels = SpriteData.pixels[0];
-		sprite.pixels = new int[totalPixels];
+		sprite.myPixels = new int[totalPixels];
 
 		for(int currentPixel = 0; currentPixel < totalPixels; ++currentPixel) {
-			sprite.pixels[currentPixel] = SpriteData.spritePalette[pixels[currentPixel] & 255];
+			sprite.myPixels[currentPixel] = SpriteData.spritePalette[pixels[currentPixel] & 255];
 		}
 
 		SpriteData.xOffsets = null;
