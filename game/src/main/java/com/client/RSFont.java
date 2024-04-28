@@ -14,11 +14,11 @@ import java.util.List;
 
 public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 
-	public int baseCharacterHeight = 0;
-	public int anInt3494;
-	public int anInt3512;
-	public int[] characterDrawYOffsets;
-	public int[] characterHeights;
+	public int ascent = 0;
+	public int maxAscent;
+	public int maxDescent;
+	public int[] topBearings;
+	public int[] heights;
 	public int[] characterDrawXOffsets;
 	public int[] characterWidths;
 	public int[] iconWidths;
@@ -71,9 +71,9 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 	public RSFont(boolean TypeFont, String s, FileArchive archive) {
 		fontPixels = new byte[256][];
 		characterWidths = new int[256];
-		characterHeights = new int[256];
+		heights = new int[256];
 		characterDrawXOffsets = new int[256];
-		characterDrawYOffsets = new int[256];
+		topBearings = new int[256];
 		characterScreenWidths = new int[256];
 		Buffer stream = new Buffer(archive.getArchiveData(s + ".dat"));
 		Buffer stream_1 = new Buffer(archive.getArchiveData("index.dat"));
@@ -84,9 +84,9 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 		}
 		for (int l = 0; l < 256; l++) {
 			characterDrawXOffsets[l] = stream_1.readUnsignedByte();
-			characterDrawYOffsets[l] = stream_1.readUnsignedByte();
+			topBearings[l] = stream_1.readUnsignedByte();
 			int i1 = characterWidths[l] = stream_1.readUShort();
-			int j1 = characterHeights[l] = stream_1.readUShort();
+			int j1 = heights[l] = stream_1.readUShort();
 			int k1 = stream_1.readUnsignedByte();
 			int l1 = i1 * j1;
 			fontPixels[l] = new byte[l1];
@@ -104,8 +104,8 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 				}
 
 			}
-			if (j1 > baseCharacterHeight && l < 128) {
-				baseCharacterHeight = j1;
+			if (j1 > ascent && l < 128) {
+				ascent = j1;
 			}
 			characterDrawXOffsets[l] = 1;
 			characterScreenWidths[l] = i1 + 2;
@@ -136,16 +136,16 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 		int i = 2147483647;
 		int i_173_ = -2147483648;
 		for (int i_174_ = 0; i_174_ < 256; i_174_++) {
-			if (characterDrawYOffsets[i_174_] < i && characterHeights[i_174_] != 0) {
-				i = characterDrawYOffsets[i_174_];
+			if (topBearings[i_174_] < i && heights[i_174_] != 0) {
+				i = topBearings[i_174_];
 			}
-			if (characterDrawYOffsets[i_174_] + characterHeights[i_174_] > i_173_) {
-				i_173_ = characterDrawYOffsets[i_174_] + characterHeights[i_174_];
+			if (topBearings[i_174_] + heights[i_174_] > i_173_) {
+				i_173_ = topBearings[i_174_] + heights[i_174_];
 			}
 		}
 
-		anInt3494 = baseCharacterHeight - i;
-		anInt3512 = i_173_ - baseCharacterHeight;
+		maxAscent = ascent - i;
+		maxDescent = i_173_ - ascent;
 	}
 	public int getCharacterWidth(int i) {
 		if (i == 160) {
@@ -165,11 +165,11 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 
 		setDefaultTextEffectValues(textColor, shadowColor, transparency);
 		if (verticalSpacing == 0) {
-			verticalSpacing = baseCharacterHeight;
+			verticalSpacing = ascent;
 		}
 
 		int[] is = { width };
-		if (height < anInt3494 + anInt3512 + verticalSpacing && height < verticalSpacing + verticalSpacing) {
+		if (height < maxAscent + maxDescent + verticalSpacing && height < verticalSpacing + verticalSpacing) {
 			//is = null;
 		}
 		final int lineCount = method1486(text, is, splitTextStrings);
@@ -178,17 +178,17 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 		}
 		int textY;
 		if (verticalAlignment == 0) {
-			textY = y + anInt3494;
+			textY = y + maxAscent;
 		} else if (verticalAlignment == 1) {
-			textY = y + anInt3494 + (height - anInt3494 - anInt3512 - (lineCount - 1) * verticalSpacing) / 2;
+			textY = y + maxAscent + (height - maxAscent - maxDescent - (lineCount - 1) * verticalSpacing) / 2;
 		} else if (verticalAlignment == 2) {
-			textY = y + height - anInt3512 - (lineCount - 1) * verticalSpacing;
+			textY = y + height - maxDescent - (lineCount - 1) * verticalSpacing;
 		} else {
-			int i_72_ = (height - anInt3494 - anInt3512 - (lineCount - 1) * verticalSpacing) / (lineCount + 1);
+			int i_72_ = (height - maxAscent - maxDescent - (lineCount - 1) * verticalSpacing) / (lineCount + 1);
 			if (i_72_ < 0) {
 				i_72_ = 0;
 			}
-			textY = y + anInt3494 + i_72_;
+			textY = y + maxAscent + i_72_;
 			verticalSpacing += i_72_;
 		}
 		for (int lineId = 0; lineId < lineCount; lineId++) {
@@ -277,7 +277,7 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 					} else if (effect.startsWith("img=")) {
 						try {
 							final int nameIconid = Strings.stringToInt10(effect.substring(4));
-							width += chatImages[nameIconid].myWidth;
+							width += chatImages[nameIconid].subWidth;
 						} catch (final Exception exception) {
 							/* empty */
 						}
@@ -320,9 +320,9 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 	public RSFont(boolean TypeFont, String s) {
 		fontPixels = new byte[256][];
 		characterWidths = new int[256];
-		characterHeights = new int[256];
+		heights = new int[256];
 		characterDrawXOffsets = new int[256];
-		characterDrawYOffsets = new int[256];
+		topBearings = new int[256];
 		characterScreenWidths = new int[256];
 		Buffer datBuf = null;
 		Buffer idxBuf = null;
@@ -343,9 +343,9 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 
 		for (int l = 0; l < 256; l++) {
 			characterDrawXOffsets[l] = idxBuf.readUnsignedByte();
-			characterDrawYOffsets[l] = idxBuf.readUnsignedByte();
+			topBearings[l] = idxBuf.readUnsignedByte();
 			int i1 = characterWidths[l] = idxBuf.readUShort();
-			int j1 = characterHeights[l] = idxBuf.readUShort();
+			int j1 = heights[l] = idxBuf.readUShort();
 			int k1 = idxBuf.readUnsignedByte();
 			int l1 = i1 * j1;
 			fontPixels[l] = new byte[l1];
@@ -362,8 +362,8 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 				}
 			}
 
-			if (j1 > baseCharacterHeight && l < 128) {
-				baseCharacterHeight = j1;
+			if (j1 > ascent && l < 128) {
+				ascent = j1;
 			}
 
 			characterDrawXOffsets[l] = 1;
@@ -398,16 +398,16 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 		int i = 2147483647;
 		int i_173_ = -2147483648;
 		for (int i_174_ = 0; i_174_ < 256; i_174_++) {
-			if (characterDrawYOffsets[i_174_] < i && characterHeights[i_174_] != 0) {
-				i = characterDrawYOffsets[i_174_];
+			if (topBearings[i_174_] < i && heights[i_174_] != 0) {
+				i = topBearings[i_174_];
 			}
-			if (characterDrawYOffsets[i_174_] + characterHeights[i_174_] > i_173_) {
-				i_173_ = characterDrawYOffsets[i_174_] + characterHeights[i_174_];
+			if (topBearings[i_174_] + heights[i_174_] > i_173_) {
+				i_173_ = topBearings[i_174_] + heights[i_174_];
 			}
 		}
 
-		anInt3494 = baseCharacterHeight - i;
-		anInt3512 = i_173_ - baseCharacterHeight;
+		maxAscent = ascent - i;
+		maxDescent = i_173_ - ascent;
 	}
 
 	public String[] wrap(String text, int maximumWidth) {
@@ -539,6 +539,9 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 		RSFont.iconPack = iconPack;
 	}
 
+	public void drawAlpha(String string, int x, int y, int color, int shadow, int trans) {
+		drawString(string, x, y, color, shadow, trans);
+	}
 	public void drawString(String string, int x, int y, int color, int shadow, int trans) {
 		if (transparency < 0 || transparency > 256) {
 			transparency = defaultTransparency;
@@ -568,7 +571,7 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 	}
 
 	public void drawBasicString(String string, int drawX, int drawY, boolean textEffects) {
-		drawY -= baseCharacterHeight;
+		drawY -= ascent;
 		int startIndex = -1;
 		string = handleOldSyntax(string);
 		for (int currentCharacter = 0; currentCharacter < string.length(); currentCharacter++) {
@@ -610,17 +613,17 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 										if (imageId > -1) {
 											Sprite icon = chatImages[imageId];
 
-											int iconModY = icon.myHeight;
+											int iconModY = icon.subHeight;
 											if (imageId >= 40 && imageId <= 50) {
-												icon = SpriteLoader.fetchAnimatedSprite(Signlink.getCacheDirectory()+"/sprites/gifs/" +imageId+".gif").getInstance(icon.myWidth, icon.myHeight);
+												icon = SpriteLoader.fetchAnimatedSprite(Signlink.getCacheDirectory()+"/sprites/gifs/" +imageId+".gif").getInstance(icon.subWidth, icon.subHeight);
 												iconModY -=2;
 											}
 											if (transparency == 256) {
-												icon.drawAdvancedSprite(drawX, (drawY + baseCharacterHeight - iconModY));
+												icon.drawAdvancedSprite(drawX, (drawY + ascent - iconModY));
 											} else {
-												icon.drawAdvancedSprite(drawX, (drawY + baseCharacterHeight - iconModY), transparency);
+												icon.drawAdvancedSprite(drawX, (drawY + ascent - iconModY), transparency);
 											}
-											drawX += icon.myWidth;
+											drawX += icon.subWidth;
 										}
 									}
 								} catch (Exception exception) {
@@ -633,13 +636,13 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 										int imageId = Integer.parseInt(sub);
 										if (imageId > -1) {
 											Sprite icon = iconPack[imageId];
-											int iconModY = icon.myHeight;
+											int iconModY = icon.subHeight;
 											if (transparency == 256) {
-												icon.drawSprite(drawX, (drawY + baseCharacterHeight - iconModY));
+												icon.drawSprite(drawX, (drawY + ascent - iconModY));
 											} else {
-												icon.drawSprite(drawX, (drawY + baseCharacterHeight - iconModY), transparency);
+												icon.drawSprite(drawX, (drawY + ascent - iconModY), transparency);
 											}
-											drawX += icon.myWidth;
+											drawX += icon.subWidth;
 										}
 									}
 								} catch (Exception exception) {
@@ -652,13 +655,13 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 										int imageId = Integer.parseInt(sub);
 										if (imageId > -1) {
 											Sprite icon = Client.instance.getOldSchoolSprite(imageId);
-											int iconModY = icon.myHeight;
+											int iconModY = icon.subHeight;
 											if (transparency == 256) {
-												icon.drawSprite(drawX, (drawY + baseCharacterHeight - iconModY));
+												icon.drawSprite(drawX, (drawY + ascent - iconModY));
 											} else {
-												icon.drawSprite(drawX, (drawY + baseCharacterHeight - iconModY), transparency);
+												icon.drawSprite(drawX, (drawY + ascent - iconModY), transparency);
 											}
-											drawX += icon.myWidth;
+											drawX += icon.subWidth;
 										}
 									}
 								} catch (Exception exception) {
@@ -671,11 +674,11 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 										int imageId = Integer.parseInt(sub);
 										if (imageId > -1) {
 											Sprite icon = clanImages[imageId];
-											int iconModY = icon.myHeight + icon.drawOffsetY + 1;
+											int iconModY = icon.subHeight + icon.yOffset + 1;
 											if (transparency == 256) {
-												icon.drawSprite(drawX, (drawY + baseCharacterHeight - iconModY));
+												icon.drawSprite(drawX, (drawY + ascent - iconModY));
 											} else {
-												icon.drawSprite(drawX, (drawY + baseCharacterHeight - iconModY), transparency);
+												icon.drawSprite(drawX, (drawY + ascent - iconModY), transparency);
 											}
 											drawX += 11;
 										}
@@ -695,24 +698,24 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 			// Draw character
 			if (startIndex == -1) {
 				int width = characterWidths[character];
-				int height = characterHeights[character];
+				int height = heights[character];
 				if (character != 32) {
 					if (transparency == 256) {
 						if (textShadowColor != -1) {
 							drawCharacter(character, drawX + characterDrawXOffsets[character] + 1,
-									drawY + characterDrawYOffsets[character] + 1, width, height, textShadowColor,
+									drawY + topBearings[character] + 1, width, height, textShadowColor,
 									true);
 						}
 						drawCharacter(character, drawX + characterDrawXOffsets[character],
-								drawY + characterDrawYOffsets[character], width, height, textColor, false);
+								drawY + topBearings[character], width, height, textColor, false);
 					} else {
 						if (textShadowColor != -1) {
 							drawTransparentCharacter(character, drawX + characterDrawXOffsets[character] + 1,
-									drawY + characterDrawYOffsets[character] + 1, width, height, textShadowColor,
+									drawY + topBearings[character] + 1, width, height, textShadowColor,
 									transparency, true);
 						}
 						drawTransparentCharacter(character, drawX + characterDrawXOffsets[character],
-								drawY + characterDrawYOffsets[character], width, height, textColor, transparency,
+								drawY + topBearings[character], width, height, textColor, transparency,
 								false);
 					}
 				} else if (anInt4178 > 0) {
@@ -722,12 +725,12 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 				}
 				int lineWidth = characterScreenWidths[character];
 				if (strikethroughColor != -1) {
-					drawHorizontalLine(drawY + (int) ((double) baseCharacterHeight * 0.6999999999),
+					drawHorizontalLine(drawY + (int) ((double) ascent * 0.6999999999),
 							strikethroughColor, lineWidth, drawX);
 				}
 				if (underlineColor != -1) {
 
-					drawHorizontalLine(drawX, drawY + baseCharacterHeight, lineWidth, underlineColor);
+					drawHorizontalLine(drawX, drawY + ascent, lineWidth, underlineColor);
 				}
 				drawX += lineWidth;
 			}
@@ -743,7 +746,7 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 	}
 
 	public void drawBaseStringMoveXY(String string, int drawX, int drawY, int[] xModifier, int[] yModifier) {
-		drawY -= baseCharacterHeight;
+		drawY -= ascent;
 		int startIndex = -1;
 		int modifierOffset = 0;
 		for (int currentCharacter = 0; currentCharacter < string.length(); currentCharacter++) {
@@ -788,20 +791,20 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 								modifierOffset++;
 								int iconId = Integer.valueOf(effectString.substring(4));
 								Sprite icon = chatImages[iconId];
-								int iconOffsetY = icon.maxHeight;
+								int iconOffsetY = icon.height;
 
 								if (iconId >= 40 && iconId <= 50) {
-									icon = SpriteLoader.fetchAnimatedSprite(Signlink.getCacheDirectory() + "/sprites/gifs/" + iconId + ".gif").getInstance(icon.myWidth, icon.myHeight);
+									icon = SpriteLoader.fetchAnimatedSprite(Signlink.getCacheDirectory() + "/sprites/gifs/" + iconId + ".gif").getInstance(icon.subWidth, icon.subHeight);
 									iconId -= 2;
 								}
 
 								if (transparency == 256) {
-									icon.drawAdvancedSprite(drawX + xModI, (drawY + baseCharacterHeight - iconOffsetY + yMod));
+									icon.drawAdvancedSprite(drawX + xModI, (drawY + ascent - iconOffsetY + yMod));
 								} else {
-									icon.drawAdvancedSprite(drawX + xModI, (drawY + baseCharacterHeight - iconOffsetY + yMod),
+									icon.drawAdvancedSprite(drawX + xModI, (drawY + ascent - iconOffsetY + yMod),
 											transparency);
 								}
-								drawX += icon.maxWidth;
+								drawX += icon.width;
 							} catch (Exception exception) {
 								exception.printStackTrace();
 							}
@@ -822,15 +825,15 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 									modifierOffset++;
 									int iconId = Integer.valueOf(effectString.substring(8));
 									Sprite icon = Client.getInstance().getOldSchoolSprite(iconId);
-									int iconOffsetY = icon.maxHeight;
+									int iconOffsetY = icon.height;
 
 									if (transparency == 256) {
-										icon.drawAdvancedSprite(drawX + xModI, (drawY + baseCharacterHeight - iconOffsetY + yMod));
+										icon.drawAdvancedSprite(drawX + xModI, (drawY + ascent - iconOffsetY + yMod));
 									} else {
-										icon.drawAdvancedSprite(drawX + xModI, (drawY + baseCharacterHeight - iconOffsetY + yMod),
+										icon.drawAdvancedSprite(drawX + xModI, (drawY + ascent - iconOffsetY + yMod),
 												transparency);
 									}
-									drawX += icon.maxWidth;
+									drawX += icon.width;
 								} catch (Exception exception) {
 									exception.printStackTrace();
 								}
@@ -851,14 +854,14 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 								modifierOffset++;
 								int iconId = Integer.valueOf(effectString.substring(5));
 								Sprite icon = iconPack[iconId];
-								int iconOffsetY = icon.maxHeight;
+								int iconOffsetY = icon.height;
 								if (transparency == 256) {
-									icon.drawSprite(drawX + xModI, (drawY + baseCharacterHeight - iconOffsetY + yMod));
+									icon.drawSprite(drawX + xModI, (drawY + ascent - iconOffsetY + yMod));
 								} else {
-									icon.drawSprite(drawX + xModI, (drawY + baseCharacterHeight - iconOffsetY + yMod),
+									icon.drawSprite(drawX + xModI, (drawY + ascent - iconOffsetY + yMod),
 											transparency);
 								}
-								drawX += icon.maxWidth;
+								drawX += icon.width;
 							} catch (Exception exception) {
 								exception.printStackTrace();
 							}
@@ -870,7 +873,7 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 				}
 				if (startIndex == -1) {
 					int width = characterWidths[character];
-					int height = characterHeights[character];
+					int height = heights[character];
 					int xOff;
 					if (xModifier != null) {
 						xOff = xModifier[modifierOffset];
@@ -888,20 +891,20 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 						if (transparency == 256) {
 							if (textShadowColor != -1) {
 								drawCharacter(character, (drawX + characterDrawXOffsets[character] + 1 + xOff),
-										(drawY + characterDrawYOffsets[character] + 1 + yOff), width, height,
+										(drawY + topBearings[character] + 1 + yOff), width, height,
 										textShadowColor, true);
 							}
 							drawCharacter(character, drawX + characterDrawXOffsets[character] + xOff,
-									drawY + characterDrawYOffsets[character] + yOff, width, height, textColor, false);
+									drawY + topBearings[character] + yOff, width, height, textColor, false);
 						} else {
 							if (textShadowColor != -1) {
 								drawTransparentCharacter(character,
 										(drawX + characterDrawXOffsets[character] + 1 + xOff),
-										(drawY + characterDrawYOffsets[character] + 1 + yOff), width, height,
+										(drawY + topBearings[character] + 1 + yOff), width, height,
 										textShadowColor, transparency, true);
 							}
 							drawTransparentCharacter(character, drawX + characterDrawXOffsets[character] + xOff,
-									drawY + characterDrawYOffsets[character] + yOff, width, height, textColor,
+									drawY + topBearings[character] + yOff, width, height, textColor,
 									transparency, false);
 						}
 					} else if (anInt4178 > 0) {
@@ -911,11 +914,11 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 					}
 					int i_109_ = characterScreenWidths[character];
 					if (strikethroughColor != -1) {
-						Rasterizer2D.drawHorizontalLine(drawX, drawY + (int) (baseCharacterHeight * 0.7), i_109_,
+						Rasterizer2D.drawHorizontalLine(drawX, drawY + (int) (ascent * 0.7), i_109_,
 								strikethroughColor);
 					}
 					if (underlineColor != -1) {
-						Rasterizer2D.drawHorizontalLine(drawX, drawY + baseCharacterHeight, i_109_, underlineColor);
+						Rasterizer2D.drawHorizontalLine(drawX, drawY + ascent, i_109_, underlineColor);
 					}
 					drawX += i_109_;
 				}
@@ -1029,9 +1032,9 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 
 								Sprite icon = chatImages[iconId];
 								if (iconId >= 40 && iconId <= 50) {
-									icon = SpriteLoader.fetchAnimatedSprite(Signlink.getCacheDirectory()+"/sprites/gifs/" +iconId+".gif").getInstance(icon.myWidth, icon.myHeight);
+									icon = SpriteLoader.fetchAnimatedSprite(Signlink.getCacheDirectory()+"/sprites/gifs/" +iconId+".gif").getInstance(icon.subWidth, icon.subHeight);
 								}
-								finalWidth += icon.maxWidth;
+								finalWidth += icon.width;
 							} catch (Exception exception) {
 								exception.printStackTrace();
 							}
@@ -1040,7 +1043,7 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 							try {// <img=
 								int iconId = Integer.valueOf(effectString.substring(5));
 								if(iconId >= 0 && iconId < clanImages.length)
-									finalWidth += clanImages[iconId].maxWidth;
+									finalWidth += clanImages[iconId].width;
 							} catch (Exception exception) {
 								exception.printStackTrace();
 							}
@@ -1048,7 +1051,7 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 						if (effectString.startsWith(startIcon)) {
 							try {// <img=
 								int iconId = Integer.valueOf(effectString.substring(5));
-								finalWidth += iconPack[iconId].maxWidth;
+								finalWidth += iconPack[iconId].width;
 							} catch (Exception exception) {
 								exception.printStackTrace();
 							}
@@ -1341,37 +1344,37 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 
 	public void drawTransparentCharacter(int i, int i_11_, int i_12_, int i_13_, int i_14_, int i_15_, int i_16_,
 			boolean bool) {
-		int i_17_ = i_11_ + i_12_ * Rasterizer2D.width;
-		int i_18_ = Rasterizer2D.width - i_13_;
+		int i_17_ = i_11_ + i_12_ * Rasterizer2D.Rasterizer2D_width;
+		int i_18_ = Rasterizer2D.Rasterizer2D_width - i_13_;
 		int i_19_ = 0;
 		int i_20_ = 0;
-		if (i_12_ < Rasterizer2D.topY) {
-			int i_21_ = Rasterizer2D.topY - i_12_;
+		if (i_12_ < Rasterizer2D.Rasterizer2D_yClipStart) {
+			int i_21_ = Rasterizer2D.Rasterizer2D_yClipStart - i_12_;
 			i_14_ -= i_21_;
-			i_12_ = Rasterizer2D.topY;
+			i_12_ = Rasterizer2D.Rasterizer2D_yClipStart;
 			i_20_ += i_21_ * i_13_;
-			i_17_ += i_21_ * Rasterizer2D.width;
+			i_17_ += i_21_ * Rasterizer2D.Rasterizer2D_width;
 		}
-		if (i_12_ + i_14_ > Rasterizer2D.bottomY) {
-			i_14_ -= i_12_ + i_14_ - Rasterizer2D.bottomY;
+		if (i_12_ + i_14_ > Rasterizer2D.Rasterizer2D_yClipEnd) {
+			i_14_ -= i_12_ + i_14_ - Rasterizer2D.Rasterizer2D_yClipEnd;
 		}
-		if (i_11_ < Rasterizer2D.leftX) {
-			int i_22_ = Rasterizer2D.leftX - i_11_;
+		if (i_11_ < Rasterizer2D.Rasterizer2D_xClipStart) {
+			int i_22_ = Rasterizer2D.Rasterizer2D_xClipStart - i_11_;
 			i_13_ -= i_22_;
-			i_11_ = Rasterizer2D.leftX;
+			i_11_ = Rasterizer2D.Rasterizer2D_xClipStart;
 			i_20_ += i_22_;
 			i_17_ += i_22_;
 			i_19_ += i_22_;
 			i_18_ += i_22_;
 		}
-		if (i_11_ + i_13_ > Rasterizer2D.bottomX) {
-			int i_23_ = i_11_ + i_13_ - Rasterizer2D.bottomX;
+		if (i_11_ + i_13_ > Rasterizer2D.Rasterizer2D_xClipEnd) {
+			int i_23_ = i_11_ + i_13_ - Rasterizer2D.Rasterizer2D_xClipEnd;
 			i_13_ -= i_23_;
 			i_19_ += i_23_;
 			i_18_ += i_23_;
 		}
 		if (i_13_ > 0 && i_14_ > 0) {
-			createTransparentCharacterPixels(Rasterizer2D.pixels, fontPixels[i], i_15_, i_20_, i_17_, i_13_, i_14_,
+			createTransparentCharacterPixels(Rasterizer2D.Rasterizer2D_pixels, fontPixels[i], i_15_, i_20_, i_17_, i_13_, i_14_,
 					i_18_, i_19_, i_16_);
 		}
 	}
@@ -1411,37 +1414,37 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 
 
 	public void drawCharacter(int character, int i_35_, int i_36_, int i_37_, int i_38_, int i_39_, boolean bool) {
-		int i_40_ = i_35_ + i_36_ * Rasterizer2D.width;
-		int i_41_ = Rasterizer2D.width - i_37_;
+		int i_40_ = i_35_ + i_36_ * Rasterizer2D.Rasterizer2D_width;
+		int i_41_ = Rasterizer2D.Rasterizer2D_width - i_37_;
 		int i_42_ = 0;
 		int i_43_ = 0;
-		if (i_36_ < Rasterizer2D.topY) {
-			int i_44_ = Rasterizer2D.topY - i_36_;
+		if (i_36_ < Rasterizer2D.Rasterizer2D_yClipStart) {
+			int i_44_ = Rasterizer2D.Rasterizer2D_yClipStart - i_36_;
 			i_38_ -= i_44_;
-			i_36_ = Rasterizer2D.topY;
+			i_36_ = Rasterizer2D.Rasterizer2D_yClipStart;
 			i_43_ += i_44_ * i_37_;
-			i_40_ += i_44_ * Rasterizer2D.width;
+			i_40_ += i_44_ * Rasterizer2D.Rasterizer2D_width;
 		}
-		if (i_36_ + i_38_ > Rasterizer2D.bottomY) {
-			i_38_ -= i_36_ + i_38_ - Rasterizer2D.bottomY;
+		if (i_36_ + i_38_ > Rasterizer2D.Rasterizer2D_yClipEnd) {
+			i_38_ -= i_36_ + i_38_ - Rasterizer2D.Rasterizer2D_yClipEnd;
 		}
-		if (i_35_ < Rasterizer2D.leftX) {
-			int i_45_ = Rasterizer2D.leftX - i_35_;
+		if (i_35_ < Rasterizer2D.Rasterizer2D_xClipStart) {
+			int i_45_ = Rasterizer2D.Rasterizer2D_xClipStart - i_35_;
 			i_37_ -= i_45_;
-			i_35_ = Rasterizer2D.leftX;
+			i_35_ = Rasterizer2D.Rasterizer2D_xClipStart;
 			i_43_ += i_45_;
 			i_40_ += i_45_;
 			i_42_ += i_45_;
 			i_41_ += i_45_;
 		}
-		if (i_35_ + i_37_ > Rasterizer2D.bottomX) {
-			int i_46_ = i_35_ + i_37_ - Rasterizer2D.bottomX;
+		if (i_35_ + i_37_ > Rasterizer2D.Rasterizer2D_xClipEnd) {
+			int i_46_ = i_35_ + i_37_ - Rasterizer2D.Rasterizer2D_xClipEnd;
 			i_37_ -= i_46_;
 			i_42_ += i_46_;
 			i_41_ += i_46_;
 		}
 		if (i_37_ > 0 && i_38_ > 0) {
-			createCharacterPixels(Rasterizer2D.pixels, fontPixels[character], i_39_, i_43_, i_40_, i_37_, i_38_, i_41_,
+			createCharacterPixels(Rasterizer2D.Rasterizer2D_pixels, fontPixels[character], i_39_, i_43_, i_40_, i_37_, i_38_, i_41_,
 					i_42_);
 
 		}

@@ -126,11 +126,11 @@ public final class AnimatedSprite extends Sprite {
             newHeight = 1;
 
         this.scaled = scaled;
-        this.width = newWidth;
-        this.height = newHeight;
+        this.spriteWidth = newWidth;
+        this.spriteHeight = newHeight;
         int pixelCount = newWidth * newHeight;
         int[] pixels = new int[pixelCount];
-        this.pixels = pixels;
+        this.spritePixels = pixels;
         DirectColorModel model = new DirectColorModel(32, 0xff0000, 0xff00, 0xff, 0xff000000);
         buffer = new BufferedImage(model,
                 Raster.createWritableRaster(model.createCompatibleSampleModel(newWidth, newHeight),
@@ -155,15 +155,15 @@ public final class AnimatedSprite extends Sprite {
                 && (width != newWidth || height != newHeight);
         if (scaled) {
             if (!absScale) {
-                newWidth = newWidth * width / sprite.width;
-                newHeight = newHeight * height / sprite.height;
+                newWidth = newWidth * width / sprite.spriteWidth;
+                newHeight = newHeight * height / sprite.spriteHeight;
             } else {
                 newWidth = width;
                 newHeight = height;
             }
         } else if (!absScale) {
-            newWidth = sprite.width;
-            newHeight = sprite.height;
+            newWidth = sprite.spriteWidth;
+            newHeight = sprite.spriteHeight;
         }
         if (newWidth < 1)
             newWidth = 1;
@@ -172,11 +172,11 @@ public final class AnimatedSprite extends Sprite {
             newHeight = 1;
 
         this.scaled = scaled;
-        this.width = newWidth;
-        this.height = newHeight;
+        this.spriteWidth = newWidth;
+        this.spriteHeight = newHeight;
         int pixelCount = newWidth * newHeight;
         int[] pixels = new int[pixelCount];
-        this.pixels = pixels;
+        this.spritePixels = pixels;
         DirectColorModel model = new DirectColorModel(32, 0xff0000, 0xff00, 0xff, 0xff000000);
         buffer = new BufferedImage(model,
                 Raster.createWritableRaster(model.createCompatibleSampleModel(newWidth, newHeight),
@@ -356,7 +356,7 @@ public final class AnimatedSprite extends Sprite {
                         if (g instanceof Graphics2D) {
                             ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_RENDERING, getScaleDetail(scaleDetail));
                         }
-                        g.drawImage(image, 0, 0, width, height, component);
+                        g.drawImage(image, 0, 0, spriteWidth, spriteHeight, component);
                     }
                 } finally {
                     g.dispose();
@@ -369,17 +369,17 @@ public final class AnimatedSprite extends Sprite {
 
     //overwrites the pixels to the rasterizer
     public void overwritePixels() {
-        drawOffsetX = drawOffsetY = 0;
-        myWidth = width;
-        myHeight = height;
-        maxHeight = height;
-        maxWidth = width;
-        myPixels = pixels;
+        xOffset = yOffset = 0;
+        subWidth = spriteWidth;
+        subHeight = spriteHeight;
+        height = spriteHeight;
+        width = spriteWidth;
+        pixels = spritePixels;
     }
 
     public void clearPixels() {
-        for (int i = 0; i < pixels.length; i++)
-            pixels[i] = 0;
+        for (int i = 0; i < spritePixels.length; i++)
+            spritePixels[i] = 0;
     }
 
     private static byte[] loadFile(File file) {
@@ -497,9 +497,9 @@ public final class AnimatedSprite extends Sprite {
     public final boolean scaled;
     public final Image image;
     public final Component component;
-    public final int width;
-    public final int height;
-    public final int[] pixels;
+    public int spriteWidth;
+    public final int spriteHeight;
+    public final int[] spritePixels;
     public BufferedImage buffer;
     public static final Component DUMMY_COMPONENT = new Canvas();
 }

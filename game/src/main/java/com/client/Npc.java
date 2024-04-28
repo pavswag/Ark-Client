@@ -64,7 +64,7 @@ public final class Npc extends Entity implements RSNPC {
 		Model model = getAnimatedModel();
 		if (model == null)
 			return null;
-		super.height = model.modelBaseY;
+		super.defaultHeight = model.modelBaseY;
 		Iterator spotAnimIterator = spotAnims.iterator();
 		while(spotAnimIterator.hasNext()) {
 			EntitySpotAnim graphicObject = (EntitySpotAnim) spotAnimIterator.next();
@@ -274,7 +274,7 @@ public final class Npc extends Entity implements RSNPC {
 
 	@Override
 	public WorldArea getWorldArea() {
-		return new WorldArea(x,y, desc.size, this.height, Client.instance.getPlane());
+		return new WorldArea(x,y, desc.size, this.defaultHeight, Client.instance.getPlane());
 	}
 
 	@Override

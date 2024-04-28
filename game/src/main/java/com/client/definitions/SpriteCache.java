@@ -10,7 +10,6 @@ import com.client.js5.util.Js5ConfigType;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -110,7 +109,7 @@ public final class SpriteCache extends DualNode {
                 System.out.println("Missing Sprite: " + id);
                 return null;
             }
-            if(image.sprite.myWidth < 1)
+            if(image.sprite.subWidth < 1)
                 return null;
             widgetSpriteCache.put(image, id);
         }
@@ -129,8 +128,12 @@ public final class SpriteCache extends DualNode {
                 System.out.println("Missing Sprite: " + id);
                 return Sprite.EMPTY_SPRITE;
             }
-            if(image.sprite.myWidth < 1)
+            if(image.sprite.subWidth < 1)
                 return null;
+            if(id == 657) {
+                System.out.println("special attack width = " + image.sprite.subWidth);
+                System.out.println("special attack height = " + image.sprite.subHeight);
+            }
             oldschoolSpriteCache.put(image, id);
         }
         return image.sprite;

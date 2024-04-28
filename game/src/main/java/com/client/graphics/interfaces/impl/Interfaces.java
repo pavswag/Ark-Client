@@ -1906,8 +1906,8 @@ public final class Interfaces extends RSInterface {
 		tab.type = 0;
 		tab.sprite2 = Client.cacheSprite3[sprite2];
 		tab.sprite1 = Client.cacheSprite3[sprite1];
-		tab.width = tab.sprite1.myWidth;
-		tab.height = tab.sprite2.myHeight;
+		tab.width = tab.sprite1.subWidth;
+		tab.height = tab.sprite2.subHeight;
 		// tab.toggled = false;
 		// tab.spriteOpacity = 255;d
 	}
@@ -2916,8 +2916,8 @@ public final class Interfaces extends RSInterface {
 
 	public static int[] centerSkillSprite(Sprite s) {
 		int x = 15, y = 15;
-		x -= (s.myWidth / 2);
-		y -= (s.myHeight / 2);
+		x -= (s.subWidth / 2);
+		y -= (s.subHeight / 2);
 		return new int[]{x, y};
 	}
 
@@ -4132,8 +4132,8 @@ public final class Interfaces extends RSInterface {
 			child++;
 			Sprite selectionIcon = new Sprite("Interfaces/teleport_interface/SPRITE " + buttonId);
 			RSInterface.addSprite(interfaceId, selectionIcon);
-			RSInterface.setBounds(interfaceId, 18 + xOffset - (selectionIcon.myWidth / 2) + 10,
-					59 + yOffset + yExtra - (selectionIcon.myHeight / 2) + 9, child, interfaces);
+			RSInterface.setBounds(interfaceId, 18 + xOffset - (selectionIcon.subWidth / 2) + 10,
+					59 + yOffset + yExtra - (selectionIcon.subHeight / 2) + 9, child, interfaces);
 			interfaceId++;
 			child++;
 			yExtra += 25;
@@ -4243,9 +4243,9 @@ public final class Interfaces extends RSInterface {
 		Sprite icon = Client.cacheSprite3[spriteId];
 
 		if (xOffset) {
-			return (stone.myWidth / 2) - icon.myWidth / 2;
+			return (stone.subWidth / 2) - icon.subWidth / 2;
 		}
-		return (stone.myHeight / 2) - icon.myHeight / 2;
+		return (stone.subHeight / 2) - icon.subHeight / 2;
 	}
 
 	public static void clanChatSetup(TextDrawingArea[] tda) {
@@ -4941,8 +4941,8 @@ public final class Interfaces extends RSInterface {
 		rsi.contentType = 0;
 		rsi.sprite1 = Client.cacheSprite3[spriteId];
 		rsi.sprite2 = Client.cacheSprite3[spriteId];
-		rsi.width = rsi.sprite1.myWidth;
-		rsi.height = rsi.sprite2.myHeight - 2;
+		rsi.width = rsi.sprite1.subWidth;
+		rsi.height = rsi.sprite2.subHeight - 2;
 	}
 
 	public static void addButton(int id, int sid, String tooltip) {
@@ -4956,8 +4956,8 @@ public final class Interfaces extends RSInterface {
 		tab.hoverType = 52;
 		tab.sprite1 = Client.cacheSprite1[sid];// imageLoader(sid, spriteName);
 		tab.sprite2 = Client.cacheSprite1[sid];// imageLoader(sid, spriteName);
-		tab.width = tab.sprite1.myWidth;
-		tab.height = tab.sprite1.myHeight;
+		tab.width = tab.sprite1.subWidth;
+		tab.height = tab.sprite1.subHeight;
 		tab.tooltip = tooltip;
 	}
 

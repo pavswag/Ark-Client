@@ -145,7 +145,7 @@ public class Entity extends Renderable {
 		interactingEntity = -1;
 		anInt1504 = 32;
 		anInt1505 = -1;
-		height = 200;
+		defaultHeight = 200;
 		seqStandID = -1;
 		standTurnAnimIndex = -1;
 		hitSplatValues = new int[4];
@@ -177,7 +177,7 @@ public class Entity extends Renderable {
 	int anInt1505;
 	public String textSpoken;
 	public String lastForceChat;
-	public int height;
+	public int defaultHeight;
 	private int turnDirection;
 	int seqStandID;
 	int standTurnAnimIndex;
@@ -191,6 +191,7 @@ public class Entity extends Renderable {
 	final int[] hitSplatCycles;
 
 	final void addHitSplat(int type, int damage, int type2, int damage2, int cycle, int delay) {
+		System.out.println("addHitSplat[" + cycle + "]");
 		boolean var7 = true;
 		boolean var8 = true;
 
@@ -203,13 +204,16 @@ public class Entity extends Renderable {
 			}
 		}
 
+		System.out.println("var7/var8 = " + var7 + "/" + var8);
+
 		var9 = -1;
 		int var10 = -1;
 		int var11 = 0;
 		if (type >= 0) {
+			//type = 16;
 			HitSplatDefinition var12 = HitSplatDefinition.getHitSplatDefinition(type);
 			var10 = var12.field2229;
-			var11 = var12.field2227;
+			var11 = var12.hitsplatLifeTime;
 		}
 
 		int var14;
@@ -251,17 +255,28 @@ public class Entity extends Renderable {
 				this.hitSplatCount = (byte)((this.hitSplatCount + 1) % 4);
 				if (this.hitSplatCycles[var15] <= cycle) {
 					var9 = var15;
+					System.out.println("var9 == " + var9);
 					break;
 				}
 			}
 		}
 
 		if (var9 >= 0) {
+			//26 block
+			//27 = tinted block
+			//28 = hit
+			//29 = tinted hit
 			this.hitSplatTypes[var9] = type;
 			this.hitSplatValues[var9] = damage;
 			this.hitSplatTypes2[var9] = type2;
 			this.hitSplatValues2[var9] = damage2;
 			this.hitSplatCycles[var9] = cycle + var11 + delay;
+			System.out.println("Hitsplat lifetime = " + var11);
+			System.out.println(var9 + " - hitSplatTypes - " + this.hitSplatTypes[var9]);
+			System.out.println(var9 + " - hitSplatValues - " + this.hitSplatValues[var9]);
+			System.out.println(var9 + " - hitSplatTypes2 - " + this.hitSplatTypes2[var9]);
+			System.out.println(var9 + " - hitSplatValues2 - " + this.hitSplatValues2[var9]);
+			System.out.println(var9 + " - hitSplatCycles - " + this.hitSplatCycles[var9]);
 		}
 	}
 
@@ -322,13 +337,33 @@ public class Entity extends Renderable {
 	}
 
 
-	final void addHealthBar(int var1, int var2, int var3, int var4, int var5, int var6) {
-		HealthBarDefinition var8 = (HealthBarDefinition)HealthBarDefinition.cache.get((long)var1);
+	public void addHealthBar(Buffer buffer) {
+		int healthBarCount = buffer.readUnsignedByte();
+		if (healthBarCount > 0) {
+			for (int i = 0; i < healthBarCount; i++) {
+				int barId = buffer.readUShort();
+				int barValue = buffer.readUShort();
+
+				if (barValue != 32767) {
+					int cycleDuration = buffer.readUShort();
+					int healthBarEndCycle = buffer.readUShort();
+					int healthBarCycleOffset = barValue > 0 ? buffer.readUShort() : healthBarEndCycle;
+
+					addHealthBar(barId, Client.cycle, barValue, cycleDuration, healthBarEndCycle, healthBarCycleOffset);
+				} else {
+					removeHealthBar(barId);
+				}
+			}
+		}
+	}
+
+	final void addHealthBar(int type, int cycle, int barValue, int cycleDuration, int healthBarEndCycle, int healthBarCycleOffset) {
+		HealthBarDefinition var8 = (HealthBarDefinition)HealthBarDefinition.cache.get((long)type);
 		HealthBarDefinition var7;
 		if (var8 != null) {
 			var7 = var8;
 		} else {
-			var8 = HealthBarDefinition.lookup(var1);
+			var8 = HealthBarDefinition.lookup(type);
 			var7 = var8;
 		}
 
@@ -341,8 +376,8 @@ public class Entity extends Renderable {
 		HealthBar var13;
 		for (var13 = (HealthBar)this.healthBars.last(); var13 != null; var13 = (HealthBar)this.healthBars.previous()) {
 			++var12;
-			if (var13.definition.field2061 == var8.field2061) {
-				var13.put(var2 + var4, var5, var6, var3);
+			if (var13.definition.field2049 == var8.field2049) {
+				var13.put(cycle + cycleDuration, healthBarEndCycle, healthBarCycleOffset, barValue);
 				return;
 			}
 
@@ -364,7 +399,7 @@ public class Entity extends Renderable {
 				IterableNodeDeque.IterableNodeDeque_addBefore(var13, var14);
 			}
 
-			var13.put(var2 + var4, var5, var6, var3);
+			var13.put(cycle + cycleDuration, healthBarEndCycle, healthBarCycleOffset, barValue);
 			if (var12 >= 4) {
 				var10.remove();
 			}
@@ -379,7 +414,7 @@ public class Entity extends Renderable {
 			var2 = var3;
 		} else {
 			var3 = HealthBarDefinition.lookup(var1);
-			var3.field2061 = var1;
+			var3.field2049 = var1;
 			var2 = var3;
 		}
 

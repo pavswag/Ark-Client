@@ -748,7 +748,43 @@ public final class Buffer extends Cacheable implements RSBuffer {
         return ((payload[pos - 1] & 0xff) << 24) + ((payload[pos - 2] & 0xff) << 16) + ((payload[pos - 3] & 0xff) << 8)
                 + (payload[pos - 4] & 0xff);
     }
+    public String readStringCp1252NullCircumfixed() {
+        byte var1 = this.payload[++this.pos - 1];
+        if (var1 != 0) {
+            throw new IllegalStateException("");
+        } else {
+            int var2 = this.pos;
 
+            while (this.payload[++this.pos - 1] != 0) {
+            }
+
+            int var3 = this.pos - var2 - 1;
+            return var3 == 0 ? "" : decodeStringCp1252(this.payload, var2, var3);
+        }
+    }
+    public static final char[] cp1252AsciiExtension = new char[]{'€', '\u0000', '‚', 'ƒ', '„', '…', '†', '‡', 'ˆ', '‰', 'Š', '‹', 'Œ', '\u0000', 'Ž', '\u0000', '\u0000', '‘', '’', '“', '”', '•', '–', '—', '˜', '™', 'š', '›', 'œ', '\u0000', 'ž', 'Ÿ'};
+    public static String decodeStringCp1252(byte[] var0, int var1, int var2) {
+        char[] var3 = new char[var2];
+        int var4 = 0;
+
+        for (int var5 = 0; var5 < var2; ++var5) {
+            int var6 = var0[var5 + var1] & 255;
+            if (var6 != 0) {
+                if (var6 >= 128 && var6 < 160) {
+                    char var7 = cp1252AsciiExtension[var6 - 128];
+                    if (var7 == 0) {
+                        var7 = '?';
+                    }
+
+                    var6 = var7;
+                }
+
+                var3[var4++] = (char)var6;
+            }
+        }
+
+        return new String(var3, 0, var4);
+    }
     @Override
     public String readStringCp1252NullTerminated() {
         return readNullTerminatedString();

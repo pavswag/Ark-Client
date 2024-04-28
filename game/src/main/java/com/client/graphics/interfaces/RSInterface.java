@@ -468,8 +468,8 @@ public class RSInterface implements RSWidget {
 		tab.type = TYPE_CONFIG;
 		tab.sprite2 = Client.cacheSprite3[enabledSprite];
 		tab.sprite1 = Client.cacheSprite3[disabledSprite];
-		tab.width = tab.sprite2.myWidth;
-		tab.height = tab.sprite1.myHeight;
+		tab.width = tab.sprite2.subWidth;
+		tab.height = tab.sprite1.subHeight;
 		tab.active = false;
 	}
 
@@ -482,8 +482,8 @@ public class RSInterface implements RSWidget {
 		tab.sprite2 = Client.cacheSprite3[sprite];
 		tab.enabledAltSprite = Client.cacheSprite3[enabledSpriteBehind];
 		tab.disabledAltSprite = Client.cacheSprite3[disabledSpriteBehind];
-		tab.width = tab.enabledAltSprite.myWidth;
-		tab.height = tab.disabledAltSprite.myHeight;
+		tab.width = tab.enabledAltSprite.subWidth;
+		tab.height = tab.disabledAltSprite.subHeight;
 		tab.spriteOpacity = opacity;
 	}
 	public static void hoverButton(int id, String dir, String tooltip, int offSprite, int hoverSprite) {
@@ -493,8 +493,8 @@ public class RSInterface implements RSWidget {
 		tab.type = TYPE_HOVER;
 		tab.sprite2 = imageLoader(offSprite, dir);
 		tab.sprite1 = imageLoader(hoverSprite, dir);
-		tab.width = tab.sprite2.myWidth;
-		tab.height = tab.sprite1.myHeight;
+		tab.width = tab.sprite2.subWidth;
+		tab.height = tab.sprite1.subHeight;
 		tab.active = false;
 		tab.toggled = false;
 		tab.spriteOpacity = 255;
@@ -506,8 +506,8 @@ public class RSInterface implements RSWidget {
 		tab.type = TYPE_HOVER;
 		tab.sprite2 = Client.cacheSprite3[0];
 		tab.sprite1 = Client.cacheSprite3[0];
-		tab.width = tab.sprite2.myWidth;
-		tab.height = tab.sprite1.myHeight;
+		tab.width = tab.sprite2.subWidth;
+		tab.height = tab.sprite1.subHeight;
 		tab.active = false;
 		tab.toggled = false;
 	}
@@ -519,8 +519,8 @@ public class RSInterface implements RSWidget {
 		tab.type = TYPE_HOVER;
 		tab.sprite2 = Client.cacheSprite3[sprite2];
 		tab.sprite1 = Client.cacheSprite3[sprite1];
-		tab.width = tab.sprite2.myWidth;
-		tab.height = tab.sprite1.myHeight;
+		tab.width = tab.sprite2.subWidth;
+		tab.height = tab.sprite1.subHeight;
 		tab.active = false;
 		tab.toggled = false;
 		tab.spriteOpacity = opacity;
@@ -534,8 +534,8 @@ public class RSInterface implements RSWidget {
 		tab.type = TYPE_HOVER;
 		tab.sprite2 = Client.cacheSprite3[enabledSprite];
 		tab.sprite1 = Client.cacheSprite3[disabledSprite];
-		tab.width = tab.sprite2.myWidth;
-		tab.height = tab.sprite1.myHeight;
+		tab.width = tab.sprite2.subWidth;
+		tab.height = tab.sprite1.subHeight;
 		tab.msgX = tab.width / 2;
 		tab.msgY = (tab.height / 2) + 4;
 		tab.message = buttonText;
@@ -556,8 +556,8 @@ public class RSInterface implements RSWidget {
 		tab.type = TYPE_HOVER;
 		tab.sprite2 = imageLoader(enabledSprite, dir);
 		tab.sprite1 = imageLoader(disabledSprite, dir);
-		tab.width = tab.sprite2.myWidth;
-		tab.height = tab.sprite1.myHeight;
+		tab.width = tab.sprite2.subWidth;
+		tab.height = tab.sprite1.subHeight;
 		tab.msgX = tab.width / 2;
 		tab.msgY = (tab.height / 2) + 4;
 		tab.message = buttonText;
@@ -578,8 +578,8 @@ public class RSInterface implements RSWidget {
 		tab.type = TYPE_HOVER;
 		tab.sprite2 = Client.cacheSprite3[enabledSprite];
 		tab.sprite1 = Client.cacheSprite3[disabledSprite];
-		tab.width = tab.sprite2.myWidth;
-		tab.height = tab.sprite1.myHeight;
+		tab.width = tab.sprite2.subWidth;
+		tab.height = tab.sprite1.subHeight;
 		tab.msgX = (tab.width / 2);
 		tab.msgY = (tab.height / 2) + 4;
 		tab.message = buttonText;
@@ -862,8 +862,8 @@ public class RSInterface implements RSWidget {
 		Tab.type = 5;
 		Tab.atActionType = atActionType;
 		Tab.contentType = 0;
-		Tab.width = sprite1.myWidth;
-		Tab.height = sprite1.myHeight;
+		Tab.width = sprite1.subWidth;
+		Tab.height = sprite1.subHeight;
 		Tab.opacity = 0;
 		Tab.mOverInterToTrigger = -1;
 		Tab.anIntArray245 = new int[1];
@@ -1744,8 +1744,8 @@ public class RSInterface implements RSWidget {
 		RSInterface.hoverType = 52;
 		RSInterface.sprite1 = sprite;
 		RSInterface.sprite2 = sprite;
-		RSInterface.width = sprite.myWidth;
-		RSInterface.height = sprite.myHeight;
+		RSInterface.width = sprite.subWidth;
+		RSInterface.height = sprite.subHeight;
 		RSInterface.tooltip = tooltip;
 		return RSInterface;
 	}
@@ -2514,8 +2514,8 @@ public class RSInterface implements RSWidget {
 		rsi.contentType = 0;
 		rsi.sprite1 = Client.cacheSprite3[spriteId];
 		rsi.sprite2 = Client.cacheSprite3[spriteId];
-		rsi.width = rsi.sprite1.myWidth;
-		rsi.height = rsi.sprite2.myHeight - 2;
+		rsi.width = rsi.sprite1.subWidth;
+		rsi.height = rsi.sprite2.subHeight - 2;
 	}
 
 	public int spriteOpacity;
@@ -2528,8 +2528,8 @@ public class RSInterface implements RSWidget {
 		tab.type = TYPE_CONFIG_HOVER;
 		tab.sprite2 = Client.cacheSprite3[sprite2];
 		tab.sprite1 = Client.cacheSprite3[sprite1];
-		tab.width = tab.sprite2.myWidth;
-		tab.height = tab.sprite1.myHeight;
+		tab.width = tab.sprite2.subWidth;
+		tab.height = tab.sprite1.subHeight;
 		tab.enabledAltSprite = Client.cacheSprite3[enabledAltSprite];
 		tab.disabledAltSprite = Client.cacheSprite3[disabledAltSprite];
 		tab.buttonsToDisable = buttonsToDisable;
@@ -2544,8 +2544,8 @@ public class RSInterface implements RSWidget {
 		tab.type = 11;
 		tab.sprite2 = imageLoader(sprite2, spriteName);
 		tab.sprite1 = imageLoader(sprite1, spriteName);
-		tab.width = tab.sprite2.myWidth;
-		tab.height = tab.sprite1.myHeight;
+		tab.width = tab.sprite2.subWidth;
+		tab.height = tab.sprite1.subHeight;
 		tab.enabledAltSprite = imageLoader(enabledAltSprite, spriteName);
 		tab.disabledAltSprite = imageLoader(disabledAltSprite, spriteName);
 		tab.buttonsToDisable = buttonsToDisable;
@@ -2947,8 +2947,8 @@ public class RSInterface implements RSWidget {
 		tab.sprite1 = imageLoader(sid, spriteName);
 		tab.sprite2 = imageLoader(sid, spriteName);
 		// tab.width = width;
-		tab.height = tab.sprite1.myHeight;
-		tab.width = tab.sprite1.myWidth;
+		tab.height = tab.sprite1.subHeight;
+		tab.width = tab.sprite1.subWidth;
 		tab.tooltip = tooltip;
 		tab.inventoryhover = true;
 	}
@@ -3435,8 +3435,8 @@ public class RSInterface implements RSWidget {
 		rsinterface.type = 5;
 		rsinterface.atActionType = 0;
 		rsinterface.contentType = 0;
-		rsinterface.width = sprite.myWidth;
-		rsinterface.height = sprite.myHeight;
+		rsinterface.width = sprite.subWidth;
+		rsinterface.height = sprite.subHeight;
 		rsinterface.opacity = 0;
 		rsinterface.mOverInterToTrigger = 52;
 		rsinterface.sprite1 = sprite;
@@ -3452,8 +3452,8 @@ public class RSInterface implements RSWidget {
 		rsinterface.type = 5;
 		rsinterface.atActionType = 0;
 		rsinterface.contentType = 0;
-		rsinterface.width = sprite.myWidth;
-		rsinterface.height = sprite.myHeight;
+		rsinterface.width = sprite.subWidth;
+		rsinterface.height = sprite.subHeight;
 		rsinterface.opacity = 0;
 		rsinterface.mOverInterToTrigger = 52;
 		rsinterface.sprite1 = sprite;
@@ -3676,8 +3676,8 @@ public class RSInterface implements RSWidget {
 		tab.type = TYPE_CONFIG_HOVER;
 		tab.sprite2 = imageLoader(sprite2, spriteName);
 		tab.sprite1 = imageLoader(sprite1, spriteName);
-		tab.width = tab.sprite2.myWidth;
-		tab.height = tab.sprite1.myHeight;
+		tab.width = tab.sprite2.subWidth;
+		tab.height = tab.sprite1.subHeight;
 		tab.enabledAltSprite = imageLoader(enabledAltSprite, spriteName);
 		tab.disabledAltSprite = imageLoader(disabledAltSprite, spriteName);
 		tab.buttonsToDisable = buttonsToDisable;
@@ -3696,8 +3696,8 @@ public class RSInterface implements RSWidget {
 		tab.mOverInterToTrigger = 52;
 		tab.sprite1 = imageLoader(sid, spriteName);
 		tab.sprite2 = imageLoader(sid, spriteName);
-		tab.width = tab.sprite1.myWidth;
-		tab.height = tab.sprite2.myHeight;
+		tab.width = tab.sprite1.subWidth;
+		tab.height = tab.sprite2.subHeight;
 		tab.tooltip = tooltip;
 	}
 
@@ -3713,8 +3713,8 @@ public class RSInterface implements RSWidget {
 		tab.mOverInterToTrigger = mouseOverTrigger;
 		tab.sprite1 = imageLoader(spriteId, spriteName);
 		tab.sprite2 = imageLoader(spriteId, spriteName);
-		tab.width = tab.sprite1.myWidth;
-		tab.height = tab.sprite2.myHeight;
+		tab.width = tab.sprite1.subWidth;
+		tab.height = tab.sprite2.subHeight;
 		tab.tooltip = tooltip;
 	}
 
@@ -3945,7 +3945,7 @@ public class RSInterface implements RSWidget {
 			if(s.startsWith("/"))
 				s = s.substring(1);
 			sprite = new Sprite(s + " " + i);
-			while(sprite.myPixels == null && SpriteCache.widgetSpriteExists(s + " " + i)) {
+			while(sprite.pixels == null && SpriteCache.widgetSpriteExists(s + " " + i)) {
 				System.out.println("Sprite ["+  s + " " + i + "] loading");
 				sprite = new Sprite(s + " " + i);
 			}
@@ -5228,7 +5228,7 @@ public class RSInterface implements RSWidget {
 		Sprite sprite = getSpriteFromName(name, this);
 		if(sprite != null)
 			return sprite;
-//		System.out.println("Undiscovered sprite #getSprite1[" + name + "]");
+		//System.out.println("Undiscovered sprite #getSprite1[" + name + "]");
 		return sprite1;
 	}
 	public Sprite getSprite2() {
@@ -5409,7 +5409,7 @@ public class RSInterface implements RSWidget {
 				case 4:
 					return Client.instance.getOldSchoolSprite(657);
 			}
-			return Client.instance.getOldSchoolSprite(115 + index);
+			return null;
 		}
 		if(name.endsWith("prayeron")) {
 			int index = Integer.parseInt(name.split("-")[0]);
@@ -5816,16 +5816,16 @@ public class RSInterface implements RSWidget {
 		RSInterface component = interfaceCache[id];
 		component.atActionType = 4;
 		component.tooltip = tooltip;
-		component.width = component.backgroundSprites[0].myWidth;
-		component.height = component.backgroundSprites[0].myHeight;
+		component.width = component.backgroundSprites[0].subWidth;
+		component.height = component.backgroundSprites[0].subHeight;
 	}
 
 	public static void addClickableSprites(int id, String path, int... spriteIds) {
 		addSprites(id, path, spriteIds);
 		RSInterface component = interfaceCache[id];
 		component.atActionType = 0;
-		component.width = (component.backgroundSprites[0]).myWidth;
-		component.height = (component.backgroundSprites[0]).myHeight;
+		component.width = (component.backgroundSprites[0]).subWidth;
+		component.height = (component.backgroundSprites[0]).subHeight;
 	}
 
 	/**

@@ -98,8 +98,8 @@ public class SpriteLoader3 {
 					sprite.spriteData);
 		}
 		sprites[sprite.id] = new Sprite(sprite.spriteData);
-		sprites[sprite.id].drawOffsetX = sprite.drawOffsetX;
-		sprites[sprite.id].drawOffsetY = sprite.drawOffsetY;
+		sprites[sprite.id].xOffset = sprite.drawOffsetX;
+		sprites[sprite.id].yOffset = sprite.drawOffsetY;
 	}
 
 	/**

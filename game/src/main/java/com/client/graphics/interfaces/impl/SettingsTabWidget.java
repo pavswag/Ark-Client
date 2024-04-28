@@ -149,8 +149,8 @@ public class SettingsTabWidget extends RSInterface {
 		tab.type = TYPE_CONFIG;
 		tab.sprite2 = Client.cacheSprite3[enabledSprite];
 		tab.sprite1 = Client.cacheSprite3[disabledSprite];
-		tab.width = tab.sprite2.myWidth;
-		tab.height = tab.sprite1.myHeight;
+		tab.width = tab.sprite2.subWidth;
+		tab.height = tab.sprite1.subHeight;
 		tab.scripts = new int[1][3];
 		tab.scripts[0][0] = 5;
 		tab.scripts[0][1] = id;
@@ -167,8 +167,8 @@ public class SettingsTabWidget extends RSInterface {
 		tab.type = TYPE_CONFIG;
 		tab.sprite2 = Client.cacheSprite4[enabledSprite];
 		tab.sprite1 = Client.cacheSprite4[disabledSprite];
-		tab.width = tab.sprite2.myWidth;
-		tab.height = tab.sprite1.myHeight;
+		tab.width = tab.sprite2.subWidth;
+		tab.height = tab.sprite1.subHeight;
 		tab.active = false;
 	}
 

@@ -18,7 +18,7 @@ public class WildWarning extends InterfaceBuilder {
     public void build() {
         int x = 47;
         int yOffset = -8;
-        int centerX = 47 + (BACKGROUND.myWidth / 2);
+        int centerX = 47 + (BACKGROUND.subWidth / 2);
         addSprite(nextInterface(), BACKGROUND);
         child(x, 44 + yOffset);
 

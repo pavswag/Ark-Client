@@ -65,7 +65,7 @@ public class SkillOrb {
         Rasterizer2D.setDrawingArea((int) ((currentLevel() >= 99 ? 100 : percentProgress) - 38) + y, x + 30, x + 56, 1 + y);
         Client.instance.skillOrbs[1].drawAdvancedSprite(x + 2, 1 + y, alpha);
         Rasterizer2D.defaultDrawingAreaSize();
-        icon.drawAdvancedSprite(x + 30 - icon.myWidth / 2, 28 - icon.myHeight / 2 + y, alpha);
+        icon.drawAdvancedSprite(x + 30 - icon.subWidth / 2, 28 - icon.subHeight / 2 + y, alpha);
     }
 
     /**

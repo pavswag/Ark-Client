@@ -2,10 +2,16 @@ package com.client.definitions;
 
 import com.client.Buffer;
 import com.client.EvictingDualNodeHashTable;
+import com.client.Sprite;
 import com.client.cache.DualNode;
 import com.client.js5.Js5List;
 import com.client.js5.util.Js5ConfigType;
+import lombok.ToString;
+import net.runelite.mapping.Export;
+import net.runelite.mapping.ObfuscatedName;
+import net.runelite.mapping.ObfuscatedSignature;
 
+@ToString
 public class HealthBarDefinition extends DualNode {
     public static EvictingDualNodeHashTable cache = new EvictingDualNodeHashTable(64);
     public static EvictingDualNodeHashTable sprites = new EvictingDualNodeHashTable(64);
@@ -29,6 +35,7 @@ public class HealthBarDefinition extends DualNode {
         int2 = 255;
         int3 = -1;
         int4 = 70;
+        field2049 = 1;
         frontspriteId = -1;
         backSpriteId = -1;
         width = 30;
@@ -87,5 +94,47 @@ public class HealthBarDefinition extends DualNode {
     public int width;
     public int widthPadding;
 
-    public int field2061;
+    public int field2049;
+
+    public Sprite getFrontSprite() {
+        if (this.frontspriteId < 0) {
+            return null;
+        } else {
+            Sprite var1 = (Sprite)sprites.get((long)this.frontspriteId);
+            if (var1 != null) {
+                return var1;
+            } else {
+                var1 = Sprite.SpriteBuffer_getSprite(Js5List.sprites, this.frontspriteId, 0);
+                if (var1 != null) {
+                    sprites.put(var1, (long)this.frontspriteId);
+                }
+
+                return var1;
+            }
+        }
+    }
+
+    @ObfuscatedName("at")
+    @ObfuscatedSignature(
+            descriptor = "(B)Lvg;",
+            garbageValue = "0"
+    )
+    @Export("getBackSprite")
+    public Sprite getBackSprite() {
+        if (this.backSpriteId < 0) {
+            return null;
+        } else {
+            Sprite var1 = (Sprite)sprites.get((long)this.backSpriteId);
+            if (var1 != null) {
+                return var1;
+            } else {
+                var1 = Sprite.SpriteBuffer_getSprite(Js5List.sprites, this.backSpriteId, 0);
+                if (var1 != null) {
+                    sprites.put(var1, (long)this.backSpriteId);
+                }
+
+                return var1;
+            }
+        }
+    }
 }

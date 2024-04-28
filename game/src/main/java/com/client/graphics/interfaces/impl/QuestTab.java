@@ -131,16 +131,16 @@ public class QuestTab extends RSInterface {
         master.child(childIndex++, interfaceId++, x + 7, y + 6);
 
         for (Button button : Button.values()) {
-            int tabX = x + (button.ordinal() * TAB_0.myWidth) - button.ordinal();
-            int tabY = y + 1 - TAB_0.myHeight;
-            addConfigButton(interfaceId, INTERFACE_ID, 0, 1, TAB, TAB_0.myWidth, TAB_0.myHeight, StringUtils.fixName(button.toString().toLowerCase()),
+            int tabX = x + (button.ordinal() * TAB_0.subWidth) - button.ordinal();
+            int tabY = y + 1 - TAB_0.subHeight;
+            addConfigButton(interfaceId, INTERFACE_ID, 0, 1, TAB, TAB_0.subWidth, TAB_0.subHeight, StringUtils.fixName(button.toString().toLowerCase()),
                     button.ordinal(),4, CONFIG_ID);
             RSInterface.interfaceCache[interfaceId].ignoreConfigClicking = true;
             master.child(childIndex++, interfaceId++, tabX, tabY);
 
             Sprite icon = button.getSprite();
-            int iconX = tabX + (TAB_0.myWidth / 2) - (icon.myWidth / 2);
-            int iconY = tabY + (TAB_0.myHeight / 2) - (icon.myHeight / 2);
+            int iconX = tabX + (TAB_0.subWidth / 2) - (icon.subWidth / 2);
+            int iconY = tabY + (TAB_0.subHeight / 2) - (icon.subHeight / 2);
             addSprite(interfaceId, icon);
             master.child(childIndex++, interfaceId++, iconX, iconY);
         }

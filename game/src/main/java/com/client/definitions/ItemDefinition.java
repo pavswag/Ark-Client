@@ -5187,7 +5187,7 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
         if (outlineColor == 0) {
             Sprite sprite = (Sprite) sprites.get(itemId);
 
-            if (sprite != null && sprite.maxHeight != stackSize && sprite.maxHeight != -1) {
+            if (sprite != null && sprite.height != stackSize && sprite.height != -1) {
                 sprite.remove();
                 sprite = null;
             }
@@ -5230,16 +5230,16 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
         int centerX = Rasterizer3D.originViewX;
         int centerY = Rasterizer3D.originViewY;
         int[] lineOffsets = Rasterizer3D.scanOffsets;
-        int[] pixels = Rasterizer2D.pixels;
-        int width = Rasterizer2D.width;
-        int height = Rasterizer2D.height;
-        int vp_left = Rasterizer2D.leftX;
-        int vp_right = Rasterizer2D.bottomX;
-        int vp_top = Rasterizer2D.topY;
-        int vp_bottom = Rasterizer2D.bottomY;
+        int[] pixels = Rasterizer2D.Rasterizer2D_pixels;
+        int width = Rasterizer2D.Rasterizer2D_width;
+        int height = Rasterizer2D.Rasterizer2D_height;
+        int vp_left = Rasterizer2D.Rasterizer2D_xClipStart;
+        int vp_right = Rasterizer2D.Rasterizer2D_xClipEnd;
+        int vp_top = Rasterizer2D.Rasterizer2D_yClipStart;
+        int vp_bottom = Rasterizer2D.Rasterizer2D_yClipEnd;
         Rasterizer3D.world = false;
         Rasterizer3D.aBoolean1464 = false;
-        Rasterizer2D.initDrawingArea(32, 32, enabledSprite.myPixels);
+        Rasterizer2D.initDrawingArea(32, 32, enabledSprite.pixels);
         Rasterizer2D.drawItemBox(0, 0, 32, 32, 0);
         Rasterizer3D.useViewport();
         int k3 = definition.zoom2d;
@@ -5265,16 +5265,16 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
             enabledSprite.shadow(3153952);
         }
 
-        Rasterizer2D.initDrawingArea(32, 32, enabledSprite.myPixels);
+        Rasterizer2D.initDrawingArea(32, 32, enabledSprite.pixels);
 
         if (noted) {
-            int old_w = sprite.maxWidth;
-            int old_h = sprite.maxHeight;
-            sprite.maxWidth = 32;
-            sprite.maxHeight = 32;
+            int old_w = sprite.width;
+            int old_h = sprite.height;
+            sprite.width = 32;
+            sprite.height = 32;
             sprite.drawSprite(0, 0);
-            sprite.maxWidth = old_w;
-            sprite.maxHeight = old_h;
+            sprite.width = old_w;
+            sprite.height = old_h;
         }
 
         if (outlineColor == 0) {
@@ -5288,8 +5288,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
         Rasterizer3D.scanOffsets = lineOffsets;
         Rasterizer3D.aBoolean1464 = true;
         Rasterizer3D.world = true;
-        enabledSprite.maxWidth = definition.isStackable() ? 33 : 32;
-        enabledSprite.maxHeight = stackSize;
+        enabledSprite.width = definition.isStackable() ? 33 : 32;
+        enabledSprite.height = stackSize;
         return enabledSprite;
     }
 
@@ -5297,7 +5297,7 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
     public static Sprite getSprite(int itemId, int stackSize, int outlineColor) {
         if (outlineColor == 0) {
             Sprite sprite = (Sprite) sprites.get(itemId);
-            if (sprite != null && sprite.maxHeight != stackSize && sprite.maxHeight != -1) {
+            if (sprite != null && sprite.height != stackSize && sprite.height != -1) {
 
                 sprite.remove();
                 sprite = null;
@@ -5347,16 +5347,16 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
         int centerX = Rasterizer3D.originViewX;
         int centerY = Rasterizer3D.originViewY;
         int[] lineOffsets = Rasterizer3D.scanOffsets;
-        int[] pixels = Rasterizer2D.pixels;
-        int width = Rasterizer2D.width;
-        int height = Rasterizer2D.height;
-        int vp_left = Rasterizer2D.leftX;
-        int vp_right = Rasterizer2D.bottomX;
-        int vp_top = Rasterizer2D.topY;
-        int vp_bottom = Rasterizer2D.bottomY;
+        int[] pixels = Rasterizer2D.Rasterizer2D_pixels;
+        int width = Rasterizer2D.Rasterizer2D_width;
+        int height = Rasterizer2D.Rasterizer2D_height;
+        int vp_left = Rasterizer2D.Rasterizer2D_xClipStart;
+        int vp_right = Rasterizer2D.Rasterizer2D_xClipEnd;
+        int vp_top = Rasterizer2D.Rasterizer2D_yClipStart;
+        int vp_bottom = Rasterizer2D.Rasterizer2D_yClipEnd;
         Rasterizer3D.world = false;
         Rasterizer3D.aBoolean1464 = false;
-        Rasterizer2D.initDrawingArea(32, 32, enabledSprite.myPixels);
+        Rasterizer2D.initDrawingArea(32, 32, enabledSprite.pixels);
         Rasterizer2D.drawItemBox(0, 0, 32, 32, 0);
         Rasterizer3D.useViewport();
         int k3 = itemDef.zoom2d;
@@ -5378,16 +5378,16 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
             enabledSprite.shadow(3153952);
         }
 
-        Rasterizer2D.initDrawingArea(32, 32, enabledSprite.myPixels);
+        Rasterizer2D.initDrawingArea(32, 32, enabledSprite.pixels);
 
         if (itemDef.noteTemplateId != -1) {
-            int old_w = sprite.maxWidth;
-            int old_h = sprite.maxHeight;
-            sprite.maxWidth = 32;
-            sprite.maxHeight = 32;
+            int old_w = sprite.width;
+            int old_h = sprite.height;
+            sprite.width = 32;
+            sprite.height = 32;
             sprite.drawSprite(0, 0);
-            sprite.maxWidth = old_w;
-            sprite.maxHeight = old_h;
+            sprite.width = old_w;
+            sprite.height = old_h;
         }
         if (outlineColor == 0)
             sprites.put(enabledSprite, itemId);
@@ -5399,10 +5399,10 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
         Rasterizer3D.aBoolean1464 = true;
         Rasterizer3D.world = true;
         if (itemDef.isStackable())
-            enabledSprite.maxWidth = 33;
+            enabledSprite.width = 33;
         else
-            enabledSprite.maxWidth = 32;
-        enabledSprite.maxHeight = stackSize;
+            enabledSprite.width = 32;
+        enabledSprite.height = stackSize;
         return enabledSprite;
     }
 
@@ -5433,16 +5433,16 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
         int centerX = Rasterizer3D.originViewX;
         int centerY = Rasterizer3D.originViewY;
         int[] lineOffsets = Rasterizer3D.scanOffsets;
-        int[] pixels = Rasterizer2D.pixels;
-        int width = Rasterizer2D.width;
-        int height = Rasterizer2D.height;
-        int vp_left = Rasterizer2D.leftX;
-        int vp_right = Rasterizer2D.bottomX;
-        int vp_top = Rasterizer2D.topY;
-        int vp_bottom = Rasterizer2D.bottomY;
+        int[] pixels = Rasterizer2D.Rasterizer2D_pixels;
+        int width = Rasterizer2D.Rasterizer2D_width;
+        int height = Rasterizer2D.Rasterizer2D_height;
+        int vp_left = Rasterizer2D.Rasterizer2D_xClipStart;
+        int vp_right = Rasterizer2D.Rasterizer2D_xClipEnd;
+        int vp_top = Rasterizer2D.Rasterizer2D_yClipStart;
+        int vp_bottom = Rasterizer2D.Rasterizer2D_yClipEnd;
         Rasterizer3D.world = false;
         Rasterizer3D.aBoolean1464 = false;
-        Rasterizer2D.initDrawingArea(18, 18, enabledSprite.myPixels);
+        Rasterizer2D.initDrawingArea(18, 18, enabledSprite.pixels);
         Rasterizer2D.drawItemBox(0, 0, 18, 18, 0);
         Rasterizer3D.useViewport();
         int k3 = (int) (itemDef.zoom2d * 1.6D);
@@ -5456,13 +5456,13 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
         enabledSprite.outline(1);
 
         if (itemDef.noteTemplateId != -1) {
-            int old_w = sprite.maxWidth;
-            int old_h = sprite.maxHeight;
-            sprite.maxWidth = 18;
-            sprite.maxHeight = 18;
+            int old_w = sprite.width;
+            int old_h = sprite.height;
+            sprite.width = 18;
+            sprite.height = 18;
             sprite.drawSprite(0, 0);
-            sprite.maxWidth = old_w;
-            sprite.maxHeight = old_h;
+            sprite.width = old_w;
+            sprite.height = old_h;
         }
 
         sprites.put(enabledSprite, itemId);
@@ -5474,8 +5474,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
         Rasterizer3D.aBoolean1464 = true;
         Rasterizer3D.world = true;
 
-        enabledSprite.maxWidth = 18;
-        enabledSprite.maxHeight = 18;
+        enabledSprite.width = 18;
+        enabledSprite.height = 18;
         return enabledSprite;
     }
 
@@ -5499,16 +5499,16 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
         int centerX = Rasterizer3D.originViewX;
         int centerY = Rasterizer3D.originViewY;
         int[] lineOffsets = Rasterizer3D.scanOffsets;
-        int[] pixels = Rasterizer2D.pixels;
-        int width = Rasterizer2D.width;
-        int height = Rasterizer2D.height;
-        int vp_left = Rasterizer2D.leftX;
-        int vp_right = Rasterizer2D.bottomX;
-        int vp_top = Rasterizer2D.topY;
-        int vp_bottom = Rasterizer2D.bottomY;
+        int[] pixels = Rasterizer2D.Rasterizer2D_pixels;
+        int width = Rasterizer2D.Rasterizer2D_width;
+        int height = Rasterizer2D.Rasterizer2D_height;
+        int vp_left = Rasterizer2D.Rasterizer2D_xClipStart;
+        int vp_right = Rasterizer2D.Rasterizer2D_xClipEnd;
+        int vp_top = Rasterizer2D.Rasterizer2D_yClipStart;
+        int vp_bottom = Rasterizer2D.Rasterizer2D_yClipEnd;
         Rasterizer3D.world = false;
         Rasterizer3D.aBoolean1464 = false;
-        Rasterizer2D.initDrawingArea(90, 90, sprite.myPixels);
+        Rasterizer2D.initDrawingArea(90, 90, sprite.pixels);
         Rasterizer2D.drawItemBox(0, 0, 90, 90, 0);
         Rasterizer3D.useViewport();
         int l3 = Rasterizer3D.SINE[itemDef.xan2d] * zoom >> 15;
@@ -5526,7 +5526,7 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
         if (outlineColor == 0) {
             sprite.shadow(3153952);
         }
-        Rasterizer2D.initDrawingArea(90, 90, sprite.myPixels);
+        Rasterizer2D.initDrawingArea(90, 90, sprite.pixels);
         Rasterizer2D.initDrawingArea(height, width, pixels);
         Rasterizer2D.setDrawingArea(vp_bottom, vp_left, vp_right, vp_top);
         Rasterizer3D.originViewX = centerX;
@@ -5535,10 +5535,10 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
         Rasterizer3D.aBoolean1464 = true;
         Rasterizer3D.world = true;
         if (itemDef.isStackable())
-            sprite.maxWidth = 33;
+            sprite.width = 33;
         else
-            sprite.maxWidth = 32;
-        sprite.maxHeight = stackSize;
+            sprite.width = 32;
+        sprite.height = stackSize;
         return sprite;
     }
 

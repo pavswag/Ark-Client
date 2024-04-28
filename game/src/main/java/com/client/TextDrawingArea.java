@@ -69,8 +69,8 @@ public final class TextDrawingArea extends Rasterizer2D {
 		method385(j, s, k, i - method384(s));
 	}
 
-	public void drawText(int i, String s, int k, int l) {
-		method385(i, s, k, l - method384(s) / 2);
+	public void drawText(int colour, String text, int y, int x) {
+		method385(colour, text, y, x - method384(text) / 2);
 	}
 
 	public void method382(int i, int j, String s, int l, boolean flag) {
@@ -267,36 +267,36 @@ public final class TextDrawingArea extends Rasterizer2D {
 	}
 
 	private void method392(byte abyte0[], int i, int j, int k, int l, int i1) {
-		int j1 = i + j * Rasterizer2D.width;
-		int k1 = Rasterizer2D.width - k;
+		int j1 = i + j * Rasterizer2D.Rasterizer2D_width;
+		int k1 = Rasterizer2D.Rasterizer2D_width - k;
 		int l1 = 0;
 		int i2 = 0;
-		if (j < Rasterizer2D.topY) {
-			int j2 = Rasterizer2D.topY - j;
+		if (j < Rasterizer2D.Rasterizer2D_yClipStart) {
+			int j2 = Rasterizer2D.Rasterizer2D_yClipStart - j;
 			l -= j2;
-			j = Rasterizer2D.topY;
+			j = Rasterizer2D.Rasterizer2D_yClipStart;
 			i2 += j2 * k;
-			j1 += j2 * Rasterizer2D.width;
+			j1 += j2 * Rasterizer2D.Rasterizer2D_width;
 		}
-		if (j + l >= Rasterizer2D.bottomY)
-			l -= ((j + l) - Rasterizer2D.bottomY) + 1;
-		if (i < Rasterizer2D.leftX) {
-			int k2 = Rasterizer2D.leftX - i;
+		if (j + l >= Rasterizer2D.Rasterizer2D_yClipEnd)
+			l -= ((j + l) - Rasterizer2D.Rasterizer2D_yClipEnd) + 1;
+		if (i < Rasterizer2D.Rasterizer2D_xClipStart) {
+			int k2 = Rasterizer2D.Rasterizer2D_xClipStart - i;
 			k -= k2;
-			i = Rasterizer2D.leftX;
+			i = Rasterizer2D.Rasterizer2D_xClipStart;
 			i2 += k2;
 			j1 += k2;
 			l1 += k2;
 			k1 += k2;
 		}
-		if (i + k >= Rasterizer2D.bottomX) {
-			int l2 = ((i + k) - Rasterizer2D.bottomX) + 1;
+		if (i + k >= Rasterizer2D.Rasterizer2D_xClipEnd) {
+			int l2 = ((i + k) - Rasterizer2D.Rasterizer2D_xClipEnd) + 1;
 			k -= l2;
 			l1 += l2;
 			k1 += l2;
 		}
 		if (!(k <= 0 || l <= 0)) {
-			method393(Rasterizer2D.pixels, abyte0, i1, i2, j1, k, l, k1, l1);
+			method393(Rasterizer2D.Rasterizer2D_pixels, abyte0, i1, i2, j1, k, l, k1, l1);
 		}
 	}
 
@@ -333,37 +333,37 @@ public final class TextDrawingArea extends Rasterizer2D {
 		}
 	}
 	private void method394(int i, int j, byte abyte0[], int k, int l, int i1, int j1) {
-		int k1 = j + l * Rasterizer2D.width;
-		int l1 = Rasterizer2D.width - k;
+		int k1 = j + l * Rasterizer2D.Rasterizer2D_width;
+		int l1 = Rasterizer2D.Rasterizer2D_width - k;
 		int i2 = 0;
 		int j2 = 0;
-		if (l < Rasterizer2D.topY) {
-			int k2 = Rasterizer2D.topY - l;
+		if (l < Rasterizer2D.Rasterizer2D_yClipStart) {
+			int k2 = Rasterizer2D.Rasterizer2D_yClipStart - l;
 			i1 -= k2;
-			l = Rasterizer2D.topY;
+			l = Rasterizer2D.Rasterizer2D_yClipStart;
 			j2 += k2 * k;
-			k1 += k2 * Rasterizer2D.width;
+			k1 += k2 * Rasterizer2D.Rasterizer2D_width;
 		}
-		if (l + i1 >= Rasterizer2D.bottomY)
-			i1 -= ((l + i1) - Rasterizer2D.bottomY) + 1;
-		if (j < Rasterizer2D.leftX) {
-			int l2 = Rasterizer2D.leftX - j;
+		if (l + i1 >= Rasterizer2D.Rasterizer2D_yClipEnd)
+			i1 -= ((l + i1) - Rasterizer2D.Rasterizer2D_yClipEnd) + 1;
+		if (j < Rasterizer2D.Rasterizer2D_xClipStart) {
+			int l2 = Rasterizer2D.Rasterizer2D_xClipStart - j;
 			k -= l2;
-			j = Rasterizer2D.leftX;
+			j = Rasterizer2D.Rasterizer2D_xClipStart;
 			j2 += l2;
 			k1 += l2;
 			i2 += l2;
 			l1 += l2;
 		}
-		if (j + k >= Rasterizer2D.bottomX) {
-			int i3 = ((j + k) - Rasterizer2D.bottomX) + 1;
+		if (j + k >= Rasterizer2D.Rasterizer2D_xClipEnd) {
+			int i3 = ((j + k) - Rasterizer2D.Rasterizer2D_xClipEnd) + 1;
 			k -= i3;
 			i2 += i3;
 			l1 += i3;
 		}
 		if (k <= 0 || i1 <= 0)
 			return;
-		method395(abyte0, i1, k1, Rasterizer2D.pixels, j2, k, i2, l1, j1, i);
+		method395(abyte0, i1, k1, Rasterizer2D.Rasterizer2D_pixels, j2, k, i2, l1, j1, i);
 	}
 
 	private void method395(byte abyte0[], int i, int j, int ai[], int l, int i1, int j1, int k1, int l1, int i2) {
@@ -392,4 +392,8 @@ public final class TextDrawingArea extends Rasterizer2D {
 	public int anInt1497;
 	public Random aRandom1498;
 	public boolean aBoolean1499;
+
+	public int stringWidth(String var45) {
+		return getTextWidth(var45);
+	}
 }

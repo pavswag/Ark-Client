@@ -31,7 +31,7 @@ public final class Player extends Entity implements RSPlayer {
 		Model model = method452();
 		if (model == null)
 			return null;
-		super.height = model.modelBaseY;
+		super.defaultHeight = model.modelBaseY;
 		model.singleTile = true;
 		if (aBoolean1699)
 			return model;
@@ -825,7 +825,7 @@ public final class Player extends Entity implements RSPlayer {
 
 	@Override
 	public int getLogicalHeight() {
-		return height;
+		return defaultHeight;
 	}
 
 	@Override
@@ -1052,7 +1052,7 @@ public final class Player extends Entity implements RSPlayer {
 
 	@Override
 	public int getModelHeight() {
-		return height;
+		return defaultHeight;
 	}
 
 	@Override

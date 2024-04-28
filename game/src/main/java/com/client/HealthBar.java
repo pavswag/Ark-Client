@@ -1,7 +1,6 @@
 package com.client;
 
 import com.client.definitions.HealthBarDefinition;
-import com.client.util.IterableDualNodeQueue;
 import net.runelite.mapping.Export;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
@@ -21,29 +20,29 @@ public class HealthBar extends Node {
             garbageValue = "686447738"
     )
     @Export("put")
-    void put(int var1, int var2, int var3, int var4) {
+    void put(int cycle, int healthBarEndCycle, int healthBarCycleOffset, int barValue) {
         HealthBarUpdate var5 = null;
         int var6 = 0;
 
         for (HealthBarUpdate var7 = (HealthBarUpdate)this.updates.last(); var7 != null; var7 = (HealthBarUpdate)this.updates.previous()) {
             ++var6;
-            if (var7.cycle == var1) {
-                var7.set(var1, var2, var3, var4);
+            if (var7.cycle == cycle) {
+                var7.set(cycle, healthBarEndCycle, healthBarCycleOffset, barValue);
                 return;
             }
 
-            if (var7.cycle <= var1) {
+            if (var7.cycle <= cycle) {
                 var5 = var7;
             }
         }
 
         if (var5 == null) {
             if (var6 < 4) {
-                this.updates.addLast(new HealthBarUpdate(var1, var2, var3, var4));
+                this.updates.addLast(new HealthBarUpdate(cycle, healthBarEndCycle, healthBarCycleOffset, barValue));
             }
 
         } else {
-            IterableNodeDeque.IterableNodeDeque_addBefore(new HealthBarUpdate(var1, var2, var3, var4), var5);
+            IterableNodeDeque.IterableNodeDeque_addBefore(new HealthBarUpdate(cycle, healthBarEndCycle, healthBarCycleOffset, barValue), var5);
             if (var6 >= 4) {
                 this.updates.last().remove();
             }
@@ -65,7 +64,7 @@ public class HealthBar extends Node {
                 var2 = var3;
             }
 
-            if (this.definition.int4 + var2.cycle + var2.cycleOffset > var1) {
+            if (this.definition.int4 + var2.cycle + var2.barValue > var1) {
                 return var2;
             } else {
                 var2.remove();

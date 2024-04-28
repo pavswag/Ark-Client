@@ -48,8 +48,8 @@ public class InterfaceImage extends RSInterface {
         this.id = this.parentID = interfaceId;
         this.type = 101;
         this.mainSprite = mainSprite;
-        this.width = mainSprite.myWidth;
-        this.height = mainSprite.myHeight;
+        this.width = mainSprite.subWidth;
+        this.height = mainSprite.subHeight;
         this.mOverInterToTrigger = -1;
         interfaceCache[this.id] = this;
     }

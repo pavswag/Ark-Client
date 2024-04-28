@@ -85,10 +85,10 @@ public class WheelOfFortune {
 
             double arcCenterX = (Math.cos(Math.toRadians(newPhi)) * newRadius + wheelCenterX);
             double arcCenterY = (Math.sin(Math.toRadians(newPhi)) * newRadius + wheelCenterY);
-            itemSprite.drawSprite((int) (arcCenterX + 2) - itemSprite.myWidth / 2, (int) (arcCenterY + 2) - itemSprite.myHeight / 2);
+            itemSprite.drawSprite((int) (arcCenterX + 2) - itemSprite.subWidth / 2, (int) (arcCenterY + 2) - itemSprite.subHeight / 2);
         }
 
-        icon.drawAdvancedSprite(x + (width / 2) - (icon.myWidth / 2), y - (height / 12));
+        icon.drawAdvancedSprite(x + (width / 2) - (icon.subWidth / 2), y - (height / 12));
     }
 
     private void update() {

@@ -31,7 +31,7 @@ public class PerduLostPropertyShop extends InterfaceBuilder {
         container.child(1, lastInterface(), 36, 48);
 
         addText(nextInterface(), 3, 0x46320A, true, "Lost Property Shop", false);
-        child(x + (BACKGROUND.myWidth / 2), 42 + yOffset);
+        child(x + (BACKGROUND.subWidth / 2), 42 + yOffset);
 
         addNonSpriteButton(nextInterface(), 23, 23, 3, "Close");
         child(455, 45);

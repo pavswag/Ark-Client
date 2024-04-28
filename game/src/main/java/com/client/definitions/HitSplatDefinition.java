@@ -4,32 +4,39 @@ import com.client.*;
 import com.client.cache.DualNode;
 import com.client.js5.Js5List;
 import com.client.js5.util.Js5ConfigType;
+import lombok.ToString;
 import net.runelite.mapping.Export;
 import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 
+@ToString
 public class HitSplatDefinition extends DualNode {
-    public static EvictingDualNodeHashTable cache = new EvictingDualNodeHashTable(64);
+    public static EvictingDualNodeHashTable HitSplatDefinition_cached = new EvictingDualNodeHashTable(64);
     public static EvictingDualNodeHashTable sprites = new EvictingDualNodeHashTable(64);
     public static EvictingDualNodeHashTable fonts = new EvictingDualNodeHashTable(20);
 
-    public static HitSplatDefinition getHitSplatDefinition(int id) {
-        HitSplatDefinition healthBarDefinition = (HitSplatDefinition) cache.get(id);
-        if(healthBarDefinition == null) {
-            healthBarDefinition = new HitSplatDefinition();
-            healthBarDefinition.id = id;
-            byte[] data = Js5List.configs.takeFile(Js5ConfigType.HITSPLAT, id);
-            if(data != null) {
-                healthBarDefinition.decode(new Buffer(data));
-                cache.put(healthBarDefinition, id);
+    public static HitSplatDefinition getHitSplatDefinition(int var0) {
+        HitSplatDefinition var1 = (HitSplatDefinition)HitSplatDefinition_cached.get((long)var0);
+        if (var1 != null) {
+            return var1;
+        } else {
+            byte[] var2 = Js5List.configs.takeFile(Js5ConfigType.HITSPLAT, var0);
+            var1 = new HitSplatDefinition();
+            var1.id = var0;
+            if (var2 != null) {
+                var1.decode(new Buffer(var2));
+                HitSplatDefinition_cached.put(var1, (long)var0);
+                System.out.println("Hitsplat [" + var0 + "] = " + var1);
+            } else {
+                var1 = null;
             }
+            return var1;
         }
-        return healthBarDefinition;
     }
     public HitSplatDefinition() {
         this.fontId = -1;
         this.textColor = 16777215;
-        this.field2227 = 70;
+        this.hitsplatLifeTime = 70;
         this.field2228 = -1;
         this.field2239 = -1;
         this.field2236 = -1;
@@ -70,9 +77,9 @@ public class HitSplatDefinition extends DualNode {
         } else if (var2 == 7) {
             this.field2232 = var1.readShort();
         } else if (var2 == 8) {
-            this.field2230 = var1.readStringCp1252NullTerminated();
+            this.field2230 = var1.readStringCp1252NullCircumfixed();
         } else if (var2 == 9) {
-            this.field2227 = var1.readUnsignedShort();
+            this.hitsplatLifeTime = var1.readUnsignedShort();
         } else if (var2 == 10) {
             this.field2233 = var1.readShort();
         } else if (var2 == 11) {
@@ -140,7 +147,7 @@ public class HitSplatDefinition extends DualNode {
     public int id;
     public int fontId;
     public int textColor;
-    public int field2227;
+    public int hitsplatLifeTime;
     public int field2228;
     public int field2239;
     public int field2236;
@@ -247,6 +254,20 @@ public class HitSplatDefinition extends DualNode {
 
                 return var1;
             }
+        }
+    }
+
+    public String getString(int var1) {
+        String var2 = this.field2230;
+
+
+        while (true) {
+            int var3 = var2.indexOf("%1");
+            if (var3 < 0) {
+                return var2;
+            }
+
+            var2 = var2.substring(0, var3) + Utility.intToString(var1, false) + var2.substring(var3 + 2);
         }
     }
 }

@@ -91,7 +91,7 @@ public class WogwInterface extends RSInterface {
             inter.child(childId++, interfaceId++, x, y);
 
             addSprite(interfaceId, button.icon);
-            inter.child(childId++, interfaceId++, x + 140 - (button.icon.myWidth / 2), y + 18 - (button.icon.myHeight / 2));
+            inter.child(childId++, interfaceId++, x + 140 - (button.icon.subWidth / 2), y + 18 - (button.icon.subHeight / 2));
 
             addText(interfaceId, 0, 0xFFFFFFFF, true, button.name);
             inter.child(childId++, interfaceId++, x + 70, y + 7);

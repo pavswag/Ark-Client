@@ -19,14 +19,14 @@ public final class Rasterizer3D extends Rasterizer2D {
     }
 
     public static void useViewport() {
-        scanOffsets = new int[Rasterizer2D.height];
+        scanOffsets = new int[Rasterizer2D.Rasterizer2D_height];
 
-        for (int j = 0; j < Rasterizer2D.height; j++) {
-            scanOffsets[j] = Rasterizer2D.width * j;
+        for (int j = 0; j < Rasterizer2D.Rasterizer2D_height; j++) {
+            scanOffsets[j] = Rasterizer2D.Rasterizer2D_width * j;
         }
 
-        originViewX = Rasterizer2D.width / 2;
-        originViewY = Rasterizer2D.height / 2;
+        originViewX = Rasterizer2D.Rasterizer2D_width / 2;
+        originViewY = Rasterizer2D.Rasterizer2D_height / 2;
     }
 
     public static void reposition(int width, int length) {
@@ -193,13 +193,13 @@ public final class Rasterizer3D extends Rasterizer2D {
             int var19 = (var13 * var12 - var14 * var10 << 8) / var18;
             int var20 = (var14 * var9 - var13 * var11 << 8) / var18;
             if (y1 <= y2 && y1 <= y3) {
-                if (y1 < Rasterizer2D.bottomY) {
-                    if (y2 > Rasterizer2D.bottomY) {
-                        y2 = Rasterizer2D.bottomY;
+                if (y1 < Rasterizer2D.Rasterizer2D_yClipEnd) {
+                    if (y2 > Rasterizer2D.Rasterizer2D_yClipEnd) {
+                        y2 = Rasterizer2D.Rasterizer2D_yClipEnd;
                     }
 
-                    if (y3 > Rasterizer2D.bottomY) {
-                        y3 = Rasterizer2D.bottomY;
+                    if (y3 > Rasterizer2D.Rasterizer2D_yClipEnd) {
+                        y3 = Rasterizer2D.Rasterizer2D_yClipEnd;
                     }
 
                     hsl1 = var19 + ((hsl1 << 8) - x1 * var19);
@@ -232,19 +232,19 @@ public final class Rasterizer3D extends Rasterizer2D {
                                             return;
                                         }
 
-                                        drawGouraudScanline(Rasterizer2D.pixels, y1, 0, 0, x2 >> 14, x3 >> 14, hsl1, var19);
+                                        drawGouraudScanline(Rasterizer2D.Rasterizer2D_pixels, y1, 0, 0, x2 >> 14, x3 >> 14, hsl1, var19);
                                         x3 += var17;
                                         x2 += var15;
                                         hsl1 += var20;
-                                        y1 += Rasterizer2D.width;
+                                        y1 += Rasterizer2D.Rasterizer2D_width;
                                     }
                                 }
 
-                                drawGouraudScanline(Rasterizer2D.pixels, y1, 0, 0, x1 >> 14, x3 >> 14, hsl1, var19);
+                                drawGouraudScanline(Rasterizer2D.Rasterizer2D_pixels, y1, 0, 0, x1 >> 14, x3 >> 14, hsl1, var19);
                                 x3 += var17;
                                 x1 += var16;
                                 hsl1 += var20;
-                                y1 += Rasterizer2D.width;
+                                y1 += Rasterizer2D.Rasterizer2D_width;
                             }
                         } else {
                             y3 -= y2;
@@ -260,19 +260,19 @@ public final class Rasterizer3D extends Rasterizer2D {
                                             return;
                                         }
 
-                                        drawGouraudScanline(Rasterizer2D.pixels, y1, 0, 0, x3 >> 14, x2 >> 14, hsl1, var19);
+                                        drawGouraudScanline(Rasterizer2D.Rasterizer2D_pixels, y1, 0, 0, x3 >> 14, x2 >> 14, hsl1, var19);
                                         x3 += var17;
                                         x2 += var15;
                                         hsl1 += var20;
-                                        y1 += Rasterizer2D.width;
+                                        y1 += Rasterizer2D.Rasterizer2D_width;
                                     }
                                 }
 
-                                drawGouraudScanline(Rasterizer2D.pixels, y1, 0, 0, x3 >> 14, x1 >> 14, hsl1, var19);
+                                drawGouraudScanline(Rasterizer2D.Rasterizer2D_pixels, y1, 0, 0, x3 >> 14, x1 >> 14, hsl1, var19);
                                 x3 += var17;
                                 x1 += var16;
                                 hsl1 += var20;
-                                y1 += Rasterizer2D.width;
+                                y1 += Rasterizer2D.Rasterizer2D_width;
                             }
                         }
                     } else {
@@ -304,19 +304,19 @@ public final class Rasterizer3D extends Rasterizer2D {
                                             return;
                                         }
 
-                                        drawGouraudScanline(Rasterizer2D.pixels, y1, 0, 0, x3 >> 14, x1 >> 14, hsl1, var19);
+                                        drawGouraudScanline(Rasterizer2D.Rasterizer2D_pixels, y1, 0, 0, x3 >> 14, x1 >> 14, hsl1, var19);
                                         x3 += var15;
                                         x1 += var16;
                                         hsl1 += var20;
-                                        y1 += Rasterizer2D.width;
+                                        y1 += Rasterizer2D.Rasterizer2D_width;
                                     }
                                 }
 
-                                drawGouraudScanline(Rasterizer2D.pixels, y1, 0, 0, x2 >> 14, x1 >> 14, hsl1, var19);
+                                drawGouraudScanline(Rasterizer2D.Rasterizer2D_pixels, y1, 0, 0, x2 >> 14, x1 >> 14, hsl1, var19);
                                 x2 += var17;
                                 x1 += var16;
                                 hsl1 += var20;
-                                y1 += Rasterizer2D.width;
+                                y1 += Rasterizer2D.Rasterizer2D_width;
                             }
                         } else {
                             y2 -= y3;
@@ -332,31 +332,31 @@ public final class Rasterizer3D extends Rasterizer2D {
                                             return;
                                         }
 
-                                        drawGouraudScanline(Rasterizer2D.pixels, y1, 0, 0, x1 >> 14, x3 >> 14, hsl1, var19);
+                                        drawGouraudScanline(Rasterizer2D.Rasterizer2D_pixels, y1, 0, 0, x1 >> 14, x3 >> 14, hsl1, var19);
                                         x3 += var15;
                                         x1 += var16;
                                         hsl1 += var20;
-                                        y1 += Rasterizer2D.width;
+                                        y1 += Rasterizer2D.Rasterizer2D_width;
                                     }
                                 }
 
-                                drawGouraudScanline(Rasterizer2D.pixels, y1, 0, 0, x1 >> 14, x2 >> 14, hsl1, var19);
+                                drawGouraudScanline(Rasterizer2D.Rasterizer2D_pixels, y1, 0, 0, x1 >> 14, x2 >> 14, hsl1, var19);
                                 x2 += var17;
                                 x1 += var16;
                                 hsl1 += var20;
-                                y1 += Rasterizer2D.width;
+                                y1 += Rasterizer2D.Rasterizer2D_width;
                             }
                         }
                     }
                 }
             } else if (y2 <= y3) {
-                if (y2 < Rasterizer2D.bottomY) {
-                    if (y3 > Rasterizer2D.bottomY) {
-                        y3 = Rasterizer2D.bottomY;
+                if (y2 < Rasterizer2D.Rasterizer2D_yClipEnd) {
+                    if (y3 > Rasterizer2D.Rasterizer2D_yClipEnd) {
+                        y3 = Rasterizer2D.Rasterizer2D_yClipEnd;
                     }
 
-                    if (y1 > Rasterizer2D.bottomY) {
-                        y1 = Rasterizer2D.bottomY;
+                    if (y1 > Rasterizer2D.Rasterizer2D_yClipEnd) {
+                        y1 = Rasterizer2D.Rasterizer2D_yClipEnd;
                     }
 
                     hsl2 = var19 + ((hsl2 << 8) - var19 * x2);
@@ -389,19 +389,19 @@ public final class Rasterizer3D extends Rasterizer2D {
                                             return;
                                         }
 
-                                        drawGouraudScanline(Rasterizer2D.pixels, y2, 0, 0, x3 >> 14, x1 >> 14, hsl2, var19);
+                                        drawGouraudScanline(Rasterizer2D.Rasterizer2D_pixels, y2, 0, 0, x3 >> 14, x1 >> 14, hsl2, var19);
                                         x1 += var16;
                                         x3 += var17;
                                         hsl2 += var20;
-                                        y2 += Rasterizer2D.width;
+                                        y2 += Rasterizer2D.Rasterizer2D_width;
                                     }
                                 }
 
-                                drawGouraudScanline(Rasterizer2D.pixels, y2, 0, 0, x2 >> 14, x1 >> 14, hsl2, var19);
+                                drawGouraudScanline(Rasterizer2D.Rasterizer2D_pixels, y2, 0, 0, x2 >> 14, x1 >> 14, hsl2, var19);
                                 x1 += var16;
                                 x2 += var15;
                                 hsl2 += var20;
-                                y2 += Rasterizer2D.width;
+                                y2 += Rasterizer2D.Rasterizer2D_width;
                             }
                         } else {
                             y1 -= y3;
@@ -417,19 +417,19 @@ public final class Rasterizer3D extends Rasterizer2D {
                                             return;
                                         }
 
-                                        drawGouraudScanline(Rasterizer2D.pixels, y2, 0, 0, x1 >> 14, x3 >> 14, hsl2, var19);
+                                        drawGouraudScanline(Rasterizer2D.Rasterizer2D_pixels, y2, 0, 0, x1 >> 14, x3 >> 14, hsl2, var19);
                                         x1 += var16;
                                         x3 += var17;
                                         hsl2 += var20;
-                                        y2 += Rasterizer2D.width;
+                                        y2 += Rasterizer2D.Rasterizer2D_width;
                                     }
                                 }
 
-                                drawGouraudScanline(Rasterizer2D.pixels, y2, 0, 0, x1 >> 14, x2 >> 14, hsl2, var19);
+                                drawGouraudScanline(Rasterizer2D.Rasterizer2D_pixels, y2, 0, 0, x1 >> 14, x2 >> 14, hsl2, var19);
                                 x1 += var16;
                                 x2 += var15;
                                 hsl2 += var20;
-                                y2 += Rasterizer2D.width;
+                                y2 += Rasterizer2D.Rasterizer2D_width;
                             }
                         }
                     } else {
@@ -461,19 +461,19 @@ public final class Rasterizer3D extends Rasterizer2D {
                                             return;
                                         }
 
-                                        drawGouraudScanline(Rasterizer2D.pixels, y2, 0, 0, x1 >> 14, x2 >> 14, hsl2, var19);
+                                        drawGouraudScanline(Rasterizer2D.Rasterizer2D_pixels, y2, 0, 0, x1 >> 14, x2 >> 14, hsl2, var19);
                                         x1 += var17;
                                         x2 += var15;
                                         hsl2 += var20;
-                                        y2 += Rasterizer2D.width;
+                                        y2 += Rasterizer2D.Rasterizer2D_width;
                                     }
                                 }
 
-                                drawGouraudScanline(Rasterizer2D.pixels, y2, 0, 0, x3 >> 14, x2 >> 14, hsl2, var19);
+                                drawGouraudScanline(Rasterizer2D.Rasterizer2D_pixels, y2, 0, 0, x3 >> 14, x2 >> 14, hsl2, var19);
                                 x3 += var16;
                                 x2 += var15;
                                 hsl2 += var20;
-                                y2 += Rasterizer2D.width;
+                                y2 += Rasterizer2D.Rasterizer2D_width;
                             }
                         } else {
                             y3 -= y1;
@@ -489,30 +489,30 @@ public final class Rasterizer3D extends Rasterizer2D {
                                             return;
                                         }
 
-                                        drawGouraudScanline(Rasterizer2D.pixels, y2, 0, 0, x2 >> 14, x1 >> 14, hsl2, var19);
+                                        drawGouraudScanline(Rasterizer2D.Rasterizer2D_pixels, y2, 0, 0, x2 >> 14, x1 >> 14, hsl2, var19);
                                         x1 += var17;
                                         x2 += var15;
                                         hsl2 += var20;
-                                        y2 += Rasterizer2D.width;
+                                        y2 += Rasterizer2D.Rasterizer2D_width;
                                     }
                                 }
 
-                                drawGouraudScanline(Rasterizer2D.pixels, y2, 0, 0, x2 >> 14, x3 >> 14, hsl2, var19);
+                                drawGouraudScanline(Rasterizer2D.Rasterizer2D_pixels, y2, 0, 0, x2 >> 14, x3 >> 14, hsl2, var19);
                                 x3 += var16;
                                 x2 += var15;
                                 hsl2 += var20;
-                                y2 += Rasterizer2D.width;
+                                y2 += Rasterizer2D.Rasterizer2D_width;
                             }
                         }
                     }
                 }
-            } else if (y3 < Rasterizer2D.bottomY) {
-                if (y1 > Rasterizer2D.bottomY) {
-                    y1 = Rasterizer2D.bottomY;
+            } else if (y3 < Rasterizer2D.Rasterizer2D_yClipEnd) {
+                if (y1 > Rasterizer2D.Rasterizer2D_yClipEnd) {
+                    y1 = Rasterizer2D.Rasterizer2D_yClipEnd;
                 }
 
-                if (y2 > Rasterizer2D.bottomY) {
-                    y2 = Rasterizer2D.bottomY;
+                if (y2 > Rasterizer2D.Rasterizer2D_yClipEnd) {
+                    y2 = Rasterizer2D.Rasterizer2D_yClipEnd;
                 }
 
                 hsl3 = var19 + ((hsl3 << 8) - x3 * var19);
@@ -545,19 +545,19 @@ public final class Rasterizer3D extends Rasterizer2D {
                                         return;
                                     }
 
-                                    drawGouraudScanline(Rasterizer2D.pixels, y3, 0, 0, x2 >> 14, x1 >> 14, hsl3, var19);
+                                    drawGouraudScanline(Rasterizer2D.Rasterizer2D_pixels, y3, 0, 0, x2 >> 14, x1 >> 14, hsl3, var19);
                                     x2 += var15;
                                     x1 += var16;
                                     hsl3 += var20;
-                                    y3 += Rasterizer2D.width;
+                                    y3 += Rasterizer2D.Rasterizer2D_width;
                                 }
                             }
 
-                            drawGouraudScanline(Rasterizer2D.pixels, y3, 0, 0, x2 >> 14, x3 >> 14, hsl3, var19);
+                            drawGouraudScanline(Rasterizer2D.Rasterizer2D_pixels, y3, 0, 0, x2 >> 14, x3 >> 14, hsl3, var19);
                             x2 += var15;
                             x3 += var17;
                             hsl3 += var20;
-                            y3 += Rasterizer2D.width;
+                            y3 += Rasterizer2D.Rasterizer2D_width;
                         }
                     } else {
                         y2 -= y1;
@@ -573,19 +573,19 @@ public final class Rasterizer3D extends Rasterizer2D {
                                         return;
                                     }
 
-                                    drawGouraudScanline(Rasterizer2D.pixels, y3, 0, 0, x1 >> 14, x2 >> 14, hsl3, var19);
+                                    drawGouraudScanline(Rasterizer2D.Rasterizer2D_pixels, y3, 0, 0, x1 >> 14, x2 >> 14, hsl3, var19);
                                     x2 += var15;
                                     x1 += var16;
                                     hsl3 += var20;
-                                    y3 += Rasterizer2D.width;
+                                    y3 += Rasterizer2D.Rasterizer2D_width;
                                 }
                             }
 
-                            drawGouraudScanline(Rasterizer2D.pixels, y3, 0, 0, x3 >> 14, x2 >> 14, hsl3, var19);
+                            drawGouraudScanline(Rasterizer2D.Rasterizer2D_pixels, y3, 0, 0, x3 >> 14, x2 >> 14, hsl3, var19);
                             x2 += var15;
                             x3 += var17;
                             hsl3 += var20;
-                            y3 += Rasterizer2D.width;
+                            y3 += Rasterizer2D.Rasterizer2D_width;
                         }
                     }
                 } else {
@@ -617,19 +617,19 @@ public final class Rasterizer3D extends Rasterizer2D {
                                         return;
                                     }
 
-                                    drawGouraudScanline(Rasterizer2D.pixels, y3, 0, 0, x2 >> 14, x3 >> 14, hsl3, var19);
+                                    drawGouraudScanline(Rasterizer2D.Rasterizer2D_pixels, y3, 0, 0, x2 >> 14, x3 >> 14, hsl3, var19);
                                     x2 += var16;
                                     x3 += var17;
                                     hsl3 += var20;
-                                    y3 += Rasterizer2D.width;
+                                    y3 += Rasterizer2D.Rasterizer2D_width;
                                 }
                             }
 
-                            drawGouraudScanline(Rasterizer2D.pixels, y3, 0, 0, x1 >> 14, x3 >> 14, hsl3, var19);
+                            drawGouraudScanline(Rasterizer2D.Rasterizer2D_pixels, y3, 0, 0, x1 >> 14, x3 >> 14, hsl3, var19);
                             x1 += var15;
                             x3 += var17;
                             hsl3 += var20;
-                            y3 += Rasterizer2D.width;
+                            y3 += Rasterizer2D.Rasterizer2D_width;
                         }
                     } else {
                         y1 -= y2;
@@ -645,19 +645,19 @@ public final class Rasterizer3D extends Rasterizer2D {
                                         return;
                                     }
 
-                                    drawGouraudScanline(Rasterizer2D.pixels, y3, 0, 0, x3 >> 14, x2 >> 14, hsl3, var19);
+                                    drawGouraudScanline(Rasterizer2D.Rasterizer2D_pixels, y3, 0, 0, x3 >> 14, x2 >> 14, hsl3, var19);
                                     x2 += var16;
                                     x3 += var17;
                                     hsl3 += var20;
-                                    y3 += Rasterizer2D.width;
+                                    y3 += Rasterizer2D.Rasterizer2D_width;
                                 }
                             }
 
-                            drawGouraudScanline(Rasterizer2D.pixels, y3, 0, 0, x3 >> 14, x1 >> 14, hsl3, var19);
+                            drawGouraudScanline(Rasterizer2D.Rasterizer2D_pixels, y3, 0, 0, x3 >> 14, x1 >> 14, hsl3, var19);
                             x1 += var15;
                             x3 += var17;
                             hsl3 += var20;
-                            y3 += Rasterizer2D.width;
+                            y3 += Rasterizer2D.Rasterizer2D_width;
                         }
                     }
                 }
@@ -794,12 +794,12 @@ public final class Rasterizer3D extends Rasterizer2D {
         float c_aY = y_c - y_a;
 
         if (y_a <= y_b && y_a <= y_c) {
-            if (y_a >= Rasterizer2D.bottomY)
+            if (y_a >= Rasterizer2D.Rasterizer2D_yClipEnd)
                 return;
-            if (y_b > Rasterizer2D.bottomY)
-                y_b = Rasterizer2D.bottomY;
-            if (y_c > Rasterizer2D.bottomY)
-                y_c = Rasterizer2D.bottomY;
+            if (y_b > Rasterizer2D.Rasterizer2D_yClipEnd)
+                y_b = Rasterizer2D.Rasterizer2D_yClipEnd;
+            if (y_c > Rasterizer2D.Rasterizer2D_yClipEnd)
+                y_c = Rasterizer2D.Rasterizer2D_yClipEnd;
             if (y_b < y_c) {
                 x_c = x_a <<= 16;
                 if (y_a < 0) {
@@ -815,33 +815,33 @@ public final class Rasterizer3D extends Rasterizer2D {
                 if (y_a != y_b && c_to_a < a_to_b || y_a == y_b && c_to_a > b_to_c) {
                     y_c -= y_b;
                     y_b -= y_a;
-                    for (y_a = scanOffsets[y_a]; --y_b >= 0; y_a += Rasterizer2D.width) {
-                        drawFlatTexturedScanline(Rasterizer2D.pixels, y_a, k1, x_c >> 16, x_a >> 16);
+                    for (y_a = scanOffsets[y_a]; --y_b >= 0; y_a += Rasterizer2D.Rasterizer2D_width) {
+                        drawFlatTexturedScanline(Rasterizer2D.Rasterizer2D_pixels, y_a, k1, x_c >> 16, x_a >> 16);
                         x_c += c_to_a;
                         x_a += a_to_b;
                     }
 
                     while (--y_c >= 0) {
-                        drawFlatTexturedScanline(Rasterizer2D.pixels, y_a, k1, x_c >> 16, x_b >> 16);
+                        drawFlatTexturedScanline(Rasterizer2D.Rasterizer2D_pixels, y_a, k1, x_c >> 16, x_b >> 16);
                         x_c += c_to_a;
                         x_b += b_to_c;
-                        y_a += Rasterizer2D.width;
+                        y_a += Rasterizer2D.Rasterizer2D_width;
                     }
                     return;
                 }
                 y_c -= y_b;
                 y_b -= y_a;
-                for (y_a = scanOffsets[y_a]; --y_b >= 0; y_a += Rasterizer2D.width) {
-                    drawFlatTexturedScanline(Rasterizer2D.pixels, y_a, k1, x_a >> 16, x_c >> 16);
+                for (y_a = scanOffsets[y_a]; --y_b >= 0; y_a += Rasterizer2D.Rasterizer2D_width) {
+                    drawFlatTexturedScanline(Rasterizer2D.Rasterizer2D_pixels, y_a, k1, x_a >> 16, x_c >> 16);
                     x_c += c_to_a;
                     x_a += a_to_b;
                 }
 
                 while (--y_c >= 0) {
-                    drawFlatTexturedScanline(Rasterizer2D.pixels, y_a, k1, x_b >> 16, x_c >> 16);
+                    drawFlatTexturedScanline(Rasterizer2D.Rasterizer2D_pixels, y_a, k1, x_b >> 16, x_c >> 16);
                     x_c += c_to_a;
                     x_b += b_to_c;
-                    y_a += Rasterizer2D.width;
+                    y_a += Rasterizer2D.Rasterizer2D_width;
                 }
                 return;
             }
@@ -860,43 +860,43 @@ public final class Rasterizer3D extends Rasterizer2D {
             if (y_a != y_c && c_to_a < a_to_b || y_a == y_c && b_to_c > a_to_b) {
                 y_b -= y_c;
                 y_c -= y_a;
-                for (y_a = scanOffsets[y_a]; --y_c >= 0; y_a += Rasterizer2D.width) {
-                    drawFlatTexturedScanline(Rasterizer2D.pixels, y_a, k1, x_b >> 16, x_a >> 16);
+                for (y_a = scanOffsets[y_a]; --y_c >= 0; y_a += Rasterizer2D.Rasterizer2D_width) {
+                    drawFlatTexturedScanline(Rasterizer2D.Rasterizer2D_pixels, y_a, k1, x_b >> 16, x_a >> 16);
                     x_b += c_to_a;
                     x_a += a_to_b;
                 }
 
                 while (--y_b >= 0) {
-                    drawFlatTexturedScanline(Rasterizer2D.pixels, y_a, k1, x_c >> 16, x_a >> 16);
+                    drawFlatTexturedScanline(Rasterizer2D.Rasterizer2D_pixels, y_a, k1, x_c >> 16, x_a >> 16);
                     x_c += b_to_c;
                     x_a += a_to_b;
-                    y_a += Rasterizer2D.width;
+                    y_a += Rasterizer2D.Rasterizer2D_width;
                 }
                 return;
             }
             y_b -= y_c;
             y_c -= y_a;
-            for (y_a = scanOffsets[y_a]; --y_c >= 0; y_a += Rasterizer2D.width) {
-                drawFlatTexturedScanline(Rasterizer2D.pixels, y_a, k1, x_a >> 16, x_b >> 16);
+            for (y_a = scanOffsets[y_a]; --y_c >= 0; y_a += Rasterizer2D.Rasterizer2D_width) {
+                drawFlatTexturedScanline(Rasterizer2D.Rasterizer2D_pixels, y_a, k1, x_a >> 16, x_b >> 16);
                 x_b += c_to_a;
                 x_a += a_to_b;
             }
 
             while (--y_b >= 0) {
-                drawFlatTexturedScanline(Rasterizer2D.pixels, y_a, k1, x_a >> 16, x_c >> 16);
+                drawFlatTexturedScanline(Rasterizer2D.Rasterizer2D_pixels, y_a, k1, x_a >> 16, x_c >> 16);
                 x_c += b_to_c;
                 x_a += a_to_b;
-                y_a += Rasterizer2D.width;
+                y_a += Rasterizer2D.Rasterizer2D_width;
             }
             return;
         }
         if (y_b <= y_c) {
-            if (y_b >= Rasterizer2D.bottomY)
+            if (y_b >= Rasterizer2D.Rasterizer2D_yClipEnd)
                 return;
-            if (y_c > Rasterizer2D.bottomY)
-                y_c = Rasterizer2D.bottomY;
-            if (y_a > Rasterizer2D.bottomY)
-                y_a = Rasterizer2D.bottomY;
+            if (y_c > Rasterizer2D.Rasterizer2D_yClipEnd)
+                y_c = Rasterizer2D.Rasterizer2D_yClipEnd;
+            if (y_a > Rasterizer2D.Rasterizer2D_yClipEnd)
+                y_a = Rasterizer2D.Rasterizer2D_yClipEnd;
             if (y_c < y_a) {
                 x_a = x_b <<= 16;
                 if (y_b < 0) {
@@ -912,33 +912,33 @@ public final class Rasterizer3D extends Rasterizer2D {
                 if (y_b != y_c && a_to_b < b_to_c || y_b == y_c && a_to_b > c_to_a) {
                     y_a -= y_c;
                     y_c -= y_b;
-                    for (y_b = scanOffsets[y_b]; --y_c >= 0; y_b += Rasterizer2D.width) {
-                        drawFlatTexturedScanline(Rasterizer2D.pixels, y_b, k1, x_a >> 16, x_b >> 16);
+                    for (y_b = scanOffsets[y_b]; --y_c >= 0; y_b += Rasterizer2D.Rasterizer2D_width) {
+                        drawFlatTexturedScanline(Rasterizer2D.Rasterizer2D_pixels, y_b, k1, x_a >> 16, x_b >> 16);
                         x_a += a_to_b;
                         x_b += b_to_c;
                     }
 
                     while (--y_a >= 0) {
-                        drawFlatTexturedScanline(Rasterizer2D.pixels, y_b, k1, x_a >> 16, x_c >> 16);
+                        drawFlatTexturedScanline(Rasterizer2D.Rasterizer2D_pixels, y_b, k1, x_a >> 16, x_c >> 16);
                         x_a += a_to_b;
                         x_c += c_to_a;
-                        y_b += Rasterizer2D.width;
+                        y_b += Rasterizer2D.Rasterizer2D_width;
                     }
                     return;
                 }
                 y_a -= y_c;
                 y_c -= y_b;
-                for (y_b = scanOffsets[y_b]; --y_c >= 0; y_b += Rasterizer2D.width) {
-                    drawFlatTexturedScanline(Rasterizer2D.pixels, y_b, k1, x_b >> 16, x_a >> 16);
+                for (y_b = scanOffsets[y_b]; --y_c >= 0; y_b += Rasterizer2D.Rasterizer2D_width) {
+                    drawFlatTexturedScanline(Rasterizer2D.Rasterizer2D_pixels, y_b, k1, x_b >> 16, x_a >> 16);
                     x_a += a_to_b;
                     x_b += b_to_c;
                 }
 
                 while (--y_a >= 0) {
-                    drawFlatTexturedScanline(Rasterizer2D.pixels, y_b, k1, x_c >> 16, x_a >> 16);
+                    drawFlatTexturedScanline(Rasterizer2D.Rasterizer2D_pixels, y_b, k1, x_c >> 16, x_a >> 16);
                     x_a += a_to_b;
                     x_c += c_to_a;
-                    y_b += Rasterizer2D.width;
+                    y_b += Rasterizer2D.Rasterizer2D_width;
                 }
                 return;
             }
@@ -956,42 +956,42 @@ public final class Rasterizer3D extends Rasterizer2D {
             if (a_to_b < b_to_c) {
                 y_c -= y_a;
                 y_a -= y_b;
-                for (y_b = scanOffsets[y_b]; --y_a >= 0; y_b += Rasterizer2D.width) {
-                    drawFlatTexturedScanline(Rasterizer2D.pixels, y_b, k1, x_c >> 16, x_b >> 16);
+                for (y_b = scanOffsets[y_b]; --y_a >= 0; y_b += Rasterizer2D.Rasterizer2D_width) {
+                    drawFlatTexturedScanline(Rasterizer2D.Rasterizer2D_pixels, y_b, k1, x_c >> 16, x_b >> 16);
                     x_c += a_to_b;
                     x_b += b_to_c;
                 }
 
                 while (--y_c >= 0) {
-                    drawFlatTexturedScanline(Rasterizer2D.pixels, y_b, k1, x_a >> 16, x_b >> 16);
+                    drawFlatTexturedScanline(Rasterizer2D.Rasterizer2D_pixels, y_b, k1, x_a >> 16, x_b >> 16);
                     x_a += c_to_a;
                     x_b += b_to_c;
-                    y_b += Rasterizer2D.width;
+                    y_b += Rasterizer2D.Rasterizer2D_width;
                 }
                 return;
             }
             y_c -= y_a;
             y_a -= y_b;
-            for (y_b = scanOffsets[y_b]; --y_a >= 0; y_b += Rasterizer2D.width) {
-                drawFlatTexturedScanline(Rasterizer2D.pixels, y_b, k1, x_b >> 16, x_c >> 16);
+            for (y_b = scanOffsets[y_b]; --y_a >= 0; y_b += Rasterizer2D.Rasterizer2D_width) {
+                drawFlatTexturedScanline(Rasterizer2D.Rasterizer2D_pixels, y_b, k1, x_b >> 16, x_c >> 16);
                 x_c += a_to_b;
                 x_b += b_to_c;
             }
 
             while (--y_c >= 0) {
-                drawFlatTexturedScanline(Rasterizer2D.pixels, y_b, k1, x_b >> 16, x_a >> 16);
+                drawFlatTexturedScanline(Rasterizer2D.Rasterizer2D_pixels, y_b, k1, x_b >> 16, x_a >> 16);
                 x_a += c_to_a;
                 x_b += b_to_c;
-                y_b += Rasterizer2D.width;
+                y_b += Rasterizer2D.Rasterizer2D_width;
             }
             return;
         }
-        if (y_c >= Rasterizer2D.bottomY)
+        if (y_c >= Rasterizer2D.Rasterizer2D_yClipEnd)
             return;
-        if (y_a > Rasterizer2D.bottomY)
-            y_a = Rasterizer2D.bottomY;
-        if (y_b > Rasterizer2D.bottomY)
-            y_b = Rasterizer2D.bottomY;
+        if (y_a > Rasterizer2D.Rasterizer2D_yClipEnd)
+            y_a = Rasterizer2D.Rasterizer2D_yClipEnd;
+        if (y_b > Rasterizer2D.Rasterizer2D_yClipEnd)
+            y_b = Rasterizer2D.Rasterizer2D_yClipEnd;
         if (y_a < y_b) {
             x_b = x_c <<= 16;
             if (y_c < 0) {
@@ -1007,33 +1007,33 @@ public final class Rasterizer3D extends Rasterizer2D {
             if (b_to_c < c_to_a) {
                 y_b -= y_a;
                 y_a -= y_c;
-                for (y_c = scanOffsets[y_c]; --y_a >= 0; y_c += Rasterizer2D.width) {
-                    drawFlatTexturedScanline(Rasterizer2D.pixels, y_c, k1, x_b >> 16, x_c >> 16);
+                for (y_c = scanOffsets[y_c]; --y_a >= 0; y_c += Rasterizer2D.Rasterizer2D_width) {
+                    drawFlatTexturedScanline(Rasterizer2D.Rasterizer2D_pixels, y_c, k1, x_b >> 16, x_c >> 16);
                     x_b += b_to_c;
                     x_c += c_to_a;
                 }
 
                 while (--y_b >= 0) {
-                    drawFlatTexturedScanline(Rasterizer2D.pixels, y_c, k1, x_b >> 16, x_a >> 16);
+                    drawFlatTexturedScanline(Rasterizer2D.Rasterizer2D_pixels, y_c, k1, x_b >> 16, x_a >> 16);
                     x_b += b_to_c;
                     x_a += a_to_b;
-                    y_c += Rasterizer2D.width;
+                    y_c += Rasterizer2D.Rasterizer2D_width;
                 }
                 return;
             }
             y_b -= y_a;
             y_a -= y_c;
-            for (y_c = scanOffsets[y_c]; --y_a >= 0; y_c += Rasterizer2D.width) {
-                drawFlatTexturedScanline(Rasterizer2D.pixels, y_c, k1, x_c >> 16, x_b >> 16);
+            for (y_c = scanOffsets[y_c]; --y_a >= 0; y_c += Rasterizer2D.Rasterizer2D_width) {
+                drawFlatTexturedScanline(Rasterizer2D.Rasterizer2D_pixels, y_c, k1, x_c >> 16, x_b >> 16);
                 x_b += b_to_c;
                 x_c += c_to_a;
             }
 
             while (--y_b >= 0) {
-                drawFlatTexturedScanline(Rasterizer2D.pixels, y_c, k1, x_a >> 16, x_b >> 16);
+                drawFlatTexturedScanline(Rasterizer2D.Rasterizer2D_pixels, y_c, k1, x_a >> 16, x_b >> 16);
                 x_b += b_to_c;
                 x_a += a_to_b;
-                y_c += Rasterizer2D.width;
+                y_c += Rasterizer2D.Rasterizer2D_width;
             }
             return;
         }
@@ -1051,33 +1051,33 @@ public final class Rasterizer3D extends Rasterizer2D {
         if (b_to_c < c_to_a) {
             y_a -= y_b;
             y_b -= y_c;
-            for (y_c = scanOffsets[y_c]; --y_b >= 0; y_c += Rasterizer2D.width) {
-                drawFlatTexturedScanline(Rasterizer2D.pixels, y_c, k1, x_a >> 16, x_c >> 16);
+            for (y_c = scanOffsets[y_c]; --y_b >= 0; y_c += Rasterizer2D.Rasterizer2D_width) {
+                drawFlatTexturedScanline(Rasterizer2D.Rasterizer2D_pixels, y_c, k1, x_a >> 16, x_c >> 16);
                 x_a += b_to_c;
                 x_c += c_to_a;
             }
 
             while (--y_a >= 0) {
-                drawFlatTexturedScanline(Rasterizer2D.pixels, y_c, k1, x_b >> 16, x_c >> 16);
+                drawFlatTexturedScanline(Rasterizer2D.Rasterizer2D_pixels, y_c, k1, x_b >> 16, x_c >> 16);
                 x_b += a_to_b;
                 x_c += c_to_a;
-                y_c += Rasterizer2D.width;
+                y_c += Rasterizer2D.Rasterizer2D_width;
             }
             return;
         }
         y_a -= y_b;
         y_b -= y_c;
-        for (y_c = scanOffsets[y_c]; --y_b >= 0; y_c += Rasterizer2D.width) {
-            drawFlatTexturedScanline(Rasterizer2D.pixels, y_c, k1, x_c >> 16, x_a >> 16);
+        for (y_c = scanOffsets[y_c]; --y_b >= 0; y_c += Rasterizer2D.Rasterizer2D_width) {
+            drawFlatTexturedScanline(Rasterizer2D.Rasterizer2D_pixels, y_c, k1, x_c >> 16, x_a >> 16);
             x_a += b_to_c;
             x_c += c_to_a;
         }
 
         while (--y_a >= 0) {
-            drawFlatTexturedScanline(Rasterizer2D.pixels, y_c, k1, x_c >> 16, x_b >> 16);
+            drawFlatTexturedScanline(Rasterizer2D.Rasterizer2D_pixels, y_c, k1, x_c >> 16, x_b >> 16);
             x_b += a_to_b;
             x_c += c_to_a;
-            y_c += Rasterizer2D.width;
+            y_c += Rasterizer2D.Rasterizer2D_width;
         }
     }
 
@@ -1183,13 +1183,13 @@ public final class Rasterizer3D extends Rasterizer2D {
 
                 int var35;
                 if(var0 <= var1 && var0 <= var2) {
-                    if(var0 < Rasterizer2D.bottomY) {
-                        if(var1 > Rasterizer2D.bottomY) {
-                            var1 = Rasterizer2D.bottomY;
+                    if(var0 < Rasterizer2D.Rasterizer2D_yClipEnd) {
+                        if(var1 > Rasterizer2D.Rasterizer2D_yClipEnd) {
+                            var1 = Rasterizer2D.Rasterizer2D_yClipEnd;
                         }
 
-                        if(var2 > Rasterizer2D.bottomY) {
-                            var2 = Rasterizer2D.bottomY;
+                        if(var2 > Rasterizer2D.Rasterizer2D_yClipEnd) {
+                            var2 = Rasterizer2D.Rasterizer2D_yClipEnd;
                         }
 
                         var6 = (var6 << 9) - var41 * var3 + var41;
@@ -1226,22 +1226,22 @@ public final class Rasterizer3D extends Rasterizer2D {
                                                 return;
                                             }
 
-                                            drawTexturedLine(Rasterizer2D.pixels, texturePixels, 0, 0, var0, var4 >> 16, var5 >> 16, var6, var41, var24, var36, var33, var38, var39, var40);
+                                            drawTexturedLine(Rasterizer2D.Rasterizer2D_pixels, texturePixels, 0, 0, var0, var4 >> 16, var5 >> 16, var6, var41, var24, var36, var33, var38, var39, var40);
                                             var5 += var22;
                                             var4 += var30;
                                             var6 += var20;
-                                            var0 += Rasterizer2D.width;
+                                            var0 += Rasterizer2D.Rasterizer2D_width;
                                             var24 += var25;
                                             var36 += var37;
                                             var33 += var34;
                                         }
                                     }
 
-                                    drawTexturedLine(Rasterizer2D.pixels, texturePixels, 0, 0, var0, var3 >> 16, var5 >> 16, var6, var41, var24, var36, var33, var38, var39, var40);
+                                    drawTexturedLine(Rasterizer2D.Rasterizer2D_pixels, texturePixels, 0, 0, var0, var3 >> 16, var5 >> 16, var6, var41, var24, var36, var33, var38, var39, var40);
                                     var5 += var22;
                                     var3 += var29;
                                     var6 += var20;
-                                    var0 += Rasterizer2D.width;
+                                    var0 += Rasterizer2D.Rasterizer2D_width;
                                     var24 += var25;
                                     var36 += var37;
                                     var33 += var34;
@@ -1260,22 +1260,22 @@ public final class Rasterizer3D extends Rasterizer2D {
                                                 return;
                                             }
 
-                                            drawTexturedLine(Rasterizer2D.pixels, texturePixels, 0, 0, var0, var5 >> 16, var4 >> 16, var6, var41, var24, var36, var33, var38, var39, var40);
+                                            drawTexturedLine(Rasterizer2D.Rasterizer2D_pixels, texturePixels, 0, 0, var0, var5 >> 16, var4 >> 16, var6, var41, var24, var36, var33, var38, var39, var40);
                                             var5 += var22;
                                             var4 += var30;
                                             var6 += var20;
-                                            var0 += Rasterizer2D.width;
+                                            var0 += Rasterizer2D.Rasterizer2D_width;
                                             var24 += var25;
                                             var36 += var37;
                                             var33 += var34;
                                         }
                                     }
 
-                                    drawTexturedLine(Rasterizer2D.pixels, texturePixels, 0, 0, var0, var5 >> 16, var3 >> 16, var6, var41, var24, var36, var33, var38, var39, var40);
+                                    drawTexturedLine(Rasterizer2D.Rasterizer2D_pixels, texturePixels, 0, 0, var0, var5 >> 16, var3 >> 16, var6, var41, var24, var36, var33, var38, var39, var40);
                                     var5 += var22;
                                     var3 += var29;
                                     var6 += var20;
-                                    var0 += Rasterizer2D.width;
+                                    var0 += Rasterizer2D.Rasterizer2D_width;
                                     var24 += var25;
                                     var36 += var37;
                                     var33 += var34;
@@ -1314,22 +1314,22 @@ public final class Rasterizer3D extends Rasterizer2D {
                                                 return;
                                             }
 
-                                            drawTexturedLine(Rasterizer2D.pixels, texturePixels, 0, 0, var0, var3 >> 16, var5 >> 16, var6, var41, var24, var36, var33, var38, var39, var40);
+                                            drawTexturedLine(Rasterizer2D.Rasterizer2D_pixels, texturePixels, 0, 0, var0, var3 >> 16, var5 >> 16, var6, var41, var24, var36, var33, var38, var39, var40);
                                             var5 += var30;
                                             var3 += var29;
                                             var6 += var20;
-                                            var0 += Rasterizer2D.width;
+                                            var0 += Rasterizer2D.Rasterizer2D_width;
                                             var24 += var25;
                                             var36 += var37;
                                             var33 += var34;
                                         }
                                     }
 
-                                    drawTexturedLine(Rasterizer2D.pixels, texturePixels, 0, 0, var0, var3 >> 16, var4 >> 16, var6, var41, var24, var36, var33, var38, var39, var40);
+                                    drawTexturedLine(Rasterizer2D.Rasterizer2D_pixels, texturePixels, 0, 0, var0, var3 >> 16, var4 >> 16, var6, var41, var24, var36, var33, var38, var39, var40);
                                     var4 += var22;
                                     var3 += var29;
                                     var6 += var20;
-                                    var0 += Rasterizer2D.width;
+                                    var0 += Rasterizer2D.Rasterizer2D_width;
                                     var24 += var25;
                                     var36 += var37;
                                     var33 += var34;
@@ -1348,22 +1348,22 @@ public final class Rasterizer3D extends Rasterizer2D {
                                                 return;
                                             }
 
-                                            drawTexturedLine(Rasterizer2D.pixels, texturePixels, 0, 0, var0, var5 >> 16, var3 >> 16, var6, var41, var24, var36, var33, var38, var39, var40);
+                                            drawTexturedLine(Rasterizer2D.Rasterizer2D_pixels, texturePixels, 0, 0, var0, var5 >> 16, var3 >> 16, var6, var41, var24, var36, var33, var38, var39, var40);
                                             var5 += var30;
                                             var3 += var29;
                                             var6 += var20;
-                                            var0 += Rasterizer2D.width;
+                                            var0 += Rasterizer2D.Rasterizer2D_width;
                                             var24 += var25;
                                             var36 += var37;
                                             var33 += var34;
                                         }
                                     }
 
-                                    drawTexturedLine(Rasterizer2D.pixels, texturePixels, 0, 0, var0, var4 >> 16, var3 >> 16, var6, var41, var24, var36, var33, var38, var39, var40);
+                                    drawTexturedLine(Rasterizer2D.Rasterizer2D_pixels, texturePixels, 0, 0, var0, var4 >> 16, var3 >> 16, var6, var41, var24, var36, var33, var38, var39, var40);
                                     var4 += var22;
                                     var3 += var29;
                                     var6 += var20;
-                                    var0 += Rasterizer2D.width;
+                                    var0 += Rasterizer2D.Rasterizer2D_width;
                                     var24 += var25;
                                     var36 += var37;
                                     var33 += var34;
@@ -1372,13 +1372,13 @@ public final class Rasterizer3D extends Rasterizer2D {
                         }
                     }
                 } else if(var1 <= var2) {
-                    if(var1 < Rasterizer2D.bottomY) {
-                        if(var2 > Rasterizer2D.bottomY) {
-                            var2 = Rasterizer2D.bottomY;
+                    if(var1 < Rasterizer2D.Rasterizer2D_yClipEnd) {
+                        if(var2 > Rasterizer2D.Rasterizer2D_yClipEnd) {
+                            var2 = Rasterizer2D.Rasterizer2D_yClipEnd;
                         }
 
-                        if(var0 > Rasterizer2D.bottomY) {
-                            var0 = Rasterizer2D.bottomY;
+                        if(var0 > Rasterizer2D.Rasterizer2D_yClipEnd) {
+                            var0 = Rasterizer2D.Rasterizer2D_yClipEnd;
                         }
 
                         var7 = (var7 << 9) - var41 * var4 + var41;
@@ -1415,22 +1415,22 @@ public final class Rasterizer3D extends Rasterizer2D {
                                                 return;
                                             }
 
-                                            drawTexturedLine(Rasterizer2D.pixels, texturePixels, 0, 0, var1, var5 >> 16, var3 >> 16, var7, var41, var24, var36, var33, var38, var39, var40);
+                                            drawTexturedLine(Rasterizer2D.Rasterizer2D_pixels, texturePixels, 0, 0, var1, var5 >> 16, var3 >> 16, var7, var41, var24, var36, var33, var38, var39, var40);
                                             var3 += var29;
                                             var5 += var22;
                                             var7 += var20;
-                                            var1 += Rasterizer2D.width;
+                                            var1 += Rasterizer2D.Rasterizer2D_width;
                                             var24 += var25;
                                             var36 += var37;
                                             var33 += var34;
                                         }
                                     }
 
-                                    drawTexturedLine(Rasterizer2D.pixels, texturePixels, 0, 0, var1, var4 >> 16, var3 >> 16, var7, var41, var24, var36, var33, var38, var39, var40);
+                                    drawTexturedLine(Rasterizer2D.Rasterizer2D_pixels, texturePixels, 0, 0, var1, var4 >> 16, var3 >> 16, var7, var41, var24, var36, var33, var38, var39, var40);
                                     var3 += var29;
                                     var4 += var30;
                                     var7 += var20;
-                                    var1 += Rasterizer2D.width;
+                                    var1 += Rasterizer2D.Rasterizer2D_width;
                                     var24 += var25;
                                     var36 += var37;
                                     var33 += var34;
@@ -1449,22 +1449,22 @@ public final class Rasterizer3D extends Rasterizer2D {
                                                 return;
                                             }
 
-                                            drawTexturedLine(Rasterizer2D.pixels, texturePixels, 0, 0, var1, var3 >> 16, var5 >> 16, var7, var41, var24, var36, var33, var38, var39, var40);
+                                            drawTexturedLine(Rasterizer2D.Rasterizer2D_pixels, texturePixels, 0, 0, var1, var3 >> 16, var5 >> 16, var7, var41, var24, var36, var33, var38, var39, var40);
                                             var3 += var29;
                                             var5 += var22;
                                             var7 += var20;
-                                            var1 += Rasterizer2D.width;
+                                            var1 += Rasterizer2D.Rasterizer2D_width;
                                             var24 += var25;
                                             var36 += var37;
                                             var33 += var34;
                                         }
                                     }
 
-                                    drawTexturedLine(Rasterizer2D.pixels, texturePixels, 0, 0, var1, var3 >> 16, var4 >> 16, var7, var41, var24, var36, var33, var38, var39, var40);
+                                    drawTexturedLine(Rasterizer2D.Rasterizer2D_pixels, texturePixels, 0, 0, var1, var3 >> 16, var4 >> 16, var7, var41, var24, var36, var33, var38, var39, var40);
                                     var3 += var29;
                                     var4 += var30;
                                     var7 += var20;
-                                    var1 += Rasterizer2D.width;
+                                    var1 += Rasterizer2D.Rasterizer2D_width;
                                     var24 += var25;
                                     var36 += var37;
                                     var33 += var34;
@@ -1503,22 +1503,22 @@ public final class Rasterizer3D extends Rasterizer2D {
                                                 return;
                                             }
 
-                                            drawTexturedLine(Rasterizer2D.pixels, texturePixels, 0, 0, var1, var3 >> 16, var4 >> 16, var7, var41, var24, var36, var33, var38, var39, var40);
+                                            drawTexturedLine(Rasterizer2D.Rasterizer2D_pixels, texturePixels, 0, 0, var1, var3 >> 16, var4 >> 16, var7, var41, var24, var36, var33, var38, var39, var40);
                                             var3 += var22;
                                             var4 += var30;
                                             var7 += var20;
-                                            var1 += Rasterizer2D.width;
+                                            var1 += Rasterizer2D.Rasterizer2D_width;
                                             var24 += var25;
                                             var36 += var37;
                                             var33 += var34;
                                         }
                                     }
 
-                                    drawTexturedLine(Rasterizer2D.pixels, texturePixels, 0, 0, var1, var5 >> 16, var4 >> 16, var7, var41, var24, var36, var33, var38, var39, var40);
+                                    drawTexturedLine(Rasterizer2D.Rasterizer2D_pixels, texturePixels, 0, 0, var1, var5 >> 16, var4 >> 16, var7, var41, var24, var36, var33, var38, var39, var40);
                                     var5 += var29;
                                     var4 += var30;
                                     var7 += var20;
-                                    var1 += Rasterizer2D.width;
+                                    var1 += Rasterizer2D.Rasterizer2D_width;
                                     var24 += var25;
                                     var36 += var37;
                                     var33 += var34;
@@ -1537,22 +1537,22 @@ public final class Rasterizer3D extends Rasterizer2D {
                                                 return;
                                             }
 
-                                            drawTexturedLine(Rasterizer2D.pixels, texturePixels, 0, 0, var1, var4 >> 16, var3 >> 16, var7, var41, var24, var36, var33, var38, var39, var40);
+                                            drawTexturedLine(Rasterizer2D.Rasterizer2D_pixels, texturePixels, 0, 0, var1, var4 >> 16, var3 >> 16, var7, var41, var24, var36, var33, var38, var39, var40);
                                             var3 += var22;
                                             var4 += var30;
                                             var7 += var20;
-                                            var1 += Rasterizer2D.width;
+                                            var1 += Rasterizer2D.Rasterizer2D_width;
                                             var24 += var25;
                                             var36 += var37;
                                             var33 += var34;
                                         }
                                     }
 
-                                    drawTexturedLine(Rasterizer2D.pixels, texturePixels, 0, 0, var1, var4 >> 16, var5 >> 16, var7, var41, var24, var36, var33, var38, var39, var40);
+                                    drawTexturedLine(Rasterizer2D.Rasterizer2D_pixels, texturePixels, 0, 0, var1, var4 >> 16, var5 >> 16, var7, var41, var24, var36, var33, var38, var39, var40);
                                     var5 += var29;
                                     var4 += var30;
                                     var7 += var20;
-                                    var1 += Rasterizer2D.width;
+                                    var1 += Rasterizer2D.Rasterizer2D_width;
                                     var24 += var25;
                                     var36 += var37;
                                     var33 += var34;
@@ -1560,13 +1560,13 @@ public final class Rasterizer3D extends Rasterizer2D {
                             }
                         }
                     }
-                } else if(var2 < Rasterizer2D.bottomY) {
-                    if(var0 > Rasterizer2D.bottomY) {
-                        var0 = Rasterizer2D.bottomY;
+                } else if(var2 < Rasterizer2D.Rasterizer2D_yClipEnd) {
+                    if(var0 > Rasterizer2D.Rasterizer2D_yClipEnd) {
+                        var0 = Rasterizer2D.Rasterizer2D_yClipEnd;
                     }
 
-                    if(var1 > Rasterizer2D.bottomY) {
-                        var1 = Rasterizer2D.bottomY;
+                    if(var1 > Rasterizer2D.Rasterizer2D_yClipEnd) {
+                        var1 = Rasterizer2D.Rasterizer2D_yClipEnd;
                     }
 
                     var8 = (var8 << 9) - var41 * var5 + var41;
@@ -1603,22 +1603,22 @@ public final class Rasterizer3D extends Rasterizer2D {
                                             return;
                                         }
 
-                                        drawTexturedLine(Rasterizer2D.pixels, texturePixels, 0, 0, var2, var4 >> 16, var3 >> 16, var8, var41, var24, var36, var33, var38, var39, var40);
+                                        drawTexturedLine(Rasterizer2D.Rasterizer2D_pixels, texturePixels, 0, 0, var2, var4 >> 16, var3 >> 16, var8, var41, var24, var36, var33, var38, var39, var40);
                                         var4 += var30;
                                         var3 += var29;
                                         var8 += var20;
-                                        var2 += Rasterizer2D.width;
+                                        var2 += Rasterizer2D.Rasterizer2D_width;
                                         var24 += var25;
                                         var36 += var37;
                                         var33 += var34;
                                     }
                                 }
 
-                                drawTexturedLine(Rasterizer2D.pixels, texturePixels, 0, 0, var2, var4 >> 16, var5 >> 16, var8, var41, var24, var36, var33, var38, var39, var40);
+                                drawTexturedLine(Rasterizer2D.Rasterizer2D_pixels, texturePixels, 0, 0, var2, var4 >> 16, var5 >> 16, var8, var41, var24, var36, var33, var38, var39, var40);
                                 var4 += var30;
                                 var5 += var22;
                                 var8 += var20;
-                                var2 += Rasterizer2D.width;
+                                var2 += Rasterizer2D.Rasterizer2D_width;
                                 var24 += var25;
                                 var36 += var37;
                                 var33 += var34;
@@ -1637,22 +1637,22 @@ public final class Rasterizer3D extends Rasterizer2D {
                                             return;
                                         }
 
-                                        drawTexturedLine(Rasterizer2D.pixels, texturePixels, 0, 0, var2, var3 >> 16, var4 >> 16, var8, var41, var24, var36, var33, var38, var39, var40);
+                                        drawTexturedLine(Rasterizer2D.Rasterizer2D_pixels, texturePixels, 0, 0, var2, var3 >> 16, var4 >> 16, var8, var41, var24, var36, var33, var38, var39, var40);
                                         var4 += var30;
                                         var3 += var29;
                                         var8 += var20;
-                                        var2 += Rasterizer2D.width;
+                                        var2 += Rasterizer2D.Rasterizer2D_width;
                                         var24 += var25;
                                         var36 += var37;
                                         var33 += var34;
                                     }
                                 }
 
-                                drawTexturedLine(Rasterizer2D.pixels, texturePixels, 0, 0, var2, var5 >> 16, var4 >> 16, var8, var41, var24, var36, var33, var38, var39, var40);
+                                drawTexturedLine(Rasterizer2D.Rasterizer2D_pixels, texturePixels, 0, 0, var2, var5 >> 16, var4 >> 16, var8, var41, var24, var36, var33, var38, var39, var40);
                                 var4 += var30;
                                 var5 += var22;
                                 var8 += var20;
-                                var2 += Rasterizer2D.width;
+                                var2 += Rasterizer2D.Rasterizer2D_width;
                                 var24 += var25;
                                 var36 += var37;
                                 var33 += var34;
@@ -1691,22 +1691,22 @@ public final class Rasterizer3D extends Rasterizer2D {
                                             return;
                                         }
 
-                                        drawTexturedLine(Rasterizer2D.pixels, texturePixels, 0, 0, var2, var4 >> 16, var5 >> 16, var8, var41, var24, var36, var33, var38, var39, var40);
+                                        drawTexturedLine(Rasterizer2D.Rasterizer2D_pixels, texturePixels, 0, 0, var2, var4 >> 16, var5 >> 16, var8, var41, var24, var36, var33, var38, var39, var40);
                                         var4 += var29;
                                         var5 += var22;
                                         var8 += var20;
-                                        var2 += Rasterizer2D.width;
+                                        var2 += Rasterizer2D.Rasterizer2D_width;
                                         var24 += var25;
                                         var36 += var37;
                                         var33 += var34;
                                     }
                                 }
 
-                                drawTexturedLine(Rasterizer2D.pixels, texturePixels, 0, 0, var2, var3 >> 16, var5 >> 16, var8, var41, var24, var36, var33, var38, var39, var40);
+                                drawTexturedLine(Rasterizer2D.Rasterizer2D_pixels, texturePixels, 0, 0, var2, var3 >> 16, var5 >> 16, var8, var41, var24, var36, var33, var38, var39, var40);
                                 var3 += var30;
                                 var5 += var22;
                                 var8 += var20;
-                                var2 += Rasterizer2D.width;
+                                var2 += Rasterizer2D.Rasterizer2D_width;
                                 var24 += var25;
                                 var36 += var37;
                                 var33 += var34;
@@ -1725,22 +1725,22 @@ public final class Rasterizer3D extends Rasterizer2D {
                                             return;
                                         }
 
-                                        drawTexturedLine(Rasterizer2D.pixels, texturePixels, 0, 0, var2, var5 >> 16, var4 >> 16, var8, var41, var24, var36, var33, var38, var39, var40);
+                                        drawTexturedLine(Rasterizer2D.Rasterizer2D_pixels, texturePixels, 0, 0, var2, var5 >> 16, var4 >> 16, var8, var41, var24, var36, var33, var38, var39, var40);
                                         var4 += var29;
                                         var5 += var22;
                                         var8 += var20;
-                                        var2 += Rasterizer2D.width;
+                                        var2 += Rasterizer2D.Rasterizer2D_width;
                                         var24 += var25;
                                         var36 += var37;
                                         var33 += var34;
                                     }
                                 }
 
-                                drawTexturedLine(Rasterizer2D.pixels, texturePixels, 0, 0, var2, var5 >> 16, var3 >> 16, var8, var41, var24, var36, var33, var38, var39, var40);
+                                drawTexturedLine(Rasterizer2D.Rasterizer2D_pixels, texturePixels, 0, 0, var2, var5 >> 16, var3 >> 16, var8, var41, var24, var36, var33, var38, var39, var40);
                                 var3 += var30;
                                 var5 += var22;
                                 var8 += var20;
-                                var2 += Rasterizer2D.width;
+                                var2 += Rasterizer2D.Rasterizer2D_width;
                                 var24 += var25;
                                 var36 += var37;
                                 var33 += var34;

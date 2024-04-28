@@ -198,44 +198,44 @@ public final class IndexedImage extends Rasterizer2D implements RSIndexedSprite 
 	public void draw(int x, int y) {
 		x += xOffset;
 		y += yOffset;
-		int destOffset = x + y * Rasterizer2D.width;
+		int destOffset = x + y * Rasterizer2D.Rasterizer2D_width;
 		int sourceOffset = 0;
 		int height = subHeight;
 		int width = subWidth;
-		int destStep = Rasterizer2D.width - width;
+		int destStep = Rasterizer2D.Rasterizer2D_width - width;
 		int sourceStep = 0;
 
-		if (y < Rasterizer2D.topY) {
-			int dy = Rasterizer2D.topY - y;
+		if (y < Rasterizer2D.Rasterizer2D_yClipStart) {
+			int dy = Rasterizer2D.Rasterizer2D_yClipStart - y;
 			height -= dy;
-			y = Rasterizer2D.topY;
+			y = Rasterizer2D.Rasterizer2D_yClipStart;
 			sourceOffset += dy * width;
-			destOffset += dy * Rasterizer2D.width;
+			destOffset += dy * Rasterizer2D.Rasterizer2D_width;
 		}
 
-		if (y + height > Rasterizer2D.bottomY) {
-			height -= (y + height) - Rasterizer2D.bottomY;
+		if (y + height > Rasterizer2D.Rasterizer2D_yClipEnd) {
+			height -= (y + height) - Rasterizer2D.Rasterizer2D_yClipEnd;
 		}
 
-		if (x < Rasterizer2D.leftX) {
-			int k2 = Rasterizer2D.leftX - x;
+		if (x < Rasterizer2D.Rasterizer2D_xClipStart) {
+			int k2 = Rasterizer2D.Rasterizer2D_xClipStart - x;
 			width -= k2;
-			x = Rasterizer2D.leftX;
+			x = Rasterizer2D.Rasterizer2D_xClipStart;
 			sourceOffset += k2;
 			destOffset += k2;
 			sourceStep += k2;
 			destStep += k2;
 		}
 
-		if (x + width > Rasterizer2D.bottomX) {
-			int dx = (x + width) - Rasterizer2D.bottomX;
+		if (x + width > Rasterizer2D.Rasterizer2D_xClipEnd) {
+			int dx = (x + width) - Rasterizer2D.Rasterizer2D_xClipEnd;
 			width -= dx;
 			sourceStep += dx;
 			destStep += dx;
 		}
 
 		if (!(width <= 0 || height <= 0)) {
-			draw(height, Rasterizer2D.pixels, palettePixels, destStep, destOffset, width, sourceOffset, palette, sourceStep);
+			draw(height, Rasterizer2D.Rasterizer2D_pixels, palettePixels, destStep, destOffset, width, sourceOffset, palette, sourceStep);
 		}
 
 	}
@@ -298,12 +298,12 @@ public final class IndexedImage extends Rasterizer2D implements RSIndexedSprite 
 
 	@Override
 	public int[] getPalette() {
-		return pixels;
+		return Rasterizer2D_pixels;
 	}
 
 	@Override
 	public void setPalette(int[] palette) {
-		pixels = palette;
+		Rasterizer2D_pixels = palette;
 	}
 
 	@Override

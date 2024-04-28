@@ -75,16 +75,16 @@ public class EventCalendar extends RSInterface {
         RSInterface inter = get(INTERFACE_ID);
         Sprite sprite = challengeSprites[challengeSpriteIndex];
         addSprite(interfaceId, challengeSprites[challengeSpriteIndex]);
-        inter.child(childId, interfaceId, 97 - sprite.myWidth / 2, 166 - sprite.myHeight / 2);
+        inter.child(childId, interfaceId, 97 - sprite.subWidth / 2, 166 - sprite.subHeight / 2);
     }
 
     public void load(TextDrawingArea[] tda) {
         challengeSprites = new Sprite[CHALLENGE_SPRITE_COUNT];
         for (int sprite = 0; sprite < CHALLENGE_SPRITE_COUNT; sprite++) {
             challengeSprites[sprite] = new Sprite(SPRITES_LOCATION + CHALLENGE_SPRITE_NAME + " " + (sprite + 1));
-            Preconditions.checkState(challengeSprites[sprite] != null && challengeSprites[sprite].myWidth != 0);
+            Preconditions.checkState(challengeSprites[sprite] != null && challengeSprites[sprite].subWidth != 0);
         }
-        Preconditions.checkState(backgroundSprite.myWidth != 0);
+        Preconditions.checkState(backgroundSprite.subWidth != 0);
 
         RSInterface inter = addInterface(INTERFACE_ID);
         inter.totalChildren(17);

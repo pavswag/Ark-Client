@@ -1,11 +1,9 @@
 package com.client.graphics.interfaces.impl;
 
 import com.client.Client;
-import com.client.Configuration;
 import com.client.Rasterizer3D;
 import com.client.Sprite;
 import com.client.audio.StaticSound;
-import com.client.engine.impl.MouseHandler;
 import com.client.features.settings.Preferences;
 import com.client.graphics.interfaces.RSInterface;
 
@@ -26,22 +24,22 @@ public class Slider {
 		this.images[1] = background;
 		this.minValue = this.value = minimumValue;
 		this.maxValue = maximumValue;
-		this.length = this.images[1].myWidth;
+		this.length = this.images[1].subWidth;
 	}
 
 	public void draw(int x, int y, int alpha) {
 		this.x = x;
 		this.y = y;
 		images[1].drawSprite(x, y);
-		images[0].drawTransparentSprite(x + position - (int) (position / length * images[0].myWidth), y - images[0].myHeight / 2 + images[1].myHeight / 2, alpha);
+		images[0].drawTransparentSprite(x + position - (int) (position / length * images[0].subWidth), y - images[0].subHeight / 2 + images[1].subHeight / 2, alpha);
 	}
 
 	public void handleClick(int mouseX, int mouseY, int offsetX, int offsetY, int contentType) {
 		int mX = Client.instance.getMouseX();
 		int mY = Client.instance.getMouseY();
 		if (mX - offsetX >= x && mX - offsetX <= x + length
-			&& mY - offsetY >= y + (images[1].myHeight / 2) - (images[0].myHeight / 2)
-			&& mY - offsetY <= y + (images[1].myHeight / 2) + (images[0].myHeight / 2))
+			&& mY - offsetY >= y + (images[1].subHeight / 2) - (images[0].subHeight / 2)
+			&& mY - offsetY <= y + (images[1].subHeight / 2) + (images[0].subHeight / 2))
 		{
 			position = mouseX - x - offsetX;
 			if (position >= length) {
@@ -69,8 +67,8 @@ public class Slider {
 		int mX = Client.instance.getMouseX();
 		int mY = Client.instance.getMouseY();
 		if (mX - offsetX >= x && mX - offsetX <= x + length
-			&& mY - offsetY >= y + images[1].myHeight / 2 - images[0].myHeight / 2
-			&& mY - offsetY <= y + images[1].myHeight / 2 + images[0].myHeight / 2)
+			&& mY - offsetY >= y + images[1].subHeight / 2 - images[0].subHeight / 2
+			&& mY - offsetY <= y + images[1].subHeight / 2 + images[0].subHeight / 2)
 		{
 			position = mouseX - x - offsetX;
 			if (position >= length) {

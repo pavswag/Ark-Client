@@ -85,4 +85,40 @@ public class Utility {
         var0.next.previous = var0;
         var0.previous.next = var0;
     }
+
+    public static String intToString(int var0, boolean var1) {
+        return var1 && var0 >= 0 ? method7088(var0, 10, var1) : Integer.toString(var0);
+    }
+
+    static String method7088(int var0, int var1, boolean var2) {
+        if (var1 >= 2 && var1 <= 36) {
+            if (var2 && var0 >= 0) {
+                int var3 = 2;
+
+                for (int var4 = var0 / var1; var4 != 0; ++var3) {
+                    var4 /= var1;
+                }
+
+                char[] var5 = new char[var3];
+                var5[0] = '+';
+
+                for (int var6 = var3 - 1; var6 > 0; --var6) {
+                    int var7 = var0;
+                    var0 /= var1;
+                    int var8 = var7 - var0 * var1;
+                    if (var8 >= 10) {
+                        var5[var6] = (char)(var8 + 87);
+                    } else {
+                        var5[var6] = (char)(var8 + 48);
+                    }
+                }
+
+                return new String(var5);
+            } else {
+                return Integer.toString(var0, var1);
+            }
+        } else {
+            throw new IllegalArgumentException("" + var1);
+        }
+    }
 }
