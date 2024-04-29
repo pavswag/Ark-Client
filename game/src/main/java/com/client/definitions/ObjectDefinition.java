@@ -804,12 +804,6 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 		transforms = null;
 	}
 
-	public void method574(OnDemandFetcher class42_sub1) {
-		if (objectModels == null)
-			return;
-		for (int j = 0; j < objectModels.length; j++)
-			class42_sub1.method560(objectModels[j] & 0xffff, 0);
-	}
 
 	public static void nullLoader() {
 		baseModels = null;

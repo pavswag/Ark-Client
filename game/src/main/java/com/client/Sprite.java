@@ -305,7 +305,6 @@ public class Sprite extends Rasterizer2D implements RSSpritePixels {
 					subHeight, this.pixels, 0, subWidth);
 			pixelgrabber.grabPixels();
 		} catch (Exception _ex) {
-			System.out.println(_ex);
 		}
 	}
 

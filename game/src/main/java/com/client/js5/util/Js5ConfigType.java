@@ -24,9 +24,8 @@ public enum Js5ConfigType {
     DBROW(38,"Database Rows"),
     DBTABLE(39,"Database Tables"),
     CUSTOM_ITEM_SPRITES(40,"Custom Item Sprites"),
-    OSRS_SPRITES(41,"Oldschool Sprites"),
-    WIDGET_SPRITES(42,"Widget Sprites"),
-    CUSTOM_TEXTURE_SPRITES(43,"Custom Texture Sprites"),
+    CUSTOM_TEXTURE_SPRITES(41,"Custom Texture Sprites"),
+    DATS(42,"Old packed data"),
     ;
 
     private final int id;

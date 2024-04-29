@@ -65,14 +65,6 @@ public final class Signlink implements Runnable {
 		active = true;
 		String s = getCacheDirectory();
 		uuid = getuid(s);
-		try {
-			cache_dat = new RandomAccessFile(s + "main_file_cache.dat", "rw");
-			for (int j = 0; j < 5; j++)
-				cache_idx[j] = new RandomAccessFile(s + "main_file_cache.idx" + j, "rw");
-
-		} catch (Exception exception) {
-			exception.printStackTrace();
-		}
 		for (int i = threadliveid; threadliveid == i;) {
 			if (socketreq != 0) {
 				try {
@@ -591,8 +583,6 @@ public final class Signlink implements Runnable {
 	public static final int clientversion = 317;
 	public static int uuid;
 	public static int storeid = 32;
-	public static RandomAccessFile cache_dat = null;
-	public static final RandomAccessFile[] cache_idx = new RandomAccessFile[5];
 	public static boolean sunjava;
 	public static Applet mainapp = null;
 	public static boolean active;

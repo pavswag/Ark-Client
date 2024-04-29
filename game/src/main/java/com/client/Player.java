@@ -68,33 +68,6 @@ public final class Player extends Entity implements RSPlayer {
 				model = new Model(aclass30_sub2_sub4_sub6_1s);
 			}
 		}
-		/*if (super.graphicId != -1 && super.graphicFrame != -1) {
-			GraphicsDefinition spotAnim = GraphicsDefinition.cache[super.graphicId];
-			Model model_2 = spotAnim.getModel();
-			if (model_2 != null) {
-				SeqDefinition seq = spotAnim.animationSequence;
-				Model model_3 = new Model(true, SeqFrame.noAnimationInProgress(super.graphicFrame), false, model_2);
-				model_3.offsetBy(0, -super.graphicHeight, 0);
-				if (seq != null && seq.isSkeletalAnimation()) {
-					model_3.playSkeletal(seq, super.graphicFrame);
-				} else {
-					model_3.generateBones();
-					model_3.interpolate(spotAnim.animationSequence.frameIDs[super.graphicFrame]);
-				}
-
-				model_3.groupedTriangleLabels = null;
-				model_3.groupedVertexLabels = null;
-				if (spotAnim.resizeXY != 128 || spotAnim.resizeZ != 128)
-					model_3.scale(spotAnim.resizeXY, spotAnim.resizeXY,
-							spotAnim.resizeZ);
-				// model_3.method479(64 + spotAnim.anInt413, 850 +
-				// spotAnim.anInt414, -30, -50, -30, true);
-				model_3.light(64 + spotAnim.modelBrightness,
-						850 + spotAnim.modelShadow, -30, -50, -30, true);
-				Model aclass30_sub2_sub4_sub6_1s[] = { model, model_3 };
-				model = new Model(aclass30_sub2_sub4_sub6_1s);
-			}
-		}*/
 		if (aModel_1714 != null) {
 			if (Client.cycle >= anInt1708)
 				aModel_1714 = null;

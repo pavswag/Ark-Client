@@ -10,6 +10,8 @@ import com.client.Configuration;
 import com.client.DataUtils;
 import com.client.Sprite;
 import com.client.Buffer;
+import com.client.js5.Js5List;
+import com.client.js5.util.Js5ConfigType;
 import com.client.sign.Signlink;
 import com.client.utilities.FileOperations;
 
@@ -23,12 +25,8 @@ public class SpriteLoader3 {
 	 */
 	public static void loadSprites() {
 		try {
-			Buffer index = new Buffer(
-					FileOperations.readFile(Signlink.getCacheDirectory() + "media_archives/media_archive3.idx"));
-			Buffer data = new Buffer(
-					FileOperations.readFile(Signlink.getCacheDirectory() + "media_archives/media_archive3.dat"));
-			DataInputStream indexFile = new DataInputStream(
-					new GZIPInputStream(new ByteArrayInputStream(index.payload)));
+			Buffer data = new Buffer(Js5List.configs.takeFile(Js5ConfigType.DATS, 12));
+			DataInputStream indexFile = new DataInputStream(new GZIPInputStream(new ByteArrayInputStream(Js5List.configs.takeFile(Js5ConfigType.DATS, 13))));
 			DataInputStream dataFile = new DataInputStream(new GZIPInputStream(new ByteArrayInputStream(data.payload)));
 			int totalSprites = indexFile.readInt();
 			if (cache == null) {

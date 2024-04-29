@@ -31,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.swing.JFrame;
 
@@ -1594,18 +1595,6 @@ public class Client extends GameEngine implements RSClient {
 		return Signlink.getCacheDirectory() + "index" + cacheIndex + "/" + (index != -1 ? index + ".gz" : "");
 	}
 
-	public void repackCacheAll() {
-		for (int index = 0; index < 10; index++) {
-			try {
-				//repackCacheIndex(index);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		packCustomMaps();
-		packCustomModels();
-		packCustomAnimations();
-	}
 
 	public byte[] fileToByteArray(File file) {
 		try {
@@ -1621,87 +1610,6 @@ public class Client extends GameEngine implements RSClient {
 		return null;
 	}
 
-	public void repackCacheIndex(int cacheIndex) {
-		if (!new File(indexLocation(cacheIndex, -1)).exists()) {
-			System.out.println("No index data found for: " + cacheIndex);
-			return;
-		}
-
-		System.out.println("Started repacking index " + cacheIndex + " . " + new File(indexLocation(cacheIndex, -1)).getPath());
-		int indexLength = new File(indexLocation(cacheIndex, -1)).listFiles().length;
-		File[] file = new File(indexLocation(cacheIndex, -1)).listFiles();
-		int packed = 0;
-		try {
-			for (int index = 0; index < indexLength; index++) {
-				if (file[index] != null) {
-					if (pack(file[index], cacheIndex)) {
-						packed++;
-					}
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Error packing index " + cacheIndex + ".");
-		}
-
-	}
-
-	public boolean pack(File file, int cacheIndex) {
-		int fileIndex = Integer.parseInt(getFileNameWithoutExtension(file.toString()));
-		byte[] data = fileToByteArray(file);
-		if (data != null && data.length > 0) {
-			decompressors[cacheIndex].write(data.length, data, fileIndex);
-			System.out.println("Packed " + file.toString() + " to index " + cacheIndex);
-			return true;
-		} else {
-			System.out.println("No file to pack: " + file);
-			return false;
-		}
-	}
-
-	public void packCustomMaps() {
-		if (new File(Configuration.CUSTOM_MAP_DIRECTORY).exists()) {
-			System.out.println("Repacking custom maps..");
-			packToIndex(4, new File(Configuration.CUSTOM_MAP_DIRECTORY));
-		}
-	}
-
-	public void packCustomModels() {
-		if (new File(Configuration.CUSTOM_MODEL_DIRECTORY).exists()) {
-			System.out.println("Repacking custom models..");
-			packToIndex(1, new File(Configuration.CUSTOM_MODEL_DIRECTORY));
-		}
-	}
-
-	public void packCustomAnimations() {
-		if (new File(Configuration.CUSTOM_ANIMATION_DIRECTORY).exists()) {
-			System.out.println("Repacking custom animations..");
-			packToIndex(2, new File(Configuration.CUSTOM_ANIMATION_DIRECTORY));
-		}
-	}
-
-	private void packToIndex(int index, File file) {
-		if (file.isDirectory()) {
-			File[] list = file.listFiles();
-			if (list != null) {
-				Arrays.stream(list).forEach(f -> packToIndex(index, f));
-			}
-		} else {
-			pack(file, index);
-			System.out.println("Pack " + file.getName() + " to index " + index);
-		}
-	}
-
-	public void preloadModels() {
-		File models = new File(Signlink.getCacheDirectory() + "/Raw/");
-		File[] modelList = models.listFiles();
-		for (int model = 0; model < modelList.length; model++) {
-			String modelID = modelList[model].getName();
-			byte[] modelData = ReadFile(Signlink.getCacheDirectory() + "/Raw/" + modelID);
-			Model.loadModel(modelData, Integer.parseInt(getFileNameWithoutExtension(modelID)));
-			System.out.println("Loaded " + models.length() + " preloaded models.");
-		}
-	}
 
 	public static final byte[] ReadFile(String s) {
 		try {
@@ -1720,15 +1628,6 @@ public class Client extends GameEngine implements RSClient {
 		}
 	}
 
-	public void addModels() {
-		for (int ModelIndex = 0; ModelIndex < 50000; ModelIndex++) {
-			byte[] abyte0 = getModel(ModelIndex);
-			if (abyte0 != null && abyte0.length > 0) {
-				decompressors[1].write(abyte0.length, abyte0, ModelIndex);
-			}
-		}
-	}
-
 	public byte[] getModel(int Index) {
 		try {
 			File Model = new File(Signlink.getCacheDirectory() + "./pModels/" + Index + ".gz");
@@ -1740,16 +1639,6 @@ public class Client extends GameEngine implements RSClient {
 			return aByte;
 		} catch (Exception e) {
 			return null;
-		}
-	}
-
-	public void addMaps() {
-		for (int MapIndex = 0; MapIndex < 3536; MapIndex++) {
-			byte[] abyte0 = getMaps(MapIndex);
-			if (abyte0 != null && abyte0.length > 0) {
-				decompressors[4].write(abyte0.length, abyte0, MapIndex);
-				System.out.println("Maps Added");
-			}
 		}
 	}
 
@@ -5432,7 +5321,7 @@ public class Client extends GameEngine implements RSClient {
 			int j = getMapLoadingState();
 			if (j != 0 && System.currentTimeMillis() - longStartTime > 0x57e40L) {
 				Signlink.reporterror(
-						myUsername + " glcfb " + aLong1215 + "," + j + "," + lowMem + "," + decompressors[0] + ","
+						myUsername + " glcfb " + aLong1215 + "," + j + "," + lowMem + ","
 								 + plane + "," + currentRegionX + "," + currentRegionY);
 				longStartTime = System.currentTimeMillis();
 			}
@@ -5997,33 +5886,43 @@ public class Client extends GameEngine implements RSClient {
 	 * @param secondsRemaining
 	 * @trees
 	 */
-	public Sprite logo, loginBackground;
+	private int getPixelAmt(int current, int pixels) {
+		return (int) (pixels * .01 * current);
+	}
 
-
+	@SneakyThrows
 	public void drawLoadingText(int percentage, String s) {
 		loadingProgress = percentage;
 		aString1049 = s;
-		System.out.println(s);
 
-		if (titleStreamLoader == null) {
-			super.drawInitial(percentage, s + " " + (percentage) + "%",false);
-			return;
-		}
-			new Sprite("loginscreen/background").drawAdvancedSprite(0, 0);
+		Sprite backgroundImage = new Sprite(ImageIO.read(Client.class.getResourceAsStream("/background.png")));
+		if(backgroundImage != null)
+			backgroundImage.drawAdvancedSprite(0, 0);
 		int x = 765 / 2 - 543 / 2;
 		int y = 475 - 20 + 8;
-		int width = 540;
+		int width = 541;
 		int height = 32;
-		double offset = 5.43;
-		new Sprite("loginscreen/general/emptybar").drawAdvancedSprite(765 / 2 - width / 2, y + 11 - height / 2);
-		new Sprite("loginscreen/general/fullbar").drawAdvancedSprite(765 / 2 - width / 2, y + 11 - height / 2);
-		Rasterizer2D.drawAlphaGradient(x + ((int) Math.round(percentage * offset) / 2), y,
-				width - ((int) Math.round(percentage * offset) / 2), height, 0x000000, 0x000000, 200);
-		if (percentage >= 198) {
-			newBoldFont.drawCenteredString("Finished loading " + Configuration.CLIENT_TITLE, (765 / 2), y + height / 2, 0xffffff, 1);
+		Rasterizer2D.drawBox(x + 1, y - 2, width, 32, 0x000000);
+		Rasterizer2D.drawBox(x + 2, y - 1, getPixelAmt(percentage, 540), 30, 0x8C1111);
+		if(newBoldFont != null) {
+			if (percentage >= 198) {
+				newBoldFont.drawCenteredString("Finished loading " + Configuration.CLIENT_TITLE, (765 / 2), y + height / 2, 0xffffff, 1);
+			} else {
+				newBoldFont.drawCenteredString(s + " - Please wait - " + (percentage) + "%", (765 / 2),
+						y + height / 2, 0xffffff, 1);
+			}
 		} else {
-			newBoldFont.drawCenteredString(s + " - Please wait - " + (percentage) + "%", (765 / 2),
-					y + height / 2, 0xffffff, 1);
+			if (image == null) {
+				image = canvas.createImage(304, 34);
+			}
+
+			Graphics imageGraphics = image.getGraphics();
+
+			if (percentage >= 198) {
+				imageGraphics.drawString("Finished loading " + Configuration.CLIENT_TITLE, (765 / 2), y + height / 2);
+			} else {
+				imageGraphics.drawString((s + " - Please wait - " + (percentage) + "%"), (765 / 2), y + height / 2);
+			}
 		}
 		rasterProvider.drawFull(0,0);
 	}
@@ -6110,9 +6009,7 @@ public class Client extends GameEngine implements RSClient {
 	private FileArchive streamLoaderForName(int i, String archiveName) {
 		byte abyte0[] = null;
 		try {
-			if (decompressors[0] != null) {
-				abyte0 = decompressors[0].read(i);
-			}
+			abyte0 = Js5List.configs.takeFile(Js5ConfigType.DATS, i);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -12420,14 +12317,9 @@ public class Client extends GameEngine implements RSClient {
 	@SneakyThrows
 	public void load() {
 		//DefinitionDumper.dumpCustomText();
-		System.out.println("Load#" + Client.titleLoadingStage);
 		if (Client.titleLoadingStage == 0) {
 			getDocumentBaseHost();
 			variousSettings[304] = 1;
-			if (Signlink.cache_dat != null) {
-				for (int i = 0; i < 5; i++)
-					decompressors[i] = new Decompressor(Signlink.cache_dat, Signlink.cache_idx[i], i + 1);
-			}
 			SettingsManager.loadSettings();
 			frameMode(false);
 
@@ -12517,22 +12409,6 @@ public class Client extends GameEngine implements RSClient {
 			Client.titleLoadingStage = 50;
 			//fontLoader = new FontLoader();
 		} else if (Client.titleLoadingStage == 50) {
-			titleStreamLoader = streamLoaderForName(1, "title screen");
-			smallText = new TextDrawingArea(false, "p11_full" + fontFilter(), titleStreamLoader);
-			XPFONT = new TextDrawingArea(true, "q8_full" + fontFilter(), titleStreamLoader);
-			aTextDrawingArea_1271 = new TextDrawingArea(false, "p12_full" + fontFilter(), titleStreamLoader);
-			chatTextDrawingArea = new TextDrawingArea(false, "b12_full", titleStreamLoader);
-			drawLoadingText(15, "Loading Fonts...");
-			aTextDrawingArea_1273 = new TextDrawingArea(true, "q8_full" + fontFilter(), titleStreamLoader);
-			newSmallFont = new RSFont(false, "p11_full" + fontFilter(), titleStreamLoader);
-			newRegularFont = new RSFont(false, "p12_full" + fontFilter(), titleStreamLoader);
-			newBoldFont = new RSFont(false, "b12_full" + fontFilter(), titleStreamLoader);
-			newFancyFont = new RSFont(true, "q8_full" + fontFilter(), titleStreamLoader);
-			lato = new RSFont(true, "lato_full", titleStreamLoader);
-			latoBold = new RSFont(true, "lato_bold_full", titleStreamLoader);
-			kingthingsPetrock = new RSFont(true, "kingthings_petrock_full", titleStreamLoader);
-			kingthingsPetrockLight = new RSFont(true, "kingthings_petrock_light_full", titleStreamLoader);
-			drawLoadingText(40, "Loading fonts");
 			Client.titleLoadingStage = 60;
 		} else {
 			int var3;
@@ -12540,30 +12416,6 @@ public class Client extends GameEngine implements RSClient {
 				drawLoadingText(50, "Loaded title screen");
 				setGameState(5);
 
-				ItemDef.load();
-				ItemStats.readDefinitions();
-
-				OSRSCacheLoader.init();
-
-				SpriteLoader1.loadSprites();
-				cacheSprite1 = SpriteLoader1.sprites;
-				SpriteLoader1.sprites = null;
-
-				SpriteLoader2.loadSprites();
-				cacheSprite2 = SpriteLoader2.sprites;
-				SpriteLoader2.sprites = null;
-
-				SpriteLoader3.loadSprites();
-				cacheSprite3 = SpriteLoader3.sprites;
-				SpriteLoader3.sprites = null;
-
-				SpriteLoader4.loadSprites();
-				cacheSprite4 = SpriteLoader4.sprites;
-				SpriteLoader4.sprites = null;
-
-
-				loadTitleScreen();
-				createScreenImages();
 
 				anInt720 = 20;
 
@@ -12571,13 +12423,14 @@ public class Client extends GameEngine implements RSClient {
 			} else if (Client.titleLoadingStage == 70) {
 				if (!Js5List.configs.isFullyLoaded()) {
 					drawLoadingText(Js5List.configs.loadPercent(), "Loading config");
-				} else if (!Js5List.configs.isFullyLoaded()) {
+				} else if (!Js5List.clientScript.isFullyLoaded()) {
 					drawLoadingText((80 + Js5List.clientScript.loadPercent() / 6), "Loading scripts");
 				} else {
 					Js5List.initConfigSizes();
 					//ItemDefinition.members = isMembers;
 
 					if (Js5List.configs.isFullyLoaded()) {
+						titleStreamLoader = streamLoaderForName(5, "title screen");
 						AreaDefinition.definitions = new AreaDefinition[Js5List.getConfigSize(Js5ConfigType.AREA)];
 
 						for (int count = 0; count < Js5List.getConfigSize(Js5ConfigType.AREA); ++count) {
@@ -12622,9 +12475,8 @@ public class Client extends GameEngine implements RSClient {
 				if (loadingProgress < 100) {
 					drawLoadingText(loadingProgress, "Loading sprites");
 				} else {
-					FileArchive streamLoader_2 = streamLoaderForName(4, "2d graphics");
-					File[] file = new File(Signlink.getCacheDirectory() + "/sprites/sprites/").listFiles();
-					int size = file.length;
+					FileArchive streamLoader_2 = streamLoaderForName(2, "2d graphics");
+					int size = 18;
 					cacheSprite = new Sprite[size];
 					for (int i = 0; i < size; i++) {
 						cacheSprite[i] = new Sprite("Sprites/" + i);
@@ -12701,8 +12553,7 @@ public class Client extends GameEngine implements RSClient {
 					for (int index = 0; index < clanIcons.length; index++) {
 						clanIcons[index] = new Sprite("Clan Chat/Icons/" + index);
 					}
-					String iconPackDir = Signlink.getCacheDirectory() + "sprites" + Signlink.separator + "icon_pack";
-					Sprite[] iconPack = new Sprite[FileUtility.getFileCount(iconPackDir)];
+					Sprite[] iconPack = new Sprite[300];
 					for (int index = 0; index < iconPack.length; index++) {
 						iconPack[index] = new Sprite("icon_pack/" + index);
 					}
@@ -12848,6 +12699,26 @@ public class Client extends GameEngine implements RSClient {
 					Frame.clientInstance = this;
 					Preferences.load();
 					AccountManager.loadAccount();
+
+
+					SpriteLoader1.loadSprites();
+					cacheSprite1 = SpriteLoader1.sprites;
+					SpriteLoader1.sprites = null;
+
+					SpriteLoader2.loadSprites();
+					cacheSprite2 = SpriteLoader2.sprites;
+					SpriteLoader2.sprites = null;
+
+					SpriteLoader3.loadSprites();
+					cacheSprite3 = SpriteLoader3.sprites;
+					SpriteLoader3.sprites = null;
+
+					SpriteLoader4.loadSprites();
+					cacheSprite4 = SpriteLoader4.sprites;
+					SpriteLoader4.sprites = null;
+
+
+					createScreenImages();
 					drawLoadingText(70, "Loading sprites");
 					Client.titleLoadingStage = 90;
 				}
@@ -12867,12 +12738,59 @@ public class Client extends GameEngine implements RSClient {
 					drawLoadingText(90, "Loading maps - " + Js5List.maps.loadPercent() + "%");
 				} else {
 					drawLoadingText(90, "Loading maps");
-					Client.titleLoadingStage = 100;
+					Client.titleLoadingStage = 97;
 
 				}
+			} else if(Client.titleLoadingStage == 97) {
+
+				smallText = new TextDrawingArea(false, "p11_full" + fontFilter(), titleStreamLoader);
+				XPFONT = new TextDrawingArea(true, "q8_full" + fontFilter(), titleStreamLoader);
+				aTextDrawingArea_1271 = new TextDrawingArea(false, "p12_full" + fontFilter(), titleStreamLoader);
+				chatTextDrawingArea = new TextDrawingArea(false, "b12_full", titleStreamLoader);
+				drawLoadingText(15, "Loading Fonts...");
+				aTextDrawingArea_1273 = new TextDrawingArea(true, "q8_full" + fontFilter(), titleStreamLoader);
+				newSmallFont = new RSFont(false, "p11_full" + fontFilter(), titleStreamLoader);
+				newRegularFont = new RSFont(false, "p12_full" + fontFilter(), titleStreamLoader);
+				newBoldFont = new RSFont(false, "b12_full" + fontFilter(), titleStreamLoader);
+				newFancyFont = new RSFont(true, "q8_full" + fontFilter(), titleStreamLoader);
+				lato = new RSFont(true, "lato_full", titleStreamLoader);
+				latoBold = new RSFont(true, "lato_bold_full", titleStreamLoader);
+				kingthingsPetrock = new RSFont(true, "kingthings_petrock_full", titleStreamLoader);
+				kingthingsPetrockLight = new RSFont(true, "kingthings_petrock_light_full", titleStreamLoader);
+				loadTitleScreen();
+				drawLoadingText(40, "Loading fonts");
+				Client.titleLoadingStage = 100;
 			} else if (Client.titleLoadingStage == 100) {
-				drawLoadingText(90, "Loading textures");
-				Client.titleLoadingStage = 110;
+
+				loadingProgress = 0;
+				if(!Js5List.animations.isFullyLoaded()) {
+					loadingProgress += Js5List.animations.loadPercent();
+				} else {
+					loadingProgress += 100;
+				}
+
+				if (loadingProgress < 100) {
+					drawLoadingText(loadingProgress, "Loading Animations");
+				} else {
+					drawLoadingText(90, "Loading Animations");
+					Client.titleLoadingStage = 105;
+				}
+			} else if (Client.titleLoadingStage == 105) {
+				drawLoadingText(90, "Loading Skeletons");
+
+				loadingProgress = 0;
+				if(!Js5List.skeletons.isFullyLoaded()) {
+					loadingProgress += Js5List.skeletons.loadPercent();
+				} else {
+					loadingProgress += 100;
+				}
+
+				if (loadingProgress < 100) {
+					drawLoadingText(loadingProgress, "Loading Skeletons");
+				} else {
+					OSRSCacheLoader.init();
+					Client.titleLoadingStage = 110;
+				}
 			} else if (Client.titleLoadingStage == 110) {
 				drawLoadingText(92, "Loading input handler");
 				Client.titleLoadingStage = 120;
@@ -12893,8 +12811,8 @@ public class Client extends GameEngine implements RSClient {
 				TextDrawingArea allFonts[] = { smallText, aTextDrawingArea_1271, chatTextDrawingArea,
 						aTextDrawingArea_1273 };
 
-				FileArchive streamLoader_1 = streamLoaderForName(3, "interface");
-				FileArchive streamLoader_2 = streamLoaderForName(4, "2d graphics");
+				FileArchive streamLoader_1 = streamLoaderForName(1, "interface");
+				FileArchive streamLoader_2 = streamLoaderForName(2, "2d graphics");
 				RSInterface.unpack(streamLoader_1, allFonts, streamLoader_2, new RSFont[] {newSmallFont, newRegularFont, newBoldFont, newFancyFont});
 
 
@@ -20955,7 +20873,6 @@ public class Client extends GameEngine implements RSClient {
 		spriteDrawY = -1;
 		anIntArray968 = new int[33];
 		anIntArray969 = new int[256];
-		decompressors = new Decompressor[5];
 		variousSettings = new int[100_000];
 		aBoolean972 = false;
 		anInt975 = 50;
@@ -21191,7 +21108,6 @@ public class Client extends GameEngine implements RSClient {
 	private final int[] anIntArray965 = { 0xffff00, 0xff0000, 65280, 65535, 0xff00ff, 0xffffff };
 	private final int[] anIntArray968;
 	private final int[] anIntArray969;
-	final Decompressor[] decompressors;
 	public int variousSettings[];
 	private boolean aBoolean972;
 	private final int anInt975;

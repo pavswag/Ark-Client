@@ -499,7 +499,7 @@ public abstract class GameEngine extends Applet implements Runnable, WindowListe
 
     static Font fontHelvetica;
     static FontMetrics loginScreenFontMetrics;
-    static Image image;
+    protected static Image image;
 
     protected final void drawInitial(int var1, String var2, boolean clear) {
         try {
@@ -533,7 +533,7 @@ public abstract class GameEngine extends Applet implements Runnable, WindowListe
                 imageGraphics.drawString(var2, (304 - loginScreenFontMetrics.stringWidth(var2)) / 2, 22);
                 graphics.drawImage(image, canvasWidth / 2 - 152, canvasHeight / 2 - 18, null);
             } catch (Exception exception) {
-/*                int centerX = canvasWidth / 2 - 152;
+              /*  int centerX = canvasWidth / 2 - 152;
                 int centerY = canvasHeight / 2 - 18;
                 graphics.setColor(color);
                 graphics.drawRect(centerX, centerY, 303, 33);
@@ -546,7 +546,7 @@ public abstract class GameEngine extends Applet implements Runnable, WindowListe
                 graphics.drawString(var2, centerX + (304 - loginScreenFontMetrics.stringWidth(var2)) / 2, centerY + 22);*/
             }
         } catch (Exception exception) {
-            canvas.repaint();
+            //canvas.repaint();
             exception.printStackTrace();
         }
 

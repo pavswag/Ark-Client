@@ -33,7 +33,7 @@ public class OSRSCacheLoader {
             return;
         }
 
-        CacheWrapper.setCachePath(Signlink.getCacheDirectory() + "osrs/");
+        CacheWrapper.setCachePath(Signlink.getCacheDirectory() + "LIVE/");
         cacheWrapper = new CacheWrapper();
         seqDefs = SeqDefs.load(cacheWrapper);
         seqBaseDefs = SeqBaseDefs.load(cacheWrapper);

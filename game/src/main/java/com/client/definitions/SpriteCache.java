@@ -49,20 +49,6 @@ public final class SpriteCache extends DualNode {
         }
         return image.sprite;
     }
-
-    public static SpriteCache metaData(int id) {
-        SpriteCache image = (SpriteCache)SpriteCache.cached.get(id);
-        if (image == null) {
-            byte[] data = Js5List.configs.takeFile(Js5ConfigType.OSRS_SPRITES, id);
-            image = new SpriteCache();
-            image.id = id;
-            if (data != null) {
-                image.decode(new Buffer(data),true);
-            }
-            cached.put(image, id);
-        }
-        return image;
-    }
     @SneakyThrows
     public static void load() {
         ObjectMapper om = new ObjectMapper();
@@ -99,6 +85,8 @@ public final class SpriteCache extends DualNode {
             return null;
         SpriteCache image = (SpriteCache)SpriteCache.widgetSpriteCache.get(id);
         if (image == null) {
+            if(Js5List.widgetSprites == null)
+                return null;
             byte[] data = Js5List.widgetSprites.takeFile(id, 0);
             image = new SpriteCache();
             image.id = id;
@@ -139,20 +127,6 @@ public final class SpriteCache extends DualNode {
         return image.sprite;
     }
 
-    public static SpriteCache lookupMetaData(int id) {
-        SpriteCache image = (SpriteCache)SpriteCache.cachedSizes.get(id);
-        if (image == null) {
-            byte[] data = Js5List.configs.takeFile(Js5ConfigType.OSRS_SPRITES, id);
-            image = new SpriteCache();
-            image.id = id;
-            if (data != null) {
-                image.decode(new Buffer(data),false);
-            }
-            cachedSizes.put(image, id);
-        }
-        return image;
-    }
-
     void decode(Buffer var1, boolean full) {
         while(true) {
             int var2 = var1.readUnsignedByte();
@@ -187,14 +161,6 @@ public final class SpriteCache extends DualNode {
 
     public static Sprite get(int id) {
         return lookup(id);
-    }
-
-    public static int getWidth(int id) {
-        return lookupMetaData(id).width;
-    }
-
-    public static int getHeight(int id) {
-        return lookupMetaData(id).height;
     }
 
 }
