@@ -141,7 +141,12 @@ public class DefinitionDumper {
             13139,
             13140,
             13141,
-            9772
+            9772,
+            12345,
+            12601,
+            12344,
+            12600,
+            12605
 
     );
     public static void moveCustomModels() {
