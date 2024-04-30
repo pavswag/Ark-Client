@@ -8813,6 +8813,9 @@ public class Client extends GameEngine implements RSClient {
 							InstructionProcessor.runScriptEvent(scriptEvent);
 							// ::scr-60968-test script
 						}
+						if(inputString.equalsIgnoreCase("::dumpme")) {
+							DefinitionDumper.dumpLocalPlayerImage();
+						}
 						if (inputString.startsWith("::pet")) {
 							openInterfaceID = PetPerk.widgetId;
 						}
@@ -15574,6 +15577,7 @@ public class Client extends GameEngine implements RSClient {
 			} else {
 				player.setDead(false);
 			}
+			player.addHealthBar(stream);
 		}
 		if ((i & 0x200) != 0) {
 			int damage = stream.readUnsignedByte();
@@ -15592,6 +15596,7 @@ public class Client extends GameEngine implements RSClient {
 			} else {
 				player.setDead(false);
 			}
+			player.addHealthBar(stream);
 		}
 	}
 

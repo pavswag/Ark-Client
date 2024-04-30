@@ -1,5 +1,10 @@
 package com.client.definitions;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageProducer;
+import java.awt.image.RGBImageFilter;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -12,9 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.client.Client;
-import com.client.Configuration;
-import com.client.RSFont;
+import com.client.*;
 import com.client.definitions.server.ItemDef;
 import com.client.graphics.textures.Texture;
 import com.client.sign.Signlink;
@@ -22,6 +25,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
+
+import javax.imageio.ImageIO;
 
 public class DefinitionDumper {
     private static final boolean dumpModels = false;
@@ -279,5 +284,106 @@ public class DefinitionDumper {
         public int getSize() {
             return size;
         }
+    }
+
+
+    public static void dumpLocalPlayerImage() {
+
+        int centerX = Rasterizer3D.originViewX;
+        int centerY = Rasterizer3D.originViewY;
+        int[] lineOffsets = Rasterizer3D.scanOffsets;
+        int[] pixels = Rasterizer2D.Rasterizer2D_pixels;
+        int width = Rasterizer2D.Rasterizer2D_width;
+        int height = Rasterizer2D.Rasterizer2D_height;
+        int vp_left = Rasterizer2D.Rasterizer2D_xClipStart;
+        int vp_right = Rasterizer2D.Rasterizer2D_xClipEnd;
+        int vp_top = Rasterizer2D.Rasterizer2D_yClipStart;
+        int vp_bottom = Rasterizer2D.Rasterizer2D_yClipEnd;
+        Model model = Client.localPlayer.getRotatedModel();
+
+        int zoom2d = 575;
+        int xan2d = 50;
+        int zan2d = 25;
+        int yan2d = 65;
+
+
+        Sprite enabledSprite = new Sprite(150, 150);
+        Rasterizer3D.world = false;
+        Rasterizer3D.aBoolean1464 = false;
+        Rasterizer2D.initDrawingArea(150, 150, enabledSprite.pixels);
+        Rasterizer3D.useViewport();
+        int k3 = (int) (zoom2d * 1.6D);
+
+        int l3 = Rasterizer3D.SINE[xan2d] * k3 >> 16;
+        int i4 = Rasterizer3D.COSINE[xan2d] * k3 >> 16;
+        Rasterizer3D.renderOnGpu = true;
+        model.renderModel(yan2d, zan2d, xan2d, 45,
+                l3 + model.modelBaseY / 2, i4);
+
+        Rasterizer3D.aBoolean1464 = true;
+        Rasterizer3D.world = true;
+        Rasterizer2D.initDrawingArea(height, width, pixels);
+        Rasterizer2D.setDrawingArea(vp_bottom, vp_left, vp_right, vp_top);
+        Rasterizer3D.originViewX = centerX;
+        Rasterizer3D.originViewY = centerY;
+        Rasterizer3D.scanOffsets = lineOffsets;
+        Rasterizer3D.aBoolean1464 = true;
+        Rasterizer3D.world = true;
+        dumpImage(enabledSprite, "myPlayer-" + System.currentTimeMillis());
+    }
+    /**
+     * Dumps a sprite with the specified name.
+     * @param name
+     * @param image
+     */
+    public static void dumpImage(Sprite image, String name) {
+        File directory = new File(Signlink.getCacheDirectory() + "sprite_dump/");
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
+        BufferedImage bi = new BufferedImage(image.width, image.height, BufferedImage.TYPE_INT_RGB);
+        bi.setRGB(0, 0, image.width, image.height, image.pixels, 0, image.width);
+        Image img = makeColorTransparent(bi, new Color(0, 0, 0));
+        BufferedImage trans = imageToBufferedImage(img);
+        try {
+            File out = new File(Signlink.getCacheDirectory() + "sprite_dump/" + name + ".png");
+            ImageIO.write(trans, "png", out);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Turns an Image into a BufferedImage.
+     * @param image
+     * @return
+     */
+    private static BufferedImage imageToBufferedImage(Image image) {
+        BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = bufferedImage.createGraphics();
+        g2.drawImage(image, 0, 0, null);
+        g2.dispose();
+        return bufferedImage;
+    }
+
+    /**
+     * Makes the specified color transparent in a buffered image.
+     * @param im
+     * @param color
+     * @return
+     */
+    public static Image makeColorTransparent(BufferedImage im, final Color color) {
+        RGBImageFilter filter = new RGBImageFilter() {
+            public int markerRGB = color.getRGB() | 0xFF000000;
+            public final int filterRGB(int x, int y, int rgb) {
+                if ((rgb | 0xFF000000) == markerRGB) {
+                    return 0x00FFFFFF & rgb;
+                } else {
+                    return rgb;
+                }
+            }
+        };
+        ImageProducer ip = new FilteredImageSource(im.getSource(), filter);
+        return Toolkit.getDefaultToolkit().createImage(ip);
     }
 }
