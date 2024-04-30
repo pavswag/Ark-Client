@@ -26,9 +26,9 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 	public static EvictingDualNodeHashTable cache = new EvictingDualNodeHashTable(64);
 	public static ObjectDefinition lookup(int i) {
 
-		if (i == 1753 || i == 1751 || i == 1752 || i == 12605 || i == 1750 || i == 11812 || i == 11811 || i == 11817 || i == 11947 || i == 11815 || i == 12600 || i == 11814 || i == 12599 || i == 11813 || i == 12598) {
+		/*if (i == 1753 || i == 1751 || i == 1752 || i == 12605 || i == 1750 || i == 11812 || i == 11811 || i == 11817 || i == 11947 || i == 11815 || i == 12600 || i == 11814 || i == 12599 || i == 11813 || i == 12598) {
 			i = 13424;
-		}
+		}*/
 		ObjectDefinition objectDef = (ObjectDefinition) cache.get(i);
 		if (objectDef == null) {
 			objectDef = new ObjectDefinition();
