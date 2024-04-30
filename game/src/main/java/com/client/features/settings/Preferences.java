@@ -8,11 +8,16 @@ import java.io.IOException;
 import com.client.Client;
 import com.client.Configuration;
 import com.client.Rasterizer3D;
+import com.client.audio.StaticSound;
 import com.client.graphics.interfaces.RSInterface;
 import com.client.graphics.interfaces.builder.impl.NotificationTab;
 import com.client.graphics.interfaces.impl.SettingsTabWidget;
+import com.client.graphics.interfaces.impl.Slider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import static com.client.graphics.interfaces.impl.SettingsTabWidget.*;
+import static com.client.graphics.interfaces.impl.Slider.*;
 
 public class Preferences implements net.runelite.api.Preferences {
 
@@ -30,12 +35,24 @@ public class Preferences implements net.runelite.api.Preferences {
             if (preferencesFile.exists()) {
                 ObjectNode node = new ObjectMapper().readValue(preferencesFile, ObjectNode.class);
 
-                if (node.has("soundVolume"))
+                if (node.has("soundVolume")) {
                     preferences.soundVolume = node.get("soundVolume").intValue();
-                if (node.has("areaSoundVolume"))
+                    int value = preferences.soundVolume;
+                    StaticSound.updateSoundEffectVolume((int) value);
+                    setSliderValue(SOUND_SLIDER, value, SOUND);
+                }
+                if (node.has("areaSoundVolume")) {
                     preferences.areaSoundVolume = node.get("areaSoundVolume").intValue();
-                if (node.has("musicVolume"))
+                    int value = preferences.areaSoundVolume;
+                    StaticSound.updateAreaVolume((int) value);
+                    setSliderValue(AREA_SOUND_SLIDER, value, AREA_SOUND);
+                }
+                if (node.has("musicVolume")) {
                     preferences.musicVolume = node.get("musicVolume").intValue();
+                    int value = preferences.musicVolume;
+                    StaticSound.updateMusicVolume((int) value);
+                    setSliderValue(MUSIC_SLIDER, value, MUSIC);
+                }
                 if (node.has("brightness"))
                     preferences.brightness = node.get("brightness").doubleValue();
                 if (node.has("screenWidth"))
@@ -68,6 +85,16 @@ public class Preferences implements net.runelite.api.Preferences {
         } catch (Exception e) {
             log.severe("Error while loading preferences.");
             e.printStackTrace();
+        }
+    }
+
+    public static void setSliderValue(int widget, int val, int content) {
+        RSInterface parent = RSInterface.get(widget);
+        assert parent != null;
+        if(parent.slider != null) {
+            Slider slider = parent.slider;
+            slider.setValue(val);
+            slider.handleContent(content);
         }
     }
 

@@ -6131,21 +6131,18 @@ public class Client extends GameEngine implements RSClient {
 				break;
 		}
 		if (buttonPressed == 42531) {
-			if (Preferences.getPreferences().musicVolume > 0) {
+			if (Preferences.getPreferences().musicVolume > 10) {
 				setConfigButton(1088, false);
 				Preferences.getPreferences().musicVolume = 0;
-				Preferences.getPreferences().musicEnabled = false;
-				setVolumeMusic(Preferences.getPreferences().musicVolume);
 			} else {
 				setConfigButton(1088, true);
 				Preferences.getPreferences().musicVolume = 5;
 				Preferences.getPreferences().musicEnabled = true;
-				setVolumeMusic(Preferences.getPreferences().musicVolume);
 			}
 			Preferences.getPreferences().updateClientConfiguration();
 		}
 		if (buttonPressed == 42533) {
-			if (Preferences.getPreferences().soundVolume > 0) {
+			if (Preferences.getPreferences().soundVolume > 10) {
 				setConfigButton(1086, false);
 				Preferences.getPreferences().soundVolume = 0;
 			} else {
@@ -6155,7 +6152,7 @@ public class Client extends GameEngine implements RSClient {
 			Preferences.getPreferences().updateClientConfiguration();
 		}
 		if (buttonPressed == 42535) {
-			if (Preferences.getPreferences().areaSoundVolume > 0) {
+			if (Preferences.getPreferences().areaSoundVolume > 10) {
 				setConfigButton(1087, false);
 				Preferences.getPreferences().areaSoundVolume = 0;
 			} else {
@@ -12700,8 +12697,6 @@ public class Client extends GameEngine implements RSClient {
 					ObjectDefinition.clientInstance = this;
 					NpcDefinition.clientInstance = this;
 					Frame.clientInstance = this;
-					Preferences.load();
-					AccountManager.loadAccount();
 
 
 					SpriteLoader1.loadSprites();
@@ -12834,6 +12829,8 @@ public class Client extends GameEngine implements RSClient {
 				drawLoadingText(99, "Loaded world map");
 				setConfigButtonsAtStartup();
 				RegionMusic.load();
+				Preferences.load();
+				AccountManager.loadAccount();
 				Client.titleLoadingStage = 150;
 			} else if (Client.titleLoadingStage == 150) {
 				try {

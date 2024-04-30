@@ -7,6 +7,9 @@ import com.client.audio.StaticSound;
 import com.client.features.settings.Preferences;
 import com.client.graphics.interfaces.RSInterface;
 
+import static com.client.features.settings.Preferences.setSliderValue;
+import static com.client.graphics.interfaces.impl.SettingsTabWidget.*;
+
 public class Slider {
 
 	private int position = 86;
@@ -96,7 +99,7 @@ public class Slider {
 	public final static int SOUND = 4;
 	public final static int AREA_SOUND = 5;
 
-	private void handleContent(int contentType) {
+	public void handleContent(int contentType) {
 		switch(contentType) {
 			case ZOOM:
 				Client.cameraZoom = (int) (minValue + maxValue - value);
@@ -113,7 +116,7 @@ public class Slider {
 				Client.setVolumeMusic((int) value);
 				StaticSound.updateMusicVolume((int) value);
 
-				if (value >= 1) {
+				if (value >= 10) {
 					Client.instance.setConfigButton(1088, true);
 					Preferences.getPreferences().musicEnabled = true;
 				} else {
@@ -124,7 +127,7 @@ public class Slider {
 			case SOUND:
 				Preferences.getPreferences().soundVolume = (int) value;
 				StaticSound.updateSoundEffectVolume((int) value);
-				if (value >= 1) {
+				if (value >= 10) {
 					Client.instance.setConfigButton(1086, true);
 				} else {
 					Client.instance.setConfigButton(1086, false);
@@ -133,7 +136,7 @@ public class Slider {
 			case AREA_SOUND:
 				Preferences.getPreferences().areaSoundVolume = (int) value;
 				StaticSound.updateAreaVolume((int) value);
-				if (value >= 1) {
+				if (value >= 10) {
 					Client.instance.setConfigButton(1087, true);
 				} else {
 					Client.instance.setConfigButton(1087, false);
