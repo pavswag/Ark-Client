@@ -69,17 +69,66 @@ public class DefinitionDumper {
                 toJson(texture, "./temp/textures/" + i + ".json");
             }
         }
+
         if(dumpRegions) {
+            start();
             regionsToDumpAndConvert.forEach(regionID -> {
+                File parent = new File("./temp/maps/" + regionID + "/");
+                if(parent.exists())
+                    parent.mkdirs();
+                int landscape = -1;
+                int loc = -1;
+                for(int i = 0; i < mapIndices1.length; i++) {
+                    if(mapIndices1[i] == regionID) {
+                        landscape = mapIndices2[i];
+                        loc = mapIndices3[i];
+                    }
+                }
+                if(landscape != -1 && loc != -1) {
                     System.out.println("--");
                     System.out.println("Region[" + regionID + "]");
+                    System.out.println("Original files = [" + landscape + "/" + loc + "]");
                     int regionX = regionID >> 8;
                     int regionY = regionID & 255;
                     String name = "_" + regionX + "_" + regionY;
                     System.out.println("New names:");
                     System.out.println("l" + name);
                     System.out.println("m" + name);
+                    File source=new File("./temp/index4/" + landscape  +".gz");
+                    File destination=new File("./temp/maps/l" + name + ".gz");
+                    try {
+                        FileUtils.copyFile(source, destination);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    source=new File("./temp/index4/" + loc  +".gz");
+                    destination=new File("./temp/maps/m" + name + ".gz");
+                    try {
+                        FileUtils.copyFile(source, destination);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
             });
+        }
+    }
+    
+    public static int[] mapIndices1;
+    public static int[] mapIndices2;
+    public static int[] mapIndices3;
+
+    @SneakyThrows
+    public static void start() {
+        byte[] fileData = FileArchive.getBytesFromFile(new File("./temp/map_index"));
+        Buffer stream = new Buffer(fileData);
+        int length = stream.readUShort();
+        mapIndices1 = new int[length];
+        mapIndices2 = new int[length];
+        mapIndices3 = new int[length];
+        for (int i2 = 0; i2 < length; i2++) {
+            mapIndices1[i2] = stream.readUShort();
+            mapIndices2[i2] = stream.readUShort();
+            mapIndices3[i2] = stream.readUShort();
         }
     }
     private static int spriteId = 5607;
@@ -119,19 +168,6 @@ public class DefinitionDumper {
         }
     }
     private static List<Integer> regionsToDumpAndConvert = List.of(
-            12342,
-            14393,
-            14910,
-            14909,
-            9531,
-            9275,
-            7763,
-            6722,
-            11343,
-            8534,
-            9783,
-            12075,
-            12074,
             13363,
             4919,
             13462,
@@ -148,7 +184,6 @@ public class DefinitionDumper {
             12600,
             12605,
             7502
-
     );
     public static void moveCustomModels() {
         customModels.forEach(model -> {
