@@ -34,14 +34,11 @@ public class DefinitionDumper {
 
     private static final boolean dumpRegions = true;
 
-    private static final boolean dumpTextures = true;
+    private static final boolean dumpTextures = false;
     private static final boolean dumpSprites = false;
     private static List<Integer> customModels = new ArrayList<>();
     private static int widgetSpriteId = 0;
     public static void dumpDefs() {
-        for(int i = 126; i <= 161; i++) {
-            dumpCustomTexture(i);
-        }
         if(dumpSprites) {
             File base = new File(Signlink.getCacheDirectory() + "sprites/");
             dumpSprite(base);
@@ -134,7 +131,24 @@ public class DefinitionDumper {
             8534,
             9783,
             12075,
-            12074
+            12074,
+            13363,
+            4919,
+            13462,
+            13136,
+            13137,
+            13138,
+            13139,
+            13140,
+            13141,
+            9772,
+            12345,
+            12601,
+            12344,
+            12600,
+            12605,
+            7502
+
     );
     public static void moveCustomModels() {
         customModels.forEach(model -> {
