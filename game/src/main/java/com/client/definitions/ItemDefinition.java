@@ -5656,12 +5656,12 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
             primaryModel_.offsetBy(0, femaleOffset, 0);
             if (modifiedColours != null) {
                 for (int i1 = 0; i1 < modifiedColours.length; i1++)
-                    primaryModel_.recolor(originalColours[i1], modifiedColours[i1]);
+                    primaryModel_.recolor(modifiedColours[i1], originalColours[i1]);
 
             }
             if (modifiedTextureColours != null) {
                 for (int i1 = 0; i1 < modifiedTextureColours.length; i1++)
-                    primaryModel_.retexture(originalTextureColours[i1], modifiedTextureColours[i1]);
+                    primaryModel_.retexture(modifiedTextureColours[i1], originalTextureColours[i1]);
             }
         return primaryModel_;
     }
@@ -5855,12 +5855,12 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
             model.scale(resizeX, resizeZ, resizeY);
         if (modifiedColours != null) {
             for (int l = 0; l < modifiedColours.length; l++)
-                model.recolor(originalColours[l], modifiedColours[l]);
+                model.recolor(modifiedColours[l], originalColours[l]);
 
         }
         if (modifiedTextureColours != null) {
             for (int i1 = 0; i1 < modifiedTextureColours.length; i1++)
-                model.retexture(originalTextureColours[i1], modifiedTextureColours[i1]);
+                model.retexture(modifiedTextureColours[i1], originalTextureColours[i1]);
         }
         int lightInt = 64 + ambient;
         int lightMag = 768 + contrast;
@@ -5915,7 +5915,7 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
             return null;
         if (modifiedColours != null) {
             for (int colorPtr = 0; colorPtr < modifiedColours.length; colorPtr++)
-                model.recolor(originalColours[colorPtr], modifiedColours[colorPtr]);
+                model.recolor(modifiedColours[colorPtr], originalColours[colorPtr]);
 
         }
         return model;
