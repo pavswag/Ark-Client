@@ -1681,9 +1681,9 @@ public class Client extends GameEngine implements RSClient {
 							var1 = false;
 						}
 					} catch (Throwable e) {
+						e.printStackTrace();
 						log.info("Missing xteas for region: {}", regions[var2]);
-						continue;
-					}
+                    }
 				}
 			}
 
