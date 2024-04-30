@@ -24,9 +24,9 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
     private static Buffer item_data;
     private static int[] streamIndices;
     public int cost;
-    public int[] modifiedColours;
-    public int id;
     public int[] originalColours;
+    public int id;
+    public int[] modifiedColours;
     public boolean members;
     public int noteTemplateId;
     public int femaleModel1;
@@ -116,8 +116,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
         ItemDefinition copyItemDef = lookup(copyingItemId);
         itemDef.id = newId;
         itemDef.name = newName;
-        itemDef.originalColours = copyItemDef.originalColours;
         itemDef.modifiedColours = copyItemDef.modifiedColours;
+        itemDef.originalColours = copyItemDef.originalColours;
         itemDef.inventoryModel = copyItemDef.inventoryModel;
         itemDef.maleModel0 = copyItemDef.maleModel0;
         itemDef.femaleModel0 = copyItemDef.femaleModel0;
@@ -1015,8 +1015,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 break;
             case 6679:
                 itemDef.inventoryModel = ItemDefinition.lookup(6199).inventoryModel;
-                itemDef.originalColours = ItemDefinition.lookup(6199).originalColours;
                 itemDef.modifiedColours = ItemDefinition.lookup(6199).modifiedColours;
+                itemDef.originalColours = ItemDefinition.lookup(6199).originalColours;
                 itemDef.name = "Mini Mystery Box";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, "Quick-Open", "Drop" };
                 itemDef.zoom2d = 1480;
@@ -1040,8 +1040,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 break;
             case 6678:
                 itemDef.inventoryModel = ItemDefinition.lookup(13346).inventoryModel;
-                itemDef.originalColours = ItemDefinition.lookup(13346).originalColours;
                 itemDef.modifiedColours = ItemDefinition.lookup(13346).modifiedColours;
+                itemDef.originalColours = ItemDefinition.lookup(13346).originalColours;
                 itemDef.name = "Mini Ultra Mystery Box";
                 itemDef.interfaceOptions = new String[] { "Open", null, null, "Quick-Open", "Drop" };
                 itemDef.zoom2d = 1480;
@@ -1515,8 +1515,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.setDefaults();
                 itemDef.name = "Agility master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
-                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.originalColours = new int[] { 677, 801, 43540, 43543, 43546, 43549, 43550, 43552, 43554, 43558,
+                itemDef.originalColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.modifiedColours = new int[] { 677, 801, 43540, 43543, 43546, 43549, 43550, 43552, 43554, 43558,
                         43560, 43575 };
                 itemDef.inventoryModel = 50030;
                 itemDef.maleModel0 = 50031;
@@ -1537,8 +1537,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.name = "Attack master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.originalColours = new int[] { 7104, 9151, 911, 914, 917, 920, 921, 923, 925, 929, 931, 946 };
+                itemDef.originalColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.modifiedColours = new int[] { 7104, 9151, 911, 914, 917, 920, 921, 923, 925, 929, 931, 946 };
                 itemDef.inventoryModel = 50032;
                 itemDef.maleModel0 = 50033;
                 itemDef.femaleModel0 = 50033;
@@ -1558,8 +1558,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.name = "Construction master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.originalColours = new int[] { 6061, 5945, 6327, 6330, 6333, 6336, 6337, 6339, 6341, 6345, 6347,
+                itemDef.originalColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.modifiedColours = new int[] { 6061, 5945, 6327, 6330, 6333, 6336, 6337, 6339, 6341, 6345, 6347,
                         6362 };
                 itemDef.inventoryModel = 50034;
                 itemDef.maleModel0 = 50035;
@@ -1580,8 +1580,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.name = "Cooking master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.originalColours = new int[] { 920, 920, 51856, 51859, 51862, 51865, 51866, 51868, 51870, 51874,
+                itemDef.originalColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.modifiedColours = new int[] { 920, 920, 51856, 51859, 51862, 51865, 51866, 51868, 51870, 51874,
                         51876, 51891 };
                 itemDef.inventoryModel = 50036;
                 itemDef.maleModel0 = 50037;
@@ -1602,8 +1602,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.name = "Crafting master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.originalColours = new int[] { 9142, 9152, 4511, 4514, 4517, 4520, 4521, 4523, 4525, 4529, 4531,
+                itemDef.originalColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.modifiedColours = new int[] { 9142, 9152, 4511, 4514, 4517, 4520, 4521, 4523, 4525, 4529, 4531,
                         4546 };
                 itemDef.inventoryModel = 50038;
                 itemDef.maleModel0 = 50039;
@@ -1624,8 +1624,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.name = "Defence master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.originalColours = new int[] { 10460, 10473, 41410, 41413, 41416, 41419, 41420, 41422, 41424,
+                itemDef.originalColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.modifiedColours = new int[] { 10460, 10473, 41410, 41413, 41416, 41419, 41420, 41422, 41424,
                         41428, 41430, 41445 };
                 itemDef.inventoryModel = 50040;
                 itemDef.maleModel0 = 50041;
@@ -1646,8 +1646,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.name = "Farming master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.originalColours = new int[] { 14775, 14792, 22026, 22029, 22032, 22035, 22036, 22038, 22040,
+                itemDef.originalColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.modifiedColours = new int[] { 14775, 14792, 22026, 22029, 22032, 22035, 22036, 22038, 22040,
                         22044, 22046, 22061 };
                 itemDef.inventoryModel = 50042;
                 itemDef.maleModel0 = 50043;
@@ -1668,8 +1668,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.name = "Firemaking master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.originalColours = new int[] { 8125, 9152, 4015, 4018, 4021, 4024, 4025, 4027, 4029, 4033, 4035,
+                itemDef.originalColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.modifiedColours = new int[] { 8125, 9152, 4015, 4018, 4021, 4024, 4025, 4027, 4029, 4033, 4035,
                         4050 };
                 itemDef.inventoryModel = 50044;
                 itemDef.maleModel0 = 50045;
@@ -1690,8 +1690,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.name = "Fishing master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.originalColours = new int[] { 9144, 9152, 38202, 38205, 38208, 38211, 38212, 38214, 38216,
+                itemDef.originalColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.modifiedColours = new int[] { 9144, 9152, 38202, 38205, 38208, 38211, 38212, 38214, 38216,
                         38220, 38222, 38237 };
                 itemDef.inventoryModel = 50046;
                 itemDef.maleModel0 = 50047;
@@ -1712,8 +1712,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.name = "Fletching master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.originalColours = new int[] { 6067, 9152, 33670, 33673, 33676, 33679, 33680, 33682, 33684,
+                itemDef.originalColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.modifiedColours = new int[] { 6067, 9152, 33670, 33673, 33676, 33679, 33680, 33682, 33684,
                         33688, 33690, 33705 };
                 itemDef.inventoryModel = 50048;
                 itemDef.maleModel0 = 50049;
@@ -1734,8 +1734,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.name = "Herblore master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.originalColours = new int[] { 9145, 9156, 22414, 22417, 22420, 22423, 22424, 22426, 22428,
+                itemDef.originalColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.modifiedColours = new int[] { 9145, 9156, 22414, 22417, 22420, 22423, 22424, 22426, 22428,
                         22432, 22434, 22449 };
                 itemDef.inventoryModel = 50050;
                 itemDef.maleModel0 = 50051;
@@ -1756,8 +1756,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.name = "Hitpoints master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.originalColours = new int[] { 818, 951, 8291, 8294, 8297, 8300, 8301, 8303, 8305, 8309, 8311,
+                itemDef.originalColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.modifiedColours = new int[] { 818, 951, 8291, 8294, 8297, 8300, 8301, 8303, 8305, 8309, 8311,
                         8319 };
                 itemDef.inventoryModel = 50052;
                 itemDef.maleModel0 = 50053;
@@ -1779,8 +1779,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.name = "Hunter master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.originalColours = new int[] { 5262, 6020, 8472, 8475, 8478, 8481, 8482, 8484, 8486, 8490, 8492,
+                itemDef.originalColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.modifiedColours = new int[] { 5262, 6020, 8472, 8475, 8478, 8481, 8482, 8484, 8486, 8490, 8492,
                         8507 };
                 itemDef.inventoryModel = 50054;
                 itemDef.maleModel0 = 50055;
@@ -1801,8 +1801,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.name = "Magic master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.originalColours = new int[] { 43569, 43685, 6336, 6339, 6342, 6345, 6346, 6348, 6350, 6354,
+                itemDef.originalColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.modifiedColours = new int[] { 43569, 43685, 6336, 6339, 6342, 6345, 6346, 6348, 6350, 6354,
                         6356, 6371 };
                 itemDef.inventoryModel = 50056;
                 itemDef.maleModel0 = 50057;
@@ -1823,8 +1823,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.name = "Mining master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.originalColours = new int[] { 36296, 36279, 10386, 10389, 10392, 10395, 10396, 10398, 10400,
+                itemDef.originalColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.modifiedColours = new int[] { 36296, 36279, 10386, 10389, 10392, 10395, 10396, 10398, 10400,
                         10404, 10406, 10421 };
                 itemDef.inventoryModel = 50058;
                 itemDef.maleModel0 = 50059;
@@ -1845,8 +1845,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.name = "Prayer master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.originalColours = new int[] { 9163, 9168, 117, 120, 123, 126, 127, 127, 127, 127, 127, 127 };
+                itemDef.originalColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.modifiedColours = new int[] { 9163, 9168, 117, 120, 123, 126, 127, 127, 127, 127, 127, 127 };
                 itemDef.inventoryModel = 50060;
                 itemDef.maleModel0 = 50061;
                 itemDef.femaleModel0 = 50061;
@@ -1866,8 +1866,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.name = "Range master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.originalColours = new int[] { 3755, 3998, 15122, 15125, 15128, 15131, 15132, 15134, 15136,
+                itemDef.originalColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.modifiedColours = new int[] { 3755, 3998, 15122, 15125, 15128, 15131, 15132, 15134, 15136,
                         15140, 15142, 15157 };
                 itemDef.inventoryModel = 50062;
                 itemDef.maleModel0 = 50063;
@@ -1888,8 +1888,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.name = "Runecrafting master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
                 // 4 //7 //10 //13 //14//16//18//22 //24//39
-                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.originalColours = new int[] { 9152, 8128, 10318, 10321, 10324, 10327, 10328, 10330, 10332,
+                itemDef.originalColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.modifiedColours = new int[] { 9152, 8128, 10318, 10321, 10324, 10327, 10328, 10330, 10332,
                         10336, 10338, 10353 };
                 itemDef.inventoryModel = 50064;
                 itemDef.maleModel0 = 50065;
@@ -1909,8 +1909,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.setDefaults();
                 itemDef.name = "Slayer master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
-                itemDef.modifiedColours = new int[] { 57022, 48811 };
-                itemDef.originalColours = new int[] { 912, 920 };
+                itemDef.originalColours = new int[] { 57022, 48811 };
+                itemDef.modifiedColours = new int[] { 912, 920 };
                 itemDef.inventoryModel = 50066;
                 itemDef.maleModel0 = 50067;
                 itemDef.femaleModel0 = 50067;
@@ -1929,8 +1929,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.setDefaults();
                 itemDef.name = "Smithing master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
-                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.originalColours = new int[] { 8115, 9148, 10386, 10389, 10392, 10395, 10396, 10398, 10400,
+                itemDef.originalColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.modifiedColours = new int[] { 8115, 9148, 10386, 10389, 10392, 10395, 10396, 10398, 10400,
                         10404, 10406, 10421 };
                 itemDef.inventoryModel = 50068;
                 itemDef.maleModel0 = 50069;
@@ -1950,8 +1950,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.setDefaults();
                 itemDef.name = "Strength master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
-                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.originalColours = new int[] { 935, 931, 27538, 27541, 27544, 27547, 27548, 27550, 27552, 27556,
+                itemDef.originalColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.modifiedColours = new int[] { 935, 931, 27538, 27541, 27544, 27547, 27548, 27550, 27552, 27556,
                         27558, 27573 };
                 itemDef.inventoryModel = 50070;
                 itemDef.maleModel0 = 50071;
@@ -1971,8 +1971,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.setDefaults();
                 itemDef.name = "Thieving master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
-                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.originalColours = new int[] { 11, 0, 58779, 58782, 58785, 58788, 58789, 57891, 58793, 58797,
+                itemDef.originalColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.modifiedColours = new int[] { 11, 0, 58779, 58782, 58785, 58788, 58789, 57891, 58793, 58797,
                         58799, 58814 };
                 itemDef.maleModel0 = 50073;
                 itemDef.femaleModel0 = 50073;
@@ -1993,8 +1993,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.setDefaults();
                 itemDef.name = "Woodcutting master cape";
                 //itemDef.description = "	A cape worn by those who've overachieved.";
-                itemDef.modifiedColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
-                itemDef.originalColours = new int[] { 25109, 24088, 6693, 6696, 6699, 6702, 6703, 6705, 6707, 6711,
+                itemDef.originalColours = new int[] { 57022, 48811, 2, 1029, 1032, 11, 12, 14, 16, 20, 22, 2 };
+                itemDef.modifiedColours = new int[] { 25109, 24088, 6693, 6696, 6699, 6702, 6703, 6705, 6707, 6711,
                         6713, 6728 };
                 itemDef.inventoryModel = 50074;
                 itemDef.maleModel0 = 50075;
@@ -3352,8 +3352,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.inventoryModel = ItemDefinition.lookup(1044).inventoryModel;
                 itemDef.name = "Durial's Green Party Hat";
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
-                itemDef.originalColours = ItemDefinition.lookup(1044).originalColours;
                 itemDef.modifiedColours = ItemDefinition.lookup(1044).modifiedColours;
+                itemDef.originalColours = ItemDefinition.lookup(1044).originalColours;
                 itemDef.zoom2d = ItemDefinition.lookup(1044).zoom2d;
                 itemDef.xan2d = ItemDefinition.lookup(1044).xan2d;
                 itemDef.yan2d = ItemDefinition.lookup(1044).yan2d;
@@ -5131,8 +5131,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
         zan2d = 1 * var1.zan2d;
         xOffset2d = 1 * var1.xOffset2d;
         yOffset2d = var1.yOffset2d * 1;
-        modifiedColours = var2.modifiedColours;
         originalColours = var2.originalColours;
+        modifiedColours = var2.modifiedColours;
         // originalTextureColors = var2.originalTextureColors;
         // modifiedTextureColors = var2.modifiedTextureColors;
         name = var2.name;
@@ -5170,8 +5170,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
         zan2d = var1.zan2d * 1;
         xOffset2d = 1 * var1.xOffset2d;
         yOffset2d = var1.yOffset2d * 1;
-        modifiedColours = var1.modifiedColours;
         originalColours = var1.originalColours;
+        modifiedColours = var1.modifiedColours;
         originalTextureColours = var1.originalTextureColours;
         modifiedTextureColours = var1.modifiedTextureColours;
         stacks = var1.stacks;
@@ -5572,9 +5572,9 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
             Model[] models = {dialogueModel_, hatModel_};
             dialogueModel_ = new Model(2, models);
         }
-        if (modifiedColours != null) {
-            for (int i1 = 0; i1 < modifiedColours.length; i1++)
-                dialogueModel_.recolor(modifiedColours[i1], originalColours[i1]);
+        if (originalColours != null) {
+            for (int i1 = 0; i1 < originalColours.length; i1++)
+                dialogueModel_.recolor(originalColours[i1], modifiedColours[i1]);
 
         }
         if (modifiedTextureColours != null) {
@@ -5654,9 +5654,9 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
             primaryModel_.offsetBy(0, maleOffset, 0);
         if (gender == 1 && femaleOffset != 0)
             primaryModel_.offsetBy(0, femaleOffset, 0);
-            if (modifiedColours != null) {
-                for (int i1 = 0; i1 < modifiedColours.length; i1++)
-                    primaryModel_.recolor(modifiedColours[i1], originalColours[i1]);
+            if (originalColours != null) {
+                for (int i1 = 0; i1 < originalColours.length; i1++)
+                    primaryModel_.recolor(originalColours[i1], modifiedColours[i1]);
 
             }
             if (modifiedTextureColours != null) {
@@ -5673,8 +5673,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
         equipActions = new String[]{"Remove", null, "Operate", null, null};
         inventoryModel = 0;
         name = null;
-        modifiedColours = null;
         originalColours = null;
+        modifiedColours = null;
         modifiedTextureColours = null;
         originalTextureColours = null;
 
@@ -5853,9 +5853,9 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
             return null;
         if (resizeX != 128 || resizeY != 128 || resizeZ != 128)
             model.scale(resizeX, resizeZ, resizeY);
-        if (modifiedColours != null) {
-            for (int l = 0; l < modifiedColours.length; l++)
-                model.recolor(modifiedColours[l], originalColours[l]);
+        if (originalColours != null) {
+            for (int l = 0; l < originalColours.length; l++)
+                model.recolor(originalColours[l], modifiedColours[l]);
 
         }
         if (modifiedTextureColours != null) {
@@ -5913,9 +5913,9 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
         Model model = Model.getModel(inventoryModel);
         if (model == null)
             return null;
-        if (modifiedColours != null) {
-            for (int colorPtr = 0; colorPtr < modifiedColours.length; colorPtr++)
-                model.recolor(modifiedColours[colorPtr], originalColours[colorPtr]);
+        if (originalColours != null) {
+            for (int colorPtr = 0; colorPtr < originalColours.length; colorPtr++)
+                model.recolor(originalColours[colorPtr], modifiedColours[colorPtr]);
 
         }
         return model;
@@ -5984,11 +5984,11 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 interfaceOptions[opcode - 35] = buffer.readNullTerminatedString();
             } else if (opcode == 40) {
                 int length = buffer.readUnsignedByte();
-                modifiedColours = new int[length];
                 originalColours = new int[length];
+                modifiedColours = new int[length];
                 for (int index = 0; index < length; index++) {
-                    modifiedColours[index] = buffer.readUShort();
                     originalColours[index] = buffer.readUShort();
+                    modifiedColours[index] = buffer.readUShort();
                 }
             } else if (opcode == 41) {
                 int length = buffer.readUnsignedByte();
