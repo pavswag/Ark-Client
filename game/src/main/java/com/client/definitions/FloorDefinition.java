@@ -2,12 +2,9 @@ package com.client.definitions;
 
 import com.client.Buffer;
 import com.client.EvictingDualNodeHashTable;
-import com.client.FileArchive;
 import com.client.cache.DualNode;
 import com.client.js5.Js5List;
 import com.client.js5.util.Js5ConfigType;
-
-import java.nio.ByteBuffer;
 
 
 public class FloorDefinition extends DualNode {
@@ -16,7 +13,7 @@ public class FloorDefinition extends DualNode {
     public static EvictingDualNodeHashTable overlayCache = new EvictingDualNodeHashTable(64);
     public static FloorDefinition[] underlays;
 
-    public int rgb = 0;
+    public int primaryRgb = 0;
 
     public int texture = -1;
 
@@ -29,6 +26,8 @@ public class FloorDefinition extends DualNode {
     public int saturation;
 
     public int lightness;
+
+    public int hueMultiplier;
 
     public int secondaryHue;
 
@@ -44,10 +43,14 @@ public class FloorDefinition extends DualNode {
             if (data != null) {
                 floorDef.readValuesUnderlay(new Buffer(data));
             }
-            floorDef.generateHsl(true);
+            floorDef.postDecodeUnderlay();
             underlayCache.put(floorDef, floorID);
         }
         return floorDef;
+    }
+
+    private void postDecodeUnderlay() {
+        this.setHsl(this.primaryRgb);
     }
     public static FloorDefinition lookupOverlay(int floorID) {
         FloorDefinition floorDef = (FloorDefinition) overlayCache.get(floorID);
@@ -55,7 +58,7 @@ public class FloorDefinition extends DualNode {
             byte[] data = Js5List.configs.takeFile(Js5ConfigType.OVERLAY, floorID);
             floorDef = new FloorDefinition();
             if (data != null) {
-                floorDef.readValuesOverlay(new Buffer(data));
+                floorDef.decode(new Buffer(data));
             }
             floorDef.postDecode();
             overlayCache.put(floorDef, floorID);
@@ -85,7 +88,7 @@ public class FloorDefinition extends DualNode {
             anotherSaturation = saturation;
             anotherLuminance = luminance;
         }
-        int color = rgb;
+        int color = primaryRgb;
         rgbToHsl(color);
     }
 
@@ -96,29 +99,34 @@ public class FloorDefinition extends DualNode {
             if (opcode == 0) {
                 break;
             } else if (opcode == 1) {
-                rgb = ((buffer.readByte() & 0xff) << 16) + ((buffer.readByte() & 0xff) << 8) + (buffer.readByte() & 0xff);
+                primaryRgb = ((buffer.readByte() & 0xff) << 16) + ((buffer.readByte() & 0xff) << 8) + (buffer.readByte() & 0xff);
             } else {
                 System.out.println("Error unrecognised underlay code: " + opcode);
             }
         }
     }
 
-    private void readValuesOverlay(Buffer buffer) {
-        for (;;) {
-            int opcode = buffer.readByte();
-            if (opcode == 0) {
-                break;
-            } else if (opcode == 1) {
-                rgb = ((buffer.readByte() & 0xff) << 16) + ((buffer.readByte() & 0xff) << 8) + (buffer.readByte() & 0xff);
-            } else if (opcode == 2) {
-                texture = buffer.readByte() & 0xff;
-            } else if (opcode == 5) {
-                hideUnderlay = false;
-            } else if (opcode == 7) {
-                secondaryRgb = ((buffer.readByte() & 0xff) << 16) + ((buffer.readByte() & 0xff) << 8) + (buffer.readByte() & 0xff);
-            } else {
-                System.out.println("Error unrecognised overlay code: " + opcode);
+    public void decode(Buffer buffer) {
+        while(true) {
+            int opcodes = buffer.readUnsignedByte();
+            if (opcodes == 0) {
+                return;
             }
+
+            this.decodeNext(buffer, opcodes);
+        }
+    }
+
+
+    void decodeNext(Buffer buffer, int opcode) {
+        if (opcode == 1) {
+            this.primaryRgb = buffer.readMedium();
+        } else if (opcode == 2) {
+            this.texture = buffer.readUnsignedByte();
+        } else if (opcode == 5) {
+            this.hideUnderlay = false;
+        } else if (opcode == 7) {
+            this.secondaryRgb = buffer.readMedium();
         }
     }
 
@@ -129,59 +137,78 @@ public class FloorDefinition extends DualNode {
             this.secondarySaturation = this.saturation;
             this.secondaryLightness = this.lightness;
         }
-        this.setHsl(this.rgb);
+        this.setHsl(this.primaryRgb);
     }
 
-    void setHsl(int var1) {
-        double var2 = ((double) (var1 >> 16 & 255)) / 256.0;
-        double var4 = ((double) (var1 >> 8 & 255)) / 256.0;
-        double var6 = ((double) (var1 & 255)) / 256.0;
-        double var8 = var2;
-        if (var4 < var2) {
-            var8 = var4;
+    void setHsl(int rgbValue) {
+        double red = (double)(rgbValue >> 16 & 255) / 256.0;
+        double green = (double)(rgbValue >> 8 & 255) / 256.0;
+        double blue = (double)(rgbValue & 255) / 256.0;
+        double minColorValue = red;
+        if (green < red) {
+            minColorValue = green;
         }
-        if (var6 < var8) {
-            var8 = var6;
+
+        if (blue < minColorValue) {
+            minColorValue = blue;
         }
-        double var10 = var2;
-        if (var4 > var2) {
-            var10 = var4;
+
+        double maxColorValue = red;
+        if (green > red) {
+            maxColorValue = green;
         }
-        if (var6 > var10) {
-            var10 = var6;
+
+        if (blue > maxColorValue) {
+            maxColorValue = blue;
         }
-        double var12 = 0.0;
-        double var14 = 0.0;
-        double var16 = (var10 + var8) / 2.0;
-        if (var10 != var8) {
-            if (var16 < 0.5) {
-                var14 = (var10 - var8) / (var8 + var10);
+
+        double hueValue = 0.0;
+        double saturationValue = 0.0;
+        double lightnessValue = (maxColorValue + minColorValue) / 2.0;
+        if (minColorValue != maxColorValue) {
+            if (lightnessValue < 0.5) {
+                saturationValue = (maxColorValue - minColorValue) / (minColorValue + maxColorValue);
             }
-            if (var16 >= 0.5) {
-                var14 = (var10 - var8) / (2.0 - var10 - var8);
+
+            if (lightnessValue >= 0.5) {
+                saturationValue = (maxColorValue - minColorValue) / (2.0 - maxColorValue - minColorValue);
             }
-            if (var10 == var2) {
-                var12 = (var4 - var6) / (var10 - var8);
-            } else if (var4 == var10) {
-                var12 = 2.0 + (var6 - var2) / (var10 - var8);
-            } else if (var6 == var10) {
-                var12 = 4.0 + (var2 - var4) / (var10 - var8);
+
+            if (red == maxColorValue) {
+                hueValue = (green - blue) / (maxColorValue - minColorValue);
+            } else if (green == maxColorValue) {
+                hueValue = 2.0 + (blue - red) / (maxColorValue - minColorValue);
+            } else if (blue == maxColorValue) {
+                hueValue = 4.0 + (red - green) / (maxColorValue - minColorValue);
             }
         }
-        var12 /= 6.0;
-        this.hue = ((int) (256.0 * var12));
-        this.saturation = ((int) (256.0 * var14));
-        this.lightness = ((int) (256.0 * var16));
+
+        hueValue /= 6.0;
+        this.saturation = (int)(256.0 * saturationValue);
+        this.lightness = (int)(256.0 * lightnessValue);
         if (this.saturation < 0) {
             this.saturation = 0;
         } else if (this.saturation > 255) {
             this.saturation = 255;
         }
+
         if (this.lightness < 0) {
             this.lightness = 0;
         } else if (this.lightness > 255) {
             this.lightness = 255;
         }
+
+        if (lightnessValue > 0.5) {
+            this.hueMultiplier = (int)(512.0 * saturationValue * (1.0 - lightnessValue));
+        } else {
+            this.hueMultiplier = (int)(512.0 * lightnessValue * saturationValue);
+        }
+
+        if (this.hueMultiplier < 1) {
+            this.hueMultiplier = 1;
+        }
+
+        this.hue = (int)((double)this.hueMultiplier * hueValue);
     }
 
 

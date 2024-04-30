@@ -123,7 +123,7 @@ public final class SceneGraph implements RSScene {
             tileArray[zLoc][xLoc][yLoc].logicHeight = logicHeight;
     }
 
-    public void addTile(int zLoc, int xLoc, int yLoc, int shape, int i1, int j1, int k1, int l1, int i2, int j2, int k2, int l2, int i3, int j3, int k3, int l3, int i4, int j4, int k4, int l4) {
+    public void add_tile(int zLoc, int xLoc, int yLoc, int shape, int i1, int j1, int k1, int l1, int i2, int j2, int k2, int l2, int i3, int j3, int k3, int l3, int i4, int j4, int k4, int minimapColor) {
         if (shape == 0) {
             SimpleTile simpleTile = new SimpleTile(k2, l2, i3, j3, -1, k4, false);
             for (int lowerZLoc = zLoc; lowerZLoc >= 0; lowerZLoc--)
@@ -132,14 +132,14 @@ public final class SceneGraph implements RSScene {
 
             tileArray[zLoc][xLoc][yLoc].mySimpleTile = simpleTile;
         } else if (shape == 1) {
-            SimpleTile simpleTile = new SimpleTile(k3, l3, i4, j4, j1, l4, k1 == l1 && k1 == i2 && k1 == j2);
+            SimpleTile simpleTile = new SimpleTile(k3, l3, i4, j4, j1, minimapColor, k1 == l1 && k1 == i2 && k1 == j2);
             for (int lowerZLoc = zLoc; lowerZLoc >= 0; lowerZLoc--)
                 if (tileArray[lowerZLoc][xLoc][yLoc] == null)
                     tileArray[lowerZLoc][xLoc][yLoc] = new Tile(lowerZLoc, xLoc, yLoc);
 
             tileArray[zLoc][xLoc][yLoc].mySimpleTile = simpleTile;
         } else {
-            ShapedTile shapedTile = new ShapedTile(yLoc, k3, j3, i2, j1, i4, i1, k2, k4, i3, j2, l1, k1, shape, j4, l3, l2, xLoc, l4);
+            ShapedTile shapedTile = new ShapedTile(yLoc, k3, j3, i2, j1, i4, i1, k2, k4, i3, j2, l1, k1, shape, j4, l3, l2, xLoc, minimapColor);
             for (int k5 = zLoc; k5 >= 0; k5--)
                 if (tileArray[k5][xLoc][yLoc] == null)
                     tileArray[k5][xLoc][yLoc] = new Tile(k5, xLoc, yLoc);

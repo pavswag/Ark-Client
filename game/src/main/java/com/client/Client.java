@@ -23490,7 +23490,7 @@ public class Client extends GameEngine implements RSClient {
 		setObjectDefinitionLowDetail(lowMemory);
 		if (getGameState() == GameState.LOGGED_IN)
 		{
-			setGameState(1);
+			setGameState(GameState.LOADING);
 		}
 	}
 

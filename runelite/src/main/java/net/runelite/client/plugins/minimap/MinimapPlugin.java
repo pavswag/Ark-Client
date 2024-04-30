@@ -87,7 +87,8 @@ public class MinimapPlugin extends Plugin implements MouseWheelListener
 
 		if (config.hdMinimap()) {
 			client.setHdMinimapEnabled(true);
-			client.setGameState(1);
+			if(client.getGameState() == GameState.LOGGED_IN)
+				client.setGameState(GameState.LOADING);
 		}
 
 	}
@@ -98,7 +99,7 @@ public class MinimapPlugin extends Plugin implements MouseWheelListener
 		restoreOriginalDots();
 		client.setMinimapZoom(false);
 		client.setHdMinimapEnabled(false);
-		client.setGameState(1);
+		client.setGameState(GameState.LOADING);
 		mouseManager.unregisterMouseWheelListener(this);
 	}
 
@@ -128,7 +129,7 @@ public class MinimapPlugin extends Plugin implements MouseWheelListener
 		else if (event.getKey().equals("hdminimap"))
 		{
 			client.setHdMinimapEnabled(config.hdMinimap());
-			client.setGameState(1);
+			client.setGameState(GameState.LOADING);
 			return;
 		}
 		replaceMapDots();

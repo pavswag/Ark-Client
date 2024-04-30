@@ -2,6 +2,8 @@ package com.client;
 
 import com.client.audio.ObjectSound;
 import com.client.definitions.FloorDefinition;
+import com.client.definitions.FloorOverlayDefinition;
+import com.client.definitions.FloorUnderlayDefinition;
 import com.client.definitions.ObjectDefinition;
 import com.client.utilities.ChunkUtil;
 import com.client.utilities.ObjectKeyUtil;
@@ -63,6 +65,9 @@ public final class MapRegion {
 		return l >> 19 & 0xff;
 	}
 
+	public int rndLightness = (int) (Math.random() * 33.0D) - 16;
+
+	public int rndHue = (int) (Math.random() * 17.0D) - 8;
 	public final void createRegionScene(CollisionMap maps[], SceneGraph scene) {
 		try {
 
@@ -119,11 +124,11 @@ public final class MapRegion {
 						if (k9 >= 0 && k9 < regionSizeX) {
 							int l12 = underlays[z][k9][i8] & 0x7FFF;
 							if (l12 > 0) {
-								FloorDefinition flo = FloorDefinition.lookupUnderlay(l12 - 1);
-								hues[i8] += flo.blendHue;
-								saturations[i8] += flo.saturation;
-								luminances[i8] += flo.luminance;
-								chromas[i8] += flo.blendHueMultiplier;
+								FloorUnderlayDefinition flo = FloorUnderlayDefinition.lookup(l12 - 1);
+								hues[i8] += flo.getHue();
+								saturations[i8] += flo.getSaturation();
+								luminances[i8] += flo.getLightness();
+								chromas[i8] += flo.getHueMultiplier();
 								anIntArray128[i8]++;
 							}
 						}
@@ -131,11 +136,11 @@ public final class MapRegion {
 						if (i13 >= 0 && i13 < regionSizeX) {
 							int i14 = underlays[z][i13][i8] & 0x7FFF;
 							if (i14 > 0) {
-								FloorDefinition flo_1 = FloorDefinition.lookupUnderlay(i14 - 1);
-								hues[i8] -= flo_1.blendHue;
-								saturations[i8] -= flo_1.saturation;
-								luminances[i8] -= flo_1.luminance;
-								chromas[i8] -= flo_1.blendHueMultiplier;
+								FloorUnderlayDefinition flo_1 = FloorUnderlayDefinition.lookup(i14 - 1);
+								hues[i8] -= flo_1.getHue();
+								saturations[i8] -= flo_1.getSaturation();
+								luminances[i8] -= flo_1.getLightness();
+								chromas[i8] -= flo_1.getHueMultiplier();
 								anIntArray128[i8]--;
 							}
 						}
@@ -197,22 +202,22 @@ public final class MapRegion {
 										boolean flag = true;
 										if (l18 == 0 && overlayTypes[z][l6][k17] != 0)
 											flag = false;
-										if (i19 > 0 && !FloorDefinition.lookupOverlay(i19 - 1).hideUnderlay)
+										if (i19 > 0 && !FloorOverlayDefinition.lookup(i19 - 1).hideUnderlay)
 											flag = false;
 										if (flag && j19 == k19 && j19 == l19 && j19 == i20)
-											anIntArrayArrayArray135[z][l6][k17] |= 0x924;
+											anIntArrayArrayArray135[z][l6][k17] |= 2340;
 									}
 									int i22 = 0;
 
 									if (j21 != -1)
 										i22 = Rasterizer3D.hslToRgb[method187(k21, mapLight)];
 									if (i19 == 0) {
-										scene.addTile(z, l6, k17, 0, 0, -1, j19, k19, l19, i20, method187(j21, j20), method187(j21, k20), method187(j21, l20), method187(j21, i21), 0, 0, 0, 0, i22, 0);
+										scene.add_tile(z, l6, k17, 0, 0, -1, j19, k19, l19, i20, method187(j21, j20), method187(j21, k20), method187(j21, l20), method187(j21, i21), 0, 0, 0, 0, i22, 0);
 									} else {
 
 										int k22 = overlayTypes[z][l6][k17] + 1;
 										byte byte4 = overlayOrientations[z][l6][k17];
-										FloorDefinition overlay_flo = FloorDefinition.lookupOverlay(i19 - 1);
+										FloorOverlayDefinition overlay_flo = FloorOverlayDefinition.lookup(i19 - 1);
 										int texture = overlay_flo.texture;
 										int encodedTile;
 										int minimapColor;
@@ -221,7 +226,7 @@ public final class MapRegion {
 										if (texture >= 0) {
 											minimapColor = Rasterizer3D.textureLoader.getAverageTextureRGB(texture);
 											encodedTile = -1;
-										} else if (overlay_flo.rgb == 16711935) {
+										} else if (overlay_flo.primaryRgb == 16711935) {
 											encodedTile = -2;
 											texture = -1;
 											minimapColor = -2;
@@ -252,7 +257,20 @@ public final class MapRegion {
 											encodedMinimap = Rasterizer3D.hslToRgb[checkedLight(minimapColor, 96)];
 										}
 
-										scene.addTile(z, l6, k17, k22, byte4, texture, j19, k19, l19, i20, method187(j21, j20), method187(j21, k20), method187(j21, l20), method187(j21, i21), checkedLight(encodedTile, j20), checkedLight(encodedTile, k20), checkedLight(encodedTile, l20), checkedLight(encodedTile, i21), i22, encodedMinimap);
+										if (overlay_flo.secondaryRgb != -1) {
+											lightness = rndHue + overlay_flo.secondaryHue & 255;
+											int var45 = overlay_flo.secondaryLightness + rndLightness;
+											if (var45 < 0) {
+												var45 = 0;
+											} else if (var45 > 255) {
+												var45 = 255;
+											}
+
+											minimapColor = set_hsl_bitset(lightness, overlay_flo.secondarySaturation, var45);
+											encodedMinimap = Rasterizer3D.hslToRgb[method425(minimapColor, 96)];
+										}
+
+										scene.add_tile(z, l6, k17, k22, byte4, texture, j19, k19, l19, i20, method187(j21, j20), method187(j21, k20), method187(j21, l20), method187(j21, i21), checkedLight(encodedTile, j20), checkedLight(encodedTile, k20), checkedLight(encodedTile, l20), checkedLight(encodedTile, i21), i22, encodedMinimap);
 									}
 								}
 							}
@@ -408,6 +426,30 @@ public final class MapRegion {
 		}
 	}
 
+	public int method425(int var0, int var1) {
+		if (var0 == -2) {
+			return 12345678;
+		} else if (var0 == -1) {
+			if (var1 < 2) {
+				var1 = 2;
+			} else if (var1 > 126) {
+				var1 = 126;
+			}
+
+			return var1;
+		} else {
+			var1 = (var0 & 127) * var1 / 128;
+			if (var1 < 2) {
+				var1 = 2;
+			} else if (var1 > 126) {
+				var1 = 126;
+			}
+
+			return (var0 & 0xFF80) + var1;
+		}
+	}
+
+
 	private static int calculateVertexHeight(int i, int j) {
 		int mapHeight = (interpolatedNoise(i + 45365, j + 0x16713, 4) - 128) + (interpolatedNoise(i + 10294, j + 37821, 2) - 128 >> 1) + (interpolatedNoise(i, j, 1) - 128 >> 2);
 		mapHeight = (int) ((double) mapHeight * 0.29999999999999999D) + 35;
@@ -418,6 +460,23 @@ public final class MapRegion {
 			mapHeight = 60;
 		}
 		return mapHeight;
+	}
+
+	static int set_hsl_bitset(int h, int s, int l) {
+		if (l > 179) {
+			s /= 2;
+		}
+		if (l > 192) {
+			s /= 2;
+		}
+		if (l > 217) {
+			s /= 2;
+		}
+		if (l > 243) {
+			s /= 2;
+		}
+		int hsl = (s / 32 << 7) + (h / 4 << 10) + l / 2;
+		return hsl;
 	}
 
 	public final void initiateVertexHeights(int yOffset, int yLength, int xLength, int xOffset) {
