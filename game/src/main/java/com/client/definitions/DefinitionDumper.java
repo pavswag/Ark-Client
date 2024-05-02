@@ -110,6 +110,12 @@ public class DefinitionDumper {
                     }
                 }
             });
+
+            for(int i = 0; i < mapIndices2.length; i++) {
+                if(mapIndices2[i] == 1 || mapIndices3[i] == 1) {
+                    System.out.println("Map files point to region [" + mapIndices1[i] + "]");
+                }
+            }
         }
     }
     
