@@ -1,11 +1,13 @@
 package com.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import lombok.*;
 
 import net.runelite.api.Point;
 import org.locationtech.jts.geom.Polygon;
 
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -16,29 +18,26 @@ import java.util.concurrent.atomic.AtomicInteger;
 @AllArgsConstructor
 @ToString
 public class RegionMusic {
-    @Getter
+
     private static RegionMusic[] regionMusic;
 
-
-    @SneakyThrows
     public static void load() {
-        ObjectMapper om = new ObjectMapper();
-        regionMusic =  om.readValue(RegionMusic.class.getResourceAsStream("/region_music.json"), RegionMusic[].class);
+        Gson gson = new Gson();
+        regionMusic = gson.fromJson(new InputStreamReader(RegionMusic.class.getResourceAsStream("/region_music.json")), RegionMusic[].class);
         System.out.println("Loaded [" + regionMusic.length + "] music regions.");
     }
 
     public static RegionMusic forPosition(int region) {
-        for(RegionMusic song : regionMusic) {
-            if(song.regionIds == null)
+        for (RegionMusic song : regionMusic) {
+            if (song.regionIds == null)
                 continue;
-            for(int id: song.getRegionIds()) {
-                if(id == region)
+            for (int id : song.regionIds) {
+                if (id == region)
                     return song;
             }
         }
         return null;
     }
-
 
     private String name;
     private String hint;
@@ -47,4 +46,3 @@ public class RegionMusic {
     private int[] regionIds;
     private boolean defaultLocked;
 }
-
