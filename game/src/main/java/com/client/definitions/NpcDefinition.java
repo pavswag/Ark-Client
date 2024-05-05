@@ -1521,16 +1521,6 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             npcDefinition.custom = true;
             npcDefinition.headIcon = 6;
         }
-        if(i==7145){
-            npcDefinition.name = "Demonic Gorilla";
-            npcDefinition.custom = true;
-            npcDefinition.headIcon = 1;
-        }
-        if(i==7146){
-            npcDefinition.name = "Demonic Gorilla";
-            npcDefinition.custom = true;
-            npcDefinition.headIcon = 2;
-        }
         if (npcDefinition.name != null && npcDefinition.name.toLowerCase().contains("chinchompa") && !npcDefinition.name.toLowerCase().contains("baby")) {
             npcDefinition.custom = true;
             npcDefinition.actions = new String[5];
@@ -1690,10 +1680,11 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             else if (opcode == 101)
                 contrast = buffer.readSignedByte();
             else if (opcode == 102) {
-                int index = buffer.readUnsignedByte();
+                headIcon = buffer.readUShort();
+                /*int index = buffer.readUnsignedByte();
                 int var4 = 0;
-                int var5;
-                for(var5 = index; var5 != 0; var5 >>= 1) {
+
+                for(int var5 = index; var5 != 0; var5 >>= 1) {
                     ++var4;
                 }
 
@@ -1701,14 +1692,15 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
                 headIconSpriteIndex = new short[var4];
 
                 for(int var6 = 0; var6 < var4; ++var6) {
+
                     if ((index & 1 << var6) == 0) {
                         headIconArchiveIds[var6] = -1;
                         headIconSpriteIndex[var6] = -1;
                     } else {
-                        headIconArchiveIds[var6] = buffer.readShort();
-                        headIconSpriteIndex[var6] = (short)buffer.readShort();
+                        headIconArchiveIds[var6] = buffer.readNullableLargeSmart();
+                        headIconSpriteIndex[var6] = (short) buffer.readUShortSmart();
                     }
-                }
+                }*/
             } else if (opcode == 103)
                 rotation = buffer.readUShort();
             else if (opcode == 107) {
