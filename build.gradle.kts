@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm") version "1.8.22"
     application
     id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.mark.bootstrap.bootstrap")
 }
 
 
@@ -21,6 +22,7 @@ allprojects {
     apply(plugin = "kotlin")
     apply(plugin = "application")
     apply(plugin = "com.github.johnrengelman.shadow")
+    apply(plugin = "com.mark.bootstrap.bootstrap")
 
     tasks.withType<KotlinCompile> {
         kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()

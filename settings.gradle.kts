@@ -15,6 +15,12 @@ pluginManagement {
         gradlePluginPortal()
         maven("https://jitpack.io")
     }
+    resolutionStrategy {
+        eachPlugin {
+            if(requested.id.toString() == "com.mark.bootstrap.bootstrap")
+                useModule("com.github.Mark7625:bootstrap-release:7d9c7df954")
+        }
+    }
 }
 
 include("game","runelite")
