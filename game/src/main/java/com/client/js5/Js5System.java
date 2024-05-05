@@ -75,7 +75,7 @@ public class Js5System {
             if (--js5Cycles + 1 <= 0)
                 try {
                     if (js5ConnectState == 0) {
-                        js5SocketTask = GameEngine.taskHandler.newSocketTask("127.0.0.1", 43596);
+                        js5SocketTask = GameEngine.taskHandler.newSocketTask(Configuration.CONNECTION.js5SocketIP, Integer.parseInt(Configuration.CONNECTION.js5Socket));
                         js5ConnectState++;
                         System.out.println("js5ConnectState set to 1, creating socket task");
                     }

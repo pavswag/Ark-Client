@@ -97,7 +97,6 @@ import com.client.utilities.settings.SettingsManager;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Doubles;
-import com.client.util.FileUtility;
 import dorkbox.notify.Notify;
 import dorkbox.notify.Pos;
 import dorkbox.util.ActionHandler;
@@ -5208,103 +5207,6 @@ public class Client extends GameEngine implements RSClient {
 		root.setLevel(level);
 	}
 
-	public static Client getClient(boolean runelite, String...args) {
-		try {
-//			RPC.init();
-
-			System.out.println("Running Java version " + getVersion());
-			Client.runelite = runelite;
-			Client.args = args;
-			StringBuilder windowTitleBuilder = new StringBuilder();
-			windowTitleBuilder.append(Configuration.CLIENT_TITLE);
-			server = Configuration.DEDICATED_SERVER_ADDRESS;
-			setLoggingLevel(Level.INFO);
-
-			if (args.length > 0) {
-				StringBuilder configurationBuilder = new StringBuilder();
-				configurationBuilder.append("[");
-
-				for (int index = 0; index < args.length; index++) {
-					configurationBuilder.append(args[index].replace("--", ""));
-					if (index != args.length - 1)
-						configurationBuilder.append(" ");
-
-					if (args[index].startsWith("server=")) {
-						server = args[index].replace("server=", "");
-						System.out.println("Custom connection address set through run arguments: " + server);
-					} else {
-						switch (args[index]) {
-							case "--debug":
-							case "-db":
-								setLoggingLevel(Level.DEBUG);
-								System.out.println("Setting log level to debug.");
-								break;
-
-							case "--developer":
-							case "-d":
-								Configuration.developerMode = true;
-								Configuration.cacheName = Configuration.CACHE_NAME_DEV;
-								System.out.println("Developer mode enabled.");
-								break;
-							case "--local":
-							case "-l":
-							case "localhost":
-							case "local":
-								if (server.equals(Configuration.DEDICATED_SERVER_ADDRESS)) {
-									server = "127.0.0.1";
-									System.out.println("Localhost client enabled.");
-								} else {
-									throw new IllegalArgumentException("Cannot have custom ip and local enabled.");
-								}
-								break;
-							case "test_server":
-								port = Configuration.TEST_PORT;
-								System.out.println("Test server enabled.");
-								break;
-
-							case "pack_data":
-								Configuration.packIndexData = true;
-								break;
-							case "dump_maps":
-								Configuration.dumpMaps = true;
-								break;
-							case "dump_animation_data":
-								Configuration.dumpAnimationData = true;
-								break;
-							case "dump_data_lists":
-								Configuration.dumpDataLists = true;
-								break;
-							default:
-								throw new IllegalArgumentException("Run argument not recognized: " + args[index]);
-						}
-					}
-				}
-
-				// Build the client title with configuration arguments
-				configurationBuilder.append("]");
-				windowTitleBuilder.append(" ");
-				windowTitleBuilder.append(configurationBuilder.toString().trim());
-			}
-
-			Signlink.createCacheDirectory();
-			enableExceptionLogging(); // Don't remove this!
-			Configuration.clientTitle = windowTitleBuilder.toString();
-			nodeID = 1;
-			portOff = 0;
-			setHighMem();
-			isMembers = true;
-			Signlink.storeid = 32;
-			Signlink.startpriv(InetAddress.getLocalHost());
-
-			instance = new Client();
-
-		} catch (Exception exception) {
-			exception.printStackTrace();
-		}
-
-		return Client.instance;
-	}
-
 	public static Client getInstance() {
 		return instance;
 	}
@@ -5877,15 +5779,7 @@ public class Client extends GameEngine implements RSClient {
 			}
 
 	}
-	/**
-	 * Runescape Loading Bar
-	 *
-	 * @param percentage
-	 * @param s
-	 * @param downloadSpeed
-	 * @param secondsRemaining
-	 * @trees
-	 */
+
 	private int getPixelAmt(int current, int pixels) {
 		return (int) (pixels * .01 * current);
 	}
@@ -18565,7 +18459,7 @@ public class Client extends GameEngine implements RSClient {
 					Configuration.CONNECTION = Connection.OSRS;
 					break;*//*
 			}*/
-			Client.server = Configuration.CONNECTION.address;
+			Client.server = Configuration.CONNECTION.main_serverIP;
 			Client.port = Integer.parseInt(Configuration.CONNECTION.port);
 			Interfaces.reloadInterfaces();
 		}
@@ -21386,7 +21280,7 @@ public class Client extends GameEngine implements RSClient {
 	private static int anInt1288;
 	public static int anInt1290;
 	private int hoverShopTile = -1;
-	public static String server = Configuration.CONNECTION.address;
+	public static String server = Configuration.CONNECTION.main_serverIP;
 	public static int port = Integer.parseInt(Configuration.CONNECTION.port);
 	public static boolean controlIsDown;
 	public int drawCount;

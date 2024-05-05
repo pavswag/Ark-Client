@@ -32,7 +32,7 @@ public class DefinitionDumper {
     private static final boolean dumpModels = false;
     private static final boolean dumpMaps = false;
 
-    private static final boolean dumpRegions = true;
+    private static final boolean dumpRegions = false;
 
     private static final boolean dumpTextures = false;
     private static final boolean dumpSprites = false;

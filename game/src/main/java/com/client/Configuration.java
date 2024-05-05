@@ -30,26 +30,15 @@ public class Configuration {
 	public static boolean SAVE_ACCOUNTS = true;
 	public static final String CLIENT_TITLE = "ArkCane";
 	public static final String WEBSITE = "ArkCane.net";
-	public static final String DEDICATED_SERVER_ADDRESS = "127.0.0.1";
-	public static Connection CONNECTION = Connection.WORLD_1;
-	public static final int TEST_PORT = 43595;
-	public static final String CACHE_NAME = ".arkcane_live";
+	public static Connection CONNECTION = Connection.WORLD_2;
 	public static final String DEV_CACHE_NAME = "local_cache";
-	public static final String CACHE_NAME_DEV = CACHE_NAME + "_dev";
 
 	public static final String CUSTOM_ITEM_SPRITES_DIRECTORY = "item_sprites/";
-	public static String CUSTOM_MAP_DIRECTORY = "./data/custom_maps/";
-	public static String CUSTOM_MODEL_DIRECTORY = "./data/custom_models/";
-	public static String CUSTOM_ANIMATION_DIRECTORY = "./data/custom_animations/";
 
 	public static boolean developerMode = false;
-	public static boolean packIndexData = false;
-	public static boolean dumpMaps;
-	public static boolean dumpAnimationData = false;
 	public static boolean dumpDataLists = false;
 	public static boolean newFonts; // TODO text offsets (i.e. spacing between characters) are incorrect, needs automatic fix from kourend
-	public static String cacheName = CACHE_NAME;
-	public static String clientTitle = "";
+
 
 	public static final LocalDateTime LAUNCH_TIME = LocalDateTime.now();
 	public static final String ERROR_LOG_DIRECTORY = "error_logs/";
