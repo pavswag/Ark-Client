@@ -189,7 +189,8 @@ public class DefinitionDumper {
             12344,
             12600,
             12605,
-            7502
+            7502,
+            10033
     );
     public static void moveCustomModels() {
         customModels.forEach(model -> {
