@@ -1513,14 +1513,6 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             npcDefinition.heightScale = 75;
             npcDefinition.widthScale = 75;
         }
-        if(i==7144){
-            npcDefinition.custom = true;
-            npcDefinition.headIcon = 0;
-        }
-        if(i==963){
-            npcDefinition.custom = true;
-            npcDefinition.headIcon = 6;
-        }
         if (npcDefinition.name != null && npcDefinition.name.toLowerCase().contains("chinchompa") && !npcDefinition.name.toLowerCase().contains("baby")) {
             npcDefinition.custom = true;
             npcDefinition.actions = new String[5];
@@ -1636,7 +1628,7 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
                 }
             } else if (opcode == 18) {
                 category = buffer.readUShort();
-            } else if (opcode >= 30 && opcode < 40) {
+            } else if (opcode >= 30 && opcode < 35) {
                 if (actions == null)
                     actions = new String[10];
                 actions[opcode - 30] = buffer.readNullTerminatedString();
@@ -1647,8 +1639,8 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
                 originalColors = new int[k];
                 modifiedColours = new int[k];
                 for (int k1 = 0; k1 < k; k1++) {
-                    originalColors[k1] = buffer.readUShort();
-                    modifiedColours[k1] = buffer.readUShort();
+                    originalColors[k1] = (short) buffer.readUShort();
+                    modifiedColours[k1] = (short) buffer.readUShort();
                 }
             } else if (opcode == 41) {
                 int k = buffer.readUnsignedByte();
@@ -1680,33 +1672,39 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             else if (opcode == 101)
                 contrast = buffer.readSignedByte();
             else if (opcode == 102) {
-                headIcon = buffer.readUShort();
-                /*int index = buffer.readUnsignedByte();
-                int var4 = 0;
+                if (customHeadicon(this.id)) {
+                    headIcon = buffer.readUShort();
+                } else {
+                    int index = buffer.readUnsignedByte();
+                    int var4 = 0;
 
-                for(int var5 = index; var5 != 0; var5 >>= 1) {
-                    ++var4;
+                    for(int var5 = index; var5 != 0; var5 >>= 1) {
+                        ++var4;
+                    }
+
+                    headIconArchiveIds = new int[var4];
+                    headIconSpriteIndex = new short[var4];
+
+                    for(int var6 = 0; var6 < var4; ++var6) {
+
+                        if ((index & 1 << var6) == 0) {
+                            headIconArchiveIds[var6] = -1;
+                            headIconSpriteIndex[var6] = -1;
+                        } else {
+                            headIconArchiveIds[var6] = buffer.readNullableLargeSmart();
+                            headIconSpriteIndex[var6] = (short) buffer.readUShortSmart();
+                        }
+                    }
                 }
 
-                headIconArchiveIds = new int[var4];
-                headIconSpriteIndex = new short[var4];
-
-                for(int var6 = 0; var6 < var4; ++var6) {
-
-                    if ((index & 1 << var6) == 0) {
-                        headIconArchiveIds[var6] = -1;
-                        headIconSpriteIndex[var6] = -1;
-                    } else {
-                        headIconArchiveIds[var6] = buffer.readNullableLargeSmart();
-                        headIconSpriteIndex[var6] = (short) buffer.readUShortSmart();
-                    }
-                }*/
             } else if (opcode == 103)
                 rotation = buffer.readUShort();
             else if (opcode == 107) {
                 isInteractable = false;
             } else if(opcode == 109) {
 //                buffer.readByte();
+            } else if(opcode == 111) {
+//                buffer.readUShort();
             } else if(opcode == 114) {
                 buffer.readUShort();
             } else if(opcode == 115) {
@@ -1721,11 +1719,11 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
                 buffer.readUShort();
                 buffer.readUShort();
                 buffer.readUShort();
-            } else if(opcode == 122) {
+            }/* else if(opcode == 122) {
                 buffer.readByte();
             } else if(opcode == 123) {
                 buffer.readByte();
-            } else if (opcode == 249) {
+            }*/ else if (opcode == 249) {
                 BufferExt.readStringIntParameters(buffer);
             } else if (opcode == 106 || opcode == 118) {
                 varbit = buffer.readUShort();
@@ -1763,6 +1761,10 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             }
             previousOpcode = opcode;
         }
+    }
+
+    private boolean customHeadicon(int npcid) {
+        return npcid == 963 || npcid == 7144 || npcid == 7594 || npcid == 2948 || npcid == 7804 || npcid == 6474 || npcid == 5630;
     }
 
     public Model method160() {
