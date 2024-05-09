@@ -32,7 +32,7 @@ public class DefinitionDumper {
     private static final boolean dumpModels = false;
     private static final boolean dumpMaps = false;
 
-    private static final boolean dumpRegions = false;
+    private static final boolean dumpRegions = true;
 
     private static final boolean dumpTextures = false;
     private static final boolean dumpSprites = false;
@@ -194,7 +194,25 @@ public class DefinitionDumper {
             14142,
             14398,
             11867,
-            9043
+            9043,
+            13393,
+            13394,
+            13395,
+            13396,
+            13397,
+            13381,
+            13398,
+            13142,
+            12889,
+            13145,
+            13401,
+            13146,
+            12890,
+            12633,
+            13144,
+            13402,
+            13147,
+            13403
     );
     public static void moveCustomModels() {
         customModels.forEach(model -> {

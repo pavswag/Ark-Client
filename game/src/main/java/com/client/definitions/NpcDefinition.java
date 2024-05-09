@@ -1611,7 +1611,7 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             } else if (opcode == 2)
                 name = buffer.readNullTerminatedString();
             else if (opcode == 12)
-                size = buffer.readSignedByte();
+                size = buffer.readUnsignedByte();
             else if (opcode == 13)
                 standAnim = buffer.readUShort();
             else if (opcode == 14)
@@ -1706,21 +1706,21 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             else if (opcode == 107) {
                 isInteractable = false;
             } else if(opcode == 109) {
-                buffer.readByte();
+//                buffer.readByte();
             } else if(opcode == 114) {
-                buffer.readShort();
+                buffer.readUShort();
             } else if(opcode == 115) {
-                buffer.readShort();
-                buffer.readShort();
-                buffer.readShort();
-                buffer.readShort();
+                buffer.readUShort();
+                buffer.readUShort();
+                buffer.readUShort();
+                buffer.readUShort();
             } else if(opcode == 116) {
-                buffer.readShort();
+                buffer.readUShort();
             } else if(opcode == 117) {
-                buffer.readShort();
-                buffer.readShort();
-                buffer.readShort();
-                buffer.readShort();
+                buffer.readUShort();
+                buffer.readUShort();
+                buffer.readUShort();
+                buffer.readUShort();
             } else if(opcode == 122) {
                 buffer.readByte();
             } else if(opcode == 123) {
@@ -2030,7 +2030,7 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
     public String name;
     public String actions[];
     public int walkAnim;
-    public byte size;
+    public int size;
     public int[] modifiedColours;
     public static int[] streamIndices;
     public int[] chatheadModels;
