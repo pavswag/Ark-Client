@@ -409,8 +409,8 @@ public final class Buffer extends Cacheable implements RSBuffer {
     }
 
     public int readUShortSmart() {
-        int var2 = this.payload[this.pos] & 255;
-        return var2 < 128 ? this.readUnsignedByte() : this.readUShort() - 32768;
+        int var2 = this.payload[this.pos] & 0xFF;
+        return var2 < 128 ? this.readUnsignedByte() - 1 : this.readUShort() - 0x8001;
     }
 
     public int readSignedWord() {

@@ -24,7 +24,7 @@ public class SetWidgetTextNull implements VoidInstruction {
                 try {
                     Objects.requireNonNull(RSInterface.get(startInterfaceId + i)).message = "";
                 } catch (Exception e) {
-                    throw new ScriptRuntimeException("Widget [" + (startInterfaceId + i) + " is null");
+                    throw new ScriptRuntimeException("Widget [" + (startInterfaceId + i) + "] is null");
                 }
             } else {
                 Objects.requireNonNull(RSInterface.get(startInterfaceId + i)).message = "";
