@@ -3386,10 +3386,10 @@ public class Client extends GameEngine implements RSClient {
 
 				} else {
 					NpcDefinition entityDef_1 = ((Npc) entity).desc;
-					if (entityDef_1.headIcon >= 0 && entityDef_1.headIcon < headIcons.length) {
+					if (((Npc) entity).getHeadIcon() >= 0 && ((Npc) entity).getHeadIcon() < headIcons.length) {
 						npcScreenPos(entity, entity.defaultHeight + 15);
 						if (spriteDrawX > -1)
-							headIcons[entityDef_1.headIcon].drawSprite(spriteDrawX - 12, spriteDrawY - 30);
+							headIcons[((Npc) entity).getHeadIcon()].drawSprite(spriteDrawX - 12, spriteDrawY - 30);
 					}
 					if (hintType == 1 && anInt1222 == npcIndices[j - playerCount] && cycle % 20 < 10) {
 						npcScreenPos(entity, entity.defaultHeight + 15);

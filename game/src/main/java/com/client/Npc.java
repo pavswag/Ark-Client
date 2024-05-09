@@ -146,6 +146,20 @@ public final class Npc extends Entity implements RSNPC {
 
 	}
 
+	public int headIcon = -1;
+
+	public int getHeadIcon() {
+		NpcDefinition definition = desc;
+		if (headIcon == -1) {
+			if (definition != null && definition.getHeadIconSpriteIndex() != null)
+				return definition.getHeadIconSpriteIndex()[0];
+			if (definition != null) {
+				return definition.getDefaultHeadIconArchive();
+			}
+		}
+		return headIcon;
+	}
+
 	@Override
 	public int getId() {
 		return desc.getId();

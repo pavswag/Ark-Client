@@ -3079,8 +3079,9 @@ public class Model extends Renderable implements RSModel {
 
     @Override
     public int[] getVertexNormalsX() {
-        if(vertexNormalsX == null)
-            return getVerticesX();
+        if (vertexNormalsX == null) {
+            vertexNormals();
+        }
         return vertexNormalsX;
     }
 
@@ -3091,8 +3092,9 @@ public class Model extends Renderable implements RSModel {
 
     @Override
     public int[] getVertexNormalsY() {
-        if(vertexNormalsY == null)
-            return getVerticesY();
+        if (vertexNormalsY == null) {
+            vertexNormals();
+        }
         return vertexNormalsY;
     }
 
@@ -3103,8 +3105,9 @@ public class Model extends Renderable implements RSModel {
 
     @Override
     public int[] getVertexNormalsZ() {
-        if(vertexNormalsZ == null)
-            return getVerticesZ();
+        if (vertexNormalsZ == null) {
+            vertexNormals();
+        }
         return vertexNormalsZ;
     }
 
@@ -3112,6 +3115,7 @@ public class Model extends Renderable implements RSModel {
     public void setVertexNormalsZ(int[] vertexNormalsZ) {
         this.vertexNormalsZ = vertexNormalsZ;
     }
+
 
     @Override
     public byte getOverrideAmount() {

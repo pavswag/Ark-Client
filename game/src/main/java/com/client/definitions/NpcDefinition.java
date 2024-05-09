@@ -39,7 +39,7 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             npcDefinition.readValues(new Buffer(data));
         }
 
-        if (i == Npcs.BOB_BARTER_HERBS) {
+       /* if (i == Npcs.BOB_BARTER_HERBS) {
             npcDefinition.custom = true;
             npcDefinition.actions = new String[] { "Talk-to", "Prices", "Decant", "Clean", null };
         }
@@ -1569,7 +1569,7 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
                 npcDefinition.standAnim = 2904;
                 npcDefinition.walkAnim = 2943;
                 break;
-        }
+        }*/
         cache.put(npcDefinition, i);
         return npcDefinition;
     }
@@ -1599,6 +1599,9 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
     }
 
     private static int defaultHeadIconArchive = -1;
+
+
+    static boolean clientRev = false;
 
     public static void init(int headIconArchive) {
         totalAmount = Js5List.configs.getGroupFileCount(Js5ConfigType.NPC) + 2_500;
@@ -1690,23 +1693,30 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             else if (opcode == 101)
                 contrast = buffer.readSignedByte();
             else if (opcode == 102) {
-                int index = buffer.readUnsignedByte();
-                int var4 = 0;
-                int var5;
-                for(var5 = index; var5 != 0; var5 >>= 1) {
-                    ++var4;
-                }
+                if (clientRev) {
+                    headIconArchiveIds = new int[1];
+                    headIconSpriteIndex = new short[1];
+                    headIconArchiveIds[0] = defaultHeadIconArchive;
+                    headIconSpriteIndex[0] = (short)buffer.readUShort();
+                } else {
+                    int index = buffer.readUnsignedByte();
+                    int var4 = 0;
 
-                headIconArchiveIds = new int[var4];
-                headIconSpriteIndex = new short[var4];
+                    for(int var5 = index; var5 != 0; var5 >>= 1) {
+                        ++var4;
+                    }
 
-                for(int var6 = 0; var6 < var4; ++var6) {
-                    if ((index & 1 << var6) == 0) {
-                        headIconArchiveIds[var6] = -1;
-                        headIconSpriteIndex[var6] = -1;
-                    } else {
-                        headIconArchiveIds[var6] = buffer.readShort();
-                        headIconSpriteIndex[var6] = (short)buffer.readShort();
+                    headIconArchiveIds = new int[var4];
+                    headIconSpriteIndex = new short[var4];
+
+                    for(int var6 = 0; var6 < var4; ++var6) {
+                        if ((index & 1 << var6) == 0) {
+                            headIconArchiveIds[var6] = -1;
+                            headIconSpriteIndex[var6] = -1;
+                        } else {
+                            headIconArchiveIds[var6] = buffer.readNullableLargeSmart();
+                            headIconSpriteIndex[var6] = (short)buffer.readShortSmartSub();
+                        }
                     }
                 }
             } else if (opcode == 103)
@@ -2123,6 +2133,14 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
         return false;
     }
 
+    public int[] getHeadIconArchiveIds() {
+        return headIconArchiveIds;
+    }
+
+    public short[] getHeadIconSpriteIndex() {
+        return headIconSpriteIndex;
+    }
+
     @Override
     public boolean isInteractible() {
         return isInteractable;
@@ -2181,5 +2199,9 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
     @Override
     public void setParams(RSIterableNodeHashTable params) {
 
+    }
+
+    public int getDefaultHeadIconArchive() {
+        return defaultHeadIconArchive;
     }
 }
