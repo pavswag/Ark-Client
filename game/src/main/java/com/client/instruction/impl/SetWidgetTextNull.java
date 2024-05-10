@@ -20,14 +20,12 @@ public class SetWidgetTextNull implements VoidInstruction {
         int lengthExclusive = args.getNextInt();
 
         for (int i = 0; i < lengthExclusive; i++) {
-            if(RSInterface.get(startInterfaceId + i) == null) {
+            if(RSInterface.get(startInterfaceId + i) != null) {
                 try {
                     Objects.requireNonNull(RSInterface.get(startInterfaceId + i)).message = "";
                 } catch (Exception e) {
                     throw new ScriptRuntimeException("Widget [" + (startInterfaceId + i) + "] is null");
                 }
-            } else {
-                Objects.requireNonNull(RSInterface.get(startInterfaceId + i)).message = "";
             }
         }
         return null;
