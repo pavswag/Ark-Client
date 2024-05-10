@@ -191,7 +191,6 @@ public class Entity extends Renderable {
 	final int[] hitSplatCycles;
 
 	final void addHitSplat(int type, int damage, int type2, int damage2, int cycle, int delay) {
-		System.out.println("addHitSplat[" + cycle + "]");
 		boolean var7 = true;
 		boolean var8 = true;
 
@@ -203,9 +202,6 @@ public class Entity extends Renderable {
 				var8 = false;
 			}
 		}
-
-		System.out.println("var7/var8 = " + var7 + "/" + var8);
-
 		var9 = -1;
 		int var10 = -1;
 		int var11 = 0;
@@ -255,7 +251,6 @@ public class Entity extends Renderable {
 				this.hitSplatCount = (byte)((this.hitSplatCount + 1) % 4);
 				if (this.hitSplatCycles[var15] <= cycle) {
 					var9 = var15;
-					System.out.println("var9 == " + var9);
 					break;
 				}
 			}
@@ -271,12 +266,6 @@ public class Entity extends Renderable {
 			this.hitSplatTypes2[var9] = type2;
 			this.hitSplatValues2[var9] = damage2;
 			this.hitSplatCycles[var9] = cycle + var11 + delay;
-			System.out.println("Hitsplat lifetime = " + var11);
-			System.out.println(var9 + " - hitSplatTypes - " + this.hitSplatTypes[var9]);
-			System.out.println(var9 + " - hitSplatValues - " + this.hitSplatValues[var9]);
-			System.out.println(var9 + " - hitSplatTypes2 - " + this.hitSplatTypes2[var9]);
-			System.out.println(var9 + " - hitSplatValues2 - " + this.hitSplatValues2[var9]);
-			System.out.println(var9 + " - hitSplatCycles - " + this.hitSplatCycles[var9]);
 		}
 	}
 
