@@ -9659,13 +9659,7 @@ public class Client extends GameEngine implements RSClient {
 
 			if (j1 == 99) {
 				if (j > k1 - 14 && j <= k1) {
-					lastViewedDropTable = chatMessages[i1] == null ? "" : chatMessages[i1].getMessage();
-					MenuEntry menuEntry = (MenuEntry) new MenuEntry(menuActionRow)
-							.setOption("Open Drop Table")
-							.setType(10_992);
-					menuManager.addEntry(menuEntry);
-					setMenuOptionCount(getMenuOptionCount() + 1);
-					callbacks.post(new MenuEntryAdded(menuEntry));
+
 				}
 				l++;
 			}
@@ -12749,7 +12743,7 @@ public class Client extends GameEngine implements RSClient {
 					setGameState(GameState.LOGIN_SCREEN);
 					isLoading = false;
 					long clientLoadStart = System.currentTimeMillis();
-					//DefinitionDumper.dumpDefs();
+					DefinitionDumper.dumpDefs();
 					int totalHitSplatDefs = Js5List.configs.getGroupFileCount(Js5ConfigType.HITSPLAT);
 					int totalHealthBarDefs = Js5List.configs.getGroupFileCount(Js5ConfigType.HEALTHBAR);
 					System.out.println("Found [" + totalHitSplatDefs + "] Hit splats");
