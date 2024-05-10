@@ -32,6 +32,7 @@ public class Model extends Renderable implements RSModel {
 
     public boolean DEBUG_MODELS = false;
 
+
     public static void clear() {
         modelHeaders = null;
         hasAnEdgeToRestrict = null;
@@ -408,8 +409,8 @@ public class Model extends Renderable implements RSModel {
                     model.texturesX = texturesX;
                     model.texturesY = texturesY;
                     model.texturesZ = texturesZ;
-                    model.vertexGroups = vertexGroups;
-                    model.faceGroups = faceGroups;
+                    model.groupedVertexLabels = groupedVertexLabels;
+                    model.groupedTriangleLabels = groupedTriangleLabels;
                     model.singleTile = singleTile ;
                     model.verticesY = new int[model.verticesCount];
                     model.normals = normals;
@@ -470,6 +471,13 @@ public class Model extends Renderable implements RSModel {
         } else {
             return this;
         }
+    }
+
+
+
+    public int getShadowIntensity() {
+        calculateBoundsCylinder();
+        return diagonal2DAboveOrigin;
     }
 
     public Model(Model model) {
@@ -1668,6 +1676,29 @@ public class Model extends Renderable implements RSModel {
             }
 
         }
+    }
+
+
+
+    private int method4319(int var0, int var1) {
+        var1 = (var0 & 127) * var1 >> 7;
+        if (var1 < 2) {
+            var1 = 2;
+        } else if (var1 > 126) {
+            var1 = 126;
+        }
+
+        return (var0 & 'ﾀ') + var1;
+    }
+
+    private int method4320(int var0) {
+        if (var0 < 2) {
+            var0 = 2;
+        } else if (var0 > 126) {
+            var0 = 126;
+        }
+
+        return var0;
     }
 
     public Model light(int ambient, int contrast, int x, int y, int z, boolean flatShading) {
