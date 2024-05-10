@@ -38,10 +38,12 @@ public final class Player extends Entity implements RSPlayer {
 		Iterator spotAnimIterator = spotAnims.iterator();
 		while(spotAnimIterator.hasNext()) {
 			EntitySpotAnim graphicObject = (EntitySpotAnim) spotAnimIterator.next();
-			if(graphicObject.getId() == -1) {
+			if(graphicObject.getId() == -1 ) {
 				graphicObject.remove();
 				continue;
 			}
+			if(graphicObject.getFrame() == -1)
+				continue;
 			SpotAnimation spotAnim = SpotAnimation.lookup(graphicObject.getId());
 			Model model_2 = spotAnim.getModel();
 			if (model_2 != null) {
@@ -877,13 +879,7 @@ public final class Player extends Entity implements RSPlayer {
 
 	@Override
 	public boolean hasSpotAnim(int customGfxID) {
-		Iterator ir = spotAnims.iterator();
-		while(ir.hasNext()) {
-			EntitySpotAnim graphicObject = (EntitySpotAnim) ir.next();
-			if(graphicObject.getId() == customGfxID)
-				return true;
-		}
-		return false;
+		return spotAnims.get(customGfxID) != null;
 	}
 
 	@Override
@@ -904,6 +900,7 @@ public final class Player extends Entity implements RSPlayer {
 		entitySpotAnim.setId(customGfxID);
 		entitySpotAnim.setHeight(i);
 		entitySpotAnim.setCycle(Client.instance.getGameCycle() + i1);
+		entitySpotAnim.setFrame(0);
 		spotAnims.insert(entitySpotAnim, entitySpotAnim.getHash());
 	}
 

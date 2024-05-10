@@ -288,7 +288,8 @@ public class EffectController
         if (customGfxID != -1)
         {
             actor.createSpotAnim(customGfxID, customGfxID, 0, 0);
-            actor.getSpotAnims().get(customGfxID).setFrame(customGfxStartFrame);
+            if(actor.getSpotAnims().get(customGfxID) != null)
+                actor.getSpotAnims().get(customGfxID).setFrame(customGfxStartFrame);
         }
 
         if (customSoundID != -1)

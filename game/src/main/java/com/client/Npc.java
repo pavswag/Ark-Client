@@ -546,6 +546,7 @@ public final class Npc extends Entity implements RSNPC {
 		entitySpotAnim.setId(customGfxID);
 		entitySpotAnim.setHeight(i);
 		entitySpotAnim.setCycle(Client.instance.getGameCycle() + i1);
+		entitySpotAnim.setFrame(0);
 		spotAnims.insert(entitySpotAnim, entitySpotAnim.getHash());
 	}
 

@@ -13654,7 +13654,7 @@ public class Client extends GameEngine implements RSClient {
 				EntitySpotAnim graphicObject = (EntitySpotAnim) ir.next();
 				if(graphicObject.getId() != -1 && cycle >= graphicObject.getCycle()) {
 					if(graphicObject.getFrame() < 0)
-						graphicObject.setFrame(0);
+						continue;
 					SequenceDefinition gfxSeq = SpotAnimation.lookup(graphicObject.getId()).animationSequence;
 					if(gfxSeq == null) {
 						graphicObject.remove();
