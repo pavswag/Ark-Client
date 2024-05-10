@@ -103,8 +103,33 @@ public class Sprite extends Rasterizer2D implements RSSpritePixels {
 	public static final Sprite EMPTY_SPRITE = new Sprite();
 
 	public Sprite(){}
-
-	public static Sprite SpriteBuffer_getSprite(Js5Archive sprites, int id, int index) {
+	public static Sprite getCacheSprite(long id) {
+		return (Sprite) cachedSprites.get(id);
+	}
+	public static Sprite SpriteBuffer_getSpriteUncached(int id, int index) {
+		System.out.println("Getting headicon [" + id + "/" + index + "]");
+		long var14 = (long)id << 8 | (long)index;
+		Sprite sprite = (Sprite) cachedSprites.get(var14);
+		if (sprite != null) {
+			return sprite;
+		}
+		byte[] spriteData = Js5List.sprites.takeFile(id, index);
+		boolean decoded;
+		if (spriteData == null) {
+			decoded = false;
+		} else {
+			SpriteData.decode(spriteData);
+			decoded = true;
+		}
+		if (!decoded) {
+			return null;
+		} else {
+			Sprite image = generateImage();
+			cachedSprites.put(image, (long)id << 8 | (long)index);
+			return image;
+		}
+	}
+	public static Sprite SpriteBuffer_getSprite(int id, int index) {
 		Sprite sprite = (Sprite) cachedSprites.get(id);
 		if (sprite != null) {
 			return sprite;
@@ -1584,6 +1609,46 @@ public class Sprite extends Rasterizer2D implements RSSpritePixels {
 		SpriteData.spritePalette = null;
 		SpriteData.pixels = null;
 		return sprite;
+	}
+
+	static Sprite[] generateImages(int id, int index) {
+
+		byte[] spriteData = Js5List.sprites.takeFile(id, index);
+		boolean decoded;
+		if (spriteData == null) {
+			decoded = false;
+		} else {
+			SpriteData.decode(spriteData);
+			decoded = true;
+		}
+		if (!decoded) {
+			return null;
+		}
+		Sprite[] sprites = new Sprite[SpriteData.spriteCount];
+		for (int var1 = 0; var1 < SpriteData.spriteCount; ++var1) {
+			Sprite sprite = sprites[var1] = new Sprite();
+			sprite.width = SpriteData.spriteWidth;
+			sprite.height = SpriteData.spriteHeight;
+			sprite.xOffset = SpriteData.xOffsets[var1];
+			sprite.yOffset = SpriteData.yOffsets[var1];
+			sprite.subWidth = SpriteData.spriteWidths[var1];
+			sprite.subHeight = SpriteData.spriteHeights[var1];
+			int totalPixels = sprite.subWidth * sprite.subHeight;
+			byte[] pixels = SpriteData.pixels[var1];
+			sprite.pixels = new int[totalPixels];
+
+			for(int currentPixel = 0; currentPixel < totalPixels; ++currentPixel) {
+				sprite.pixels[currentPixel] = SpriteData.spritePalette[pixels[currentPixel] & 255];
+			}
+		}
+
+		SpriteData.xOffsets = null;
+		SpriteData.yOffsets = null;
+		SpriteData.spriteWidths = null;
+		SpriteData.spriteHeights = null;
+		SpriteData.spritePalette = null;
+		SpriteData.pixels = null;
+		return sprites;
 	}
 
 	public void drawTransBgAt(int var1, int var2) {

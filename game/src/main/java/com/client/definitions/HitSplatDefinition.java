@@ -194,7 +194,7 @@ public class HitSplatDefinition extends DualNode {
             if (var1 != null) {
                 return var1;
             } else {
-                var1 = Sprite.SpriteBuffer_getSprite(Js5List.sprites, this.field2228, 0);
+                var1 = Sprite.SpriteBuffer_getSprite(this.field2228, 0);
                 if (var1 != null) {
                     sprites.put(var1, (long)this.field2228);
                 }
@@ -211,7 +211,7 @@ public class HitSplatDefinition extends DualNode {
             if (var1 != null) {
                 return var1;
             } else {
-                var1 = Sprite.SpriteBuffer_getSprite(Js5List.sprites, this.field2239, 0);
+                var1 = Sprite.SpriteBuffer_getSprite(this.field2239, 0);
                 if (var1 != null) {
                     sprites.put(var1, (long)this.field2239);
                 }
@@ -229,7 +229,7 @@ public class HitSplatDefinition extends DualNode {
             if (var1 != null) {
                 return var1;
             } else {
-                var1 = Sprite.SpriteBuffer_getSprite(Js5List.sprites, this.field2236, 0);
+                var1 = Sprite.SpriteBuffer_getSprite(this.field2236, 0);
                 if (var1 != null) {
                     sprites.put(var1, (long)this.field2236);
                 }
@@ -247,7 +247,7 @@ public class HitSplatDefinition extends DualNode {
             if (var1 != null) {
                 return var1;
             } else {
-                var1 = Sprite.SpriteBuffer_getSprite(Js5List.sprites, this.field2231, 0);
+                var1 = Sprite.SpriteBuffer_getSprite(this.field2231, 0);
                 if (var1 != null) {
                     sprites.put(var1, (long)this.field2231);
                 }

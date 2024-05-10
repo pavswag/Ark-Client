@@ -3385,11 +3385,28 @@ public class Client extends GameEngine implements RSClient {
 					}//
 
 				} else {
-					NpcDefinition entityDef_1 = ((Npc) entity).desc;
-					if (((Npc) entity).getHeadIcon() >= 0 && ((Npc) entity).getHeadIcon() < headIcons.length) {
-						npcScreenPos(entity, entity.defaultHeight + 15);
-						if (spriteDrawX > -1)
-							headIcons[((Npc) entity).getHeadIcon()].drawSprite(spriteDrawX - 12, spriteDrawY - 30);
+					NpcDefinition npcDefinition = ((Npc) entity).desc;
+					if (npcDefinition.headIconSpriteIndex != null && npcDefinition.headIconArchiveIds != null) {
+						Sprite headIcon = null;
+						int[] headIconArchiveIds = npcDefinition.headIconArchiveIds;
+						short[] headIconSpriteIndex = npcDefinition.headIconSpriteIndex;
+
+						for (int var13 = 0; var13 < headIconSpriteIndex.length; ++var13) {
+							if (headIconSpriteIndex[var13] >= 0 && headIconArchiveIds[var13] >= 0) {
+								long var14 = (long)headIconArchiveIds[var13] << 8 | (long)headIconSpriteIndex[var13];
+								headIcon =	Sprite.getCacheSprite(var14);
+								if(headIcon == null) {
+									Sprite[] var17 = Sprite.generateImages(headIconArchiveIds[var13], 0);
+									if (var17 != null && headIconSpriteIndex[var13] < var17.length) {
+										headIcon = var17[headIconSpriteIndex[var13]];
+									}
+								}
+							}
+						}
+						if(headIcon != null) {
+							npcScreenPos(entity, entity.defaultHeight + 15);
+							headIcon.drawSprite(spriteDrawX - 12, spriteDrawY - 30);
+						}
 					}
 					if (hintType == 1 && anInt1222 == npcIndices[j - playerCount] && cycle % 20 < 10) {
 						npcScreenPos(entity, entity.defaultHeight + 15);

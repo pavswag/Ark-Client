@@ -1693,30 +1693,23 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             else if (opcode == 101)
                 contrast = buffer.readSignedByte();
             else if (opcode == 102) {
-                if (clientRev) {
-                    headIconArchiveIds = new int[1];
-                    headIconSpriteIndex = new short[1];
-                    headIconArchiveIds[0] = defaultHeadIconArchive;
-                    headIconSpriteIndex[0] = (short)buffer.readUShort();
-                } else {
-                    int index = buffer.readUnsignedByte();
-                    int var4 = 0;
+                int var3 = buffer.readUnsignedByte();
+                int var4 = 0;
 
-                    for(int var5 = index; var5 != 0; var5 >>= 1) {
-                        ++var4;
-                    }
+                for(int var5 = var3; var5 != 0; var5 >>= 1) {
+                    ++var4;
+                }
 
-                    headIconArchiveIds = new int[var4];
-                    headIconSpriteIndex = new short[var4];
+                headIconArchiveIds = new int[var4];
+                headIconSpriteIndex = new short[var4];
 
-                    for(int var6 = 0; var6 < var4; ++var6) {
-                        if ((index & 1 << var6) == 0) {
-                            headIconArchiveIds[var6] = -1;
-                            headIconSpriteIndex[var6] = -1;
-                        } else {
-                            headIconArchiveIds[var6] = buffer.readNullableLargeSmart();
-                            headIconSpriteIndex[var6] = (short)buffer.readShortSmartSub();
-                        }
+                for(int var6 = 0; var6 < var4; ++var6) {
+                    if ((var3 & 1 << var6) == 0) {
+                        headIconArchiveIds[var6] = -1;
+                        headIconSpriteIndex[var6] = -1;
+                    } else {
+                        headIconArchiveIds[var6] = buffer.readNullableLargeSmart();
+                        headIconSpriteIndex[var6] = (short)buffer.readShortSmartSub();
                     }
                 }
             } else if (opcode == 103)

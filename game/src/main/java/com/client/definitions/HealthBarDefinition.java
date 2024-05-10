@@ -104,7 +104,7 @@ public class HealthBarDefinition extends DualNode {
             if (var1 != null) {
                 return var1;
             } else {
-                var1 = Sprite.SpriteBuffer_getSprite(Js5List.sprites, this.frontspriteId, 0);
+                var1 = Sprite.SpriteBuffer_getSprite(this.frontspriteId, 0);
                 if (var1 != null) {
                     sprites.put(var1, (long)this.frontspriteId);
                 }
@@ -128,7 +128,7 @@ public class HealthBarDefinition extends DualNode {
             if (var1 != null) {
                 return var1;
             } else {
-                var1 = Sprite.SpriteBuffer_getSprite(Js5List.sprites, this.backSpriteId, 0);
+                var1 = Sprite.SpriteBuffer_getSprite(this.backSpriteId, 0);
                 if (var1 != null) {
                     sprites.put(var1, (long)this.backSpriteId);
                 }
