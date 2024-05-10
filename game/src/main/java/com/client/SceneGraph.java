@@ -583,6 +583,7 @@ public final class SceneGraph implements RSScene {
         }
     }
 
+
     private void method307(int modelZLoc, int modelXSize, int modelYSize, int modelXLoc, int modelYLoc, Model model) {
         boolean flag = true;
         int startX = modelXLoc;
@@ -620,68 +621,91 @@ public final class SceneGraph implements RSScene {
 
     }
 
-    private void mergeNormals(final Model model, final Model secondModel, final int posX, final int posY, final int posZ, final boolean flag) {
-        this.anInt488++;
+    private void mergeNormals(Model var0, Model var1, int posX, int posY, int posZ, boolean var5) {
+        var0.calculateBounds();
+        var0.calculateVertexNormals();
+        var1.calculateBounds();
+        var1.calculateVertexNormals();
+        ++anInt488;
         int count = 0;
-        final int[] vertices = secondModel.verticesX;
-        final int vertexCount = secondModel.verticesCount;
+        int[] vertices = var1.verticesX;
+        int vertexCount = var1.verticesCount;
 
-        for (int vertex = 0; vertex < model.verticesCount; vertex++) {
-            final VertexNormal vertexNormal = model.normals[vertex];
-            final VertexNormal offsetVertexNormal = model.vertexNormalsOffsets[vertex];
-            if (offsetVertexNormal.magnitude != 0) {
-                final int y = model.verticesY[vertex] - posY;
-                if (y <= secondModel.maxY) {
-                    final int x = model.verticesX[vertex] - posX;
-                    if (x >= secondModel.minX && x <= secondModel.maxX) {
-                        final int z = model.verticesZ[vertex] - posZ;
-                        if (z >= secondModel.minZ && z <= secondModel.maxZ) {
-                            for (int v = 0; v < vertexCount; v++) {
-                                final VertexNormal vertexNormal2 = secondModel.normals[v];
-                                final VertexNormal offsetVertexNormal2 = secondModel.vertexNormalsOffsets[v];
-                                if (x == vertices[v] && z == secondModel.verticesZ[v] && y == secondModel.verticesY[v]
-                                        && offsetVertexNormal2.magnitude != 0) {
-                                    vertexNormal.x += offsetVertexNormal2.x;
-                                    vertexNormal.y += offsetVertexNormal2.y;
-                                    vertexNormal.z += offsetVertexNormal2.z;
-                                    vertexNormal.magnitude += offsetVertexNormal2.magnitude;
-                                    vertexNormal2.x += offsetVertexNormal.x;
-                                    vertexNormal2.y += offsetVertexNormal.y;
-                                    vertexNormal2.z += offsetVertexNormal.z;
-                                    vertexNormal2.magnitude += offsetVertexNormal.magnitude;
-                                    count++;
-                                    this.anIntArray486[vertex] = this.anInt488;
-                                    this.anIntArray487[v] = this.anInt488;
+        int vertex;
+        for (vertex = 0; vertex < var0.verticesCount; ++vertex) {
+            VertexNormal vertexNormal = var0.normals[vertex];
+            if (vertexNormal.magnitude != 0) {
+                int y = var0.verticesY[vertex] - posY;
+                if (y <= var1.maxY) {
+                    int x = var0.verticesX[vertex] - posX;
+                    if (x >= var1.minX && x <= var1.maxX) {
+                        int z = var0.verticesZ[vertex] - posZ;
+                        if (z >= var1.minZ && z <= var1.maxZ) {
+                            for (int var14 = 0; var14 < vertexCount; ++var14) {
+                                VertexNormal var15 = var1.normals[var14];
+                                if (x == vertices[var14] && z == var1.verticesZ[var14] && y == var1.verticesY[var14] && var15.magnitude != 0) {
+                                    if (var0.vertexNormalsOffsets == null) {
+                                        var0.vertexNormalsOffsets = new VertexNormal[var0.verticesCount];
+                                    }
+
+                                    if (var1.vertexNormalsOffsets == null) {
+                                        var1.vertexNormalsOffsets = new VertexNormal[vertexCount];
+                                    }
+
+                                    VertexNormal var16 = var0.vertexNormalsOffsets[vertex];
+                                    if (var16 == null) {
+                                        var16 = var0.vertexNormalsOffsets[vertex] = new VertexNormal(vertexNormal);
+                                    }
+
+                                    VertexNormal var17 = var1.vertexNormalsOffsets[var14];
+                                    if (var17 == null) {
+                                        var17 = var1.vertexNormalsOffsets[var14] = new VertexNormal(var15);
+                                    }
+
+                                    var16.x += var15.x;
+                                    var16.y += var15.y;
+                                    var16.z += var15.z;
+                                    var16.magnitude += var15.magnitude;
+                                    var17.x += vertexNormal.x;
+                                    var17.y += vertexNormal.y;
+                                    var17.z += vertexNormal.z;
+                                    var17.magnitude += vertexNormal.magnitude;
+                                    ++count;
+                                    anIntArray486[vertex] = anInt488;
+                                    anIntArray487[var14] = anInt488;
                                 }
                             }
-
                         }
                     }
                 }
             }
         }
 
-        if (count < 3 || !flag) {
-            return;
-        }
+        if (count >= 3 && var5) {
+            for (vertex = 0; vertex < var0.trianglesCount; ++vertex) {
+                if (this.anIntArray486[var0.trianglesX[vertex]] == this.anInt488 && this.anIntArray486[var0.trianglesY[vertex]] == anInt488 && this.anIntArray486[var0.trianglesZ[vertex]] == anInt488) {
+                    if (var0.drawType == null) {
+                        var0.drawType = new int[var0.getFaceCount()];
+                    }
 
-        for (int triangle = 0; triangle < model.trianglesCount; triangle++) {
-            if (this.anIntArray486[model.trianglesX[triangle]] == this.anInt488
-                    && this.anIntArray486[model.trianglesY[triangle]] == this.anInt488
-                    && this.anIntArray486[model.trianglesZ[triangle]] == this.anInt488) {
-                model.drawType[triangle] = -1;
+                    var0.drawType[vertex] = 2;
+                }
             }
-        }
 
-        for (int triangle = 0; triangle < secondModel.trianglesCount; triangle++) {
-            if (this.anIntArray487[secondModel.trianglesX[triangle]] == this.anInt488
-                    && this.anIntArray487[secondModel.trianglesY[triangle]] == this.anInt488
-                    && this.anIntArray487[secondModel.trianglesZ[triangle]] == this.anInt488) {
-                secondModel.drawType[triangle] = -1;
+            for (vertex = 0; vertex < var1.trianglesCount; ++vertex) {
+                if (anInt488 == anIntArray487[var1.trianglesX[vertex]] && anInt488 == anIntArray487[var1.trianglesY[vertex]] && anInt488 == anIntArray487[var1.trianglesZ[vertex]]) {
+                    if (var1.drawType == null) {
+                        var1.drawType = new int[var1.getFaceCount()];
+                    }
+
+                    var1.drawType[vertex] = 2;
+                }
             }
-        }
 
+        }
     }
+
+
 
     public void drawTileMinimap(int[] pixels, int pixelOffset, int z, int x, int y)
     {

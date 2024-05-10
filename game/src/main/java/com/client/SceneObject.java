@@ -5,48 +5,19 @@ import com.client.definitions.SequenceDefinition;
 import com.client.definitions.VariableBits;
 
 final class SceneObject extends Renderable {
+
+	private final int level;
+	private final int sceneX;
+	private final int sceneY;
+
+	private final int objectId;
+	private final int type;
+	private final int orientation;
+
 	private int animationFrame;
-	private final int[] anIntArray1600;
-	private final int anInt1601;
-	private final int anInt1602;
-	private final int anInt1603;
-	private final int anInt1604;
-	private final int anInt1605;
-	private final int anInt1606;
 	private SequenceDefinition seq;
 	private int cycleDelay;
-	public static Client clientInstance;
-	private final int anInt1610;
-	private final int anInt1611;
-	private final int anInt1612;
 
-	/*
-	 * private ObjectDef method457() { int i = -1; if(anInt1601 != -1) { try {
-	 * VarBit varBit = VarBit.overlays[anInt1601]; int k = varBit.anInt648; int l =
-	 * varBit.anInt649; int i1 = varBit.anInt650; int j1 =
-	 * client.anIntArray1232[i1 - l]; i = clientInstance.variousSettings[k] >> l
-	 * & j1; } catch(Exception ex){} } else if(anInt1602 != -1) i =
-	 * clientInstance.variousSettings[anInt1602]; if(i < 0 || i >=
-	 * anIntArray1600.length || anIntArray1600[i] == -1) return null; else
-	 * return ObjectDef.forID(anIntArray1600[i]); }
-	 */
-	private ObjectDefinition method457() {
-		int i = -1;
-		if (anInt1601 != -1) {
-			VariableBits varBit = VariableBits.lookup(anInt1601);
-			int k = varBit.baseVar;
-			int l = varBit.startBit;
-			int i1 = varBit.endBit;
-			int j1 = Client.anIntArray1232[i1 - l];
-			i = clientInstance.variousSettings[k] >> l & j1;
-		} else if (anInt1602 != -1
-				&& anInt1602 < clientInstance.variousSettings.length)
-			i = clientInstance.variousSettings[anInt1602];
-		if (i < 0 || i >= anIntArray1600.length || anIntArray1600[i] == -1)
-			return null;
-		else
-			return ObjectDefinition.lookup(anIntArray1600[i]);
-	}
 
 	@Override
 	public Model getRotatedModel() {
@@ -87,44 +58,57 @@ final class SceneObject extends Renderable {
 				}
 			}
 		}
-		ObjectDefinition class46;
-		if (anIntArray1600 != null)
-			class46 = method457();
-		else
-			class46 = ObjectDefinition.lookup(anInt1610);
-		if (class46 == null) {
+		ObjectDefinition objectDefinition = ObjectDefinition.lookup(objectId);
+		if (objectDefinition.transforms != null) {
+			objectDefinition = objectDefinition.transform();
+		}
+		if (objectDefinition == null) {
 			return null;
 		} else {
-			return class46.modelAt(anInt1611, anInt1612, anInt1603, anInt1604, anInt1605, anInt1606, frameId, seq, animationFrame);
+			int sizeX;
+			int sizeY;
+			// Orientation
+			if (this.orientation != 1 && this.orientation != 3) {
+				sizeX = objectDefinition.sizeX;
+				sizeY = objectDefinition.sizeY;
+			} else {
+				sizeX = objectDefinition.sizeY;
+				sizeY = objectDefinition.sizeX;
+			}
+
+			int primaryX = (sizeX >> 1) + this.sceneX;
+			int secondaryX = (sizeX + 1 >> 1) + this.sceneX;
+			int primaryY = (sizeY >> 1) + this.sceneY;
+			int secondaryY = (sizeY + 1 >> 1) + this.sceneY;
+			int[][] heights = Client.instance.getTileHeights()[this.level];
+			int mean = heights[secondaryX][secondaryY] + heights[primaryX][secondaryY] + heights[secondaryX][primaryY] + heights[primaryX][primaryY] >> 2;
+			int x = (this.sceneX << 7) + (sizeX << 6);
+			int y = (this.sceneY << 7) + (sizeY << 6);
+			return objectDefinition.getModel(type, orientation, frameId, heights, x, mean, y,seq, animationFrame);
 		}
+
 	}
 
-	public SceneObject(int i, int j, int k, int l, int i1, int j1, int k1,
-					   int l1, boolean randomFrame) {
-		anInt1610 = i;
-		anInt1611 = k;
-		anInt1612 = j;
-		anInt1603 = j1;
-		anInt1604 = l;
-		anInt1605 = i1;
-		anInt1606 = k1;
-		if (l1 != -1) {
+	public SceneObject(final int objectId, final int orientation, final int type, int level, int sceneX, int sceneY, final int animationId, final boolean animating) {
+		this.objectId = objectId;
+		this.type = type;
+		this.orientation = orientation;
+		this.level = level;
+		this.sceneX = sceneX;
+		this.sceneY = sceneY;
+
+		if (animationId != -1) {
 			try {
-				seq = SequenceDefinition.get(l1);
+				seq = SequenceDefinition.get(animationId);
 				animationFrame = 0;
 				cycleDelay = Client.cycle;
-				if (randomFrame && seq.frameStep != -1) {
+				if (animating && seq.frameStep != -1) {
 					animationFrame = (int) (Math.random() * seq.frameCount);
-					cycleDelay -= (int) (Math.random() * seq
-							.getDuration(animationFrame));
+					cycleDelay -= (int) (Math.random() * seq.getDuration(animationFrame));
 				}
 			}catch (Exception e) {
 
 			}
 		}
-		ObjectDefinition class46 = ObjectDefinition.lookup(anInt1610);
-		anInt1601 = class46.varp;
-		anInt1602 = class46.varbit;
-		anIntArray1600 = class46.transforms;
 	}
 }

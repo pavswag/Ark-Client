@@ -777,10 +777,9 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 		solid = 1;
 		impenetrable = true;
 		interactive = 0;
-		contouredGround = false;
-		nonFlatShading = false;
+		mergeNormals = false;
 		modelClipped = false;
-		animationId = -1;
+		animation = -1;
 		decorDisplacement = 16;
 		ambient = 0;
 		contrast = 0;
@@ -838,29 +837,28 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 
 		return true;
 	}
-	public Model modelAt(int type, int orientation, int aY, int bY, int cY, int dY, int frameId, SequenceDefinition primary, int tick) {
+
+	public Model getModel(int type, int orientation, int frameId, int[][] heights, int vertexX, int mean, int vertexY) {
+		return getModel(type,orientation,frameId,heights,vertexX,mean,vertexY,null,-1);
+	}
+
+	public Model getModel(int type, int orientation, int frameId, int[][] heights, int vertexX, int mean, int vertexY, SequenceDefinition primary, int tick) {
 		Model model = model(type, frameId, orientation, primary, tick);
 		if (model == null)
 			return null;
-		if (contouredGround || nonFlatShading)
-			model = new Model(contouredGround, nonFlatShading, model);
-		if (contouredGround) {
-			int y = (aY + bY + cY + dY) / 4;
-			for (int vertex = 0; vertex < model.verticesCount; vertex++) {
-				int x = model.verticesX[vertex];
-				int z = model.verticesZ[vertex];
-				int l2 = aY + ((bY - aY) * (x + 64)) / 128;
-				int i3 = dY + ((cY - dY) * (x + 64)) / 128;
-				int j3 = l2 + ((i3 - l2) * (z + 64)) / 128;
-				model.verticesY[vertex] += j3 - y;
-			}
 
-			model.normalise();
-			model.resetBounds();
+		if (mergeNormals) {
+			model = new Model(model);
+		}
+		
+
+		if (clipType >= 0) {
+			model = model.adjustToTerrain(heights, vertexX, mean, vertexY, true, this.clipType);
 		}
 
 		return model;
 	}
+
 
 	public boolean modelCached() {
 		if (objectModels == null)
@@ -998,15 +996,10 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 			model_3.scale(modelSizeX, modelSizeY, modelSizeZ);
 		if (flag2)
 			model_3.offsetBy(offsetX, offsetZ, offsetY);
-		model_3.light(85 + ambient, 768 + contrast, -50, -10, -50, !nonFlatShading);
+
+		model_3.light(ambient + 64, 768 + contrast, -50, -10, -50, !mergeNormals);
 		if (supportItems == 1)
 			model_3.itemDropHeight = model_3.modelBaseY;
-
-/*
-		if (this.clipType * 256 >= 0) {
-			model_3 = ((Model)model_3).contourGround(var3, var4, var5, var6, true, this.clipType * 256);
-		}
-*/
 
 
 		models.put(model_3, l1);
@@ -1015,7 +1008,7 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 
 	public int category;
 	public int[] ambientSoundIds;
-	private boolean randomizeAnimStart;
+	public boolean randomAnimStart;
 	public int soundMin;
 	public int soundMax;
 	public int ambientSoundId;
@@ -1080,15 +1073,15 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 			} else if (opcode == 19) {
 				interactive = (buffer.readUnsignedByte());
 			} else if (opcode == 21) {
-				contouredGround = true;
+				clipType = 0;
 			} else if (opcode == 22) {
-				nonFlatShading = true;
+				mergeNormals = true;
 			} else if (opcode == 23) {
 				modelClipped = true;
 			} else if (opcode == 24) {
-				animationId = buffer.readUShort();
-				if (animationId == 0xFFFF) {
-					animationId = -1;
+				animation = buffer.readUShort();
+				if (animation == 0xFFFF) {
+					animation = -1;
 				}
 			} else if (opcode == 27) {
 				solid = 1;
@@ -1176,7 +1169,7 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 			} else if (opcode == 82) {
 				mapAreaId = buffer.readUShort();
 			} else if (opcode == 89) {
-				randomizeAnimStart = true;
+				randomAnimStart = true;
 			} else if(opcode == 90) {
 				buffer.readUnsignedByte();
 			} else if (opcode == 77 || opcode == 92) {
@@ -1286,13 +1279,13 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 	public int transforms[];
 	public int supportItems;
 	public int sizeY;
-	public boolean contouredGround;
+
 	public boolean modelClipped;
 	public static Client clientInstance;
 	private boolean isHollow;
 	public int solid;
 	public int clipMask;
-	private boolean nonFlatShading;
+	private boolean mergeNormals;
 	private static int cacheIndex;
 	private int modelSizeZ;
 	public int[] objectModels;
@@ -1303,7 +1296,7 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 	public int interactive;
 	public boolean clipped;
 	public static EvictingDualNodeHashTable models = new EvictingDualNodeHashTable(30);
-	public int animationId;
+	public int animation;
 	private int offsetY;
 	private int[] originalColours;
 	public static EvictingDualNodeHashTable baseModels = new EvictingDualNodeHashTable(500);
@@ -1502,6 +1495,10 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 
 	@Override
 	public void setNonFlatShading(boolean nonFlatShading) {
+		mergeNormals = nonFlatShading;
+	}
+
+	public void setMergeNormals(boolean nonFlatShading) {
 
 	}
 
@@ -1517,12 +1514,20 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 
 	@Override
 	public int getAnimationId() {
-		return animationId;
+		return 0;
 	}
 
 	@Override
 	public void setAnimationId(int animationId) {
-		this.animationId = animationId;
+
+	}
+
+	public int getAnimation() {
+		return animation;
+	}
+
+	public void setAnimation(int animationId) {
+		this.animation = animationId;
 	}
 
 	@Override
