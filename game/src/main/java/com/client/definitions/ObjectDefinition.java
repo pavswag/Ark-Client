@@ -1175,6 +1175,13 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 		}
 
 
+		if (this.originalColours != null) {
+			for (var7 = 0; var7 < this.originalColours.length; ++var7) {
+				var8.recolor(this.originalColours[var7], this.modifiedColours[var7]);
+			}
+		}
+
+
 		if (this.originalTextureColours != null) {
 			for (var7 = 0; var7 < this.originalTextureColours.length; ++var7) {
 				var8.retexture(this.originalTextureColours[var7], this.modifiedTextureColours[var7]);
@@ -1319,11 +1326,11 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 				}
 			} else if (opcode == 40) {
 				int len = buffer.readUnsignedByte();
-				originalColours = new int[len];
-				modifiedColours = new int[len];
+				originalColours = new short[len];
+				modifiedColours = new short[len];
 				for (int i = 0; i < len; i++) {
-					originalColours[i] = buffer.readUShort();
-					modifiedColours[i] = buffer.readUShort();
+					originalColours[i] = (short)buffer.readUShort();
+					modifiedColours[i] = (short)buffer.readUShort();
 				}
 			} else if (opcode == 41) {
 				int len = buffer.readUnsignedByte();
@@ -1486,7 +1493,7 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 	public int sizeX;
 	private int offsetZ;
 	public int mapAreaId;
-	private int[] modifiedColours;
+	private short[] modifiedColours;
 	private int modelSizeX;
 	public int varbit;
 	private boolean isRotated;
@@ -1516,7 +1523,7 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 
 	public int animation;
 	private int offsetY;
-	private int[] originalColours;
+	private short[] originalColours;
 
 	public String actions[];
 	private boolean field2118 = false;

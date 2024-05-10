@@ -45,6 +45,8 @@ public enum GroundMaterial
 	GRAVEL(Material.GRAVEL),
 	FALADOR_PATHS(Material.FALADOR_PATH_BRICK),
 	VARROCK_PATHS(Material.JAGGED_STONE_TILE),
+	VAR_PATH_1(Material.FLOOR_PATH_1),
+	VAR_PATH_2(Material.FLOOR_PATH_2),
 	VARIED_DIRT(Material.GRAVEL, Material.DIRT_1, Material.DIRT_2),
 	VARIED_DIRT_SHINY(Material.GRAVEL_SHINY, Material.DIRT_1_SHINY, Material.DIRT_2_SHINY),
 	TILE_SMALL(Material.TILE_SMALL_1),

@@ -83,6 +83,15 @@ public enum Overlay {
     LUMBRIDGE_CASTLE_TILE(3, Area.LUMBRIDGE_CASTLE_BASEMENT, GroundMaterial.MARBLE_1_SEMIGLOSS),
     LUMBRIDGE_CASTLE_FLOORS(10, Area.LUMBRIDGE_CASTLE_COBBLE, GroundMaterial.VARROCK_PATHS, p -> p.shiftLightness(10)),
 
+    VAR_PATHS(Area.VAR, GroundMaterial.VAR_PATH_1,p -> p.ids(328,329)),
+
+    VAR_PATHS_2(10, Area.VAR, GroundMaterial.VAR_PATH_2, p -> p
+            .replaceWithIf(WINTER_JAGGED_STONE_TILE_LIGHT, plugin -> plugin.configWinterTheme)
+            .shiftLightness(3)
+            .blended(false)
+    ),
+
+
     // Lumbridge
     LUM_BRIDGE_10(Area.LUM_BRIDGE, GroundMaterial.GRAVEL, p -> p
             .ids(10)

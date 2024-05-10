@@ -1,10 +1,17 @@
 package com.client;
 
 import com.client.js5.Js5List;
+import net.runelite.api.ModelData;
+import net.runelite.api.model.Triangle;
+import net.runelite.api.model.Vertex;
 import net.runelite.rs.api.RSModel;
 import net.runelite.rs.api.RSModelData;
 import net.runelite.rs.api.RSNode;
 import net.runelite.rs.api.RSVertexNormal;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Mesh extends Renderable implements RSModelData {
 
@@ -2268,13 +2275,6 @@ public class Mesh extends Renderable implements RSModelData {
 
     private int[] vertexNormalsZ;
 
-    public RSVertexNormal[] getVertexNormals() {
-        return vertexNormals;
-    }
-
-    public RSVertexNormal[] getVertexVertices() {
-        return vertexVertices;
-    }
 
 
     public void vertexNormals()
@@ -2320,7 +2320,242 @@ public class Mesh extends Renderable implements RSModelData {
         return contrast;
     }
 
+    @Override
+    public RSModelData cloneVertices()
+    {
+        int[] newVericesX = Arrays.copyOf(this.getVerticesX(), this.getVerticesX().length);
+        int[] newVericesY = Arrays.copyOf(this.getVerticesY(), this.getVerticesX().length);
+        int[] newVericesZ = Arrays.copyOf(this.getVerticesZ(), this.getVerticesX().length);
 
+        this.setVerticesX(newVericesX);
+        this.setVerticesY(newVericesY);
+        this.setVerticesZ(newVericesZ);
+
+        return this;
+    }
+
+    @Override
+    public RSModelData cloneColors()
+    {
+        short[] newFaceColor = Arrays.copyOf(this.getFaceColors(), this.getFaceColors().length);
+        this.setFaceColors(newFaceColor);
+
+        return this;
+    }
+
+    @Override
+    public RSModelData cloneTextures()
+    {
+        short[] newFaceColor = Arrays.copyOf(this.getFaceTextures(), this.getFaceTextures().length);
+        this.setFaceTextures(newFaceColor);
+
+        return this;
+    }
+
+    @Override
+    public RSModelData cloneTransparencies()
+    {
+        byte[] newFaceColor = Arrays.copyOf(this.getFaceTransparencies(), this.getFaceTransparencies().length);
+        this.setFaceTransparencies(newFaceColor);
+
+        return this;
+    }
+
+    @Override
+    public int getFaceCount() {
+        return faceCount;
+    }
+
+    @Override
+    public int[] getFaceIndices1() {
+        return indices1;
+    }
+
+    @Override
+    public int[] getFaceIndices2() {
+        return indices2;
+    }
+
+    @Override
+    public int[] getFaceIndices3() {
+        return indices3;
+    }
+
+    @Override
+    public int[] getVerticesX() {
+        return verticesX;
+    }
+
+    @Override
+    public void setVerticesX(int[] var1) {
+        this.verticesX = var1;
+    }
+
+    @Override
+    public int[] getVerticesY() {
+        return verticesY;
+    }
+
+    @Override
+    public void setVerticesY(int[] var1) {
+        this.verticesY = var1;
+    }
+
+    @Override
+    public int[] getVerticesZ() {
+        return verticesZ;
+    }
+
+    @Override
+    public void setVerticesZ(int[] var1) {
+        this.verticesZ = var1;
+    }
+
+    @Override
+    public short[] getTexTriangleX() {
+        return texTriangleX;
+    }
+
+    @Override
+    public short[] getTexTriangleY() {
+        return texTriangleY;
+    }
+
+    @Override
+    public short[] getTexTriangleZ() {
+        return texTriangleZ;
+    }
+
+    @Override
+    public short[] getFaceTextures() {
+        return faceTextures;
+    }
+
+    @Override
+    public RSModelData rotateY90Ccw() {
+        for (int var1 = 0; var1 < this.getVerticesCount(); ++var1)
+        {
+            int var2 = this.getVerticesX()[var1];
+            this.getVerticesX()[var1] = this.getVerticesZ()[var1];
+            this.getVerticesZ()[var1] = -var2;
+        }
+
+        this.invalidate();
+
+        return this;
+    }
+
+    @Override
+    public RSModelData rotateY180Ccw() {
+        for (int var1 = 0; var1 < this.getVerticesCount(); ++var1)
+        {
+            this.getVerticesX()[var1] = -this.getVerticesX()[var1];
+            this.getVerticesZ()[var1] = -this.getVerticesZ()[var1];
+        }
+
+        this.invalidate();
+
+        return this;
+    }
+
+    @Override
+    public RSModelData rotateY270Ccw() {
+        for (int var1 = 0; var1 < this.getVerticesCount(); ++var1)
+        {
+            int var2 = this.getVerticesZ()[var1];
+            this.getVerticesZ()[var1] = this.getVerticesX()[var1];
+            this.getVerticesX()[var1] = -var2;
+        }
+
+        this.invalidate();
+
+        return this;
+    }
+
+    @Override
+    public RSModelData translate(int x, int y, int z) {
+        for (int i = 0; i < this.getVerticesCount(); ++i)
+        {
+            int[] vertexX = this.getVerticesX();
+            int[] vertexY = this.getVerticesY();
+            int[] vertexZ = this.getVerticesZ();
+
+            vertexX[i] += x;
+            vertexY[i] += y;
+            vertexZ[i] += z;
+        }
+
+        this.invalidate();
+
+        return this;
+    }
+
+    @Override
+    public RSModelData scale(int x, int y, int z) {
+        for (int i = 0; i < this.getVerticesCount(); ++i)
+        {
+            this.getVerticesX()[i] = this.getVerticesX()[i] * x / 128;
+            this.getVerticesY()[i] = this.getVerticesY()[i] * y / 128;
+            this.getVerticesZ()[i] = this.getVerticesZ()[i] * z / 128;
+        }
+
+        this.invalidate();
+
+        return this;
+    }
+
+    @Override
+    public void setFaceTextures(short[] var1) {
+        faceTextures = var1;
+    }
+
+    @Override
+    public byte[] getFaceTransparencies() {
+        return faceAlphas;
+    }
+
+    @Override
+    public void setFaceTransparencies(byte[] var1) {
+        faceAlphas = var1;
+    }
+
+    @Override
+    public short[] getFaceColors() {
+        return faceColors;
+    }
+
+    @Override
+    public Model light(int ambient, int contrast, int x, int y, int z) {
+        return toModel(ambient,contrast,x,y,z);
+    }
+
+    @Override
+    public Model light() {
+        return this.toModel(DEFAULT_AMBIENT, DEFAULT_CONTRAST, DEFAULT_X, DEFAULT_Y, DEFAULT_Z);
+    }
+
+    @Override
+    public RSModelData recolor(short var1, short var2) {
+        rs$recolor(var1,var2);
+        return this;
+
+    }
+
+
+    @Override
+    public void setFaceColors(short[] var1) {
+        faceColors = var1;
+    }
+
+    @Override
+    public byte[] getTextureCoords() {
+        return textureCoords;
+    }
+
+    @Override
+    public byte[] getTextureRenderTypes() {
+        return textureRenderTypes;
+    }
 
 
 
@@ -2330,58 +2565,43 @@ public class Mesh extends Renderable implements RSModelData {
     }
 
     @Override
-    public net.runelite.api.Model recolor(short var1, short var2) {
-        return null;
-    }
-
-
-    @Override
-    public boolean isHidden() {
-        return false;
+    public RSVertexNormal[] getVertexNormals() {
+        return vertexNormals;
     }
 
     @Override
-    public RSNode getNext() {
-        return null;
+    public RSVertexNormal[] getVertexVertices() {
+        return vertexVertices;
     }
 
     @Override
-    public long getHash() {
-        return 0;
+    public void rs$recolor(short var1, short var2) {
+        for(int var3 = 0; var3 < this.faceCount; ++var3) {
+            if (this.faceColors[var3] == var1) {
+                this.faceColors[var3] = var2;
+            }
+        }
     }
 
     @Override
-    public RSNode getPrevious() {
-        return null;
+    public void rs$retexture(short var1, short var2) {
+        if (this.faceTextures != null) {
+            for(int var3 = 0; var3 < this.faceCount; ++var3) {
+                if (this.faceTextures[var3] == var1) {
+                    this.faceTextures[var3] = var2;
+                }
+            }
+        }
     }
 
     @Override
-    public void remove() {
-
+    public RSModelData shallowCopy() {
+        return copyModelData();
     }
 
     @Override
-    public void onUnlink() {
-
+    public RSModelData newModelData(net.runelite.api.ModelData var1, boolean var2, boolean var3, boolean var4, boolean var5) {
+        return new Mesh((Mesh) var1,var2,var3,var4,var5);
     }
 
-    @Override
-    public int getModelHeight() {
-        return 0;
-    }
-
-    @Override
-    public void setModelHeight(int modelHeight) {
-
-    }
-
-    @Override
-    public RSModel getModel() {
-        return null;
-    }
-
-    @Override
-    public void draw(int orientation, int pitchSin, int pitchCos, int yawSin, int yawCos, int x, int y, int z, long hash) {
-
-    }
 }
