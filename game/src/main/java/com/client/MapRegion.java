@@ -574,7 +574,7 @@ public final class MapRegion {
 			}
 			Object obj;
 			if (definition.animation == -1 && definition.transforms == null) {
-				obj = definition.getModel(22, face, -1, heights, vertexX, mean, vertexY);
+				obj = definition.getEntity(22, face, heights, vertexX, mean, vertexY);
 			} else {
 				obj = new SceneObject(objectId, face, 22, plane, x, y, definition.animation,definition.randomAnimStart);
 			}
@@ -587,7 +587,7 @@ public final class MapRegion {
 		if (type == 10 || type == 11) {
 			Object obj1;
 			if (definition.animation == -1 && definition.transforms == null) {
-				obj1 = definition.getModel(10, face, -1, heights, vertexX, mean, vertexY);
+				obj1 = definition.getEntity(10, face, heights, vertexX, mean, vertexY);
 			} else {
 				obj1 = new SceneObject(objectId, face, 10, plane, x, y, definition.animation, definition.randomAnimStart);
 			}
@@ -605,26 +605,21 @@ public final class MapRegion {
 					j4 = definition.sizeX;
 					l4 = definition.sizeY;
 				}
-				if (scene.addTiledObject(key, config, mean, l4, ((Renderable) (obj1)), j4, plane, i5, y, x)
-						&& definition.clipped) {
-					Model model;
-					if (obj1 instanceof Model) {
-						model = (Model) obj1;
-					} else {
-						model = definition.getModel(10, face, -1, heights, vertexX, mean, vertexY);
-					}
-					if (model != null) {
-						for (int j5 = 0; j5 <= j4; j5++) {
-							for (int k5 = 0; k5 <= l4; k5++) {
-								int l5 = model.getShadowIntensity() / 4;
-								if (l5 > 30) {
-									l5 = 30;
-								}
-								if (l5 > shading[plane][x + j5][y + k5]) {
-									shading[plane][x + j5][y + k5] = (byte) l5;
-								}
-							}
+				if (scene.addTiledObject(key, config, mean, l4, ((Renderable) (obj1)), j4, plane, i5, y, x) && definition.clipped) {
+					Renderable model = definition.getEntity(10, face, heights, vertexX, mean, vertexY);
 
+					int var24 = 0;
+					if (model instanceof Model) {
+						var24 = ((Model) model).getShadowIntensity() / 4;
+						if (var24 > 30) {
+							var24 = 30;
+						}
+					}
+					for (int j5 = 0; j5 <= j4; j5++) {
+						for (int k5 = 0; k5 <= l4; k5++) {
+							if (var24 > shading[plane][x + j5][y + k5]) {
+								shading[plane][x + j5][y + k5] = (byte) var24;
+							}
 						}
 
 					}
@@ -638,7 +633,7 @@ public final class MapRegion {
 		if (type >= 12) {
 			Object obj2;
 			if (definition.animation == -1 && definition.transforms == null) {
-				obj2 = definition.getModel(type, face, -1, heights, vertexX, mean, vertexY);
+				obj2 = definition.getEntity(type, face, heights, vertexX, mean, vertexY);
 			} else {
 				obj2 = new SceneObject(objectId, face, type, plane, x, y, definition.animation, definition.randomAnimStart);
 			}
@@ -655,7 +650,7 @@ public final class MapRegion {
 		if (type == 0) {
 			Object obj3;
 			if (definition.animation == -1 && definition.transforms == null) {
-				obj3 = definition.getModel(0, face, -1, heights, vertexX, mean, vertexY);
+				obj3 = definition.getEntity(0, face, heights, vertexX, mean, vertexY);
 			} else {
 				obj3 = new SceneObject(objectId, face, 0, plane, x, y, definition.animation, definition.randomAnimStart);
 			}
@@ -705,7 +700,7 @@ public final class MapRegion {
 		if (type == 1) {
 			Object obj4;
 			if (definition.animation == -1 && definition.transforms == null) {
-				obj4 = definition.getModel(1, face, -1, heights, vertexX, mean, vertexY);
+				obj4 = definition.getEntity(1, face, heights, vertexX, mean, vertexY);
 			} else {
 				obj4 = new SceneObject(objectId, face, 1, plane, x, y, definition.animation, definition.randomAnimStart);
 			}
@@ -732,8 +727,8 @@ public final class MapRegion {
 			Object obj11;
 			Object obj12;
 			if (definition.animation == -1 && definition.transforms == null) {
-				obj11 = definition.getModel(2, 4 + face, -1, heights, vertexX, mean, vertexY);
-				obj12 = definition.getModel(2, i3, -1, heights, vertexX, mean, vertexY);
+				obj11 = definition.getEntity(2, 4 + face, heights, vertexX, mean, vertexY);
+				obj12 = definition.getEntity(2, i3, heights, vertexX, mean, vertexY);
 			} else {
 				obj11 = new SceneObject(objectId, 4 + face, 2, plane, x, y, definition.animation, definition.randomAnimStart);
 				obj12 = new SceneObject(objectId, 4 + face, 2, plane, x, y, definition.animation, definition.randomAnimStart);
@@ -766,7 +761,7 @@ public final class MapRegion {
 		if (type == 3) {
 			Object obj5;
 			if (definition.animation == -1 && definition.transforms == null) {
-				obj5 = definition.getModel(3, face, -1, heights, vertexX, mean, vertexY);
+				obj5 = definition.getEntity(3, face, heights, vertexX, mean, vertexY);
 			} else {
 				obj5 = new SceneObject(objectId, face, 3, plane, x, y, definition.animation, definition.randomAnimStart);
 			}
@@ -791,7 +786,7 @@ public final class MapRegion {
 		if (type == 9) {
 			Object obj6;
 			if (definition.animation == -1 && definition.transforms == null) {
-				obj6 = definition.getModel(type, face, -1, heights, vertexX, mean, vertexY);
+				obj6 = definition.getEntity(type, face, heights, vertexX, mean, vertexY);
 			} else {
 				obj6 = new SceneObject(objectId, face, type, plane, x, y, definition.animation, definition.randomAnimStart);
 			}
@@ -806,7 +801,7 @@ public final class MapRegion {
 		if (type == 4) {
 			Object obj7;
 			if (definition.animation == -1 && definition.transforms == null) {
-				obj7 = definition.getModel(4, 0, -1, heights, vertexX, mean, vertexY);
+				obj7 = definition.getEntity(4, 0, heights, vertexX, mean, vertexY);
 			} else {
 				obj7 = new SceneObject(objectId, 0, 4, plane, x, y, definition.animation, definition.randomAnimStart);
 			}
@@ -822,7 +817,7 @@ public final class MapRegion {
 			}
 			Object obj13;
 			if (definition.animation == -1 && definition.transforms == null) {
-				obj13 = definition.getModel(4, 0, -1, heights, vertexX, mean, vertexY);
+				obj13 = definition.getEntity(4, 0, heights, vertexX, mean, vertexY);
 			} else {
 				obj13 = new SceneObject(objectId, 0, 4, plane, x, y, definition.animation, definition.randomAnimStart);
 			}
@@ -833,7 +828,7 @@ public final class MapRegion {
 		if (type == 6) {
 			Object obj8;
 			if (definition.animation == -1 && definition.transforms == null) {
-				obj8 = definition.getModel(4, 0, -1, heights, vertexX, mean, vertexY);
+				obj8 = definition.getEntity(4, 0, heights, vertexX, mean, vertexY);
 			} else {
 				obj8 = new SceneObject(objectId, 0, 4, plane, x, y, definition.animation, definition.randomAnimStart);
 			}
@@ -843,7 +838,7 @@ public final class MapRegion {
 		if (type == 7) {
 			Object obj9;
 			if (definition.animation == -1 && definition.transforms == null) {
-				obj9 = definition.getModel(4, 0, -1, heights, vertexX, mean, vertexY);
+				obj9 = definition.getEntity(4, 0, heights, vertexX, mean, vertexY);
 			} else {
 				obj9 = new SceneObject(objectId, 0, 4, plane, x, y, definition.animation, definition.randomAnimStart);
 			}
@@ -853,7 +848,7 @@ public final class MapRegion {
 		if (type == 8) {
 			Object obj10;
 			if (definition.animation == -1 && definition.transforms == null) {
-				obj10 = definition.getModel(4, 0, -1, heights, vertexX, mean, vertexY);
+				obj10 = definition.getEntity(4, 0, heights, vertexX, mean, vertexY);
 			} else {
 				obj10 = new SceneObject(objectId, 0, 4, plane, x, y, definition.animation, definition.randomAnimStart);
 			}
@@ -1186,7 +1181,7 @@ public final class MapRegion {
 		if (type == 22) {
 			Object obj;
 			if (definition.animation == -1 && definition.transforms == null) {
-				obj = definition.getModel(22, face, -1, heights, vertexX, mean, vertexY);
+				obj = definition.getModel(22, face, heights, vertexX, mean, vertexY);
 			} else {
 				obj = new SceneObject(objectId, face, 22, l, x, y, definition.animation, definition.randomAnimStart);
 			}
@@ -1199,7 +1194,7 @@ public final class MapRegion {
 		if (type == 10 || type == 11) {
 			Object obj1;
 			if (definition.animation == -1 && definition.transforms == null) {
-				obj1 = definition.getModel(10, face, -1, heights, vertexX, mean, vertexY);
+				obj1 = definition.getModel(10, face, heights, vertexX, mean, vertexY);
 			} else {
 				obj1 = new SceneObject(objectId, face, 10, l, x, y, definition.animation, definition.randomAnimStart);
 			}
@@ -1227,7 +1222,7 @@ public final class MapRegion {
 		if (type >= 12) {
 			Object obj2;
 			if (definition.animation == -1 && definition.transforms == null) {
-				obj2 = definition.getModel(type, face, -1, heights, vertexX, mean, vertexY);
+				obj2 = definition.getModel(type, face, heights, vertexX, mean, vertexY);
 			} else {
 				obj2 =  new SceneObject(objectId, face, type, l, x, y, definition.animation, definition.randomAnimStart);
 			}
@@ -1240,7 +1235,7 @@ public final class MapRegion {
 		if (type == 0) {
 			Object obj3;
 			if (definition.animation == -1 && definition.transforms == null) {
-				obj3 = definition.getModel(0, face, -1, heights, vertexX, mean, vertexY);
+				obj3 = definition.getModel(0, face, heights, vertexX, mean, vertexY);
 			} else {
 				obj3 = new SceneObject(objectId, face, 0, l, x, y, definition.animation, definition.randomAnimStart);
 			}
@@ -1254,7 +1249,7 @@ public final class MapRegion {
 		if (type == 1) {
 			Object obj4;
 			if (definition.animation == -1 && definition.transforms == null) {
-				obj4 = definition.getModel(1, face, -1, heights, vertexX, mean, vertexY);
+				obj4 = definition.getModel(1, face, heights, vertexX, mean, vertexY);
 			} else {
 				obj4 = new SceneObject(objectId, face, 1, l, x, y, definition.animation, definition.randomAnimStart);
 			}
@@ -1270,8 +1265,8 @@ public final class MapRegion {
 			Object obj11;
 			Object obj12;
 			if (definition.animation == -1 && definition.transforms == null) {
-				obj11 = definition.getModel(2, 4 + face, -1, heights, vertexX, mean, vertexY);
-				obj12 = definition.getModel(2, objectFace, -1, heights, vertexX, mean, vertexY);
+				obj11 = definition.getModel(2, 4 + face, heights, vertexX, mean, vertexY);
+				obj12 = definition.getModel(2, face, heights, vertexX, mean, vertexY);
 			} else {
 				obj11 =  new SceneObject(objectId, 4 + face, 2, l, x, y, definition.animation, definition.randomAnimStart);
 				obj12 = new SceneObject(objectId, objectFace, 2, l, x, y, definition.animation, definition.randomAnimStart);
@@ -1286,7 +1281,7 @@ public final class MapRegion {
 		if (type == 3) {
 			Object obj5;
 			if (definition.animation == -1 && definition.transforms == null) {
-				obj5 = definition.getModel(3, face, -1, heights, vertexX, mean, vertexY);
+				obj5 = definition.getModel(3, face, heights, vertexX, mean, vertexY);
 			} else {
 				obj5 =  new SceneObject(objectId, face, 3, l, x, y, definition.animation, definition.randomAnimStart);
 			}
@@ -1300,7 +1295,7 @@ public final class MapRegion {
 		if (type == 9) {
 			Object obj6;
 			if (definition.animation == -1 && definition.transforms == null) {
-				obj6 = definition.getModel(type, face, -1, heights, vertexX, mean, vertexY);
+				obj6 = definition.getModel(type, face, heights, vertexX, mean, vertexY);
 			} else {
 				obj6 = new SceneObject(objectId, face, type, l, x, y, definition.animation, definition.randomAnimStart);
 			}
@@ -1314,7 +1309,7 @@ public final class MapRegion {
 		if (type == 4) {
 			Object obj7;
 			if (definition.animation == -1 && definition.transforms == null) {
-				obj7 = definition.getModel(4, 0, -1, heights, vertexX, mean, vertexY);
+				obj7 = definition.getModel(4, 0, heights, vertexX, mean, vertexY);
 			} else {
 				obj7 = new SceneObject(objectId, 0, 4, l, x, y, definition.animation, definition.randomAnimStart);
 			}
@@ -1330,7 +1325,7 @@ public final class MapRegion {
 			}
 			Object obj13;
 			if (definition.animation == -1 && definition.transforms == null) {
-				obj13 = definition.getModel(4, 0, -1, heights, vertexX, mean, vertexY);
+				obj13 = definition.getModel(4, 0, heights, vertexX, mean, vertexY);
 			} else {
 				obj13 = new SceneObject(objectId, 0, 4, l, x, y, definition.animation, definition.randomAnimStart);
 			}
@@ -1341,7 +1336,7 @@ public final class MapRegion {
 		if (type == 6) {
 			Object obj8;
 			if (definition.animation == -1 && definition.transforms == null) {
-				obj8 = definition.getModel(4, 0, -1, heights, vertexX, mean, vertexY);
+				obj8 = definition.getModel(4, 0, heights, vertexX, mean, vertexY);
 			} else {
 				obj8 =  new SceneObject(objectId, 0, 4, l, x, y, definition.animation, definition.randomAnimStart);
 			}
@@ -1352,7 +1347,7 @@ public final class MapRegion {
 		if (type == 7) {
 			Object obj9;
 			if (definition.animation == -1 && definition.transforms == null) {
-				obj9 = definition.getModel(4, 0, -1, heights, vertexX, mean, vertexY);
+				obj9 = definition.getModel(4, 0, heights, vertexX, mean, vertexY);
 			} else {
 				obj9 = new SceneObject(objectId, 0, 4, l, x, y, definition.animation, definition.randomAnimStart);
 			}
@@ -1363,7 +1358,7 @@ public final class MapRegion {
 		if (type == 8) {
 			Object obj10;
 			if (definition.animation == -1 && definition.transforms == null) {
-				obj10 = definition.getModel(4, 0, -1, heights, vertexX, mean, vertexY);
+				obj10 = definition.getModel(4, 0, heights, vertexX, mean, vertexY);
 			} else {
 				obj10 =  new SceneObject(objectId, 0, 4, l, x, y, definition.animation, definition.randomAnimStart);
 			}

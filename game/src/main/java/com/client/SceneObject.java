@@ -84,7 +84,7 @@ final class SceneObject extends Renderable {
 			int mean = heights[secondaryX][secondaryY] + heights[primaryX][secondaryY] + heights[secondaryX][primaryY] + heights[primaryX][primaryY] >> 2;
 			int x = (this.sceneX << 7) + (sizeX << 6);
 			int y = (this.sceneY << 7) + (sizeY << 6);
-			return objectDefinition.getModel(type, orientation, frameId, heights, x, mean, y,seq, animationFrame);
+			return objectDefinition.getModelDynamic(type, orientation, frameId, heights, x, mean, y,seq, animationFrame);
 		}
 
 	}

@@ -511,199 +511,144 @@ public final class SceneGraph implements RSScene {
             return tile.groundDecoration.uid;
     }
 
-
-    public void shadeModels(int lightY, int lightX, int lightZ) {
-        int intensity = 64;// was parameter
-        int diffusion = 768;// was parameter
-        int lightDistance = (int) Math.sqrt(lightX * lightX + lightY * lightY + lightZ * lightZ);
-        int someLightQualityVariable = diffusion * lightDistance >> 8;
-        for (int zLoc = 0; zLoc < maxY; zLoc++) {
-            for (int xLoc = 0; xLoc < maxX; xLoc++) {
-                for (int yLoc = 0; yLoc < maxZ; yLoc++) {
-                    Tile tile = tileArray[zLoc][xLoc][yLoc];
-                    if (tile != null) {
-                        WallObject wallObject = tile.wallObject;
-                        if (wallObject != null && wallObject.renderable1 != null
-                                && wallObject.renderable1.normals != null) {
-                            method307(zLoc, 1, 1, xLoc, yLoc, (Model) wallObject.renderable1);
-                            if (wallObject.renderable2 != null && wallObject.renderable2.normals != null) {
-                                method307(zLoc, 1, 1, xLoc, yLoc, (Model) wallObject.renderable2);
-                                mergeNormals((Model) wallObject.renderable1, (Model) wallObject.renderable2, 0, 0,
-                                        0, false);
-                                ((Model) wallObject.renderable2).setLighting(intensity, someLightQualityVariable,
-                                        lightX, lightY, lightZ);
+    public void shadeModels(int arg0, int arg1, int arg2) {
+        for (int var4 = 0; var4 < this.maxY; ++var4) {
+            for (int var5 = 0; var5 < maxX; ++var5) {
+                for (int var6 = 0; var6 < maxZ; ++var6) {
+                    Tile var7 = this.tileArray[var4][var5][var6];
+                    if (var7 != null) {
+                        WallObject var8 = var7.wallObject;
+                        Mesh var10;
+                        if (var8 != null && var8.renderable1 instanceof Mesh) {
+                            Mesh var9 = (Mesh) var8.renderable1;
+                            this.method4285(var9, var4, var5, var6, 1, 1);
+                            if (var8.renderable2 instanceof Mesh) {
+                                var10 = (Mesh) var8.renderable2;
+                                this.method4285(var10, var4, var5, var6, 1, 1);
+                                Mesh.method4253(var9, var10, 0, 0, 0, false);
+                                var8.renderable2 = var10.toModel(var10.ambient, var10.contrast, arg0, arg1, arg2);
                             }
-                            ((Model) wallObject.renderable1).setLighting(intensity, someLightQualityVariable,
-                                    lightX, lightY, lightZ);
+
+                            var8.renderable1 = var9.toModel(var9.ambient, var9.contrast, arg0, arg1, arg2);
                         }
-                        for (int k2 = 0; k2 < tile.gameObjectIndex; k2++) {
-                            GameObject interactableObject = tile.gameObjects[k2];
-                            if (interactableObject != null && interactableObject.renderable != null
-                                    && interactableObject.renderable.normals != null) {
-                                method307(zLoc, (interactableObject.xLocHigh - interactableObject.xLocLow) + 1,
-                                        (interactableObject.yLocLow - interactableObject.yLocHigh) + 1, xLoc, yLoc,
-                                        (Model) interactableObject.renderable);
-                                ((Model) interactableObject.renderable).setLighting(intensity,
-                                        someLightQualityVariable, lightX, lightY, lightZ);
+
+                        try {
+                            for (int var12 = 0; var12 < var7.gameObjectIndex; ++var12) {
+                                GameObject var14 = var7.gameObjects[var12];
+                                if (var14 != null && var14.renderable instanceof Mesh) {
+                                    Mesh var11 = (Mesh) var14.renderable;
+                                    this.method4285(var11, var4, var5, var6, var14.xLocHigh - var14.xLocLow + 1, var14.yLocLow - var14.yLocHigh + 1);
+                                    var14.renderable = var11.toModel(var11.ambient, var11.contrast, arg0, arg1, arg2);
+                                }
                             }
+                        } catch (ArithmeticException e) {
+                            e.printStackTrace();
                         }
 
-                        GroundDecoration groundDecoration = tile.groundDecoration;
-                        if (groundDecoration != null && groundDecoration.renderable.normals != null) {
-                            method306GroundDecorationOnly(xLoc, zLoc, (Model) groundDecoration.renderable, yLoc);
-                            ((Model) groundDecoration.renderable).setLighting(intensity, someLightQualityVariable, lightX, lightY, lightZ);
+                        GroundDecoration var13 = var7.groundDecoration;
+                        if (var13 != null && var13.renderable instanceof Mesh) {
+                            var10 = (Mesh) var13.renderable;
+                            this.method4249(var10, var4, var5, var6);
+                            var13.renderable = var10.toModel(var10.ambient, var10.contrast, arg0, arg1, arg2);
                         }
-
                     }
                 }
             }
         }
     }
 
-    private void method306GroundDecorationOnly(int modelXLoc, int modelZLoc, Model model, int modelYLoc) { //TODO figure it out
-        if (modelXLoc < maxX) {
-            Tile tile = tileArray[modelZLoc][modelXLoc + 1][modelYLoc];
-            if (tile != null && tile.groundDecoration != null && tile.groundDecoration.renderable.normals != null)
-                mergeNormals(model, (Model) tile.groundDecoration.renderable, 128, 0, 0, true);
+    void method4249(Mesh arg0, int arg1, int arg2, int arg3) {
+        Tile var5;
+        Mesh var6;
+        if (arg2 < this.maxX) {
+            var5 = this.tileArray[arg1][arg2 + 1][arg3];
+            if (var5 != null && var5.groundDecoration != null && var5.groundDecoration.renderable instanceof Mesh) {
+                var6 = (Mesh) var5.groundDecoration.renderable;
+                Mesh.method4253(arg0, var6, 128, 0, 0, true);
+            }
         }
-        if (modelYLoc < maxX) {
-            Tile tile = tileArray[modelZLoc][modelXLoc][modelYLoc + 1];
-            if (tile != null && tile.groundDecoration != null && tile.groundDecoration.renderable.normals != null)
-                mergeNormals(model, (Model) tile.groundDecoration.renderable, 0, 0, 128, true);
+
+        if (arg3 < this.maxX) {
+            var5 = this.tileArray[arg1][arg2][arg3 + 1];
+            if (var5 != null && var5.groundDecoration != null && var5.groundDecoration.renderable instanceof Mesh) {
+                var6 = (Mesh) var5.groundDecoration.renderable;
+                Mesh.method4253(arg0, var6, 0, 0, 128, true);
+            }
         }
-        if (modelXLoc < maxX && modelYLoc < maxZ) {
-            Tile tile = tileArray[modelZLoc][modelXLoc + 1][modelYLoc + 1];
-            if (tile != null && tile.groundDecoration != null && tile.groundDecoration.renderable.normals != null)
-                mergeNormals(model, (Model) tile.groundDecoration.renderable, 128, 0, 128, true);
+
+        if (arg2 < this.maxX && arg3 < this.maxY) {
+            var5 = this.tileArray[arg1][arg2 + 1][arg3 + 1];
+            if (var5 != null && var5.groundDecoration != null && var5.groundDecoration.renderable instanceof Mesh) {
+                var6 = (Mesh) var5.groundDecoration.renderable;
+                Mesh.method4253(arg0, var6, 128, 0, 128, true);
+            }
         }
-        if (modelXLoc < maxX && modelYLoc > 0) {
-            Tile tile = tileArray[modelZLoc][modelXLoc + 1][modelYLoc - 1];
-            if (tile != null && tile.groundDecoration != null && tile.groundDecoration.renderable.normals != null)
-                mergeNormals(model, (Model) tile.groundDecoration.renderable, 128, 0, -128, true);
+
+        if (arg2 < this.maxX && arg3 > 0) {
+            var5 = this.tileArray[arg1][arg2 + 1][arg3 - 1];
+            if (var5 != null && var5.groundDecoration != null && var5.groundDecoration.renderable instanceof Mesh) {
+                var6 = (Mesh) var5.groundDecoration.renderable;
+                Mesh.method4253(arg0, var6, 128, 0, -128, true);
+            }
         }
     }
 
 
-    private void method307(int modelZLoc, int modelXSize, int modelYSize, int modelXLoc, int modelYLoc, Model model) {
-        boolean flag = true;
-        int startX = modelXLoc;
-        int stopX = modelXLoc + modelXSize;
-        int startY = modelYLoc - 1;
-        int stopY = modelYLoc + modelYSize;
-        for (int zLoc = modelZLoc; zLoc <= modelZLoc + 1; zLoc++)
-            if (zLoc != maxY) {//TODO Always?
-                for (int xLoc = startX; xLoc <= stopX; xLoc++)
-                    if (xLoc >= 0 && xLoc < maxX) {
-                        for (int yLoc = startY; yLoc <= stopY; yLoc++)
-                            if (yLoc >= 0 && yLoc < maxZ && (!flag || xLoc >= stopX || yLoc >= stopY || yLoc < modelYLoc && xLoc != modelXLoc)) {
-                                Tile tile = tileArray[zLoc][xLoc][yLoc];
-                                if (tile != null) {
-                                    int relativeHeightToModelTile = (heightMap[zLoc][xLoc][yLoc] + heightMap[zLoc][xLoc + 1][yLoc] + heightMap[zLoc][xLoc][yLoc + 1] + heightMap[zLoc][xLoc + 1][yLoc + 1]) / 4 - (heightMap[modelZLoc][modelXLoc][modelYLoc] + heightMap[modelZLoc][modelXLoc + 1][modelYLoc] + heightMap[modelZLoc][modelXLoc][modelYLoc + 1] + heightMap[modelZLoc][modelXLoc + 1][modelYLoc + 1]) / 4;
-                                    WallObject wallObject = tile.wallObject;
-                                    if (wallObject != null && wallObject.renderable1 != null && wallObject.renderable1.normals != null)
-                                        mergeNormals(model, (Model) wallObject.renderable1, (xLoc - modelXLoc) * 128 + (1 - modelXSize) * 64, relativeHeightToModelTile, (yLoc - modelYLoc) * 128 + (1 - modelYSize) * 64, flag);
-                                    if (wallObject != null && wallObject.renderable2 != null && wallObject.renderable2.normals != null)
-                                        mergeNormals(model, (Model) wallObject.renderable2, (xLoc - modelXLoc) * 128 + (1 - modelXSize) * 64, relativeHeightToModelTile, (yLoc - modelYLoc) * 128 + (1 - modelYSize) * 64, flag);
-                                    for (int i = 0; i < tile.gameObjectIndex; i++) {
-                                        GameObject gameObject = tile.gameObjects[i];
-                                        if (gameObject != null && gameObject.renderable != null && gameObject.renderable.normals != null) {
-                                            int tiledObjectXSize = (gameObject.xLocHigh - gameObject.xLocLow) + 1;
-                                            int tiledObjectYSize = (gameObject.yLocLow - gameObject.yLocHigh) + 1;
-                                            mergeNormals(model, (Model) gameObject.renderable, (gameObject.xLocLow - modelXLoc) * 128 + (tiledObjectXSize - modelXSize) * 64, relativeHeightToModelTile, (gameObject.yLocHigh - modelYLoc) * 128 + (tiledObjectYSize - modelYSize) * 64, flag);
+    void method4285(Mesh arg0, int arg1, int arg2, int arg3, int arg4, int arg5) {
+        boolean var7 = true;
+        int var8 = arg2;
+        int var9 = arg2 + arg4;
+        int var10 = arg3 - 1;
+        int var11 = arg3 + arg5;
+
+        for (int var12 = arg1; var12 <= arg1 + 1; ++var12) {
+            if (var12 != this.maxY) {
+                for (int var13 = var8; var13 <= var9; ++var13) {
+                    if (var13 >= 0 && var13 < this.maxX) {
+                        for (int var14 = var10; var14 <= var11; ++var14) {
+                            if (var14 >= 0 && var14 < this.maxZ && (!var7 || var13 >= var9 || var14 >= var11 || var14 < arg3 && var13 != arg2)) {
+                                Tile var15 = this.tileArray[var12][var13][var14];
+                                if (var15 != null) {
+                                    int var16 = (this.heightMap[var12][var13][var14] + this.heightMap[var12][var13 + 1][var14] + this.heightMap[var12][var13][var14 + 1] + this.heightMap[var12][var13 + 1][var14 + 1]) / 4 - (this.heightMap[arg1][arg2][arg3] + this.heightMap[arg1][arg2 + 1][arg3] + this.heightMap[arg1][arg2][arg3 + 1] + this.heightMap[arg1][arg2 + 1][arg3 + 1]) / 4;
+                                    WallObject var17 = var15.wallObject;
+                                    if (var17 != null) {
+                                        Mesh var18;
+                                        if (var17.renderable1 instanceof Mesh) {
+                                            var18 = (Mesh) var17.renderable1;
+                                            Mesh.method4253(arg0, var18, (var13 - arg2) * 128 + (1 - arg4) * 64, var16, (var14 - arg3) * 128 + (1 - arg5) * 64, var7);
+                                        }
+
+                                        if (var17.renderable2 instanceof Mesh) {
+                                            var18 = (Mesh) var17.renderable2;
+                                            Mesh.method4253(arg0, var18, (var13 - arg2) * 128 + (1 - arg4) * 64, var16, (var14 - arg3) * 128 + (1 - arg5) * 64, var7);
+                                        }
+                                    }
+
+                                    for (int var23 = 0; var23 < var15.gameObjectIndex; ++var23) {
+                                        GameObject var19 = var15.gameObjects[var23];
+                                        if (var19 != null && var19.renderable instanceof Mesh) {
+                                            Mesh var20 = (Mesh) var19.renderable;
+                                            int var21 = var19.xLocHigh - var19.xLocLow + 1;
+                                            int var22 = var19.yLocLow - var19.yLocHigh + 1;
+                                            Mesh.method4253(arg0, var20, (var19.xLocLow - arg2) * 128 + (var21 - arg4) * 64, var16, (var19.yLocHigh - arg3) * 128 + (var22 - arg5) * 64, var7);
                                         }
                                     }
                                 }
                             }
-                    }
-                startX--; //TODO why?
-                flag = false;
-            }
-
-    }
-
-    private void mergeNormals(Model var0, Model var1, int posX, int posY, int posZ, boolean var5) {
-        var0.calculateBounds();
-        var0.calculateVertexNormals();
-        var1.calculateBounds();
-        var1.calculateVertexNormals();
-        ++anInt488;
-        int count = 0;
-        int[] vertices = var1.verticesX;
-        int vertexCount = var1.verticesCount;
-
-        int vertex;
-        for (vertex = 0; vertex < var0.verticesCount; ++vertex) {
-            VertexNormal vertexNormal = var0.normals[vertex];
-            if (vertexNormal.magnitude != 0) {
-                int y = var0.verticesY[vertex] - posY;
-                if (y <= var1.maxY) {
-                    int x = var0.verticesX[vertex] - posX;
-                    if (x >= var1.minX && x <= var1.maxX) {
-                        int z = var0.verticesZ[vertex] - posZ;
-                        if (z >= var1.minZ && z <= var1.maxZ) {
-                            for (int var14 = 0; var14 < vertexCount; ++var14) {
-                                VertexNormal var15 = var1.normals[var14];
-                                if (x == vertices[var14] && z == var1.verticesZ[var14] && y == var1.verticesY[var14] && var15.magnitude != 0) {
-                                    if (var0.vertexNormalsOffsets == null) {
-                                        var0.vertexNormalsOffsets = new VertexNormal[var0.verticesCount];
-                                    }
-
-                                    if (var1.vertexNormalsOffsets == null) {
-                                        var1.vertexNormalsOffsets = new VertexNormal[vertexCount];
-                                    }
-
-                                    VertexNormal var16 = var0.vertexNormalsOffsets[vertex];
-                                    if (var16 == null) {
-                                        var16 = var0.vertexNormalsOffsets[vertex] = new VertexNormal(vertexNormal);
-                                    }
-
-                                    VertexNormal var17 = var1.vertexNormalsOffsets[var14];
-                                    if (var17 == null) {
-                                        var17 = var1.vertexNormalsOffsets[var14] = new VertexNormal(var15);
-                                    }
-
-                                    var16.x += var15.x;
-                                    var16.y += var15.y;
-                                    var16.z += var15.z;
-                                    var16.magnitude += var15.magnitude;
-                                    var17.x += vertexNormal.x;
-                                    var17.y += vertexNormal.y;
-                                    var17.z += vertexNormal.z;
-                                    var17.magnitude += vertexNormal.magnitude;
-                                    ++count;
-                                    anIntArray486[vertex] = anInt488;
-                                    anIntArray487[var14] = anInt488;
-                                }
-                            }
                         }
                     }
                 }
+                --var8;
+                var7 = false;
             }
         }
 
-        if (count >= 3 && var5) {
-            for (vertex = 0; vertex < var0.trianglesCount; ++vertex) {
-                if (this.anIntArray486[var0.trianglesX[vertex]] == this.anInt488 && this.anIntArray486[var0.trianglesY[vertex]] == anInt488 && this.anIntArray486[var0.trianglesZ[vertex]] == anInt488) {
-                    if (var0.drawType == null) {
-                        var0.drawType = new int[var0.getFaceCount()];
-                    }
-
-                    var0.drawType[vertex] = 2;
-                }
-            }
-
-            for (vertex = 0; vertex < var1.trianglesCount; ++vertex) {
-                if (anInt488 == anIntArray487[var1.trianglesX[vertex]] && anInt488 == anIntArray487[var1.trianglesY[vertex]] && anInt488 == anIntArray487[var1.trianglesZ[vertex]]) {
-                    if (var1.drawType == null) {
-                        var1.drawType = new int[var1.getFaceCount()];
-                    }
-
-                    var1.drawType[vertex] = 2;
-                }
-            }
-
-        }
     }
+
+
+
+
+
 
 
 

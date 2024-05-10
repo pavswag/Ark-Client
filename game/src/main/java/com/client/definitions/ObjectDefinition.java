@@ -24,6 +24,10 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 	public transient boolean custom;
 
 	public static EvictingDualNodeHashTable cache = new EvictingDualNodeHashTable(64);
+	public static EvictingDualNodeHashTable cachedModelData = new EvictingDualNodeHashTable(500);
+
+	public static EvictingDualNodeHashTable modelsCached = new EvictingDualNodeHashTable(30);
+
 	public static ObjectDefinition lookup(int i) {
 
 		/*if (i == 1753 || i == 1751 || i == 1752 || i == 12605 || i == 1750 || i == 11812 || i == 11811 || i == 11817 || i == 11947 || i == 11815 || i == 12600 || i == 11814 || i == 12599 || i == 11813 || i == 12598) {
@@ -805,9 +809,10 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 
 
 	public static void nullLoader() {
-		baseModels = null;
-		models = null;
-		cache = null;
+		cache.clear();
+		models.clear();
+		cachedModelData.clear();
+		modelsCached.clear();
 	}
 
 	public static int totalObjects;
@@ -817,32 +822,35 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 		System.out.println("Loaded [" + totalObjects + "] Object Definitions.");
 	}
 
-	public boolean modelTypeCached(int i) {
-		if (objectTypes == null) {
-			if (objectModels == null)
-				return true;
-			if (i != 10)
-				return true;
-			boolean flag1 = true;
-			Model model = (Model) ObjectDefinition.models.get(id);
-			for (int k = 0; k < objectModels.length; k++)
-				flag1 &= Model.isCached(objectModels[k] & 0xffff);
+	public boolean modelTypeCached(int var1) {
+		if (this.objectTypes != null) {
+			for (int var4 = 0; var4 < this.objectTypes.length; ++var4) {
+				if (this.objectTypes[var4] == var1) {
+					return Js5List.models.tryLoadFile(this.objectModels[var4] & 65535, 0);
+				}
+			}
 
-			return flag1;
+			return true;
+		} else if (this.objectModels == null) {
+			return true;
+		} else if (var1 != 10) {
+			return true;
+		} else {
+			boolean var2 = true;
+
+			for (int var3 = 0; var3 < this.objectModels.length; ++var3) {
+				var2 &= Js5List.models.tryLoadFile(this.objectModels[var3] & 65535, 0);
+			}
+
+			return var2;
 		}
-		Model model = (Model) ObjectDefinition.models.get(id);
-		for (int j = 0; j < objectTypes.length; j++)
-			if (objectTypes[j] == i)
-				return Model.isCached(objectModels[j] & 0xffff);
-
-		return true;
 	}
 
-	public Model getModel(int type, int orientation, int frameId, int[][] heights, int vertexX, int mean, int vertexY) {
-		return getModel(type,orientation,frameId,heights,vertexX,mean,vertexY,null,-1);
+	public Model getModelDynamic(int type, int orientation, int frameId, int[][] heights, int vertexX, int mean, int vertexY) {
+		return getModelDynamic(type,orientation,frameId,heights,vertexX,mean,vertexY,null,-1);
 	}
 
-	public Model getModel(int type, int orientation, int frameId, int[][] heights, int vertexX, int mean, int vertexY, SequenceDefinition primary, int tick) {
+	public Model getModelDynamic(int type, int orientation, int frameId, int[][] heights, int vertexX, int mean, int vertexY, SequenceDefinition primary, int tick) {
 		Model model = model(type, frameId, orientation, primary, tick);
 		if (model == null)
 			return null;
@@ -850,42 +858,13 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 		if (mergeNormals) {
 			model = new Model(model);
 		}
-		
+
 
 		if (clipType >= 0) {
-			model = model.adjustToTerrain(heights, vertexX, mean, vertexY, true, this.clipType);
+			model = model.contourGround(heights, vertexX, mean, vertexY, true, this.clipType);
 		}
 
 		return model;
-	}
-
-
-	public boolean modelCached() {
-		if (objectModels == null)
-			return true;
-		boolean flag1 = true;
-		for (int i = 0; i < objectModels.length; i++)
-			flag1 &= Model.isCached(objectModels[i] & 0xffff);
-		return flag1;
-	}
-
-	public ObjectDefinition transform() {
-		int i = -1;
-		if (varp != -1) {
-			VariableBits varBit = VariableBits.lookup(varp);
-			int j = varBit.baseVar;
-			int k = varBit.startBit;
-			int l = varBit.endBit;
-			int i1 = Client.anIntArray1232[l - k];
-			i = clientInstance.variousSettings[j] >> k & i1;
-		} else if (varbit != -1)
-			i = clientInstance.variousSettings[varbit];
-		int var3;
-		if (i >= 0 && i < transforms.length)
-			var3 = transforms[i];
-		else
-			var3 = transforms[transforms.length - 1];
-		return var3 == -1 ? null : lookup(var3);
 	}
 
 	public Model model(int j, int animation_id, int l, SequenceDefinition primary, int tick) {
@@ -907,14 +886,14 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 				int l2 = objectModels[i2];
 				if (flag1)
 					l2 += 0x10000;
-				model = (Model) baseModels.get(l2);
+				model = (Model) modelsCached.get(l2);
 				if (model == null) {
 					model = Model.getModel(l2 & 0xffff);
 					if (model == null)
 						return null;
 					if (flag1)
 						model.mirror();
-					baseModels.put(model, l2);
+					modelsCached.put(model, l2);
 				}
 				if (k1 > 1)
 					aModelArray741s[i2] = model;
@@ -946,14 +925,14 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 			boolean flag3 = isRotated ^ (l > 3);
 			if (flag3)
 				j2 += 0x10000;
-			model = (Model) baseModels.get(j2);
+			model = (Model) modelsCached.get(j2);
 			if (model == null) {
 				model = Model.getModel(j2 & 0xffff);
 				if (model == null)
 					return null;
 				if (flag3)
 					model.mirror();
-				baseModels.put(model, j2);
+				modelsCached.put(model, j2);
 			}
 		}
 		boolean flag;
@@ -1005,6 +984,245 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 		models.put(model_3, l1);
 		return model_3;
 	}
+
+
+	public static EvictingDualNodeHashTable models = new EvictingDualNodeHashTable(30);
+
+	public Renderable getEntity(int var1, int var2, int[][] var3, int var4, int var5, int var6) {
+		long var7;
+		if (this.objectTypes == null) {
+			var7 = (long) (var2 + (this.id << 10));
+		} else {
+			var7 = (long) (var2 + (var1 << 3) + (this.id << 10));
+		}
+
+		Object var9 = (Renderable) cachedModelData.get(var7);
+		if (var9 == null) {
+			Mesh var10 = this.getModelData(var1, var2);
+			if (var10 == null) {
+				return null;
+			}
+
+			if (!this.mergeNormals) {
+				var9 = var10.toModel(this.ambient + 64, this.contrast + 768, -50, -10, -50);
+			} else {
+				var10.ambient = (short)(this.ambient + 64);
+				var10.contrast = (short)(this.contrast + 768);
+				var10.calculateVertexNormals();
+				var9 = var10;
+			}
+
+			cachedModelData.put((DualNode)var9, var7);
+		}
+
+		if (this.mergeNormals) {
+			var9 = ((Mesh)var9).copyModelData();
+		}
+
+		if (this.clipType * 65536 >= 0) {
+			if (var9 instanceof Model) {
+				var9 = ((Model)var9).contourGround(var3, var4, var5, var6, true, this.clipType * 65536);
+			} else if (var9 instanceof Mesh) {
+				var9 = ((Mesh)var9).method4239(var3, var4, var5, var6, true, this.clipType * 65536);
+			}
+		}
+
+		return (Renderable) var9;
+	}
+
+	public final Model getModel(int var1, int var2, int[][] var3, int var4, int var5, int var6) {
+		long var7;
+		if (this.objectTypes == null) {
+			var7 = (long)(var2 + (this.id << 10));
+		} else {
+			var7 = (long)(var2 + (var1 << 3) + (this.id << 10));
+		}
+
+		Model var9 = (Model) cachedModelData.get(var7);
+		if (var9 == null) {
+			Mesh var10 = this.getModelData(var1, var2);
+			if (var10 == null) {
+				return null;
+			}
+
+			var9 = var10.toModel(this.ambient + 64, this.contrast + 768, -50, -10, -50);
+			cachedModelData.put(var9, var7);
+		}
+
+		if (this.clipType * 65536 >= 0) {
+			var9 = var9.contourGround(var3, var4, var5, var6, true, this.clipType * 65536);
+		}
+
+		return var9;
+	}
+
+	static Mesh[] meshData;
+
+	static {
+		meshData = new Mesh[4];
+	}
+
+	Mesh getModelData(int var1, int var2) {
+		Mesh var3 = null;
+		boolean var4;
+		int var5;
+		int var7;
+		if (this.objectTypes == null) {
+			if (var1 != 10) {
+				return null;
+			}
+
+			if (this.objectModels == null) {
+				return null;
+			}
+
+			var4 = this.isRotated;
+			if (var1 == 2 && var2 > 3) {
+				var4 = !var4;
+			}
+
+			var5 = this.objectModels.length;
+
+			for (int var6 = 0; var6 < var5; ++var6) {
+				var7 = this.objectModels[var6];
+				if (var4) {
+					var7 += 65536;
+				}
+
+				var3 = (Mesh) cachedModelData.get((long)var7);
+				if (var3 == null) {
+					var3 = Mesh.getModel(var7 & 65535);
+					if (var3 == null) {
+						return null;
+					}
+
+					if (var4) {
+						var3.method4306();
+					}
+
+					cachedModelData.put(var3, (long)var7);
+				}
+
+				if (var5 > 1) {
+					meshData[var6] = var3;
+				}
+			}
+
+			if (var5 > 1) {
+				var3 = new Mesh(meshData, var5);
+			}
+		} else {
+			int var9 = -1;
+
+			for (var5 = 0; var5 < this.objectTypes.length; ++var5) {
+				if (this.objectTypes[var5] == var1) {
+					var9 = var5;
+					break;
+				}
+			}
+
+			if (var9 == -1) {
+				return null;
+			}
+
+			var5 = this.objectModels[var9];
+			boolean var10 = this.isRotated ^ var2 > 3;
+			if (var10) {
+				var5 += 65536;
+			}
+
+			var3 = (Mesh) cachedModelData.get((long)var5);
+			if (var3 == null) {
+				var3 = Mesh.getModel(var5 & 65535);
+				if (var3 == null) {
+					return null;
+				}
+
+				if (var10) {
+					var3.method4306();
+				}
+
+				cachedModelData.put(var3, (long)var5);
+			}
+		}
+
+		if (this.modelSizeX == 128 && this.modelSizeZ == 128 && this.modelSizeY == 128) {
+			var4 = false;
+		} else {
+			var4 = true;
+		}
+
+		boolean var11;
+		if (this.offsetX == 0 && this.offsetZ == 0 && this.offsetY == 0) {
+			var11 = false;
+		} else {
+			var11 = true;
+		}
+
+		Mesh var8 = new Mesh(var3, var2 == 0 && !var4 && !var11, this.originalColours == null, null == this.originalTextureColours, true);
+		if (var1 == 4 && var2 > 3) {
+			var8.method4244(256);
+			var8.changeOffset(45, 0, -45);
+		}
+
+		var2 &= 3;
+		if (var2 == 1) {
+			var8.method4281();
+		} else if (var2 == 2) {
+			var8.method4242();
+		} else if (var2 == 3) {
+			var8.method4243();
+		}
+
+
+		if (this.originalTextureColours != null) {
+			for (var7 = 0; var7 < this.originalTextureColours.length; ++var7) {
+				var8.retexture(this.originalTextureColours[var7], this.modifiedTextureColours[var7]);
+			}
+		}
+
+		if (var4) {
+			var8.resize(this.modelSizeX, this.modelSizeZ, this.modelSizeY);
+		}
+
+		if (var11) {
+			var8.changeOffset(this.offsetX, this.offsetZ, this.offsetY);
+		}
+
+		return var8;
+	}
+
+
+
+	public boolean modelCached() {
+		if (objectModels == null)
+			return true;
+		boolean flag1 = true;
+		for (int i = 0; i < objectModels.length; i++)
+			flag1 &= Model.isCached(objectModels[i] & 0xffff);
+		return flag1;
+	}
+
+	public ObjectDefinition transform() {
+		int i = -1;
+		if (varp != -1) {
+			VariableBits varBit = VariableBits.lookup(varp);
+			int j = varBit.baseVar;
+			int k = varBit.startBit;
+			int l = varBit.endBit;
+			int i1 = Client.anIntArray1232[l - k];
+			i = clientInstance.variousSettings[j] >> k & i1;
+		} else if (varbit != -1)
+			i = clientInstance.variousSettings[varbit];
+		int var3;
+		if (i >= 0 && i < transforms.length)
+			var3 = transforms[i];
+		else
+			var3 = transforms[transforms.length - 1];
+		return var3 == -1 ? null : lookup(var3);
+	}
+
+
 
 	public int category;
 	public int[] ambientSoundIds;
@@ -1295,11 +1513,11 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 	public String description;
 	public int interactive;
 	public boolean clipped;
-	public static EvictingDualNodeHashTable models = new EvictingDualNodeHashTable(30);
+
 	public int animation;
 	private int offsetY;
 	private int[] originalColours;
-	public static EvictingDualNodeHashTable baseModels = new EvictingDualNodeHashTable(500);
+
 	public String actions[];
 	private boolean field2118 = false;
 	private int field2130 = 0;

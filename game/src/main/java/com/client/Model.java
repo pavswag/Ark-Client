@@ -370,110 +370,6 @@ public class Model extends Renderable implements RSModel {
         }
     }
 
-    public Model adjustToTerrain(int[][] heights, int vertexX, int mean, int vertexY, boolean clone, int clipType) {
-        calculateBoundsCylinder();
-        int shadowMinX = vertexX - diagonal2DAboveOrigin;
-        int shadowMaxX = vertexX + diagonal2DAboveOrigin;
-        int shadowMinY = vertexY -  diagonal2DAboveOrigin;
-        int shadowMaxY = vertexY +  diagonal2DAboveOrigin;
-        if (shadowMinX >= 0 && shadowMaxX + 128 >> 7 < heights.length && shadowMinY >= 0 && shadowMaxY + 128 >> 7 < heights[0].length) {
-            shadowMinX >>= 7;
-            shadowMaxX = shadowMaxX + 127 >> 7;
-            shadowMinY >>= 7;
-            shadowMaxY = shadowMaxY + 127 >> 7;
-            if (mean == heights[shadowMinX][shadowMinY] && mean == heights[shadowMaxX][shadowMinY] && mean == heights[shadowMinX][shadowMaxY] && mean == heights[shadowMaxX][shadowMaxY]) {
-                return this;
-            } else {
-                Model model;
-                if (clone) {
-                    model = new Model();
-                    model.verticesCount = verticesCount;
-                    model.trianglesCount  = trianglesCount ;
-                    model.texturesCount = texturesCount;
-                    model.verticesX = this.verticesX;
-                    model.verticesZ = verticesZ;
-                    model.trianglesX = trianglesX;
-                    model.trianglesY = trianglesY;
-                    model.trianglesZ = trianglesZ;
-                    model.colorsX = colorsX;
-                    model.colorsY = colorsY;
-                    model.colorsZ = colorsZ;
-                    model.renderPriorities = renderPriorities;
-                    model.faceTransparencies = faceTransparencies;
-                    model.textures = textures;
-                    model.materials = materials;
-                    model.textureTypes = textureTypes;
-                    model.drawType = drawType;
-                    model.facePriority = facePriority;
-                    model.colors = colors;
-                    model.texturesX = texturesX;
-                    model.texturesY = texturesY;
-                    model.texturesZ = texturesZ;
-                    model.groupedVertexLabels = groupedVertexLabels;
-                    model.groupedTriangleLabels = groupedTriangleLabels;
-                    model.singleTile = singleTile ;
-                    model.verticesY = new int[model.verticesCount];
-                    model.normals = normals;
-                    model.faceNormals = faceNormals;
-                    model.vertexNormalsX = vertexNormalsX;
-                    model.vertexNormalsY = vertexNormalsY;
-                    model.vertexNormalsZ = vertexNormalsZ;
-                    model.faceTextureUVCoordinates = faceTextureUVCoordinates;
-                } else {
-                    model = this;
-                }
-
-                int vertex;
-                int int_9;
-                int int_10;
-                int int_11;
-                int int_12;
-                int int_13;
-                int int_14;
-                int int_15;
-                int int_16;
-                int int_17;
-                if (clipType == 0) {
-                    for (vertex = 0; vertex < model.verticesCount; vertex++) {
-                        int_9 = vertexX + this.verticesX[vertex];
-                        int_10 = vertexY + this.verticesZ[vertex];
-                        int_11 = int_9 & 0x7F;
-                        int_12 = int_10 & 0x7F;
-                        int_13 = int_9 >> 7;
-                        int_14 = int_10 >> 7;
-                        int_15 = heights[int_13][int_14] * (128 - int_11) + heights[int_13 + 1][int_14] * int_11 >> 7;
-                        int_16 = heights[int_13][int_14 + 1] * (128 - int_11) + int_11 * heights[int_13 + 1][int_14 + 1] >> 7;
-                        int_17 = int_15 * (128 - int_12) + int_16 * int_12 >> 7;
-                        model.verticesY[vertex] = int_17 + this.verticesY[vertex] - mean;
-                    }
-                } else {
-                    for (vertex = 0; vertex < model.verticesCount; vertex++) {
-                        int_9 = (-this.verticesY[vertex] << 16) / super.modelBaseY;
-                        if (int_9 < clipType) {
-                            int_10 = vertexX + this.verticesX[vertex];
-                            int_11 = vertexY + this.verticesZ[vertex];
-                            int_12 = int_10 & 0x7F;
-                            int_13 = int_11 & 0x7F;
-                            int_14 = int_10 >> 7;
-                            int_15 = int_11 >> 7;
-                            int_16 = heights[int_14][int_15] * (128 - int_12) + heights[int_14 + 1][int_15] * int_12 >> 7;
-                            int_17 = heights[int_14][int_15 + 1] * (128 - int_12) + int_12 * heights[int_14 + 1][int_15 + 1] >> 7;
-                            int int_18 = int_16 * (128 - int_13) + int_17 * int_13 >> 7;
-                            model.verticesY[vertex] = (clipType - int_9) * (int_18 - mean) / clipType + this.verticesY[vertex];
-                        }
-                    }
-                }
-
-                model.resetBounds();
-                model.invalidate();
-                return model;
-            }
-        } else {
-            return this;
-        }
-    }
-
-
 
     public int getShadowIntensity() {
         calculateBoundsCylinder();
@@ -822,6 +718,78 @@ public class Model extends Renderable implements RSModel {
         vertexNormalsY = model.vertexNormalsY;
         vertexNormalsZ = model.vertexNormalsZ;
         faceTextureUVCoordinates = model.faceTextureUVCoordinates;
+    }
+
+    static Model Model_sharedSequenceModel = new Model();
+
+    static byte[] Model_sharedSequenceModelFaceAlphas = new byte[1];
+
+    public Model toSharedSequenceModel(boolean var1) {
+        if (!var1 && Model_sharedSequenceModelFaceAlphas.length < this.trianglesCount) {
+            Model_sharedSequenceModelFaceAlphas = new byte[this.trianglesCount + 100];
+        }
+
+        return this.buildSharedModel(var1, Model_sharedSequenceModel, Model_sharedSequenceModelFaceAlphas);
+    }
+
+    Model buildSharedModel(boolean var1, Model var2, byte[] var3) {
+        var2.verticesCount = this.verticesCount;
+        var2.trianglesCount = this.trianglesCount;
+        var2.texturesCount = this.texturesCount;
+        if (var2.verticesX == null || var2.verticesX.length < this.verticesCount) {
+            var2.verticesX = new int[this.verticesCount + 100];
+            var2.verticesY = new int[this.verticesCount + 100];
+            var2.verticesZ = new int[this.verticesCount + 100];
+        }
+
+        int var4;
+        for(var4 = 0; var4 < this.verticesCount; ++var4) {
+            var2.verticesX[var4] = this.verticesX[var4];
+            var2.verticesY[var4] = this.verticesY[var4];
+            var2.verticesZ[var4] = this.verticesZ[var4];
+        }
+
+        if (var1) {
+            var2.faceTransparencies = this.faceTransparencies;
+        } else {
+            var2.faceTransparencies = var3;
+            if (this.faceTransparencies == null) {
+                for(var4 = 0; var4 < this.trianglesCount; ++var4) {
+                    var2.faceTransparencies[var4] = 0;
+                }
+            } else {
+                for(var4 = 0; var4 < this.trianglesCount; ++var4) {
+                    var2.faceTransparencies[var4] = this.faceTransparencies[var4];
+                }
+            }
+        }
+
+        var2.trianglesX = this.trianglesX;
+        var2.trianglesY = this.trianglesY;
+        var2.trianglesZ = this.trianglesZ;
+        var2.colorsX = this.colorsX;
+        var2.colorsY = this.colorsY;
+        var2.colorsZ = this.colorsZ;
+        var2.renderPriorities = this.renderPriorities;
+        var2.textures = this.textures;
+        var2.materials = this.materials;
+        var2.facePriority = this.facePriority;
+        var2.texturesX = this.texturesX;
+        var2.texturesY = this.texturesY;
+        var2.texturesZ = this.texturesZ;
+        var2.groupedVertexLabels = this.groupedVertexLabels;
+        var2.groupedTriangleLabels = this.groupedTriangleLabels;
+        var2.skeletalBones = this.skeletalBones;
+        var2.skeletalScales = this.skeletalScales;
+        var2.singleTile = this.singleTile;
+        var2.resetBounds();
+
+
+        var2.vertexNormalsX = this.vertexNormalsX;
+        var2.vertexNormalsY = this.vertexNormalsY;
+        var2.vertexNormalsZ = this.vertexNormalsZ;
+
+        return var2;
     }
 
     public void buildSharedSequenceModel(Model model, boolean replaceAlpha) {
@@ -2919,7 +2887,7 @@ public class Model extends Renderable implements RSModel {
     public int skeletalScales[][];
 
     private float[] faceTextureUVCoordinates;
-    private int[] vertexNormalsX, vertexNormalsY, vertexNormalsZ;
+    public int[] vertexNormalsX, vertexNormalsY, vertexNormalsZ;
 
     public short[] materials;
     public byte[] textures;

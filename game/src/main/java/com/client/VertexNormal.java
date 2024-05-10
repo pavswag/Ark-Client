@@ -2,7 +2,7 @@ package com.client;
 
 import net.runelite.rs.api.RSVertexNormal;
 
-final class VertexNormal implements RSVertexNormal {
+public final class VertexNormal implements RSVertexNormal {
 
     public VertexNormal() {
     }

@@ -1862,7 +1862,7 @@ public class Client extends GameEngine implements RSClient {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		ObjectDefinition.baseModels.clear();
+		ObjectDefinition.modelsCached.clear();
 		stream.createFrame(210);
 		stream.writeInt(0x3f008edd);
 		System.gc();
@@ -1886,8 +1886,8 @@ public class Client extends GameEngine implements RSClient {
 	}
 
 	public void release() {
-		ObjectDefinition.baseModels.clear();
-		ObjectDefinition.models.clear();
+
+
 		NpcDefinition.mruNodes.clear();
 		ItemDefinition.models.clear();
 		ItemDefinition.sprites.clear();
@@ -18087,7 +18087,7 @@ public class Client extends GameEngine implements RSClient {
 				int middleX = (xLoc << 7) + (sizeX << 6);
 				int middleY = (yLoc << 7) + (sizeY << 6);
 
-				Model model = class46.getModel(objectType, objectFace, -1, heights, middleX, mean, middleY, null, -1);
+				Model model = class46.getModel(objectType, objectFace, heights, middleX, mean, middleY);
 				if (model != null) {
 					method130(stopDelay + 1, -1, 0, objectGenre, yLoc, 0, plane, xLoc, startDelay + 1);
 					player.anInt1707 = startDelay + cycle;

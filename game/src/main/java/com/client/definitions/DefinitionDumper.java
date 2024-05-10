@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.client.*;
-import com.client.definitions.server.ItemDef;
 import com.client.graphics.textures.Texture;
 import com.client.sign.Signlink;
 import com.google.gson.Gson;
