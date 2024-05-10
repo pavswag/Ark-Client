@@ -996,7 +996,7 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 			var7 = (long) (var2 + (var1 << 3) + (this.id << 10));
 		}
 
-		Object var9 = (Renderable) cachedModelData.get(var7);
+		Object var9 = (Renderable) models.get(var7);
 		if (var9 == null) {
 			Mesh var10 = this.getModelData(var1, var2);
 			if (var10 == null) {
@@ -1012,7 +1012,7 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 				var9 = var10;
 			}
 
-			cachedModelData.put((DualNode)var9, var7);
+			models.put((DualNode)var9, var7);
 		}
 
 		if (this.mergeNormals) {
@@ -1038,7 +1038,7 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 			var7 = (long)(var2 + (var1 << 3) + (this.id << 10));
 		}
 
-		Model var9 = (Model) cachedModelData.get(var7);
+		Model var9 = (Model) models.get(var7);
 		if (var9 == null) {
 			Mesh var10 = this.getModelData(var1, var2);
 			if (var10 == null) {
@@ -1046,7 +1046,7 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 			}
 
 			var9 = var10.toModel(this.ambient + 64, this.contrast + 768, -50, -10, -50);
-			cachedModelData.put(var9, var7);
+			models.put(var9, var7);
 		}
 
 		if (this.clipType * 65536 >= 0) {
@@ -1089,7 +1089,7 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 					var7 += 65536;
 				}
 
-				var3 = (Mesh) cachedModelData.get((long)var7);
+				var3 = (Mesh) models.get((long)var7);
 				if (var3 == null) {
 					var3 = Mesh.getModel(var7 & 65535);
 					if (var3 == null) {
