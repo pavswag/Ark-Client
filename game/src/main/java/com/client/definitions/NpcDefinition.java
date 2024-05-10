@@ -36,7 +36,12 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             npcDefinition = new NpcDefinition();
             npcDefinition.id = i;
             byte[] data = Js5List.configs.takeFile(Js5ConfigType.NPC, i);
-            npcDefinition.readValues(new Buffer(data));
+            try {
+                npcDefinition.readValues(new Buffer(data));
+            } catch (Exception e) {
+                System.out.println("Error decoding NPC [" + i + "], previous opcode[" + npcDefinition.previousOpcode + "]");
+                e.printStackTrace();
+            }
         }
 
        /* if (i == Npcs.BOB_BARTER_HERBS) {
@@ -1609,8 +1614,9 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
     }
     public int category;
 
+    private int previousOpcode = -1;
+
     private void readValues(Buffer buffer) {
-        int previousOpcode = -1;
         while (true) {
             int opcode = buffer.readUnsignedByte();
             if (opcode == 0)
@@ -1649,7 +1655,7 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
                 }
             } else if (opcode == 18) {
                 category = buffer.readUShort();
-            } else if (opcode >= 30 && opcode < 40) {
+            } else if (opcode >= 30 && opcode <= 35) {
                 if (actions == null)
                     actions = new String[10];
                 actions[opcode - 30] = buffer.readNullTerminatedString();
@@ -1717,7 +1723,7 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             else if (opcode == 107) {
                 isInteractable = false;
             } else if(opcode == 109) {
-                buffer.readByte();
+                boolean isClipped = false;
             } else if(opcode == 114) {
                 buffer.readShort();
             } else if(opcode == 115) {
