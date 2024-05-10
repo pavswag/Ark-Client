@@ -1246,46 +1246,46 @@ public class Sprite extends Rasterizer2D implements RSSpritePixels {
 		}
 	}
 
-	static void Sprite_drawTransBg(int[] var0, int[] var1, int var2, int var3, int var4, int var5, int var6, int var7, int var8) {
+	static void Sprite_drawTransBg(int[] rasterizerPixels, int[] spritePixels, int var2, int var3, int var4, int var5, int var6, int var7, int var8) {
 		int var9 = -(var5 >> 2);
 		var5 = -(var5 & 3);
 
 		for (int var10 = -var6; var10 < 0; ++var10) {
 			int var11;
 			for (var11 = var9; var11 < 0; ++var11) {
-				var2 = var1[var3++];
+				var2 = spritePixels[var3++];
 				if (var2 != 0) {
-					var0[var4++] = var2;
+					drawAlpha(rasterizerPixels, var4++, var2, 255);
 				} else {
 					++var4;
 				}
 
-				var2 = var1[var3++];
+				var2 = spritePixels[var3++];
 				if (var2 != 0) {
-					var0[var4++] = var2;
+					drawAlpha(rasterizerPixels, var4++, var2, 255);
 				} else {
 					++var4;
 				}
 
-				var2 = var1[var3++];
+				var2 = spritePixels[var3++];
 				if (var2 != 0) {
-					var0[var4++] = var2;
+					drawAlpha(rasterizerPixels, var4++, var2, 255);
 				} else {
 					++var4;
 				}
 
-				var2 = var1[var3++];
+				var2 = spritePixels[var3++];
 				if (var2 != 0) {
-					var0[var4++] = var2;
+					drawAlpha(rasterizerPixels, var4++, var2, 255);
 				} else {
 					++var4;
 				}
 			}
 
 			for (var11 = var5; var11 < 0; ++var11) {
-				var2 = var1[var3++];
+				var2 = spritePixels[var3++];
 				if (var2 != 0) {
-					var0[var4++] = var2;
+					drawAlpha(rasterizerPixels, var4++, var2, 255);
 				} else {
 					++var4;
 				}
