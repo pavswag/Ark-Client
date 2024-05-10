@@ -57,8 +57,6 @@ public class Rasterizer2D extends DualNode implements RSRasterizer2D {
         if (Rasterizer2D_yClipEnd > yEnd) {
             Rasterizer2D_yClipEnd = yEnd;
         }
-        System.out.println("xStart[" + xStart + "]  yStart[" + yStart + "]  xEnd[" + xEnd + "]  yEnd[" + yEnd + "]");
-        System.out.println("Rasterizer2D_xClipStart[" + Rasterizer2D_xClipStart + "]  Rasterizer2D_yClipStart[" + Rasterizer2D_yClipStart + "]  Rasterizer2D_xClipEnd[" + Rasterizer2D_xClipEnd + "]  Rasterizer2D_yClipEnd[" + Rasterizer2D_yClipEnd + "]");
     }
     public static void drawArc(int x, int y, int width, int height, int stroke, int start, int sweep, int color, int alpha, int closure, boolean fill) {
         Graphics2D graphics = Sprite.createGraphics(Rasterizer2D.Rasterizer2D_pixels, Rasterizer2D.Rasterizer2D_width, Rasterizer2D.Rasterizer2D_height);
