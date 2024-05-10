@@ -12604,7 +12604,7 @@ public class Client extends GameEngine implements RSClient {
 					if (informationFile.isRememberRoof()) {
 						removeRoofs = true;
 					}
-					SceneObject.clientInstance = this;
+
 					ObjectDefinition.clientInstance = this;
 					NpcDefinition.clientInstance = this;
 					Frame.clientInstance = this;
@@ -12749,7 +12749,7 @@ public class Client extends GameEngine implements RSClient {
 					setGameState(GameState.LOGIN_SCREEN);
 					isLoading = false;
 					long clientLoadStart = System.currentTimeMillis();
-					DefinitionDumper.dumpDefs();
+					//DefinitionDumper.dumpDefs();
 					int totalHitSplatDefs = Js5List.configs.getGroupFileCount(Js5ConfigType.HITSPLAT);
 					int totalHealthBarDefs = Js5List.configs.getGroupFileCount(Js5ConfigType.HEALTHBAR);
 					System.out.println("Found [" + totalHitSplatDefs + "] Hit splats");
@@ -18001,114 +18001,121 @@ public class Client extends GameEngine implements RSClient {
 			return;
 		}
 		if (j == 160) {
-			int k1 = stream.method428();
-			int j4 = anInt1268 + (k1 >> 4 & 7);
-			int i7 = anInt1269 + (k1 & 7);
+			int offset = stream.method428();
+			int xLoc = anInt1268 + (offset >> 4 & 7);
+			int yLoc = anInt1269 + (offset & 7);
 			int l9 = stream.method428();
 			int objectType = l9 >> 2;
 			int orientation = l9 & 3;
 			int objectTypeGroup = objectTypes[objectType];
 			int animationId = stream.readUShortA();
-			if (j4 >= 0 && i7 >= 0 && j4 < 103 && i7 < 103) {
-				int j18 = tileHeights[plane][j4][i7];
-				int i19 = tileHeights[plane][j4 + 1][i7];
-				int l19 = tileHeights[plane][j4 + 1][i7 + 1];
-				int k20 = tileHeights[plane][j4][i7 + 1];
+			if (xLoc >= 0 && yLoc >= 0 && xLoc < 103 && yLoc < 103) {
 				if (objectTypeGroup == 0) {
-					WallObject class10 = scene.getWallObject(plane, j4, i7);
+					WallObject class10 = scene.getWallObject(plane, xLoc, yLoc);
 					if (class10 != null) {
 						int k21 = ObjectKeyUtil.getObjectId(class10.uid);
 						if (objectType == 2) {
-							class10.renderable1 = new SceneObject(k21, 4 + orientation, 2, i19, l19, j18, k20, animationId,
+							class10.renderable1 = new SceneObject(k21, 4 + orientation, 2, plane, xLoc, yLoc, animationId,
 									false);
-							class10.renderable2 = new SceneObject(k21, orientation + 1 & 3, 2, i19, l19, j18, k20,
+							class10.renderable2 = new SceneObject(k21, orientation + 1 & 3, 2, plane, xLoc, yLoc,
 									animationId, false);
 						} else {
-							class10.renderable1 = new SceneObject(k21, orientation, objectType, i19, l19, j18, k20, animationId,
+							class10.renderable1 = new SceneObject(k21, orientation, objectType, plane, xLoc, yLoc, animationId,
 									false);
 						}
 					}
 				}
 				if (objectTypeGroup == 1) {
-					WallDecoration class26 = scene.getWallDecoration(j4, i7, plane);
+					WallDecoration class26 = scene.getWallDecoration(xLoc, yLoc, plane);
 					if (class26 != null)
-						class26.renderable = new SceneObject(ObjectKeyUtil.getObjectId(class26.uid), 0, 4, i19, l19,
-								j18, k20, animationId, false);
+						class26.renderable = new SceneObject(ObjectKeyUtil.getObjectId(class26.uid), 0, 4, plane, xLoc, yLoc, animationId, false);
 				}
 				if (objectTypeGroup == 2) {
-					GameObject class28 = scene.getGameObject(j4, i7, plane);
+					GameObject class28 = scene.getGameObject(xLoc, yLoc, plane);
 					if (objectType == 11)
 						objectType = 10;
 					if (class28 != null) {
-						class28.renderable = new SceneObject(ObjectKeyUtil.getObjectId(class28.uid), orientation, objectType, i19,
-								l19, j18, k20, animationId, false);
+						class28.renderable = new SceneObject(ObjectKeyUtil.getObjectId(class28.uid), orientation, objectType, plane, xLoc, yLoc, animationId, false);
 					}
 				}
 				if (objectTypeGroup == 3) {
-					GroundDecoration class49 = scene.getGroundDecoration(i7, j4, plane);
+					GroundDecoration class49 = scene.getGroundDecoration(yLoc, xLoc, plane);
 					if (class49 != null)
-						class49.renderable = new SceneObject(ObjectKeyUtil.getObjectId(class49.uid), orientation, 22, i19,
-								l19, j18, k20, animationId, false);
+						class49.renderable = new SceneObject(ObjectKeyUtil.getObjectId(class49.uid), orientation, 22, plane, xLoc, yLoc, animationId, false);
 				}
 			}
 			return;
 		}
 		if (j == 147) {
-			int l1 = stream.method428();
-			int k4 = anInt1268 + (l1 >> 4 & 7);
-			int j7 = anInt1269 + (l1 & 7);
-			int i10 = stream.readUShort();
-			byte byte0 = stream.method430();
-			int l14 = stream.method434();
-			byte byte1 = stream.method429();
-			int k17 = stream.readUShort();
-			int k18 = stream.method428();
-			int j19 = k18 >> 2;
-			int i20 = k18 & 3;
-			int l20 = objectTypes[j19];
+			int offset = stream.method428();
+			int xLoc = anInt1268 + (offset >> 4 & 7);
+			int yLoc = anInt1269 + (offset & 7);
+			int playerIndex = stream.readUShort();
+			byte byte0GreaterXLoc = stream.method430();
+			int startDelay = stream.method434();
+			byte byte1GreaterYLoc = stream.method429();
+			int stopDelay = stream.readUShort();
+			int objectTypeFace = stream.method428();
+			int objectType = objectTypeFace >> 2;
+			int objectFace = objectTypeFace & 3;
+			int objectGenre = objectTypes[objectType];
 			byte byte2 = stream.readSignedByte();
 			int l21 = stream.readUShort();
 			byte byte3 = stream.method429();
 			Player player;
-			if (i10 == localPlayerIndex)
+			if (playerIndex == localPlayerIndex)
 				player = localPlayer;
 			else
-				player = players[i10];
+				player = players[playerIndex];
 			if (player != null) {
 				ObjectDefinition class46 = ObjectDefinition.lookup(l21);
-				int i22 = tileHeights[plane][k4][j7];
-				int j22 = tileHeights[plane][k4 + 1][j7];
-				int k22 = tileHeights[plane][k4 + 1][j7 + 1];
-				int l22 = tileHeights[plane][k4][j7 + 1];
-				Model model = class46.modelAt(j19, i20, i22, j22, k22, l22, -1, null, -1);
+				int sizeX;
+				int sizeY;
+				if (objectFace != 1 && objectFace != 3) {
+					sizeX = class46.sizeX;
+					sizeY = class46.sizeY;
+				} else {
+					sizeX = class46.sizeY;
+					sizeY = class46.sizeX;
+				}
+				int left = xLoc + (sizeX >> 1);
+				int right = xLoc + (sizeX + 1 >> 1);
+				int top = yLoc + (sizeY >> 1);
+				int bottom = yLoc + (sizeY + 1 >> 1);
+				int[][] heights = Client.instance.getTileHeights()[plane];
+				int mean = heights[left][bottom] + heights[right][top] + heights[left][top] + heights[right][bottom] >> 2;
+				int middleX = (xLoc << 7) + (sizeX << 6);
+				int middleY = (yLoc << 7) + (sizeY << 6);
+
+				Model model = class46.getModel(objectType, objectFace, -1, heights, middleX, mean, middleY, null, -1);
 				if (model != null) {
-					method130(k17 + 1, -1, 0, l20, j7, 0, plane, k4, l14 + 1);
-					player.anInt1707 = l14 + cycle;
-					player.anInt1708 = k17 + cycle;
+					method130(stopDelay + 1, -1, 0, objectGenre, yLoc, 0, plane, xLoc, startDelay + 1);
+					player.anInt1707 = startDelay + cycle;
+					player.anInt1708 = stopDelay + cycle;
 					player.aModel_1714 = model;
 					int i23 = class46.sizeX;
 					int j23 = class46.sizeY;
-					if (i20 == 1 || i20 == 3) {
+					if (objectFace == 1 || objectFace == 3) {
 						i23 = class46.sizeY;
 						j23 = class46.sizeX;
 					}
-					player.anInt1711 = k4 * 128 + i23 * 64;
-					player.anInt1713 = j7 * 128 + j23 * 64;
+					player.anInt1711 = xLoc * 128 + i23 * 64;
+					player.anInt1713 = yLoc * 128 + j23 * 64;
 					player.anInt1712 = getCenterHeight(plane, player.anInt1713, player.anInt1711);
-					if (byte2 > byte0) {
+					if (byte2 > byte0GreaterXLoc) {
 						byte byte4 = byte2;
-						byte2 = byte0;
-						byte0 = byte4;
+						byte2 = byte0GreaterXLoc;
+						byte0GreaterXLoc = byte4;
 					}
-					if (byte3 > byte1) {
+					if (byte3 > byte1GreaterYLoc) {
 						byte byte5 = byte3;
-						byte3 = byte1;
-						byte1 = byte5;
+						byte3 = byte1GreaterYLoc;
+						byte1GreaterYLoc = byte5;
 					}
-					player.anInt1719 = k4 + byte2;
-					player.anInt1721 = k4 + byte0;
-					player.anInt1720 = j7 + byte3;
-					player.anInt1722 = j7 + byte1;
+					player.anInt1719 = xLoc + byte2;
+					player.anInt1721 = xLoc + byte0GreaterXLoc;
+					player.anInt1720 = yLoc + byte3;
+					player.anInt1722 = yLoc + byte1GreaterYLoc;
 				}
 			}
 		}

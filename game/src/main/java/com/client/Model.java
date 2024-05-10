@@ -32,6 +32,7 @@ public class Model extends Renderable implements RSModel {
 
     public boolean DEBUG_MODELS = false;
 
+
     public static void clear() {
         modelHeaders = null;
         hasAnEdgeToRestrict = null;
@@ -368,6 +369,163 @@ public class Model extends Renderable implements RSModel {
             e.printStackTrace();
         }
     }
+
+    public Model adjustToTerrain(int[][] heights, int vertexX, int mean, int vertexY, boolean clone, int clipType) {
+        calculateBoundsCylinder();
+        int shadowMinX = vertexX - diagonal2DAboveOrigin;
+        int shadowMaxX = vertexX + diagonal2DAboveOrigin;
+        int shadowMinY = vertexY -  diagonal2DAboveOrigin;
+        int shadowMaxY = vertexY +  diagonal2DAboveOrigin;
+        if (shadowMinX >= 0 && shadowMaxX + 128 >> 7 < heights.length && shadowMinY >= 0 && shadowMaxY + 128 >> 7 < heights[0].length) {
+            shadowMinX >>= 7;
+            shadowMaxX = shadowMaxX + 127 >> 7;
+            shadowMinY >>= 7;
+            shadowMaxY = shadowMaxY + 127 >> 7;
+            if (mean == heights[shadowMinX][shadowMinY] && mean == heights[shadowMaxX][shadowMinY] && mean == heights[shadowMinX][shadowMaxY] && mean == heights[shadowMaxX][shadowMaxY]) {
+                return this;
+            } else {
+                Model model;
+                if (clone) {
+                    model = new Model();
+                    model.verticesCount = verticesCount;
+                    model.trianglesCount  = trianglesCount ;
+                    model.texturesCount = texturesCount;
+                    model.verticesX = this.verticesX;
+                    model.verticesZ = verticesZ;
+                    model.trianglesX = trianglesX;
+                    model.trianglesY = trianglesY;
+                    model.trianglesZ = trianglesZ;
+                    model.colorsX = colorsX;
+                    model.colorsY = colorsY;
+                    model.colorsZ = colorsZ;
+                    model.renderPriorities = renderPriorities;
+                    model.faceTransparencies = faceTransparencies;
+                    model.textures = textures;
+                    model.materials = materials;
+                    model.textureTypes = textureTypes;
+                    model.drawType = drawType;
+                    model.facePriority = facePriority;
+                    model.colors = colors;
+                    model.texturesX = texturesX;
+                    model.texturesY = texturesY;
+                    model.texturesZ = texturesZ;
+                    model.groupedVertexLabels = groupedVertexLabels;
+                    model.groupedTriangleLabels = groupedTriangleLabels;
+                    model.singleTile = singleTile ;
+                    model.verticesY = new int[model.verticesCount];
+                    model.normals = normals;
+                    model.faceNormals = faceNormals;
+                    model.vertexNormalsX = vertexNormalsX;
+                    model.vertexNormalsY = vertexNormalsY;
+                    model.vertexNormalsZ = vertexNormalsZ;
+                    model.faceTextureUVCoordinates = faceTextureUVCoordinates;
+                } else {
+                    model = this;
+                }
+
+                int vertex;
+                int int_9;
+                int int_10;
+                int int_11;
+                int int_12;
+                int int_13;
+                int int_14;
+                int int_15;
+                int int_16;
+                int int_17;
+                if (clipType == 0) {
+                    for (vertex = 0; vertex < model.verticesCount; vertex++) {
+                        int_9 = vertexX + this.verticesX[vertex];
+                        int_10 = vertexY + this.verticesZ[vertex];
+                        int_11 = int_9 & 0x7F;
+                        int_12 = int_10 & 0x7F;
+                        int_13 = int_9 >> 7;
+                        int_14 = int_10 >> 7;
+                        int_15 = heights[int_13][int_14] * (128 - int_11) + heights[int_13 + 1][int_14] * int_11 >> 7;
+                        int_16 = heights[int_13][int_14 + 1] * (128 - int_11) + int_11 * heights[int_13 + 1][int_14 + 1] >> 7;
+                        int_17 = int_15 * (128 - int_12) + int_16 * int_12 >> 7;
+                        model.verticesY[vertex] = int_17 + this.verticesY[vertex] - mean;
+                    }
+                } else {
+                    for (vertex = 0; vertex < model.verticesCount; vertex++) {
+                        int_9 = (-this.verticesY[vertex] << 16) / super.modelBaseY;
+                        if (int_9 < clipType) {
+                            int_10 = vertexX + this.verticesX[vertex];
+                            int_11 = vertexY + this.verticesZ[vertex];
+                            int_12 = int_10 & 0x7F;
+                            int_13 = int_11 & 0x7F;
+                            int_14 = int_10 >> 7;
+                            int_15 = int_11 >> 7;
+                            int_16 = heights[int_14][int_15] * (128 - int_12) + heights[int_14 + 1][int_15] * int_12 >> 7;
+                            int_17 = heights[int_14][int_15 + 1] * (128 - int_12) + int_12 * heights[int_14 + 1][int_15 + 1] >> 7;
+                            int int_18 = int_16 * (128 - int_13) + int_17 * int_13 >> 7;
+                            model.verticesY[vertex] = (clipType - int_9) * (int_18 - mean) / clipType + this.verticesY[vertex];
+                        }
+                    }
+                }
+
+                model.resetBounds();
+                model.invalidate();
+                return model;
+            }
+        } else {
+            return this;
+        }
+    }
+
+
+
+    public int getShadowIntensity() {
+        calculateBoundsCylinder();
+        return diagonal2DAboveOrigin;
+    }
+
+    public Model(Model model) {
+        if (model.drawType != null) {
+            drawType = new int[model.trianglesCount];
+            for (int face = 0; face < model.trianglesCount; face++) {
+                drawType[face] = model.drawType[face];
+            }
+        }
+
+        singleTile = false;
+        verticesCount = model.verticesCount;
+        trianglesCount = model.trianglesCount;
+        texturesCount = model.texturesCount;
+        colorsX = model.colorsX;
+        colorsY = model.colorsY;
+        colorsZ = model.colorsZ;
+        verticesY = model.verticesY;
+        verticesX = model.verticesX;
+        verticesZ = model.verticesZ;
+        colors = model.colors;
+        faceTransparencies = model.faceTransparencies;
+        renderPriorities = model.renderPriorities;
+        facePriority = model.facePriority;
+        trianglesX = model.trianglesX;
+        trianglesY = model.trianglesY;
+        trianglesZ = model.trianglesZ;
+        texturesX = model.texturesX;
+        texturesY = model.texturesY;
+        texturesZ = model.texturesZ;
+        super.modelBaseY = model.modelBaseY;
+        textures = model.textures;
+        materials = model.materials;
+        diagonal2DAboveOrigin = model.diagonal2DAboveOrigin;
+        diagonal3DAboveOrigin = model.diagonal3DAboveOrigin;
+        diagonal3D = model.diagonal3D;
+        minX = model.minX;
+        maxZ = model.maxZ;
+        minZ = model.minZ;
+        maxX = model.maxX;
+
+        //New
+        vertexNormalsX = model.vertexNormalsX;
+        vertexNormalsY = model.vertexNormalsY;
+        vertexNormalsZ = model.vertexNormalsZ;
+        faceTextureUVCoordinates = model.faceTextureUVCoordinates;
+    }
+
 
     //Players - graphics in particular
     public Model(Model models[]) {
@@ -1518,6 +1676,29 @@ public class Model extends Renderable implements RSModel {
             }
 
         }
+    }
+
+
+
+    private int method4319(int var0, int var1) {
+        var1 = (var0 & 127) * var1 >> 7;
+        if (var1 < 2) {
+            var1 = 2;
+        } else if (var1 > 126) {
+            var1 = 126;
+        }
+
+        return (var0 & 'ﾀ') + var1;
+    }
+
+    private int method4320(int var0) {
+        if (var0 < 2) {
+            var0 = 2;
+        } else if (var0 > 126) {
+            var0 = 126;
+        }
+
+        return var0;
     }
 
     public Model light(int ambient, int contrast, int x, int y, int z, boolean flatShading) {
