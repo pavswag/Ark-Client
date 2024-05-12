@@ -28,25 +28,21 @@ import java.util.Random;
 import lombok.Getter;
 
 @Getter
-public enum GroundMaterial
-{
+public enum GroundMaterial {
 	NONE(Material.NONE),
 	SKULL_OBELISK(Material.SKULLS),
 	TRANSPARENT(Material.TRANSPARENT),
-
-	HD_WOOD_PLANKS_1(Material.HD_WOOD_PLANKS_1),
 	GRASS_1(Material.GRASS_1, Material.GRASS_2, Material.GRASS_3),
 	OVERWORLD_GRASS_1(Material.GRASS_1, Material.GRASS_2, Material.GRASS_3),
 	GRASS_SCROLLING(Material.GRASS_SCROLLING),
 	STONE_SCROLLING(Material.STONE_SCROLLING),
 	DIRT(Material.DIRT_1, Material.DIRT_2),
+	VERTICAL_DIRT(Material.DIRT_1_VERT, Material.DIRT_2_VERT),
 	SNOW_1(Material.SNOW_1, Material.SNOW_1, Material.SNOW_2, Material.SNOW_3, Material.SNOW_3, Material.SNOW_4),
 	SNOW_2(Material.SNOW_2, Material.SNOW_4),
 	GRAVEL(Material.GRAVEL),
 	FALADOR_PATHS(Material.FALADOR_PATH_BRICK),
 	VARROCK_PATHS(Material.JAGGED_STONE_TILE),
-	VAR_PATH_1(Material.FLOOR_PATH_1),
-	VAR_PATH_2(Material.FLOOR_PATH_2),
 	VARIED_DIRT(Material.GRAVEL, Material.DIRT_1, Material.DIRT_2),
 	VARIED_DIRT_SHINY(Material.GRAVEL_SHINY, Material.DIRT_1_SHINY, Material.DIRT_2_SHINY),
 	TILE_SMALL(Material.TILE_SMALL_1),
@@ -57,12 +53,12 @@ public enum GroundMaterial
 	GRUNGE_2(Material.GRUNGE_2),
 	SUBMERGED_GRUNGE_2(Material.SUBMERGED_GRUNGE_2),
 
-	TILES_2x2_1(Material.TILES_1_2x2),
-	TILES_2x2_2(Material.TILES_2_2x2),
-	TILES_2x2_1_GLOSS(Material.TILES_2x2_1_GLOSS),
-	TILES_2x2_2_GLOSS(Material.TILES_2x2_2_GLOSS),
-	TILES_2x2_1_SEMIGLOSS(Material.TILES_2x2_1_SEMIGLOSS),
-	TILES_2x2_2_SEMIGLOSS(Material.TILES_2x2_2_SEMIGLOSS),
+	TILES_2x2_1(Material.TILES_2X2_1),
+	TILES_2x2_2(Material.TILES_2X2_2),
+	TILES_2X2_1_GLOSS(Material.TILES_2X2_1_GLOSS),
+	TILES_2X2_2_GLOSS(Material.TILES_2X2_2_GLOSS),
+	TILES_2X2_1_SEMIGLOSS(Material.TILES_2X2_1_SEMIGLOSS),
+	TILES_2X2_2_SEMIGLOSS(Material.TILES_2X2_2_SEMIGLOSS),
 
 	MARBLE_1(Material.MARBLE_1, Material.MARBLE_2, Material.MARBLE_3),
 	MARBLE_2(Material.MARBLE_3, Material.MARBLE_1, Material.MARBLE_2),
@@ -84,7 +80,15 @@ public enum GroundMaterial
 	WOOD_PLANKS_1(Material.WOOD_PLANKS_1),
 	CLEAN_WOOD_FLOOR(Material.CLEAN_WOOD_FLOOR),
 
-	HD_LAVA(Material.HD_LAVA_1, Material.HD_LAVA_2, Material.HD_LAVA_1, Material.HD_LAVA_1, Material.HD_LAVA_2, Material.HD_MAGMA_1, Material.HD_MAGMA_2),
+	HD_LAVA(
+		Material.HD_LAVA_1,
+		Material.HD_LAVA_2,
+		Material.HD_LAVA_1,
+		Material.HD_LAVA_1,
+		Material.HD_LAVA_2,
+		Material.HD_MAGMA_1,
+		Material.HD_MAGMA_2
+	),
 
 	STONE_PATTERN(Material.STONE_PATTERN),
 	CONCRETE(Material.CONCRETE),
@@ -107,10 +111,10 @@ public enum GroundMaterial
 	GRASSY_DIRT(Material.GRASS_1, Material.DIRT_1, Material.GRASS_2, Material.DIRT_2, Material.GRASS_3),
 	OOZE_FLOOR(Material.GRUNGE_1_SHINY, Material.GRAVEL_SHINY_LIGHT, Material.GRUNGE_2_SHINY),
 	TEMPLE_OF_THE_EYE_FLOOR(
-			Material.GRUNGE_1,
-			Material.GRAVEL_LIGHT,
-			Material.GRUNGE_2,
-			Material.GRAVEL_LIGHT
+		Material.GRUNGE_1,
+		Material.GRAVEL_LIGHT,
+		Material.GRUNGE_2,
+		Material.GRAVEL_LIGHT
 	),
 	OVERWORLD_ROCKY(Material.ROCK_2, Material.STONE_NORMALED_DARK, Material.ROCK_1, Material.GRAVEL),
 	HD_BRICK_BROWN(Material.HD_BRICK_BROWN),
@@ -119,13 +123,11 @@ public enum GroundMaterial
 
 	private final Material[] materials;
 
-	GroundMaterial(Material... materials)
-	{
+	GroundMaterial(Material... materials) {
 		this.materials = materials;
 	}
 
-	public Material getRandomMaterial(int plane, int worldX, int worldY)
-	{
+	public Material getRandomMaterial(int plane, int worldX, int worldY) {
 		// Generate a seed from the tile coordinates for
 		// consistent 'random' results between scene loads.
 		// This seed creates a patchy, varied terrain

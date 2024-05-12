@@ -955,99 +955,6 @@ public class Model extends Renderable implements RSModel {
         this.diagonal3D = diagonal3DAboveOrigin + (int)(Math.sqrt(diagonal2DAboveOrigin * diagonal2DAboveOrigin + maxY * maxY) + 0.98999999999999999);
     }
 
-    public Model method1121(int[][] var1, int var2, int var3, int var4, boolean var5, int var6) {
-        this.calculateBounds();
-        int var7 = var2 + this.minX;
-        int var8 = var2 + this.maxX;
-        int var9 = var4 + this.maxZ;
-        int var10 = var4 + this.minZ;
-        if (var7 >= 0 && var8 + 128 >> 7 < var1.length && var9 >= 0 && var10 + 128 >> 7 < var1[0].length) {
-            var7 >>= 7;
-            var8 = var8 + 127 >> 7;
-            var9 >>= 7;
-            var10 = var10 + 127 >> 7;
-            if (var3 == var1[var7][var9] && var3 == var1[var8][var9] && var3 == var1[var7][var10]
-                    && var3 == var1[var8][var10]) {
-                return this;
-            } else {
-                Model var11 = new Model();
-                var11.verticesCount = this.verticesCount;
-                var11.trianglesCount = this.trianglesCount;
-                var11.texturesCount = this.texturesCount;
-                var11.verticesX = this.verticesX;
-                var11.verticesZ = this.verticesZ;
-                var11.trianglesX = this.trianglesX;
-                var11.trianglesY = this.trianglesY;
-                var11.trianglesZ = this.trianglesZ;
-                var11.drawType = this.drawType;
-                var11.renderPriorities = this.renderPriorities;
-                var11.faceTransparencies = this.faceTransparencies;
-                var11.textures = this.textures;
-                var11.colors = this.colors;
-                var11.materials = this.materials;
-                var11.facePriority = this.facePriority;
-                var11.textureTypes = this.textureTypes;
-                var11.texturesX = this.texturesX;
-                var11.texturesY = this.texturesY;
-                var11.texturesZ = this.texturesZ;
-                var11.vertexData = this.vertexData;
-                var11.triangleData = this.triangleData;
-                var11.groupedVertexLabels = this.groupedVertexLabels;
-                var11.groupedTriangleLabels = this.groupedTriangleLabels;
-                var11.ambient = this.ambient;
-                var11.contrast = this.contrast;
-                var11.verticesY = new int[var11.verticesCount];
-                int var12;
-                int var13;
-                int var14;
-                int var15;
-                int var16;
-                int var17;
-                int var18;
-                int var19;
-                int var20;
-                int var21;
-                if (var6 == 0) {
-                    for (var12 = 0; var12 < var11.verticesCount; ++var12) {
-                        var13 = var2 + this.verticesX[var12];
-                        var14 = var4 + this.verticesZ[var12];
-                        var15 = var13 & 127;
-                        var16 = var14 & 127;
-                        var17 = var13 >> 7;
-                        var18 = var14 >> 7;
-                        var19 = var1[var17][var18] * (128 - var15) + var1[var17 + 1][var18] * var15 >> 7;
-                        var20 = var1[var17][var18 + 1] * (128 - var15) + var15 * var1[var17 + 1][var18 + 1] >> 7;
-                        var21 = var19 * (128 - var16) + var20 * var16 >> 7;
-                        var11.verticesY[var12] = var21 + this.verticesY[var12] - var3;
-                    }
-                } else {
-                    for (var12 = 0; var12 < var11.verticesCount; ++var12) {
-                        var13 = (-this.verticesY[var12] << 16) / super.modelBaseY;
-                        if (var13 < var6) {
-                            var14 = var2 + this.verticesX[var12];
-                            var15 = var4 + this.verticesZ[var12];
-                            var16 = var14 & 127;
-                            var17 = var15 & 127;
-                            var18 = var14 >> 7;
-                            var19 = var15 >> 7;
-                            var20 = var1[var18][var19] * (128 - var16) + var1[var18 + 1][var19] * var16 >> 7;
-                            var21 = var1[var18][var19 + 1] * (128 - var16) + var16 * var1[var18 + 1][var19 + 1] >> 7;
-                            int var22 = var20 * (128 - var17) + var21 * var17 >> 7;
-                            var11.verticesY[var12] = (var6 - var13) * (var22 - var3) / var6 + this.verticesY[var12];
-                        }
-                    }
-                }
-
-                var11.invalidate();
-                return var11;
-            }
-        } else {
-            return this;
-        }
-    }
-
-
-
     public void calculateBounds() {
         if (!this.isBoundsCalculated) {
             super.modelBaseY = 0;
@@ -2602,78 +2509,73 @@ public class Model extends Renderable implements RSModel {
     }
 
     public void drawFace(int face) { //method484
-        DrawCallbacks callbacks = Client.instance.getDrawCallbacks();
-        if (callbacks == null || !callbacks.drawFace(this, face))
-        {
-            if (outOfReach[face]) {
-                faceRotation(face);
-                return;
+        if (outOfReach[face]) {
+            faceRotation(face);
+            return;
+        }
+        int triX = trianglesX[face];
+        int triY = trianglesY[face];
+        int triZ = trianglesZ[face];
+        Rasterizer3D.textureOutOfDrawingBounds = hasAnEdgeToRestrict[face];
+        if (faceTransparencies == null)
+            Rasterizer3D.alpha = 0;
+        else
+            Rasterizer3D.alpha = faceTransparencies[face] & 0xff;
+
+        int type;
+        if (drawType == null)
+            type = 0;
+        else
+            type = drawType[face] & 3;
+
+        if (materials != null && materials[face] != -1) {
+            int textureA = triX;
+            int textureB = triY;
+            int textureC = triZ;
+            if (textures != null && textures[face] != -1) {
+                int coordinate = textures[face] & 0xff;
+                textureA = texturesX[coordinate];
+                textureB = texturesY[coordinate];
+                textureC = texturesZ[coordinate];
             }
-            int triX = trianglesX[face];
-            int triY = trianglesY[face];
-            int triZ = trianglesZ[face];
-            Rasterizer3D.textureOutOfDrawingBounds = hasAnEdgeToRestrict[face];
-            if (faceTransparencies == null)
-                Rasterizer3D.alpha = 0;
-            else
-                Rasterizer3D.alpha = faceTransparencies[face] & 0xff;
 
-            int type;
-            if (drawType == null)
-                type = 0;
-            else
-                type = drawType[face] & 3;
-
-            if (materials != null && materials[face] != -1) {
-                int textureA = triX;
-                int textureB = triY;
-                int textureC = triZ;
-                if (textures != null && textures[face] != -1) {
-                    int coordinate = textures[face] & 0xff;
-                    textureA = texturesX[coordinate];
-                    textureB = texturesY[coordinate];
-                    textureC = texturesZ[coordinate];
-                }
-
-                if (colorsZ[face] == -1 || type == 3) {
-                    Rasterizer3D.drawTexturedTriangle(
-                            vertexScreenY[triX], vertexScreenY[triY], vertexScreenY[triZ],
-                            vertexScreenX[triX], vertexScreenX[triY], vertexScreenX[triZ],
-                            colorsX[face], colorsX[face], colorsX[face],
-                            vertexMovedX[textureA], vertexMovedX[textureB], vertexMovedX[textureC],
-                            vertexMovedY[textureA], vertexMovedY[textureB], vertexMovedY[textureC],
-                            vertexMovedZ[textureA], vertexMovedZ[textureB], vertexMovedZ[textureC],
-                            materials[face]);
-                } else {
-                    Rasterizer3D.drawTexturedTriangle(
-                            vertexScreenY[triX], vertexScreenY[triY], vertexScreenY[triZ],
-                            vertexScreenX[triX], vertexScreenX[triY], vertexScreenX[triZ],
-                            colorsX[face], colorsY[face], colorsZ[face],
-                            vertexMovedX[textureA], vertexMovedX[textureB], vertexMovedX[textureC],
-                            vertexMovedY[textureA], vertexMovedY[textureB], vertexMovedY[textureC],
-                            vertexMovedZ[textureA], vertexMovedZ[textureB], vertexMovedZ[textureC],
-                            materials[face]);
-                }
-
-            } else if(colorsZ[face] == -1) {//From old to new clause
-                Rasterizer3D.drawFlatTriangle(
+            if (colorsZ[face] == -1 || type == 3) {
+                Rasterizer3D.drawTexturedTriangle(
                         vertexScreenY[triX], vertexScreenY[triY], vertexScreenY[triZ],
                         vertexScreenX[triX], vertexScreenX[triY], vertexScreenX[triZ],
-                        modelColors[colorsX[face]]);
-
+                        colorsX[face], colorsX[face], colorsX[face],
+                        vertexMovedX[textureA], vertexMovedX[textureB], vertexMovedX[textureC],
+                        vertexMovedY[textureA], vertexMovedY[textureB], vertexMovedY[textureC],
+                        vertexMovedZ[textureA], vertexMovedZ[textureB], vertexMovedZ[textureC],
+                        materials[face]);
             } else {
-                if (type == 0) {
-                    Rasterizer3D.drawShadedTriangle(vertexScreenY[triX], vertexScreenY[triY],
-                            vertexScreenY[triZ], vertexScreenX[triX], vertexScreenX[triY],
-                            vertexScreenX[triZ], colorsX[face], colorsY[face], colorsZ[face]);
-                }
-                if (type == 1) {
-                    Rasterizer3D.drawFlatTriangle(vertexScreenY[triX], vertexScreenY[triY],
-                            vertexScreenY[triZ], vertexScreenX[triX], vertexScreenX[triY],
-                            vertexScreenX[triZ], modelColors[colorsX[face]]);
-                }
+                Rasterizer3D.drawTexturedTriangle(
+                        vertexScreenY[triX], vertexScreenY[triY], vertexScreenY[triZ],
+                        vertexScreenX[triX], vertexScreenX[triY], vertexScreenX[triZ],
+                        colorsX[face], colorsY[face], colorsZ[face],
+                        vertexMovedX[textureA], vertexMovedX[textureB], vertexMovedX[textureC],
+                        vertexMovedY[textureA], vertexMovedY[textureB], vertexMovedY[textureC],
+                        vertexMovedZ[textureA], vertexMovedZ[textureB], vertexMovedZ[textureC],
+                        materials[face]);
             }
 
+        } else if(colorsZ[face] == -1) {//From old to new clause
+            Rasterizer3D.drawFlatTriangle(
+                    vertexScreenY[triX], vertexScreenY[triY], vertexScreenY[triZ],
+                    vertexScreenX[triX], vertexScreenX[triY], vertexScreenX[triZ],
+                    modelColors[colorsX[face]]);
+
+        } else {
+            if (type == 0) {
+                Rasterizer3D.drawShadedTriangle(vertexScreenY[triX], vertexScreenY[triY],
+                        vertexScreenY[triZ], vertexScreenX[triX], vertexScreenX[triY],
+                        vertexScreenX[triZ], colorsX[face], colorsY[face], colorsZ[face]);
+            }
+            if (type == 1) {
+                Rasterizer3D.drawFlatTriangle(vertexScreenY[triX], vertexScreenY[triY],
+                        vertexScreenY[triZ], vertexScreenX[triX], vertexScreenX[triY],
+                        vertexScreenX[triZ], modelColors[colorsX[face]]);
+            }
         }
     }
 
@@ -3197,6 +3099,19 @@ public class Model extends Renderable implements RSModel {
         return this;
     }
 
+    private RSModel unskewedModel;
+
+    @Override
+    public void setUnskewedModel(RSModel unskewedModel)
+    {
+        this.unskewedModel = unskewedModel;
+    }
+
+    @Override
+    public RSModel getUnskewedModel()
+    {
+        return unskewedModel;
+    }
     @Override
     public Model rotateY270Ccw() {
         for (int vert = 0; vert < this.verticesCount; ++vert)
@@ -3393,6 +3308,8 @@ public class Model extends Renderable implements RSModel {
         return (AABB) getAABBMap().get(lastOrientation);
     }
 
+
+
     public Model contourGround(int[][] var1, int var2, int var3, int var4, boolean var5, int var6) {
         this.calculateBoundsCylinder();
         int var7 = var2 - this.diagonal2DAboveOrigin;
@@ -3482,6 +3399,10 @@ public class Model extends Renderable implements RSModel {
                 return var11;
             }
         } else {
+            if ((Client.instance.getGpuFlags() & 2) == 2)
+            {
+                setUnskewedModel(this);
+            }
             return this;
         }
     }

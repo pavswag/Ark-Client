@@ -435,4 +435,7 @@ public interface Actor extends Renderable, Locatable
 	void removeSpotAnim(int hash);
 
 	void createSpotAnim(int customGfxID, int customGfxID1, int i, int i1);
+
+    int getId();
+
 }

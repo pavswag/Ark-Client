@@ -125,6 +125,21 @@ public class SequenceDefinition implements Animation {
         return false;
     }
 
+    @Override
+    public int getNumFrames() {
+        return 0;
+    }
+
+    @Override
+    public int getRestartMode() {
+        return 0;
+    }
+
+    @Override
+    public void setRestartMode(int restartMode) {
+
+    }
+
     public static class Defaults {
         public static final int DEFAULT_FRAME_COUNT = 0;
         public static int DEFAULT_LOOP_DELAY = -1;

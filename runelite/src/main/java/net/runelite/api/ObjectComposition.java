@@ -16,4 +16,8 @@ public interface ObjectComposition extends ParamHolder {
 	ObjectComposition getImpostor();
 
 	int getAccessBitMask();
+
+    int getVarbitId();
+
+	int getVarPlayerId();
 }

@@ -144,4 +144,6 @@ public interface Model extends Renderable
 	Model rotateY270Ccw();
 
 	Model rotateY180Ccw();
+
+    Model getUnskewedModel();
 }

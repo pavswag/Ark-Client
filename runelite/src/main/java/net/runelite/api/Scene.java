@@ -197,4 +197,8 @@ public interface Scene
 	 * @see InstanceTemplates
 	 */
 	int[][][] getInstanceTemplateChunks();
+
+    Tile[][][] getExtendedTiles();
+
+    void removeTile(Tile tile);
 }

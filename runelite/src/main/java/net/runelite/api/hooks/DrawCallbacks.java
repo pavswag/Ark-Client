@@ -28,6 +28,7 @@ import net.runelite.api.*;
 
 public interface DrawCallbacks
 {
+
 	/**
 	 * GPU mode on.
 	 */
@@ -42,6 +43,7 @@ public interface DrawCallbacks
 	 * {@link Model#getVertexNormalsY()} {@link Model#getVertexNormalsZ()} API.
 	 */
 	int NORMALS = 4;
+
 	void draw(Renderable renderable, int orientation, int pitchSin, int pitchCos, int yawSin, int yawCos, int x, int y, int z, long hash);
 
 	void drawScenePaint(int orientation, int pitchSin, int pitchCos, int yawSin, int yawCos, int x, int y, int z,
@@ -60,8 +62,6 @@ public interface DrawCallbacks
 	 */
 	void draw(int overlayColor);
 
-	boolean drawFace(Model model, int face);
-
 	/**
 	 * Called before the scene is drawn
 	 * @param cameraX
@@ -71,7 +71,13 @@ public interface DrawCallbacks
 	 * @param cameraYaw
 	 * @param plane
 	 */
-	void drawScene(int cameraX, int cameraY, int cameraZ, int cameraPitch, int cameraYaw, int plane);
+	/**
+	 * Called before the scene is drawn
+	 */
+	default void drawScene(double cameraX, double cameraY, double cameraZ, double cameraPitch, double cameraYaw, int plane)
+	{
+	}
+
 
 	/**
 	 * Called after the scene has been drawn
@@ -83,4 +89,10 @@ public interface DrawCallbacks
 	void loadScene(Scene scene);
 
 	void swapScene(Scene scene);
+
+	default boolean tileInFrustum(Scene scene, int pitchSin, int pitchCos, int yawSin, int yawCos, int cameraX, int cameraY, int cameraZ, int plane, int msx, int msy)
+	{
+		return true;
+	}
+
 }

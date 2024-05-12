@@ -29,7 +29,6 @@ import javax.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Texture;
 import net.runelite.api.TextureProvider;
-import net.runelite.client.RuneLiteProperties;
 import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL43C;
@@ -187,7 +186,7 @@ class TextureManager
 			}
 		}
 
-		if (RuneLiteProperties.DEBUG_MODE)log.debug("Uploaded textures {}", cnt);
+		log.debug("Uploaded textures {}", cnt);
 	}
 
 	private static byte[] convertPixels(int[] srcPixels, int width, int height, int textureWidth, int textureHeight)
@@ -225,7 +224,7 @@ class TextureManager
 	{
 		Texture[] textures = textureProvider.getTextures();
 		float[] anims = new float[TEXTURE_SIZE * 2];
-		for (int i = 0; i < 116; ++i)
+		for (int i = 0; i < textures.length; ++i)
 		{
 			Texture texture = textures[i];
 			if (texture == null)

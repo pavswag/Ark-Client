@@ -241,9 +241,23 @@ public class Client extends GameEngine implements RSClient {
 	public int fogOpacity;
 
 	private final Object modelLoaderLock = new Object();
+
+	public EvictingDualNodeHashTable tmpModelDataCache = new EvictingDualNodeHashTable(16);
+
 	@SneakyThrows
-	public Model loadModelData(int id) {
-		return Model.getModel(id);
+	public RSModelData loadModelData(int var0)
+	{
+		return null;
+	}
+
+	@Override
+	public ModelData mergeModels(ModelData[] models, int length) {
+		return null;
+	}
+
+	@Override
+	public ModelData mergeModels(ModelData... models) {
+		return null;
 	}
 
 	@Override
@@ -21837,7 +21851,7 @@ public class Client extends GameEngine implements RSClient {
 	@Inject
 	private Callbacks callbacks;
 
-	private boolean gpu = false;
+	private int gpuFlags;
 
 	@Override
 	public Callbacks getCallbacks() {
@@ -24938,14 +24952,33 @@ public class Client extends GameEngine implements RSClient {
 
 	@Override
 	public boolean isGpu() {
-		return gpu;
+		return (gpuFlags & 1) == 1;
 	}
 
 	@Override
-	public void setGpu(boolean gpu) {
-		this.gpu = gpu;
+	public void setGpuFlags(int gpuFlags) {
+		this.gpuFlags = gpuFlags;
 	}
 
+	@Override
+	public int getGpuFlags() {
+		return gpuFlags;
+	}
+
+	@Override
+	public NPC getFollower() {
+		return null;
+	}
+
+	@Override
+	public int getExpandedMapLoading() {
+		return 0;
+	}
+
+	@Override
+	public void setExpandedMapLoading(int chunks) {
+
+	}
 
 	@Override
 	public int get3dZoom() {
@@ -26023,7 +26056,7 @@ public class Client extends GameEngine implements RSClient {
 
 	@Override
 	public RSModelData getModelData(RSAbstractArchive var0, int var1, int var2) {
-		return null;
+		return Mesh.get(var1,var2);
 	}
 
 	@Override
@@ -26369,10 +26402,6 @@ public class Client extends GameEngine implements RSClient {
 		this.lockChatbox = locked;
 	}
 
-	@Override
-	public net.runelite.api.Model mergeModels(net.runelite.api.Model shipBoat0, net.runelite.api.Model shipSail0) {
-		return new Model(new Model[]{(Model) shipBoat0, (Model) shipSail0});
-	}
 	private long accountHash;
 	@Override
 	public long getAccountHash() {

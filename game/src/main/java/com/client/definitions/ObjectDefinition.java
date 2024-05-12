@@ -1535,6 +1535,16 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 	}
 
 	@Override
+	public int getVarbitId() {
+		return varbit;
+	}
+
+	@Override
+	public int getVarPlayerId() {
+		return varp;
+	}
+
+	@Override
 	public int getIntValue(int paramID) {
 		return 0;
 	}

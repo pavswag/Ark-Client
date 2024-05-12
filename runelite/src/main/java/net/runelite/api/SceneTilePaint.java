@@ -54,4 +54,6 @@ public interface SceneTilePaint
 
 	int getBufferLen();
 	void setBufferLen(int bufferLen);
+
+    boolean isFlat();
 }

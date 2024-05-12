@@ -32,7 +32,7 @@ void get_face(
   __local struct shared_data *shared,
   __constant struct uniform *uni,
   __global const int4 *vb,
-  uint localId, struct ModelInfo minfo, int cameraYaw, int cameraPitch,
+  uint localId, struct ModelInfo minfo,
   /* out */ int *prio, int *dis, int4 *o1, int4 *o2, int4 *o3);
 void add_face_prio_distance(
   __local struct shared_data *shared,
@@ -40,6 +40,10 @@ void add_face_prio_distance(
   uint localId, struct ModelInfo minfo, int4 thisrvA, int4 thisrvB, int4 thisrvC, int thisPriority, int thisDistance, int4 pos);
 int map_face_priority(__local struct shared_data *shared, uint localId, struct ModelInfo minfo, int thisPriority, int thisDistance, int *prio);
 void insert_dfs(__local struct shared_data *shared, uint localId, struct ModelInfo minfo, int adjPrio, int distance, int prioIdx);
+int tile_height(read_only image3d_t tileHeightMap, int z, int x, int y);
+void hillskew_vertex(read_only image3d_t tileHeightMap, int4 *v, int hillskew, int y, int plane);
+void hillskew_vertexf(read_only image3d_t tileHeightMap, float4 *v, int hillskew, int y, int plane);
+void undoVanillaShading(int4 *vertex, float3 unrotatedNormal);
 void sort_and_insert(
   __local struct shared_data *shared,
   __global const float4 *uv,
@@ -48,7 +52,15 @@ void sort_and_insert(
   __global float4 *uvout,
   __global float4 *normalout,
   __constant struct uniform *uni,
-  uint localId, struct ModelInfo minfo, int thisPriority, int thisDistance, int4 thisrvA, int4 thisrvB, int4 thisrvC);
+  uint localId,
+  struct ModelInfo minfo,
+  int thisPriority,
+  int thisDistance,
+  int4 thisrvA,
+  int4 thisrvB,
+  int4 thisrvC,
+  read_only image3d_t tileHeightMap
+);
 
 // Calculate adjusted priority for a face with a given priority, distance, and
 // model global min10 and face distance averages. This allows positioning faces
@@ -110,7 +122,7 @@ void get_face(
   __local struct shared_data *shared,
   __constant struct uniform *uni,
   __global const int4 *vb,
-  uint localId, struct ModelInfo minfo, int cameraYaw, int cameraPitch,
+  uint localId, struct ModelInfo minfo,
   /* out */ int *prio, int *dis, int4 *o1, int4 *o2, int4 *o3
 ) {
   uint size = minfo.size;
@@ -129,7 +141,7 @@ void get_face(
   int4 thisC = vb[offset + ssboOffset * 3 + 2];
 
   if (localId < size) {
-    int radius = (flags & 0x7fffffff) >> 12;
+    int radius = (flags >> 12) & 0xfff;
     int orientation = flags & 0x7ff;
 
     // rotate for model orientation
@@ -138,12 +150,12 @@ void get_face(
     int4 thisrvC = rotate_ivec(uni, thisC, orientation);
 
     // calculate distance to face
-    int thisPriority = (thisA.w >> 16) & 0xff;// all vertices on the face have the same priority
+    int thisPriority = (thisA.w >> 16) & 0xF;// all vertices on the face have the same priority
     int thisDistance;
     if (radius == 0) {
       thisDistance = 0;
     } else {
-      thisDistance = face_distance(thisrvA, thisrvB, thisrvC, cameraYaw, cameraPitch) + radius;
+      thisDistance = face_distance(uni, thisrvA, thisrvB, thisrvC) + radius;
     }
 
     *o1 = thisrvA;
@@ -224,6 +236,71 @@ void insert_dfs(__local struct shared_data *shared, uint localId, struct ModelIn
   }
 }
 
+int tile_height(read_only image3d_t tileHeightMap, int z, int x, int y) {
+  #define ESCENE_OFFSET 40 // (184-104)/2
+  const sampler_t tileHeightSampler = CLK_NORMALIZED_COORDS_FALSE | CLK_ADDRESS_CLAMP_TO_EDGE;
+  int4 coord = (int4)(x + ESCENE_OFFSET, y + ESCENE_OFFSET, z, 0);
+  return read_imagei(tileHeightMap, tileHeightSampler, coord).x << 3;
+}
+
+void hillskew_vertex(read_only image3d_t tileHeightMap, int4 *v, int hillskew, int y, int plane) {
+    int px = v->x & 127;
+    int pz = v->z & 127;
+    int sx = v->x >> 7;
+    int sz = v->z >> 7;
+    int h1 = (px * tile_height(tileHeightMap, plane, sx + 1, sz) + (128 - px) * tile_height(tileHeightMap, plane, sx, sz)) >> 7;
+    int h2 = (px * tile_height(tileHeightMap, plane, sx + 1, sz + 1) + (128 - px) * tile_height(tileHeightMap, plane, sx, sz + 1)) >> 7;
+    int h3 = (pz * h2 + (128 - pz) * h1) >> 7;
+    v->y += h3 - y;
+}
+
+void hillskew_vertexf(read_only image3d_t tileHeightMap, float4 *v, int hillskew, int y, int plane) {
+    int x = (int) v->x;
+    int z = (int) v->z;
+    int px = x & 127;
+    int pz = z & 127;
+    int sx = x >> 7;
+    int sz = z >> 7;
+    int h1 = (px * tile_height(tileHeightMap, plane, sx + 1, sz) + (128 - px) * tile_height(tileHeightMap, plane, sx, sz)) >> 7;
+    int h2 = (px * tile_height(tileHeightMap, plane, sx + 1, sz + 1) + (128 - px) * tile_height(tileHeightMap, plane, sx, sz + 1)) >> 7;
+    int h3 = (pz * h2 + (128 - pz) * h1) >> 7;
+    v->y += h3 - y;
+}
+
+void undoVanillaShading(int4 *vertex, float3 unrotatedNormal) {
+    unrotatedNormal = normalize(unrotatedNormal);
+
+    const float3 LIGHT_DIR_MODEL = (float3)(0.57735026, 0.57735026, 0.57735026);
+    // subtracts the X lowest lightness levels from the formula.
+    // helps keep darker colors appropriately dark
+    const int IGNORE_LOW_LIGHTNESS = 3;
+    // multiplier applied to vertex' lightness value.
+    // results in greater lightening of lighter colors
+    const float LIGHTNESS_MULTIPLIER = 3.f;
+    // the minimum amount by which each color will be lightened
+    const int BASE_LIGHTEN = 10;
+
+    int hsl = vertex->w;
+    int saturation = hsl >> 7 & 0x7;
+    int lightness = hsl & 0x7F;
+    float vanillaLightDotNormals = dot(LIGHT_DIR_MODEL, unrotatedNormal);
+    if (vanillaLightDotNormals > 0) {
+        float lighten = max(0, lightness - IGNORE_LOW_LIGHTNESS);
+        lightness += (int) ((lighten * LIGHTNESS_MULTIPLIER + BASE_LIGHTEN - lightness) * vanillaLightDotNormals);
+    }
+    int maxLightness;
+    #if LEGACY_GREY_COLORS
+    maxLightness = 55;
+    #else
+    const int MAX_BRIGHTNESS_LOOKUP_TABLE[8] = { 127, 61, 59, 57, 56, 56, 55, 55 };
+    maxLightness = MAX_BRIGHTNESS_LOOKUP_TABLE[saturation];
+    #endif
+    lightness = min(lightness, maxLightness);
+    hsl &= ~0x7F;
+    hsl |= lightness;
+    vertex->w = hsl;
+}
+
 void sort_and_insert(
   __local struct shared_data *shared,
   __global const float4 *uv,
@@ -232,7 +309,15 @@ void sort_and_insert(
   __global float4 *uvout,
   __global float4 *normalout,
   __constant struct uniform *uni,
-  uint localId, struct ModelInfo minfo, int thisPriority, int thisDistance, int4 thisrvA, int4 thisrvB, int4 thisrvC) {
+  uint localId,
+  struct ModelInfo minfo,
+  int thisPriority,
+  int thisDistance,
+  int4 thisrvA,
+  int4 thisrvB,
+  int4 thisrvC,
+  read_only image3d_t tileHeightMap
+) {
   /* compute face distance */
   uint offset = minfo.offset;
   uint size = minfo.size;
@@ -250,8 +335,6 @@ void sort_and_insert(
     int end = priorityOffset + numOfPriority; // index of last face with this priority
     int myOffset = priorityOffset;
     
-    uint ssboOffset = localId;
-
     // we only have to order faces against others of the same priority
     // calculate position this face will be in
     for (int i = start; i < end; ++i) {
@@ -268,10 +351,44 @@ void sort_and_insert(
       }
     }
 
+    float4 normA = normal[offset + localId * 3];
+    float4 normB = normal[offset + localId * 3 + 1];
+    float4 normC = normal[offset + localId * 3 + 2];
+
+    normalout[outOffset + myOffset * 3    ] = rotate_vec(normA, orientation);
+    normalout[outOffset + myOffset * 3 + 1] = rotate_vec(normB, orientation);
+    normalout[outOffset + myOffset * 3 + 2] = rotate_vec(normC, orientation);
+
+    #if UNDO_VANILLA_SHADING
+    if ((((int)thisrvA.w) >> 20 & 1) == 0) {
+        if (fast_length(normA) == 0) {
+            // Compute flat normal if necessary, and rotate it back to match unrotated normals
+            float3 N = cross(convert_float3(thisrvA.xyz - thisrvB.xyz), convert_float3(thisrvA.xyz - thisrvC.xyz));
+            normA = normB = normC = (float4) (N, 1.f);
+        }
+        undoVanillaShading(&thisrvA, normA.xyz);
+        undoVanillaShading(&thisrvB, normB.xyz);
+        undoVanillaShading(&thisrvC, normC.xyz);
+    }
+    #endif
+
+    thisrvA += pos;
+    thisrvB += pos;
+    thisrvC += pos;
+
+    // apply hillskew
+    int plane = (flags >> 24) & 3;
+    int hillskew = (flags >> 26) & 1;
+    if (hillskew == 1) {
+        hillskew_vertex(tileHeightMap, &thisrvA, hillskew, minfo.y, plane);
+        hillskew_vertex(tileHeightMap, &thisrvB, hillskew, minfo.y, plane);
+        hillskew_vertex(tileHeightMap, &thisrvC, hillskew, minfo.y, plane);
+    }
+
     // position vertices in scene and write to out buffer
-    vout[outOffset + myOffset * 3]     = pos + thisrvA;
-    vout[outOffset + myOffset * 3 + 1] = pos + thisrvB;
-    vout[outOffset + myOffset * 3 + 2] = pos + thisrvC;
+    vout[outOffset + myOffset * 3]     = thisrvA;
+    vout[outOffset + myOffset * 3 + 1] = thisrvB;
+    vout[outOffset + myOffset * 3 + 2] = thisrvC;
 
     float4 uvA = (float4)(0);
     float4 uvB = (float4)(0);
@@ -282,7 +399,7 @@ void sort_and_insert(
       uvB = uv[uvOffset + localId * 3 + 1];
       uvC = uv[uvOffset + localId * 3 + 2];
 
-      if ((((int)uvA.w) >> MATERIAL_FLAG_IS_VANILLA_TEXTURED & 1) == 1) {
+      if ((((int)uvA.w) >> MATERIAL_FLAG_VANILLA_UVS & 1) == 1) {
         // Rotate the texture triangles to match model orientation
         uvA = rotate_vec(uvA, orientation);
         uvB = rotate_vec(uvB, orientation);
@@ -293,19 +410,18 @@ void sort_and_insert(
         uvA.xyz += modelPos;
         uvB.xyz += modelPos;
         uvC.xyz += modelPos;
+
+        // For vanilla UVs, the first 3 components are an integer position vector
+        if (hillskew == 1) {
+            hillskew_vertexf(tileHeightMap, &uvA, hillskew, minfo.y, plane);
+            hillskew_vertexf(tileHeightMap, &uvB, hillskew, minfo.y, plane);
+            hillskew_vertexf(tileHeightMap, &uvC, hillskew, minfo.y, plane);
+        }
       }
     }
 
     uvout[outOffset + myOffset * 3]     = uvA;
     uvout[outOffset + myOffset * 3 + 1] = uvB;
     uvout[outOffset + myOffset * 3 + 2] = uvC;
-    
-    float4 normA = normal[offset + ssboOffset * 3    ];
-    float4 normB = normal[offset + ssboOffset * 3 + 1];
-    float4 normC = normal[offset + ssboOffset * 3 + 2];
-
-    normalout[outOffset + myOffset * 3    ] = rotate_vec(normA, orientation);
-    normalout[outOffset + myOffset * 3 + 1] = rotate_vec(normB, orientation);
-    normalout[outOffset + myOffset * 3 + 2] = rotate_vec(normC, orientation);
   }
 }

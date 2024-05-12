@@ -33,6 +33,10 @@ import net.runelite.mapping.Import;
 
 public interface RSModel extends RSRenderable, Model
 {
+
+	RSModel getUnskewedModel();
+	void setUnskewedModel(RSModel unskewedModel);
+
 	@Import("verticesCount")
 	@Override
 	int getVerticesCount();

@@ -25,14 +25,14 @@
  */
 package net.runelite.client.plugins.hd.data;
 
+import java.util.function.Consumer;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.runelite.client.plugins.hd.data.materials.Material;
 
-import java.util.function.Consumer;
-
-import static net.runelite.client.plugins.hd.utils.HDUtils.linearToSrgb;
-import static net.runelite.client.plugins.hd.utils.HDUtils.rgb;
+import static net.runelite.client.plugins.hd.utils.ColorUtils.hsl;
+import static net.runelite.client.plugins.hd.utils.ColorUtils.rgb;
+import static net.runelite.client.plugins.hd.utils.ColorUtils.srgb;
 
 public enum WaterType
 {
@@ -45,11 +45,12 @@ public enum WaterType
 		.normalStrength(.05f)
 		.baseOpacity(.8f)
 		.fresnelAmount(.3f)
-		.surfaceColor(linearToSrgb(rgb(23, 33, 20)))
-		.foamColor(linearToSrgb(rgb(115, 120, 101)))
-		.depthColor(linearToSrgb(rgb(41, 82, 26)))
+		.surfaceColor(srgb(23, 33, 20))
+		.foamColor(srgb(115, 120, 101))
+		.depthColor(srgb(41, 82, 26))
 		.causticsStrength(0)
-		.duration(1.2f)),
+		.duration(1.2f)
+		.fishingSpotRecolor(hsl("#04730d"))),
 	SWAMP_WATER_FLAT(SWAMP_WATER, true),
 	POISON_WASTE(b -> b
 		.specularStrength(.1f)
@@ -57,21 +58,32 @@ public enum WaterType
 		.normalStrength(.05f)
 		.baseOpacity(.9f)
 		.fresnelAmount(.3f)
-		.surfaceColor(linearToSrgb(rgb(22, 23, 13)))
-		.foamColor(linearToSrgb(rgb(106, 108, 100)))
-		.depthColor(linearToSrgb(rgb(50, 52, 46)))
+		.surfaceColor(srgb(22, 23, 13))
+		.foamColor(srgb(106, 108, 100))
+		.depthColor(srgb(50, 52, 46))
 		.causticsStrength(0)
 		.duration(1.6f)),
-	POISON_WASTE_FLAT(POISON_WASTE, true),
+	BLACK_TAR_FLAT(b -> b
+		.specularStrength(.05f)
+		.specularGloss(300)
+		.normalStrength(.05f)
+		.baseOpacity(.9f)
+		.fresnelAmount(.02f)
+		.surfaceColor(rgb(38, 40, 43))
+		.foamColor(rgb(0, 0, 0))
+		.depthColor(rgb(38, 40, 43))
+		.causticsStrength(0)
+		.duration(1.6f)
+		.flat(true)),
 	BLOOD(b -> b
 		.specularStrength(.5f)
 		.specularGloss(500)
 		.normalStrength(.05f)
-		.baseOpacity(.8f)
-		.fresnelAmount(.3f)
-		.surfaceColor(linearToSrgb(rgb(38, 0, 0)))
-		.foamColor(linearToSrgb(rgb(117, 63, 45)))
-		.depthColor(linearToSrgb(rgb(50, 26, 22)))
+		.baseOpacity(.85f)
+		.fresnelAmount(0)
+		.surfaceColor(srgb(38, 0, 0))
+		.foamColor(srgb(117, 63, 45))
+		.depthColor(srgb(50, 26, 22))
 		.causticsStrength(0)
 		.duration(2)),
 	ICE(b -> b
@@ -80,12 +92,61 @@ public enum WaterType
 		.normalStrength(.04f)
 		.baseOpacity(.85f)
 		.fresnelAmount(1)
-		.foamColor(linearToSrgb(rgb(150, 150, 150)))
-		.depthColor(linearToSrgb(rgb(0, 117, 142)))
+		.foamColor(srgb(150, 150, 150))
+		.depthColor(srgb(0, 117, 142))
 		.causticsStrength(.4f)
 		.duration(0)
 		.normalMap(Material.WATER_NORMAL_MAP_2)),
 	ICE_FLAT(ICE, true),
+	MUDDY_WATER(b -> b
+		.specularStrength(.1f)
+		.specularGloss(100)
+		.normalStrength(.05f)
+		.baseOpacity(.7f)
+		.fresnelAmount(.3f)
+		.surfaceColor(srgb(35, 10, 0))
+		.foamColor(srgb(106, 108, 24))
+		.depthColor(srgb(65, 23, 0))
+		.causticsStrength(0)
+		.duration(2.7f)),
+	SCAR_SLUDGE(b -> b
+		.specularStrength(0)
+		.specularGloss(100)
+		.normalStrength(.05f)
+		.baseOpacity(.85f)
+		.fresnelAmount(.3f)
+		.surfaceColor(srgb(0x26, 0x26, 0x23))
+		.foamColor(srgb(0x69, 0x77, 0x5e))
+		.depthColor(srgb(0x69, 0x77, 0x5e))
+		.causticsStrength(0)
+		.duration(1.2f)),
+	ABYSS_BILE(b -> b
+		.specularStrength(0.2f)
+		.specularGloss(100)
+		.normalStrength(.08f)
+		.baseOpacity(.85f)
+		.fresnelAmount(.3f)
+		.surfaceColor(rgb(120, 91, 0))
+		.foamColor(rgb(120, 81, 0))
+		.depthColor(rgb(120, 59, 0))
+		.causticsStrength(0.4f)
+		.duration(2.2f)),
+	PLAIN_WATER(b -> b
+		.depthColor(rgb(0, 0, 0))
+		.foamColor(rgb(64, 64, 64))
+		.causticsStrength(0)
+		.flat(true)),
+	DARK_BLUE_WATER(b -> b
+		.specularStrength(.1f)
+		.specularGloss(100)
+		.normalStrength(.1f)
+		.baseOpacity(.8f)
+		.fresnelAmount(.2f)
+		.surfaceColor(rgb("#07292f"))
+		.foamColor(rgb(64, 64, 64))
+		.depthColor(rgb("#000000"))
+		.causticsStrength(0)
+		.flat(true)),
 	;
 
 	public final boolean flat;
@@ -101,6 +162,7 @@ public enum WaterType
 	public final float causticsStrength;
 	public final boolean hasFoam;
 	public final float duration;
+	public final int fishingSpotRecolor;
 
 	@Setter
 	@Accessors(fluent = true)
@@ -114,11 +176,12 @@ public enum WaterType
 		private float fresnelAmount = 1;
 		private Material normalMap = Material.WATER_NORMAL_MAP_1;
 		private float[] surfaceColor = { 1, 1, 1 };
-		private float[] foamColor = linearToSrgb(rgb(176, 164, 146));
-		private float[] depthColor = linearToSrgb(rgb(0, 117, 142));
+		private float[] foamColor = srgb(176, 164, 146);
+		private float[] depthColor = srgb(0, 117, 142);
 		private float causticsStrength = 1;
 		private boolean hasFoam = true;
 		private float duration = 1;
+		private int fishingSpotRecolor = -1;
 	}
 
 	WaterType()
@@ -143,6 +206,7 @@ public enum WaterType
 		causticsStrength = builder.causticsStrength;
 		hasFoam = builder.hasFoam;
 		duration = builder.duration;
+		fishingSpotRecolor = builder.fishingSpotRecolor;
 	}
 
 	WaterType(WaterType parent, boolean flat)
@@ -160,5 +224,6 @@ public enum WaterType
 		causticsStrength = parent.causticsStrength;
 		hasFoam = parent.hasFoam;
 		duration = parent.duration;
+		fishingSpotRecolor = parent.fishingSpotRecolor;
 	}
 }

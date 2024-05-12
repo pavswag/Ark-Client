@@ -905,6 +905,11 @@ public final class Player extends Entity implements RSPlayer {
 	}
 
 	@Override
+	public int getId() {
+		return (int) aLong1697;
+	}
+
+	@Override
 	public int getPathLength() {
 		return 0;
 	}

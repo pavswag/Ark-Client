@@ -3,6 +3,7 @@ package com.client;
 import com.client.definitions.SpotAnimation;
 import com.client.definitions.SeqFrame;
 import net.runelite.api.Actor;
+import net.runelite.api.Animation;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.events.ProjectileMoved;
 import net.runelite.api.events.ProjectileSpawned;
@@ -257,37 +258,8 @@ final class Projectile extends Renderable implements RSProjectile {
 	}
 
 	@Override
-	public RSNode getNext() {
-		return null;
+	public Animation getAnimation() {
+		return projectileGFX.animationSequence;
 	}
 
-	@Override
-	public long getHash() {
-		return 0;
-	}
-
-	@Override
-	public RSNode getPrevious() {
-		return null;
-	}
-
-	@Override
-	public void onUnlink() {
-
-	}
-
-	@Override
-	public int getModelHeight() {
-		return modelBaseY;
-	}
-
-	@Override
-	public void setModelHeight(int modelHeight) {
-		modelBaseY = modelHeight;
-	}
-
-	@Override
-	public void draw(int orientation, int pitchSin, int pitchCos, int yawSin, int yawCos, int x, int y, int z, long hash) {
-		renderAtPoint(orientation, pitchSin, pitchCos, yawSin, yawCos, x, y, z, hash, 0);
-	}
 }

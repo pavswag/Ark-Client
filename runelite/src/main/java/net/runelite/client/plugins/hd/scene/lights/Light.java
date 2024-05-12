@@ -1,148 +1,129 @@
 package net.runelite.client.plugins.hd.scene.lights;
 
-import com.google.gson.TypeAdapter;
-import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
-import net.runelite.client.plugins.hd.data.NpcID;
-import net.runelite.client.plugins.hd.data.ObjectID;
+import net.runelite.api.*;
+import net.runelite.api.coords.*;
+import net.runelite.client.plugins.hd.utils.HDUtils;
 
-import javax.annotation.Nullable;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import static net.runelite.client.plugins.hd.utils.GsonUtils.parseIDArray;
-import static net.runelite.client.plugins.hd.utils.GsonUtils.writeIDArray;
-
-@Slf4j
-@NoArgsConstructor // Called by GSON when parsing JSON
 public class Light
 {
-	public String description;
-	@Nullable
-	public Integer worldX, worldY;
-	public int plane;
-	@NonNull
-	public Alignment alignment = Alignment.CENTER;
-	public int height;
+	public static final float VISIBILITY_FADE = 0.1f;
+
+	public final float randomOffset = HDUtils.rand.nextFloat();
+	public final LightDefinition def;
+
 	public int radius;
 	public float strength;
 	/**
 	 * Linear color space RGBA in the range [0, 1]
 	 */
 	public float[] color;
-	@NonNull
-	public LightType type = LightType.STATIC;
+	public float animation = 0.5f;
 	public float duration;
-	public float range;
-	public int fadeInDuration;
-	@JsonAdapter(NpcID.JsonAdapter.class)
-	public HashSet<Integer> npcIds = new HashSet<>();
-	@JsonAdapter(ObjectID.JsonAdapter.class)
-	public HashSet<Integer> objectIds = new HashSet<>();
-	@JsonAdapter(IntegerSetAdapter.class)
-	public HashSet<Integer> projectileIds = new HashSet<>();
-	@JsonAdapter(IntegerSetAdapter.class)
-	public HashSet<Integer> graphicsObjectIds = new HashSet<>();
+	public float fadeInDuration;
+	public float fadeOutDuration;
+	public float spawnDelay;
+	public float despawnDelay;
 
-	public Light(String description, int worldX, int worldY, int plane, Integer height, @NonNull Alignment alignment, int radius, float strength, float[] color, @NonNull LightType type, float duration, float range, Integer fadeInDuration, HashSet<Integer> npcIds, HashSet<Integer> objectIds, HashSet<Integer> projectileIds, HashSet<Integer> graphicsObjectIds)
-	{
-		this.description = description;
-		this.worldX = worldX;
-		this.worldY = worldY;
-		this.plane = plane;
-		this.height = height;
-		this.alignment = alignment;
-		this.radius = radius;
-		this.strength = strength;
-		this.color = color;
-		this.type = type;
-		this.duration = duration;
-		this.range = range;
-		this.fadeInDuration = fadeInDuration;
-		this.npcIds = npcIds == null ? new HashSet<>() : npcIds;
-		this.objectIds = objectIds == null ? new HashSet<>() : objectIds;
-		this.projectileIds = projectileIds == null ? new HashSet<>() : projectileIds;
-		this.graphicsObjectIds = graphicsObjectIds == null ? new HashSet<>() : graphicsObjectIds;
-	}
+	public boolean visible;
+	public boolean parentExists;
+	public boolean withinViewingDistance = true;
+	public boolean hiddenTemporarily;
+	public boolean markedForRemoval;
+	public boolean persistent;
+	public boolean replayable;
 
-	public static class IntegerSetAdapter extends TypeAdapter<HashSet<Integer>>
-	{
-		@Override
-		public HashSet<Integer> read(JsonReader in) throws IOException
-		{
-			return parseIDArray(in, null);
+	public final boolean animationSpecific;
+	public final boolean dynamicLifetime;
+
+	public float elapsedTime;
+	public float changedVisibilityAt = -1;
+	public float lifetime = -1;
+
+	public WorldPoint worldPoint;
+	public boolean belowFloor;
+	public boolean aboveFloor;
+	public int plane;
+	public int prevPlane = -1;
+	public int prevTileX = -1;
+	public int prevTileY = -1;
+	public Alignment alignment;
+	public int[] origin = new int[3];
+	public int[] offset = new int[3];
+	public int[] pos = new int[3];
+	public int orientation;
+	public int distanceSquared;
+
+	public Actor actor;
+	public Projectile projectile;
+	public TileObject tileObject;
+	public GraphicsObject graphicsObject;
+	public int spotAnimId = -1;
+	public int preOrientation;
+	public int[] projectileRefCounter;
+	public long hash;
+
+	public int sizeX = 1;
+	public int sizeY = 1;
+
+	public Light(LightDefinition def) {
+		this.def = def;
+		System.arraycopy(def.offset, 0, offset, 0, 3);
+		duration = Math.max(0, def.duration) / 1000f;
+		fadeInDuration = Math.max(0, def.fadeInDuration) / 1000f;
+		fadeOutDuration = Math.max(0, def.fadeOutDuration) / 1000f;
+		spawnDelay = Math.max(0, def.spawnDelay) / 1000f;
+		despawnDelay = Math.max(0, def.despawnDelay) / 1000f;
+		color = def.color;
+		radius = def.radius;
+		strength = def.strength;
+		alignment = def.alignment;
+		plane = def.plane;
+		if (def.type == LightType.PULSE)
+			animation = (float) Math.random();
+
+		// Old way of setting a fixed lifetime
+		if (def.fixedDespawnTime)
+			lifetime = spawnDelay + despawnDelay;
+
+		if (lifetime == -1) {
+			dynamicLifetime = true;
+			// If the despawn is dynamic, ensure there's enough time for the light to fade out
+			despawnDelay = Math.max(despawnDelay, fadeOutDuration);
+		} else {
+			dynamicLifetime = false;
 		}
 
-		@Override
-		public void write(JsonWriter out, HashSet<Integer> value) throws IOException
-		{
-			writeIDArray(out, value, null);
+		animationSpecific = !def.animationIds.isEmpty();
+		if (animationSpecific) {
+			persistent = replayable = true;
+			// Initially hide the light
+			if (dynamicLifetime) {
+				lifetime = 0;
+			} else {
+				elapsedTime = lifetime;
+			}
 		}
 	}
 
-	@Override
-	public boolean equals(Object obj)
-	{
-		if (!(obj instanceof Light))
-		{
-			return false;
-		}
-
-		Light other = (Light) obj;
-		return other.description.equals(description) &&
-			equal(other.worldX, worldX) &&
-			equal(other.worldY, worldY) &&
-			equal(other.plane, plane) &&
-			equal(other.height, height) &&
-			other.alignment == alignment &&
-			other.radius == radius &&
-			other.strength == strength &&
-			Arrays.equals(other.color, color) &&
-			other.type == type &&
-			other.duration == duration &&
-			other.range == range &&
-			equal(other.fadeInDuration, fadeInDuration) &&
-			other.npcIds.equals(npcIds) &&
-			other.objectIds.equals(objectIds) &&
-			other.projectileIds.equals(projectileIds) &&
-			other.graphicsObjectIds.equals(graphicsObjectIds);
+	public void toggleTemporaryVisibility() {
+		hiddenTemporarily = !hiddenTemporarily;
+		// Begin fading in or out, while accounting for time already spent fading out or in respectively
+		float beginFadeAt = elapsedTime;
+		if (changedVisibilityAt != -1)
+			beginFadeAt -= Math.max(0, VISIBILITY_FADE - (elapsedTime - changedVisibilityAt));
+		changedVisibilityAt = beginFadeAt;
 	}
 
-	@Override
-	public int hashCode()
-	{
-		int hash = 1;
-		hash = hash * 37 + description.hashCode();
-		hash = hash * 37 + (worldX == null ? 0 : worldX);
-		hash = hash * 37 + (worldY == null ? 0 : worldY);
-		hash = hash * 37 + plane;
-		hash = hash * 37 + height;
-		hash = hash * 37 + alignment.hashCode();
-		hash = hash * 37 + radius;
-		hash = hash * 37 + (int) strength;
-		for (float f : color)
-			hash = hash * 37 + Float.floatToIntBits(f);
-		hash = hash * 37 + type.hashCode();
-		hash = hash * 37 + Float.floatToIntBits(duration);
-		hash = hash * 37 + Float.floatToIntBits(range);
-		hash = hash * 37 + fadeInDuration;
-		hash = hash * 37 + npcIds.hashCode();
-		hash = hash * 37 + objectIds.hashCode();
-		hash = hash * 37 + projectileIds.hashCode();
-		hash = hash * 37 + graphicsObjectIds.hashCode();
-		return hash;
+	public float getTemporaryVisibilityFade() {
+		float fade = 1;
+		if (changedVisibilityAt != -1)
+			fade = HDUtils.clamp((elapsedTime - changedVisibilityAt) / Light.VISIBILITY_FADE, 0, 1);
+		if (hiddenTemporarily)
+			fade = 1 - fade; // Fade out instead
+		return fade;
 	}
 
-	private static boolean equal(Integer a, Integer b)
-	{
-		if (a != null && b != null)
-		{
-			return a.equals(b);
-		}
-		return a == null && b == null;
+	public void applyTemporaryVisibilityFade() {
+		strength *= getTemporaryVisibilityFade();
 	}
 }

@@ -1023,6 +1023,8 @@ public final class SceneGraph implements RSScene {
     private static final int PITCH_LOWER_LIMIT = 128;
     private static final int PITCH_UPPER_LIMIT = 383;
 
+    public static final double JAG2RAD = 0.0030679615757712823D;
+
     /**
      * Renders the terrain.
      * The coordinates use the WorldCoordinate Axes but the modelWorld coordinates.
@@ -1039,6 +1041,7 @@ public final class SceneGraph implements RSScene {
         if (drawCallbacks != null)
         {
             Client.instance.getDrawCallbacks().drawScene(cameraXPos, cameraZPos, cameraYPos, camAngleZ, camAngleXY, planeZ);
+            Client.instance.getDrawCallbacks().drawScene(cameraXPos, cameraZPos, cameraYPos, camAngleZ * JAG2RAD, camAngleXY * JAG2RAD, planeZ);
         }
 
         final boolean isGpu = Client.instance.isGpu();
@@ -2784,6 +2787,16 @@ public final class SceneGraph implements RSScene {
     @Override
     public int[][][] getInstanceTemplateChunks() {
         return new int[0][][];
+    }
+
+    @Override
+    public net.runelite.api.Tile[][][] getExtendedTiles() {
+        return tileArray;
+    }
+
+    @Override
+    public void removeTile(net.runelite.api.Tile tile) {
+
     }
 
     @Override

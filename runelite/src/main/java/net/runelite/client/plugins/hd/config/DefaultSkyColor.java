@@ -26,8 +26,8 @@ package net.runelite.client.plugins.hd.config;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.runelite.api.Client;
-import net.runelite.client.plugins.hd.utils.HDUtils;
+import net.runelite.api.*;
+import net.runelite.client.plugins.hd.utils.ColorUtils;
 
 @Getter
 @RequiredArgsConstructor
@@ -60,10 +60,10 @@ public enum DefaultSkyColor
 			g = sky >> 8 & 0xFF;
 			b = sky & 0xFF;
 		}
-		return new float[]{
-			HDUtils.srgbToLinear(r / 255f),
-			HDUtils.srgbToLinear(g / 255f),
-			HDUtils.srgbToLinear(b / 255f)
+		return new float[] {
+			ColorUtils.srgbToLinear(r / 255f),
+			ColorUtils.srgbToLinear(g / 255f),
+			ColorUtils.srgbToLinear(b / 255f)
 		};
 	}
 }

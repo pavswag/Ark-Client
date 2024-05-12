@@ -2144,12 +2144,13 @@ public class Mesh extends Renderable implements RSModelData {
         var8.materials = this.faceTextures;
         var8.skeletalBones = this.field2413;
         var8.skeletalScales = this.field2414;
+        if ((Client.instance.getGpuFlags() & 4) == 4) {
+            vertexNormals();
 
-
-        vertexNormals();
-        var8.vertexNormalsX = this.vertexNormalsX;
-        var8.vertexNormalsY = this.vertexNormalsY;
-        var8.vertexNormalsZ = this.vertexNormalsZ;
+            var8.vertexNormalsX = this.vertexNormalsX;
+            var8.vertexNormalsY = this.vertexNormalsY;
+            var8.vertexNormalsZ = this.vertexNormalsZ;
+        }
 
         return var8;
     }

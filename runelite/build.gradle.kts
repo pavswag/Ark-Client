@@ -4,7 +4,6 @@ version = "0.0.1"
 dependencies {
     val lombokVersion = "1.18.24"
     val slf4jVersion = "1.7.36"
-    val lwjglVersion = "3.3.1"
     val lwjglClassifiers = arrayOf(
         "natives-linux",
         "natives-windows-x86", "natives-windows",
@@ -16,6 +15,7 @@ dependencies {
         "natives-windows-amd64", "natives-windows-i586",
         "natives-macosx-universal"
     )
+
     implementation("net.runelite:flatlaf:3.2.5-rl4")
 
     annotationProcessor(group = "org.projectlombok", name = "lombok", version = lombokVersion)
@@ -62,14 +62,14 @@ dependencies {
 
     implementation(group = "net.runelite", name = "rlawt", version = "1.3")
 
-    implementation(group = "org.lwjgl", name = "lwjgl", version = lwjglVersion)
-    implementation(group = "org.lwjgl", name = "lwjgl-opengl", version = lwjglVersion)
+    implementation(group = "org.lwjgl", name = "lwjgl")
+    implementation(group = "org.lwjgl", name = "lwjgl-opengl")
     for (classifier in lwjglClassifiers) {
-        implementation(group = "org.lwjgl", name = "lwjgl", version = lwjglVersion, classifier = classifier)
-        implementation(group = "org.lwjgl", name = "lwjgl-opengl", version = lwjglVersion, classifier = classifier)
+        implementation(group = "org.lwjgl", name = "lwjgl", classifier = classifier)
+        implementation(group = "org.lwjgl", name = "lwjgl-opengl", classifier = classifier)
     }
 
-    runtimeOnly(group = "net.runelite.pushingpixels", name = "trident", version = "1.5.00")
+
 
     for (classifier in joglClassifiers) {
         runtimeOnly(group = "net.runelite.jogl", name = "jogl-rl", version = joglVersion, classifier = classifier)
@@ -78,6 +78,10 @@ dependencies {
 
     runtimeOnly(group = "net.runelite.jocl", name = "jocl", version = "1.0", classifier = "macos-x64")
     runtimeOnly(group = "net.runelite.jocl", name = "jocl", version = "1.0", classifier = "macos-arm64")
+    implementation(platform("org.lwjgl:lwjgl-bom:3.3.2"))
+    implementation(group = "org.lwjgl", name = "lwjgl")
+    implementation(group = "org.lwjgl", name = "lwjgl-opengl")
+    implementation(group = "org.lwjgl", name = "lwjgl-opencl")
 
     testAnnotationProcessor(group = "org.projectlombok", name = "lombok", version = lombokVersion)
     testCompileOnly(group = "org.projectlombok", name = "lombok", version = lombokVersion)

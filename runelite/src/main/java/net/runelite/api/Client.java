@@ -1949,8 +1949,6 @@ public interface Client extends GameEngine
 
 	boolean isGpu();
 
-	void setGpu(boolean gpu);
-
 	int get3dZoom();
 
 	int getCenterX();
@@ -2386,8 +2384,22 @@ public interface Client extends GameEngine
 	 */
 	void setMinimapZoom(double zoom);
 
+	/**
+	 * Loads an unlit model from the cache. The returned model shares
+	 * data such as faces, face colors, face transparencies, and vertex points with
+	 * other models. If you want to mutate these you MUST call the relevant {@code cloneX}
+	 * method.
+	 *
+	 * @see ModelData#cloneColors()
+	 *
+	 * @param id the ID of the model
+	 * @return the model or null if it is loading or nonexistent
+	 */
 	@Nullable
-	Model loadModelData(int id);
+	ModelData loadModelData(int id);
+
+	ModelData mergeModels(ModelData[] models, int length);
+	ModelData mergeModels(ModelData ...models);
 
 	String[] playerlist();
 
@@ -2395,9 +2407,16 @@ public interface Client extends GameEngine
 
 	void setChatboxLocked(boolean locked);
 
-    Model mergeModels(Model shipBoat0, Model shipSail0);
-
 	long getAccountHash();
 
 	void set3dZoom(int amount);
+
+    void setExpandedMapLoading(int i);
+
+	void setGpuFlags(int i);
+	int getGpuFlags();
+
+	NPC getFollower();
+
+    int getExpandedMapLoading();
 }

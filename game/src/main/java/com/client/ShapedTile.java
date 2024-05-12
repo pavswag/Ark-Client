@@ -449,7 +449,7 @@ public final class ShapedTile implements RSSceneTileModel {
     }
 
     @Override
-    public boolean getIsFlat() {
+    public boolean isFlat() {
         return false;
     }
 

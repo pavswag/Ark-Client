@@ -2,20 +2,18 @@ package net.runelite.client.plugins.hd.scene;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Objects;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.Client;
-import net.runelite.api.GameState;
-import net.runelite.api.coords.WorldPoint;
-import net.runelite.client.RuneLiteProperties;
+import net.runelite.api.*;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.plugins.hd.HdPlugin;
 import net.runelite.client.plugins.hd.model.ModelPusher;
 import net.runelite.client.plugins.hd.scene.model_overrides.ModelOverride;
-import net.runelite.client.plugins.hd.utils.AABB;
-import net.runelite.client.plugins.hd.utils.HDUtils;
+import net.runelite.client.plugins.hd.utils.FileWatcher;
 import net.runelite.client.plugins.hd.utils.ModelHash;
 import net.runelite.client.plugins.hd.utils.Props;
 import net.runelite.client.plugins.hd.utils.ResourcePath;
@@ -25,109 +23,170 @@ import static net.runelite.client.plugins.hd.utils.ResourcePath.path;
 @Singleton
 @Slf4j
 public class ModelOverrideManager {
-    private static final ResourcePath MODEL_OVERRIDES_PATH =  Props.getPathOrDefault("rlhd.model-overrides-path",
-        () -> path(ModelOverrideManager.class, "model_overrides.json"));
+	private static final ResourcePath MODEL_OVERRIDES_PATH = Props.getPathOrDefault(
+		"rlhd.model-overrides-path",
+		() -> path(ModelOverrideManager.class, "model_overrides.json")
+	);
 
-    @Inject
-    private Client client;
+	@Inject
+	private Client client;
 
-    @Inject
-    private ClientThread clientThread;
+	@Inject
+	private ClientThread clientThread;
 
-    @Inject
-    private HdPlugin plugin;
+	@Inject
+	private HdPlugin plugin;
 
-    @Inject
-    private ModelPusher modelPusher;
+	@Inject
+	private ModelPusher modelPusher;
 
-    private final HashMap<Long, ModelOverride> modelOverrides = new HashMap<>();
-    private final HashMap<Long, AABB[]> modelsToHide = new HashMap<>();
+	@Inject
+	private FishingSpotReplacer fishingSpotReplacer;
 
-    public void startUp() {
-        MODEL_OVERRIDES_PATH.watch(path -> {
-            modelOverrides.clear();
-            modelsToHide.clear();
+	private final HashMap<Integer, ModelOverride> modelOverrides = new HashMap<>();
 
-            try {
-                ModelOverride[] entries = path.loadJson(plugin.getGson(), ModelOverride[].class);
-                if (entries == null)
-                    throw new IOException("Empty or invalid: " + path);
-                for (ModelOverride override : entries) {
-					override.gsonReallyShouldSupportThis();
-                    for (int npcId : override.npcIds)
-                        addEntry(ModelHash.packUuid(npcId, ModelHash.TYPE_NPC), override);
-                    for (int objectId : override.objectIds)
-                        addEntry(ModelHash.packUuid(objectId, ModelHash.TYPE_OBJECT), override);
-                }
+	private FileWatcher.UnregisterCallback fileWatcher;
 
+	public void startUp() {
+		fileWatcher = MODEL_OVERRIDES_PATH.watch((path, first) -> {
+			modelOverrides.clear();
+
+			try {
+				ModelOverride[] entries = path.loadJson(plugin.getGson(), ModelOverride[].class);
+				if (entries == null)
+					throw new IOException("Empty or invalid: " + path);
+				for (ModelOverride override : entries) {
+					try {
+						override.normalize(plugin.configVanillaShadowMode);
+					} catch (IllegalStateException ex) {
+						log.error("Invalid model override '{}': {}", override.description, ex.getMessage());
+						continue;
+					}
+
+					addOverride(override);
+
+					if (override.hideInAreas.length > 0) {
+						var hider = override.copy();
+						hider.hide = true;
+						hider.areas = override.hideInAreas;
+						addOverride(hider);
+					}
+				}
+
+				log.debug("Loaded {} model overrides", modelOverrides.size());
+			} catch (IOException ex) {
+				log.error("Failed to load model overrides:", ex);
+			}
+
+			addOverride(fishingSpotReplacer.getModelOverride());
+
+			if (!first) {
 				clientThread.invoke(() -> {
 					modelPusher.clearModelCache();
 					if (client.getGameState() == GameState.LOGGED_IN)
-						plugin.uploadScene();
+						client.setGameState(GameState.LOADING);
 				});
+			}
+		});
+	}
 
-                if (RuneLiteProperties.DEBUG_MODE)log.debug("Loaded {} model overrides", modelOverrides.size());
-            } catch (IOException ex) {
-                log.error("Failed to load model overrides:", ex);
-            }
-        });
-    }
+	public void shutDown() {
+		if (fileWatcher != null)
+			fileWatcher.unregister();
+		fileWatcher = null;
 
-    private void addEntry(long uuid, ModelOverride entry) {
-        ModelOverride old = modelOverrides.put(uuid, entry);
-        modelsToHide.put(uuid, entry.hideInAreas);
+		modelOverrides.clear();
+	}
 
-        if (Props.DEVELOPMENT && old != null) {
-            if (entry.hideInAreas.length > 0) {
-                log.warn("Replacing ID {} from '{}' with hideInAreas-override '{}'. This is likely a mistake...",
-                    ModelHash.getIdOrIndex(uuid), old.description, entry.description);
-            } else if (old.hideInAreas.length == 0) {
-                log.warn("Replacing ID {} from '{}' with '{}'. The first-mentioned override should be removed.",
-                    ModelHash.getIdOrIndex(uuid), old.description, entry.description);
-            }
-        }
-    }
+	public void reload() {
+		shutDown();
+		startUp();
+	}
 
-    public boolean shouldHideModel(long hash, int x, int z) {
-		assert client.isClientThread();
-        long uuid = ModelHash.getUuid(client, hash);
+	private void addOverride(@Nullable ModelOverride override) {
+		if (override == null || override.seasonalTheme != null && override.seasonalTheme != plugin.configSeasonalTheme)
+			return;
 
-        AABB[] aabbs = modelsToHide.get(uuid);
-        if (aabbs != null && hasNoActions(uuid)) {
-            WorldPoint location = HDUtils.cameraSpaceToWorldPoint(client, x, z);
-            for (AABB aabb : aabbs)
-                if (aabb.contains(location))
-                    return true;
-        }
+		for (int id : override.npcIds)
+			addEntry(ModelHash.TYPE_NPC, id, override);
+		for (int id : override.objectIds)
+			addEntry(ModelHash.TYPE_OBJECT, id, override);
+		for (int id : override.projectileIds)
+			addEntry(ModelHash.TYPE_PROJECTILE, id, override);
+		for (int id : override.graphicsObjectIds)
+			addEntry(ModelHash.TYPE_GRAPHICS_OBJECT, id, override);
+	}
 
-        return false;
-    }
+	private void addEntry(int type, int id, ModelOverride entry) {
+		int uuid = ModelHash.packUuid(type, id);
+		ModelOverride current = modelOverrides.get(uuid);
 
-    private boolean hasNoActions(long uuid) {
-        int id = ModelHash.getIdOrIndex(uuid);
-        int type = ModelHash.getType(uuid);
+		if (current != null && !Objects.equals(current.seasonalTheme, entry.seasonalTheme)) {
+			// Seasonal theme overrides should take precedence
+			if (current.seasonalTheme != null)
+				return;
+			current = null;
+		}
 
-        String[] actions = {};
+		boolean isDuplicate = false;
 
-        switch (type) {
-            case ModelHash.TYPE_OBJECT:
-                actions = client.getObjectDefinition(id).getActions();
-                break;
-            case ModelHash.TYPE_NPC:
-                actions = client.getNpcDefinition(id).getActions();
-                break;
-        }
+		if (entry.areas.length == 0) {
+			// Non-area-restricted override, of which there can only be one per UUID
 
-        for (String action : actions) {
-            if (action != null)
-                return false;
-        }
+			// A dummy override is used as the base if only area-specific overrides exist
+			isDuplicate = current != null && !current.isDummy;
 
-        return true;
-    }
+			if (current != null && current.areaOverrides != null && !current.areaOverrides.isEmpty()) {
+				var areaOverrides = current.areaOverrides;
+				current = entry.copy();
+				current.areaOverrides = areaOverrides;
+			} else {
+				current = entry;
+			}
 
-    @NonNull
-    public ModelOverride getOverride(long hash) {
-        return modelOverrides.getOrDefault(ModelHash.getUuid(client, hash), ModelOverride.NONE);
-    }
+			modelOverrides.put(uuid, current);
+		} else {
+			if (current == null)
+				current = ModelOverride.NONE;
+
+			if (current.areaOverrides == null) {
+				// We need to replace the override with a copy that has a separate list of area overrides to avoid conflicts
+				current = current.copy();
+				current.areaOverrides = new HashMap<>();
+				modelOverrides.put(uuid, current);
+			}
+
+			for (var area : entry.areas)
+				current.areaOverrides.put(area, entry);
+		}
+
+		if (isDuplicate && Props.DEVELOPMENT) {
+			// This should ideally not be reached, so print helpful warnings in development mode
+			if (entry.hideInAreas.length > 0) {
+				System.err.printf(
+					"Replacing ID %d from '%s' with hideInAreas-override '%s'. This is likely a mistake...\n",
+					id, current.description, entry.description
+				);
+			} else {
+				System.err.printf(
+					"Replacing ID %d from '%s' with '%s'. The first-mentioned override should be removed.\n",
+					id, current.description, entry.description
+				);
+			}
+		}
+	}
+
+	@Nonnull
+	public ModelOverride getOverride(int uuid, int[] worldPos) {
+		var override = modelOverrides.get(uuid);
+		if (override == null)
+			return ModelOverride.NONE;
+
+		if (override.areaOverrides != null)
+			for (var entry : override.areaOverrides.entrySet())
+				if (entry.getKey().contains(worldPos))
+					return entry.getValue();
+
+		return override;
+	}
 }

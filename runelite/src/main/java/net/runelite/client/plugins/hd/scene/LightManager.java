@@ -25,89 +25,66 @@
  */
 package net.runelite.client.plugins.hd.scene;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.gson.Gson;
-
-import java.awt.*;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.function.Predicate;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.Actor;
-import net.runelite.api.Client;
-import net.runelite.api.Constants;
-import net.runelite.api.DecorativeObject;
-import net.runelite.api.GameObject;
-import net.runelite.api.GameState;
-import net.runelite.api.GraphicsObject;
-import net.runelite.api.GroundObject;
-import net.runelite.api.NPC;
-import net.runelite.api.Projectile;
-import net.runelite.api.Tile;
-import net.runelite.api.TileObject;
-import net.runelite.api.WallObject;
-import net.runelite.api.coords.LocalPoint;
-import net.runelite.api.coords.WorldPoint;
-import net.runelite.api.events.DecorativeObjectDespawned;
-import net.runelite.api.events.DecorativeObjectSpawned;
-import net.runelite.api.events.GameObjectDespawned;
-import net.runelite.api.events.GameObjectSpawned;
-import net.runelite.api.events.GraphicsObjectCreated;
-import net.runelite.api.events.GroundObjectDespawned;
-import net.runelite.api.events.GroundObjectSpawned;
-import net.runelite.api.events.NpcChanged;
-import net.runelite.api.events.NpcDespawned;
-import net.runelite.api.events.NpcSpawned;
-import net.runelite.api.events.ProjectileMoved;
-import net.runelite.api.events.WallObjectDespawned;
-import net.runelite.api.events.WallObjectSpawned;
-import net.runelite.client.Notifier;
-import net.runelite.client.RuneLiteProperties;
+import net.runelite.api.*;
+import net.runelite.api.coords.*;
+import net.runelite.api.events.*;
 import net.runelite.client.config.ConfigManager;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.PluginManager;
 import net.runelite.client.plugins.entityhider.EntityHiderConfig;
 import net.runelite.client.plugins.entityhider.EntityHiderPlugin;
 import net.runelite.client.plugins.hd.HdPlugin;
+import net.runelite.client.plugins.hd.HdPluginConfig;
+import net.runelite.client.plugins.hd.config.MaxDynamicLights;
+import net.runelite.client.plugins.hd.overlays.FrameTimer;
+import net.runelite.client.plugins.hd.overlays.Timer;
 import net.runelite.client.plugins.hd.scene.lights.Alignment;
 import net.runelite.client.plugins.hd.scene.lights.Light;
+import net.runelite.client.plugins.hd.scene.lights.LightDefinition;
 import net.runelite.client.plugins.hd.scene.lights.LightType;
-import net.runelite.client.plugins.hd.scene.lights.SceneLight;
+import net.runelite.client.plugins.hd.scene.lights.TileObjectImpostorTracker;
 import net.runelite.client.plugins.hd.utils.HDUtils;
+import net.runelite.client.plugins.hd.utils.ModelHash;
 import net.runelite.client.plugins.hd.utils.Props;
 import net.runelite.client.plugins.hd.utils.ResourcePath;
 
+import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.pow;
-import static net.runelite.api.Perspective.COSINE;
-import static net.runelite.api.Perspective.LOCAL_HALF_TILE_SIZE;
-import static net.runelite.api.Perspective.LOCAL_TILE_SIZE;
-import static net.runelite.api.Perspective.SCENE_SIZE;
-import static net.runelite.api.Perspective.SINE;
+import static net.runelite.api.Constants.*;
+import static net.runelite.api.Perspective.*;
+import static net.runelite.client.plugins.hd.utils.HDUtils.TWO_PI;
+import static net.runelite.client.plugins.hd.utils.HDUtils.fract;
+import static net.runelite.client.plugins.hd.utils.HDUtils.mod;
 import static net.runelite.client.plugins.hd.utils.ResourcePath.path;
 
 @Singleton
 @Slf4j
-public class LightManager
-{
-	private static final ResourcePath LIGHTS_PATH = Props.getPathOrDefault("rlhd.lights-path",
-		() -> path(LightManager.class,"lights.json"));
+public class LightManager {
+	private static final ResourcePath LIGHTS_PATH = Props.getPathOrDefault(
+		"rlhd.lights-path",
+		() -> path(LightManager.class, "lights.json")
+	);
 
 	@Inject
 	private Client client;
 
 	@Inject
-	private HdPlugin plugin;
-
-	@Inject
-	private Notifier notifier;
-
-	@Inject
-	private EntityHiderPlugin entityHiderPlugin;
+	private EventBus eventBus;
 
 	@Inject
 	private PluginManager pluginManager;
@@ -115,34 +92,39 @@ public class LightManager
 	@Inject
 	private ConfigManager configManager;
 
-	@VisibleForTesting
-	final ArrayList<SceneLight> WORLD_LIGHTS = new ArrayList<>();
-	@VisibleForTesting
-	final ListMultimap<Integer, Light> NPC_LIGHTS = ArrayListMultimap.create();
-	@VisibleForTesting
-	final ListMultimap<Integer, Light> OBJECT_LIGHTS = ArrayListMultimap.create();
-	@VisibleForTesting
-	final ListMultimap<Integer, Light> PROJECTILE_LIGHTS = ArrayListMultimap.create();
-	@VisibleForTesting
-	final ListMultimap<Integer, Light> GRAPHICS_OBJECT_LIGHTS = ArrayListMultimap.create();
+	@Inject
+	private HdPlugin plugin;
 
-	long lastFrameTime = -1;
-	boolean configChanged = false;
+	@Inject
+	private HdPluginConfig config;
 
+	@Inject
+	private ModelOverrideManager modelOverrideManager;
+
+	@Inject
+	private EntityHiderPlugin entityHiderPlugin;
+
+	@Inject
+	private FrameTimer frameTimer;
+
+	private final ArrayList<Light> WORLD_LIGHTS = new ArrayList<>();
+	private final ListMultimap<Integer, LightDefinition> NPC_LIGHTS = ArrayListMultimap.create();
+	private final ListMultimap<Integer, LightDefinition> OBJECT_LIGHTS = ArrayListMultimap.create();
+	private final ListMultimap<Integer, LightDefinition> PROJECTILE_LIGHTS = ArrayListMultimap.create();
+	private final ListMultimap<Integer, LightDefinition> SPOT_ANIM_LIGHTS = ArrayListMultimap.create();
+
+	private boolean reloadLights;
 	private EntityHiderConfig entityHiderConfig;
 
-	static final float TWO_PI = (float) (2 * Math.PI);
-
-	private final ArrayList<Projectile> trackedProjectiles = new ArrayList<>();
-
-	@VisibleForTesting
-	void loadConfig(Gson gson, ResourcePath path)
-	{
-		try
-		{
-			Light[] lights;
+	public void loadConfig(Gson gson, ResourcePath path) {
+		try {
+			LightDefinition[] lights;
 			try {
-				lights = path.loadJson(gson, Light[].class);
+				lights = path.loadJson(gson, LightDefinition[].class);
+				if (lights == null) {
+					log.warn("Skipping empty lights.json");
+					return;
+				}
 			} catch (IOException ex) {
 				log.error("Failed to load lights", ex);
 				return;
@@ -152,723 +134,935 @@ public class LightManager
 			NPC_LIGHTS.clear();
 			OBJECT_LIGHTS.clear();
 			PROJECTILE_LIGHTS.clear();
-			GRAPHICS_OBJECT_LIGHTS.clear();
+			SPOT_ANIM_LIGHTS.clear();
 
-			for (Light l : lights)
-			{
-				// Map values from [0, 255] in gamma color space to [0, 1] in linear color space
-				// Also ensure that each color always has 4 components with sensible defaults
-				float[] linearRGBA = { 0, 0, 0, 1 };
-				for (int i = 0; i < Math.min(l.color.length, linearRGBA.length); i++)
-					linearRGBA[i] = HDUtils.srgbToLinear(l.color[i] /= 255f);
-				l.color = linearRGBA;
-
-				if (l.worldX != null && l.worldY != null) {
-					WorldPoint worldPoint = new WorldPoint(l.worldX, l.worldY, l.plane);
-					WORLD_LIGHTS.add(new SceneLight(l, worldPoint));
+			for (LightDefinition lightDef : lights) {
+				lightDef.normalize();
+				if (lightDef.worldX != null && lightDef.worldY != null) {
+					Light light = new Light(lightDef);
+					light.worldPoint = new WorldPoint(lightDef.worldX, lightDef.worldY, lightDef.plane);
+					light.persistent = true;
+					WORLD_LIGHTS.add(light);
 				}
-				l.npcIds.forEach(id -> NPC_LIGHTS.put(id, l));
-				l.objectIds.forEach(id -> OBJECT_LIGHTS.put(id, l));
-				l.projectileIds.forEach(id -> PROJECTILE_LIGHTS.put(id, l));
-				l.graphicsObjectIds.forEach(id -> GRAPHICS_OBJECT_LIGHTS.put(id, l));
+				lightDef.npcIds.forEach(id -> NPC_LIGHTS.put(id, lightDef));
+				lightDef.objectIds.forEach(id -> OBJECT_LIGHTS.put(id, lightDef));
+				lightDef.projectileIds.forEach(id -> PROJECTILE_LIGHTS.put(id, lightDef));
+				lightDef.spotAnimIds.forEach(id -> SPOT_ANIM_LIGHTS.put(id, lightDef));
 			}
 
-			if (RuneLiteProperties.DEBUG_MODE)log.debug("Loaded {} lights", lights.length);
-			configChanged = true;
-		}
-		catch (Exception ex)
-		{
+			log.debug("Loaded {} lights", lights.length);
+
+			// Reload lights once on plugin startup, and whenever lights.json should be hot-swapped.
+			// If we don't reload on startup, NPCs won't have lights added until RuneLite fires events
+			reloadLights = true;
+		} catch (Exception ex) {
 			log.error("Failed to parse light configuration", ex);
 		}
 	}
 
-	public void startUp()
-	{
+	public void startUp() {
 		entityHiderConfig = configManager.getConfig(EntityHiderConfig.class);
 		LIGHTS_PATH.watch(path -> loadConfig(plugin.getGson(), path));
+		eventBus.register(this);
 	}
 
-	public void update(SceneContext sceneContext)
-	{
+	public void shutDown() {
+		eventBus.unregister(this);
+	}
+
+	public void update(@Nonnull SceneContext sceneContext) {
 		assert client.isClientThread();
 
-		if (client.getGameState() != GameState.LOGGED_IN)
-		{
+		if (client.getGameState() != GameState.LOGGED_IN || config.maxDynamicLights() == MaxDynamicLights.NONE) {
+			sceneContext.numVisibleLights = 0;
 			return;
 		}
 
-		if (configChanged)
-		{
-			configChanged = false;
-			loadSceneLights(sceneContext);
+		if (reloadLights) {
+			reloadLights = false;
+			loadSceneLights(sceneContext, null);
 
-			// check the NPCs in the scene to make sure they have lights assigned, if applicable,
-			// for scenarios in which HD mode or dynamic lights were disabled during NPC spawn
-			client.getNpcs().forEach(npc -> addNpcLights(sceneContext, npc));
+			client.getNpcs().forEach(npc -> {
+				addNpcLights(npc);
+				addSpotAnimLights(npc);
+			});
 		}
 
-		Tile[][][] tiles = sceneContext.scene.getTiles();
+		// These should never occur, but just in case...
+		if (sceneContext.knownProjectiles.size() > 10000) {
+			log.warn("Too many projectiles tracked: {}. Clearing...", sceneContext.knownProjectiles.size());
+			sceneContext.knownProjectiles.clear();
+		}
+		if (sceneContext.lights.size() > 10000) {
+			log.warn("Too many lights: {}. Clearing...", sceneContext.lights.size());
+			sceneContext.lights.clear();
+		}
+
+		int drawDistance = plugin.getDrawDistance() * LOCAL_TILE_SIZE;
+		Tile[][][] tiles = sceneContext.scene.getExtendedTiles();
 		int[][][] tileHeights = sceneContext.scene.getTileHeights();
+		var cachedNpcs = client.getCachedNPCs();
+		var cachedPlayers = client.getCachedPlayers();
 
-		Iterator<SceneLight> lightIterator = sceneContext.lights.iterator();
-		while (lightIterator.hasNext())
-		{
-			SceneLight light = lightIterator.next();
+		for (Light light : sceneContext.lights) {
+			// Ways lights may get deleted:
+			// - animation-specific:
+			//   effectively spawn when the animation they're attached to starts playing, and despawns when it stops,
+			//   but they are typically replayable, so they don't fully despawn until marked for removal by something else
+			// - spotanim & projectile lights:
+			//   automatically marked for removal upon completion
+			// - actor lights:
+			//   may be automatically marked for removal if the actor becomes invalid
+			// - other lights:
+			//   despawn when marked for removal by a RuneLite despawn event
+			// - fixed lifetime && !replayable:
+			//   All non-replayable lights with a fixed lifetime will be automatically marked for removal when done playing
 
-			long frameTime = System.currentTimeMillis() - lastFrameTime;
+			// Light fade-in and fade-out are based on whether the parent currently exists
+			// Additionally, lights have an overruling fade-out when being deprioritized
 
-			light.distance = Integer.MAX_VALUE;
+			// Whatever the light is attached to is presumed to exist if it's not marked for removal yet
+			boolean parentExists = !light.markedForRemoval;
+			boolean hiddenTemporarily = false;
+			light.orientation = 0;
 
-			if (light.projectile != null)
-			{
-				if (light.projectile.getRemainingCycles() <= 0)
-				{
-					lightIterator.remove();
-					trackedProjectiles.remove(light.projectile);
-					continue;
+			if (light.tileObject != null) {
+				if (!light.markedForRemoval && light.animationSpecific && light.tileObject instanceof GameObject) {
+					int animationId = -1;
+					var renderable = ((GameObject) light.tileObject).getRenderable();
+					if (renderable instanceof DynamicObject) {
+						var anim = ((DynamicObject) renderable).getAnimation();
+						if (anim != null)
+							animationId = anim.getId();
+					}
+					parentExists = light.def.animationIds.contains(animationId);
 				}
-
-				light.x = (int) light.projectile.getX();
-				light.y = (int) light.projectile.getY();
-				light.z = (int) light.projectile.getZ() - light.height;
-
-				light.visible = projectileLightVisible();
-			}
-
-			if (light.graphicsObject != null)
-			{
-				if (light.graphicsObject.finished())
-				{
-					lightIterator.remove();
-					continue;
+			} else if (light.projectile != null) {
+				light.origin[0] = (int) light.projectile.getX();
+				light.origin[1] = (int) light.projectile.getZ() - light.def.height;
+				light.origin[2] = (int) light.projectile.getY();
+				if (light.projectile.getRemainingCycles() <= 0) {
+					light.markedForRemoval = true;
+				} else {
+					hiddenTemporarily = !shouldShowProjectileLights();
+					if (light.animationSpecific) {
+						var animation = light.projectile.getAnimation();
+						parentExists = animation != null && light.def.animationIds.contains(animation.getId());
+					}
+					light.orientation = (int) Math.round(
+						Math.atan2(light.projectile.getVelocityZ(), light.projectile.getVelocityX()) / UNIT);
 				}
-
-				light.x = light.graphicsObject.getLocation().getX();
-				light.y = light.graphicsObject.getLocation().getY();
-				light.z = light.graphicsObject.getZ() - light.height;
-			}
-
-
-
-			if (light.npc != null)
-			{
-				if (light.npc.getIndex() != -1) {
-					light.x = light.npc.getLocalLocation().getX();
-					light.y = light.npc.getLocalLocation().getY();
-					// Offset the light's position based on its Alignment
-					if (light.alignment == Alignment.NORTH || light.alignment == Alignment.NORTHEAST || light.alignment == Alignment.NORTHWEST)
-					{
-						light.y += LOCAL_HALF_TILE_SIZE;
-					}
-					if (light.alignment == Alignment.SOUTH || light.alignment == Alignment.SOUTHEAST || light.alignment == Alignment.SOUTHWEST)
-					{
-						light.y -= LOCAL_HALF_TILE_SIZE;
-					}
-					if (light.alignment == Alignment.EAST || light.alignment == Alignment.SOUTHEAST || light.alignment == Alignment.NORTHEAST)
-					{
-						light.x += LOCAL_HALF_TILE_SIZE;
-					}
-					if (light.alignment == Alignment.WEST || light.alignment == Alignment.SOUTHWEST || light.alignment == Alignment.NORTHWEST)
-					{
-						light.x -= LOCAL_HALF_TILE_SIZE;
-					}
-
+			} else if (light.graphicsObject != null) {
+				light.origin[0] = light.graphicsObject.getLocation().getX();
+				light.origin[1] = light.graphicsObject.getZ() - light.def.height;
+				light.origin[2] = light.graphicsObject.getLocation().getY();
+				if (light.graphicsObject.finished()) {
+					light.markedForRemoval = true;
+				} else if (light.animationSpecific) {
+					var animation = light.graphicsObject.getAnimation();
+					parentExists = animation != null && light.def.animationIds.contains(animation.getId());
+				}
+			} else if (light.actor != null && !light.markedForRemoval) {
+				if (light.actor instanceof NPC && light.actor != cachedNpcs[((NPC) light.actor).getIndex()] ||
+					light.actor instanceof Player && light.actor != cachedPlayers[((Player) light.actor).getId()] ||
+					light.spotAnimId != -1 && !light.actor.hasSpotAnim(light.spotAnimId)
+				) {
+					parentExists = false;
+					light.markedForRemoval = true;
+				} else {
+					var lp = light.actor.getLocalLocation();
+					light.origin[0] = lp.getX();
+					light.origin[2] = lp.getY();
 					int plane = client.getPlane();
 					light.plane = plane;
-					int npcTileX = light.npc.getLocalLocation().getSceneX();
-					int npcTileY = light.npc.getLocalLocation().getSceneY();
+					light.orientation = light.actor.getCurrentOrientation();
+
+					if (light.animationSpecific)
+						parentExists = light.def.animationIds.contains(light.actor.getAnimation());
+
+					int tileExX = light.origin[0] / LOCAL_TILE_SIZE + SceneUploader.SCENE_OFFSET;
+					int tileExY = light.origin[2] / LOCAL_TILE_SIZE + SceneUploader.SCENE_OFFSET;
+
 					// Some NPCs, such as Crystalline Hunllef in The Gauntlet, sometimes return scene X/Y values far outside the possible range.
-					if (npcTileX < SCENE_SIZE && npcTileY < SCENE_SIZE && npcTileX >= 0 && npcTileY >= 0)
-					{
-						// Tile null check is to prevent oddities caused by - once again - Crystalline Hunllef.
-						// May also apply to other NPCs in instances.
-						if (tiles[plane][npcTileX][npcTileY] != null && tiles[plane][npcTileX][npcTileY].getBridge() != null)
-						{
-							plane++;
-						}
-
-						// Interpolate between tile heights based on specific scene coordinates.
-						float lerpX = (light.x % LOCAL_TILE_SIZE) / (float) LOCAL_TILE_SIZE;
-						float lerpY = (light.y % LOCAL_TILE_SIZE) / (float) LOCAL_TILE_SIZE;
-						int baseTileX = (int) Math.floor(light.x / (float) LOCAL_TILE_SIZE);
-						int baseTileY = (int) Math.floor(light.y / (float) LOCAL_TILE_SIZE);
-						float heightNorth = HDUtils.lerp(tileHeights[plane][baseTileX][baseTileY + 1], tileHeights[plane][baseTileX + 1][baseTileY + 1], lerpX);
-						float heightSouth = HDUtils.lerp(tileHeights[plane][baseTileX][baseTileY], tileHeights[plane][baseTileX + 1][baseTileY], lerpX);
-						float tileHeight = HDUtils.lerp(heightSouth, heightNorth, lerpY);
-						light.z = (int) tileHeight - 1 - light.height;
-
-						light.visible = npcLightVisible(light.npc);
-					}
-					else
-					{
-						light.visible = false;
-					}
-				}
-			}
-
-			if (light.type == LightType.FLICKER)
-			{
-				long repeatMs = 60000;
-				int offset = light.randomOffset;
-				float t = TWO_PI * ((System.currentTimeMillis() + offset) % repeatMs) / repeatMs;
-
-				float flicker = (float) (
-					pow(cos(11 * t), 2) +
-						pow(cos(17 * t), 4) +
-						pow(cos(23 * t), 6) +
-						pow(cos(31 * t), 2) +
-						pow(cos(71 * t), 2) / 3 +
-						pow(cos(151 * t), 2) / 7
-				) / 4.335f;
-
-				float maxFlicker = 1f + (light.range / 100f);
-				float minFlicker = 1f - (light.range / 100f);
-
-				flicker = minFlicker + (maxFlicker - minFlicker) * flicker;
-
-				light.currentStrength = light.strength * flicker;
-				light.currentSize = (int) (light.radius * flicker * 1.5f);
-			}
-			else if (light.type == LightType.PULSE)
-			{
-				float duration = light.duration / 1000f;
-				float range = light.range / 100f;
-				float fullRange = range * 2f;
-				float change = (frameTime / 1000f) / duration;
-//				change = change % 1.0f;
-
-				light.currentAnimation += change % 1.0f;
-				// lock animation to 0-1
-				light.currentAnimation = light.currentAnimation % 1.0f;
-
-				float output;
-
-				if (light.currentAnimation > 0.5f)
-				{
-					// light is shrinking
-					output = 1f - (light.currentAnimation - 0.5f) * 2;
-				}
-				else
-				{
-					// light is expanding
-					output = light.currentAnimation * 2f;
-				}
-
-				float multiplier = (1.0f - range) + output * fullRange;
-
-				light.currentSize = (int) (light.radius * multiplier);
-				light.currentStrength = light.strength * multiplier;
-			}
-			else
-			{
-				light.currentStrength = light.strength;
-				light.currentSize = light.radius;
-				light.currentColor = light.color;
-			}
-			// Apply fade-in
-			if (light.fadeInDuration > 0)
-			{
-				light.currentStrength *= Math.min((float) light.currentFadeIn / (float) light.fadeInDuration, 1.0f);
-
-				light.currentFadeIn += frameTime;
-			}
-
-			// Calculate the distance between the player and the light to determine which
-			// lights to display based on the 'max dynamic lights' config option
-			int camX = plugin.camTarget[0];
-			int camY = plugin.camTarget[1];
-			int camZ = plugin.camTarget[2];
-			light.distance = (int) Math.sqrt(Math.pow(camX - light.x, 2) + Math.pow(camY - light.y, 2) + Math.pow(camZ - light.z, 2));
-
-			int tileX = (int) Math.floor(light.x / 128f);
-			int tileY = (int) Math.floor(light.y / 128f);
-			int tileZ = light.plane;
-
-			light.belowFloor = false;
-			light.aboveFloor = false;
-
-
-
-			if (tileX < SCENE_SIZE && tileY < SCENE_SIZE && tileX >= 0 && tileY >= 0 && tileZ >= 0)
-			{
-				Tile aboveTile = tileZ < 3 ? tiles[tileZ + 1][tileX][tileY] : null;
-
-				if (aboveTile != null && (aboveTile.getSceneTilePaint() != null || aboveTile.getSceneTileModel() != null))
-				{
-					light.belowFloor = true;
-				}
-
-				Tile lightTile = tiles[tileZ][tileX][tileY];
-
-				if (lightTile != null && (lightTile.getSceneTilePaint() != null || lightTile.getSceneTileModel() != null))
-				{
-					light.aboveFloor = true;
-				}
-			}
-		}
-
-		sceneContext.lights.sort(Comparator.comparingInt(light -> light.distance));
-
-		lastFrameTime = System.currentTimeMillis();
-	}
-
-	private boolean npcLightVisible(NPC npc)
-	{
-		if (npc.getModel() == null)
-		{
-			return false;
-		}
-
-		if (pluginManager.isPluginEnabled(entityHiderPlugin))
-		{
-			boolean isPet = npc.getComposition().isFollower();
-
-
-			if (entityHiderConfig.hideNPCs() && !isPet)
-			{
-				return false;
-			}
-
-			if (entityHiderConfig.hidePets() && isPet)
-			{
-				return false;
-			}
-		}
-
-		return plugin.configNpcLights;
-	}
-
-	private boolean projectileLightVisible()
-	{
-		if (pluginManager.isPluginEnabled(entityHiderPlugin))
-		{
-			if (entityHiderConfig.hideProjectiles())
-			{
-				return false;
-			}
-		}
-
-		return plugin.configProjectileLights;
-	}
-
-	public void loadSceneLights(SceneContext sceneContext)
-	{
-		sceneContext.lights.clear();
-		trackedProjectiles.clear();
-
-		for (SceneLight light : WORLD_LIGHTS)
-		{
-			assert light.worldPoint != null;
-			if (sceneContext.regionIds.contains(light.worldPoint.getRegionID()))
-			{
-				sceneContext.lights.add(light);
-				updateWorldLightPosition(sceneContext, light);
-			}
-		}
-
-		for (Tile[][] plane : sceneContext.scene.getTiles()) {
-			for (Tile[] column : plane) {
-				for (Tile tile : column) {
-					if (tile == null) {
-						continue;
-					}
-
-					DecorativeObject decorativeObject = tile.getDecorativeObject();
-					if (decorativeObject != null && decorativeObject.getRenderable() != null) {
-						addObjectLight(sceneContext, decorativeObject, tile.getRenderLevel());
-					}
-
-					WallObject wallObject = tile.getWallObject();
-					if (wallObject != null && wallObject.getRenderable1() != null) {
-						int orientation = HDUtils.convertWallObjectOrientation(wallObject.getOrientationA());
-						addObjectLight(sceneContext, wallObject, tile.getRenderLevel(), 1, 1, orientation);
-					}
-
-					GroundObject groundObject = tile.getGroundObject();
-					if (groundObject != null && groundObject.getRenderable() != null) {
-						addObjectLight(sceneContext, groundObject, tile.getRenderLevel());
-					}
-
-					for (GameObject gameObject : tile.getGameObjects()) {
-						if (gameObject != null) {
-							if (gameObject.getRenderable() instanceof Actor) {
-								// rarely these tile game objects are actors with weird properties
-								// we skip those
+					Tile tile;
+					if (tileExX >= 0 && tileExY >= 0 &&
+						tileExX < EXTENDED_SCENE_SIZE && tileExY < EXTENDED_SCENE_SIZE &&
+						(tile = tiles[plane][tileExX][tileExY]) != null
+					) {
+						// Check if the actor is hidden by another actor on the same tile
+						for (var gameObject : tile.getGameObjects()) {
+							if (gameObject == null || !(gameObject.getRenderable() instanceof Actor))
 								continue;
-							}
 
-							addObjectLight(
-								sceneContext,
-								gameObject,
-								tile.getRenderLevel(),
-								gameObject.sizeX(),
-								gameObject.sizeY(),
-								gameObject.getOrientation().getAngle());
+							// Assume only the first actor at the same exact location will be rendered
+							if (gameObject.getX() == light.origin[0] && gameObject.getY() == light.origin[2]) {
+								hiddenTemporarily = gameObject.getRenderable() != light.actor;
+								break;
+							}
+						}
+
+						if (!hiddenTemporarily)
+							hiddenTemporarily = !isActorLightVisible(light.actor);
+
+						if (tileExX != light.prevTileX || tileExY != light.prevTileY) {
+							light.prevTileX = tileExX;
+							light.prevTileY = tileExY;
+
+							// Tile null check is to prevent oddities caused by - once again - Crystalline Hunllef.
+							// May also apply to other NPCs in instances.
+							if (tile.getBridge() != null)
+								plane++;
+
+							// Interpolate between tile heights based on specific scene coordinates
+							float lerpX = (light.origin[0] % LOCAL_TILE_SIZE) / (float) LOCAL_TILE_SIZE;
+							float lerpY = (light.origin[2] % LOCAL_TILE_SIZE) / (float) LOCAL_TILE_SIZE;
+							int baseTileX =
+								(int) Math.floor(light.origin[0] / (float) LOCAL_TILE_SIZE) + SceneUploader.SCENE_OFFSET;
+							int baseTileY =
+								(int) Math.floor(light.origin[2] / (float) LOCAL_TILE_SIZE) + SceneUploader.SCENE_OFFSET;
+							float heightNorth = HDUtils.lerp(
+								tileHeights[plane][baseTileX][baseTileY + 1],
+								tileHeights[plane][baseTileX + 1][baseTileY + 1],
+								lerpX
+							);
+							float heightSouth = HDUtils.lerp(
+								tileHeights[plane][baseTileX][baseTileY],
+								tileHeights[plane][baseTileX + 1][baseTileY],
+								lerpX
+							);
+							float tileHeight = HDUtils.lerp(heightSouth, heightNorth, lerpY);
+							light.origin[1] = (int) tileHeight - 1 - light.def.height;
 						}
 					}
 				}
 			}
-		}
-	}
 
-	public ArrayList<SceneLight> getVisibleLights(int maxDistance, int maxLights)
-	{
-		SceneContext sceneContext = plugin.getSceneContext();
-		ArrayList<SceneLight> visibleLights = new ArrayList<>();
+			light.pos[0] = light.origin[0];
+			light.pos[1] = light.origin[1];
+			light.pos[2] = light.origin[2];
 
-		if (sceneContext == null)
-			return visibleLights;
-
-		for (SceneLight light : sceneContext.lights)
-		{
-			if (light.distance > maxDistance * LOCAL_TILE_SIZE)
-				break;
-
-			if (!light.visible) {
-				continue;
+			if (light.alignment.relative) {
+				light.orientation += light.preOrientation;
+				light.orientation += light.alignment.orientation;
+			} else {
+				light.orientation = 0;
 			}
+			light.orientation = HDUtils.mod(light.orientation, 2048);
 
-			// Hide certain lights on planes lower than the player to prevent light 'leaking' through the floor
-			if (light.plane < client.getPlane() && light.belowFloor)
-				continue;
+			if (light.alignment == Alignment.CUSTOM) {
+				// orientation 0 = south
+				int sin = SINE[light.orientation];
+				int cos = COSINE[light.orientation];
+				int x = light.offset[0];
+				int z = light.offset[2];
+				light.pos[0] += -cos * x - sin * z >> 16;
+				light.pos[1] += light.offset[1];
+				light.pos[2] += -cos * z + sin * x >> 16;
+			} else {
+				int localSizeX = light.sizeX * LOCAL_TILE_SIZE;
+				int localSizeY = light.sizeY * LOCAL_TILE_SIZE;
 
-			// Hide any light that is above the current plane and is above a solid floor
-			if (light.plane > client.getPlane() && light.aboveFloor)
-				continue;
-
-			visibleLights.add(light);
-
-			if (visibleLights.size() >= maxLights)
-				break;
-		}
-
-		return visibleLights;
-	}
-
-	@Subscribe
-	public void onProjectileMoved(ProjectileMoved projectileMoved)
-	{
-		SceneContext sceneContext = plugin.getSceneContext();
-		Projectile projectile = projectileMoved.getProjectile();
-
-		for (Light l : PROJECTILE_LIGHTS.get(projectile.getId()))
-		{
-			// prevent duplicate lights being spawned for the same projectile
-			if (trackedProjectiles.contains(projectile))
-			{
-				continue;
-			}
-
-			SceneLight light = new SceneLight(
-				0, 0, projectile.getFloor(), l.height, l.alignment, l.radius,
-				l.strength, l.color, l.type, l.duration, l.range, 300);
-			light.projectile = projectile;
-			light.x = (int) projectile.getX();
-			light.y = (int) projectile.getY();
-			light.z = (int) projectile.getZ();
-
-			trackedProjectiles.add(projectile);
-
-			if (sceneContext != null) {
-				sceneContext.lights.add(light);
-			}
-
-		}
-	}
-
-	private void addNpcLights(SceneContext sceneContext, NPC npc)
-	{
-		if (sceneContext == null)
-			return;
-
-		for (Light l : NPC_LIGHTS.get(npc.getId()))
-		{
-			// prevent duplicate lights being spawned for the same NPC
-			if (sceneContext.lights.stream().anyMatch(x -> x.npc == npc))
-			{
-				System.out.println("light npc already exists " + npc.getId());
-				continue;
-			}
-
-			SceneLight light = new SceneLight(
-				0, 0, -1, l.height, l.alignment, l.radius,
-				l.strength, l.color, l.type, l.duration, l.range, 0);
-
-			light.npc = npc;
-			light.visible = false;
-
-			sceneContext.lights.add(light);
-		}
-	}
-
-	public void removeNpcLight(SceneContext sceneContext, NPC npc)
-	{
-		if (sceneContext != null)
-			sceneContext.lights.removeIf(light -> light.npc == npc);
-	}
-
-
-
-	@Subscribe
-	public void onNpcSpawned(NpcSpawned npcSpawned)
-	{
-		addNpcLights(plugin.getSceneContext(), npcSpawned.getNpc());
-	}
-
-	@Subscribe
-	public void onNpcChanged(NpcChanged npcChanged)
-	{
-		SceneContext sceneContext = plugin.getSceneContext();
-		removeNpcLight(sceneContext, npcChanged.getNpc());
-		addNpcLights(sceneContext, npcChanged.getNpc());
-	}
-
-	@Subscribe
-	public void onNpcDespawned(NpcDespawned npcDespawned)
-	{
-		removeNpcLight(plugin.getSceneContext(), npcDespawned.getNpc());
-	}
-
-	private void addObjectLight(SceneContext sceneContext, TileObject tileObject, int plane)
-	{
-		addObjectLight(sceneContext, tileObject, plane, 1, 1, -1);
-	}
-
-	private void addObjectLight(SceneContext sceneContext, TileObject tileObject, int plane, int sizeX, int sizeY, int orientation)
-	{
-		for (Light l : OBJECT_LIGHTS.get(tileObject.getId()))
-		{
-			// prevent objects at plane -1 and below from having lights
-			if (tileObject.getPlane() <= -1)
-			{
-				continue;
-			}
-
-			// prevent duplicate lights being spawned for the same object
-			int hash = tileObjectHash(tileObject);
-			boolean isDuplicate = sceneContext.lights.stream()
-				.anyMatch(light -> light.object == tileObject || hash == tileObjectHash(light.object));
-			if (isDuplicate)
-			{
-				continue;
-			}
-
-			int localPlane = tileObject.getPlane();
-			SceneLight light = new SceneLight(
-				0, 0, localPlane, l.height, l.alignment, l.radius,
-				l.strength, l.color, l.type, l.duration, l.range, l.fadeInDuration);
-
-			LocalPoint localPoint = tileObject.getLocalLocation();
-			int lightX = localPoint.getX();
-			int lightY = localPoint.getY();
-			int localSizeX = sizeX * LOCAL_TILE_SIZE;
-			int localSizeY = sizeY * LOCAL_TILE_SIZE;
-
-			if (orientation != -1 && light.alignment != Alignment.CENTER)
-			{
 				float radius = localSizeX / 2f;
 				if (!light.alignment.radial)
-				{
 					radius = (float) Math.sqrt(localSizeX * localSizeX + localSizeX * localSizeX) / 2;
-				}
 
-				if (!light.alignment.relative)
-				{
-					orientation = 0;
-				}
-				orientation += light.alignment.orientation;
-				orientation %= 2048;
-
-				float sine = SINE[orientation] / 65536f;
-				float cosine = COSINE[orientation] / 65536f;
+				float sine = SINE[light.orientation] / 65536f;
+				float cosine = COSINE[light.orientation] / 65536f;
 				cosine /= (float) localSizeX / (float) localSizeY;
 
 				int offsetX = (int) (radius * sine);
 				int offsetY = (int) (radius * cosine);
 
-				lightX += offsetX;
-				lightY += offsetY;
+				light.pos[0] += offsetX;
+				light.pos[2] += offsetY;
 			}
 
-			float tileX = (float) lightX / LOCAL_TILE_SIZE;
-			float tileY = (float) lightY / LOCAL_TILE_SIZE;
-			float lerpX = (lightX % LOCAL_TILE_SIZE) / (float) LOCAL_TILE_SIZE;
-			float lerpY = (lightY % LOCAL_TILE_SIZE) / (float) LOCAL_TILE_SIZE;
-			int tileMinX = (int) Math.floor(tileX);
-			int tileMinY = (int) Math.floor(tileY);
-			int tileMaxX = tileMinX + 1;
-			int tileMaxY = tileMinY + 1;
-			tileMinX = HDUtils.clamp(tileMinX, 0, Constants.SCENE_SIZE - 1);
-			tileMinY = HDUtils.clamp(tileMinY, 0, Constants.SCENE_SIZE - 1);
-			tileMaxX = HDUtils.clamp(tileMaxX, 0, Constants.SCENE_SIZE - 1);
-			tileMaxY = HDUtils.clamp(tileMaxY, 0, Constants.SCENE_SIZE - 1);
+			// This is a little bit slow, so only update it when necessary
+			if (light.prevPlane != light.plane) {
+				light.prevPlane = light.plane;
+				light.belowFloor = false;
+				light.aboveFloor = false;
+				int tileExX = light.pos[0] / LOCAL_TILE_SIZE + SceneUploader.SCENE_OFFSET;
+				int tileExY = light.pos[2] / LOCAL_TILE_SIZE + SceneUploader.SCENE_OFFSET;
+				if (light.plane >= 0 && tileExX >= 0 && tileExY >= 0 && tileExX < EXTENDED_SCENE_SIZE && tileExY < EXTENDED_SCENE_SIZE) {
+					Tile tileAbove = light.plane < 3 ? tiles[light.plane + 1][tileExX][tileExY] : null;
+					if (tileAbove != null && (tileAbove.getSceneTilePaint() != null || tileAbove.getSceneTileModel() != null))
+						light.belowFloor = true;
 
-			int[][][] tileHeights = sceneContext.scene.getTileHeights();
-			float heightNorth = HDUtils.lerp(
-				tileHeights[plane][tileMinX][tileMaxY],
-				tileHeights[plane][tileMaxX][tileMaxY],
-				lerpX);
-			float heightSouth = HDUtils.lerp(
-				tileHeights[plane][tileMinX][tileMinY],
-				tileHeights[plane][tileMaxX][tileMinY],
-				lerpX);
-			float tileHeight = HDUtils.lerp(heightSouth, heightNorth, lerpY);
+					Tile lightTile = tiles[light.plane][tileExX][tileExY];
+					if (lightTile != null && (lightTile.getSceneTilePaint() != null || lightTile.getSceneTileModel() != null))
+						light.aboveFloor = true;
+				}
+			}
 
-			light.x = lightX;
-			light.y = lightY;
-			light.z = (int) tileHeight - light.height - 1;
-			light.object = tileObject;
+			if (!hiddenTemporarily && !light.def.visibleFromOtherPlanes) {
+				// Hide certain lights on planes lower than the player to prevent light 'leaking' through the floor
+				if (light.plane < client.getPlane() && light.belowFloor)
+					hiddenTemporarily = true;
+				// Hide any light that is above the current plane and is above a solid floor
+				if (light.plane > client.getPlane() && light.aboveFloor)
+					hiddenTemporarily = true;
+			}
 
+			if (parentExists != light.parentExists) {
+				light.parentExists = parentExists;
+				if (parentExists) {
+					// Reset the light if it's replayable and the parent just spawned
+					if (light.replayable) {
+						light.elapsedTime = 0;
+						if (light.dynamicLifetime)
+							light.lifetime = -1;
+					}
+				} else if (light.lifetime == -1) {
+					// Schedule despawning of the light if the parent just despawned, and the light isn't already scheduled to despawn
+					float minLifetime = light.spawnDelay + light.fadeInDuration;
+					light.lifetime = Math.max(minLifetime, light.elapsedTime) + light.despawnDelay;
+				}
+			}
 
+			if (hiddenTemporarily != light.hiddenTemporarily)
+				light.toggleTemporaryVisibility();
 
+			light.elapsedTime += plugin.deltaClientTime;
+
+			light.visible = light.spawnDelay < light.elapsedTime && (light.lifetime == -1 || light.elapsedTime < light.lifetime);
+
+			// If the light is temporarily hidden, keep it visible only while fading out
+			if (light.visible && light.hiddenTemporarily)
+				light.visible = light.changedVisibilityAt != -1 && light.elapsedTime - light.changedVisibilityAt < Light.VISIBILITY_FADE;
+
+			if (light.visible) {
+				// Hide lights which cannot possibly affect the visible scene
+				int distFromCamera = (int) Math.max(
+					Math.abs(plugin.cameraPosition[0] - light.pos[0]),
+					Math.abs(plugin.cameraPosition[2] - light.pos[2])
+				) - light.radius;
+				if (distFromCamera > drawDistance)
+					light.visible = false;
+			}
+
+			if (light.visible) {
+				// Calculate the distance between the player and the light to determine which
+				// lights to display based on the 'max dynamic lights' config option
+				int distX = plugin.cameraFocalPoint[0] - light.pos[0];
+				int distZ = plugin.cameraFocalPoint[1] - light.pos[2];
+				light.distanceSquared = distX * distX + distZ * distZ + light.pos[1] * light.pos[1];
+			}
+		}
+
+		// Order visible lights first, and by distance. Leave hidden lights unordered at the end.
+		sceneContext.lights.sort((a, b) -> {
+			// -1 = move a left of b
+			if (a.visible && b.visible)
+				return a.distanceSquared - b.distanceSquared;
+			if (!a.visible && !b.visible)
+				return 0;
+			return a.visible ? -1 : 1;
+		});
+
+		// Count number of visible lights
+		sceneContext.numVisibleLights = 0;
+		for (Light light : sceneContext.lights) {
+			// Exit early once encountering the first invisible light, or the light limit is reached
+			if (!light.visible || sceneContext.numVisibleLights >= plugin.configMaxDynamicLights)
+				break;
+
+			sceneContext.numVisibleLights++;
+
+			// If the light was temporarily hidden, begin fading in
+			if (!light.withinViewingDistance && light.hiddenTemporarily)
+				light.toggleTemporaryVisibility();
+			light.withinViewingDistance = true;
+
+			if (light.def.type == LightType.FLICKER) {
+				double t = TWO_PI * (mod(plugin.elapsedTime, 60) / 60 + light.randomOffset);
+				float flicker = (float) (
+					pow(cos(11 * t), 3) +
+					pow(cos(17 * t), 6) +
+					pow(cos(23 * t), 2) +
+					pow(cos(31 * t), 6) +
+					pow(cos(71 * t), 4) +
+					pow(cos(151 * t), 6) / 2
+				) / 4.335f;
+
+				float maxFlicker = 1f + (light.def.range / 100f);
+				float minFlicker = 1f - (light.def.range / 100f);
+
+				flicker = minFlicker + (maxFlicker - minFlicker) * flicker;
+
+				light.strength = light.def.strength * flicker;
+				light.radius = (int) (light.def.radius * 1.5f);
+			} else if (light.def.type == LightType.PULSE) {
+				light.animation = fract(light.animation + plugin.deltaClientTime / light.duration);
+
+				float output = 1 - 2 * abs(light.animation - .5f);
+				float range = light.def.range / 100f;
+				float fullRange = range * 2f;
+				float multiplier = (1.0f - range) + output * fullRange;
+
+				light.radius = (int) (light.def.radius * multiplier);
+				light.strength = light.def.strength * multiplier;
+			} else {
+				light.strength = light.def.strength;
+				light.radius = light.def.radius;
+				light.color = light.def.color;
+			}
+
+			// Spawn & despawn fade-in and fade-out
+			if (light.fadeInDuration > 0)
+				light.strength *= HDUtils.clamp((light.elapsedTime - light.spawnDelay) / light.fadeInDuration, 0, 1);
+			if (light.fadeOutDuration > 0 && light.lifetime != -1)
+				light.strength *= HDUtils.clamp((light.lifetime - light.elapsedTime) / light.fadeOutDuration, 0, 1);
+
+			light.applyTemporaryVisibilityFade();
+		}
+
+		for (int i = sceneContext.lights.size() - 1; i >= sceneContext.numVisibleLights; i--) {
+			Light light = sceneContext.lights.get(i);
+			light.withinViewingDistance = false;
+
+			// Automatically despawn non-replayable fixed lifetime lights when they expire
+			if (!light.replayable && light.lifetime != -1 && light.lifetime < light.elapsedTime)
+				light.markedForRemoval = true;
+
+			if (light.markedForRemoval) {
+				sceneContext.lights.remove(i);
+				if (light.projectile != null && --light.projectileRefCounter[0] == 0)
+					sceneContext.knownProjectiles.remove(light.projectile);
+			}
+		}
+	}
+
+	private boolean isActorLightVisible(@Nonnull Actor actor) {
+		try {
+			// getModel may throw an exception from vanilla client code
+			if (actor.getModel() == null)
+				return false;
+		} catch (Exception ex) {
+			// Vanilla handles exceptions thrown in `DrawCallbacks#draw` gracefully, but here we have to handle them
+			return false;
+		}
+
+		boolean entityHiderEnabled = pluginManager.isPluginEnabled(entityHiderPlugin);
+
+		if (actor instanceof NPC) {
+			if (!plugin.configNpcLights)
+				return false;
+
+			if (entityHiderEnabled) {
+				var npc = (NPC) actor;
+				boolean isPet = npc.getComposition().isFollower();
+
+				if (client.getFollower() != null && client.getFollower().getIndex() == npc.getIndex())
+					return true;
+
+				if (entityHiderConfig.hideNPCs() && !isPet)
+					return false;
+
+				return !entityHiderConfig.hidePets() || !isPet;
+			}
+		} else if (actor instanceof Player) {
+			if (entityHiderEnabled) {
+				var player = (Player) actor;
+				Player local = client.getLocalPlayer();
+				if (local == null || player.getName() == null)
+					return true;
+
+				if (player == local)
+					return !entityHiderConfig.hideLocalPlayer();
+
+				if (entityHiderConfig.hideAttackers() && player.getInteracting() == local)
+					return false;
+
+				if (player.isFriend())
+					return !entityHiderConfig.hideFriends();
+				if (player.isFriendsChatMember())
+					return !entityHiderConfig.hideFriendsChatMembers();
+				if (player.isClanMember())
+					return !entityHiderConfig.hideClanChatMembers();
+				if (client.getIgnoreContainer().findByName(player.getName()) != null)
+					return !entityHiderConfig.hideIgnores();
+
+				return !entityHiderConfig.hideOthers();
+			}
+		}
+
+		return true;
+	}
+
+	private boolean shouldShowProjectileLights() {
+		return plugin.configProjectileLights && !(pluginManager.isPluginEnabled(entityHiderPlugin) && entityHiderConfig.hideProjectiles());
+	}
+
+	public void loadSceneLights(SceneContext sceneContext, @Nullable SceneContext oldSceneContext)
+	{
+		assert client.isClientThread();
+
+		if (oldSceneContext == null) {
+			sceneContext.lights.clear();
+			sceneContext.trackedTileObjects.clear();
+			sceneContext.trackedVarps.clear();
+			sceneContext.trackedVarbits.clear();
+			sceneContext.knownProjectiles.clear();
+		} else {
+			// Copy over NPC and projectile lights from the old scene
+			ArrayList<Light> lightsToKeep = new ArrayList<>();
+			for (Light light : oldSceneContext.lights)
+				if (light.actor != null || light.projectile != null)
+					lightsToKeep.add(light);
+
+			sceneContext.lights.addAll(lightsToKeep);
+			for (var light : lightsToKeep)
+				if (light.projectile != null && oldSceneContext.knownProjectiles.contains(light.projectile))
+					sceneContext.knownProjectiles.add(light.projectile);
+		}
+
+		for (Light light : WORLD_LIGHTS) {
+			assert light.worldPoint != null;
+			int regionId = light.worldPoint.getRegionID();
+			if (sceneContext.regionIds.contains(regionId))
+				addWorldLight(sceneContext, light);
+		}
+
+		for (Tile[][] plane : sceneContext.scene.getExtendedTiles()) {
+			for (Tile[] column : plane) {
+				for (Tile tile : column) {
+					if (tile == null)
+						continue;
+
+					DecorativeObject decorativeObject = tile.getDecorativeObject();
+					if (decorativeObject != null)
+						handleObjectSpawn(sceneContext, decorativeObject);
+
+					WallObject wallObject = tile.getWallObject();
+					if (wallObject != null)
+						handleObjectSpawn(sceneContext, wallObject);
+
+					GroundObject groundObject = tile.getGroundObject();
+					if (groundObject != null && groundObject.getRenderable() != null)
+						handleObjectSpawn(sceneContext, groundObject);
+
+					for (GameObject gameObject : tile.getGameObjects()) {
+						// Skip nulls, players & NPCs
+						if (gameObject == null || gameObject.getRenderable() instanceof Actor)
+							continue;
+
+						handleObjectSpawn(sceneContext, gameObject);
+					}
+				}
+			}
+		}
+	}
+
+	private void removeLightIf(Predicate<Light> predicate) {
+		var sceneContext = plugin.getSceneContext();
+		if (sceneContext == null)
+			return;
+		removeLightIf(sceneContext, predicate);
+	}
+
+	private void removeLightIf(@Nonnull SceneContext sceneContext, Predicate<Light> predicate) {
+		for (var light : sceneContext.lights)
+			if (predicate.test(light))
+				light.markedForRemoval = true;
+	}
+
+	private void addSpotAnimLights(Actor actor) {
+		var sceneContext = plugin.getSceneContext();
+		if (sceneContext == null)
+			return;
+
+		for (var spotAnim : actor.getSpotAnims()) {
+			int spotAnimId = spotAnim.getId();
+			for (var def : SPOT_ANIM_LIGHTS.get(spotAnim.getId())) {
+				boolean isDuplicate = sceneContext.lights.stream()
+					.anyMatch(light ->
+						light.spotAnimId == spotAnimId &&
+						light.actor == actor &&
+						light.def == def);
+				if (isDuplicate)
+					continue;
+
+				Light light = new Light(def);
+				light.plane = -1;
+				light.spotAnimId = spotAnimId;
+				light.actor = actor;
+				sceneContext.lights.add(light);
+			}
+		}
+	}
+
+	private void addNpcLights(NPC npc)
+	{
+		var sceneContext = plugin.getSceneContext();
+		if (sceneContext == null)
+			return;
+
+		var modelOverride = modelOverrideManager.getOverride(
+			ModelHash.packUuid(ModelHash.TYPE_NPC, npc.getId()),
+			sceneContext.localToWorld(npc.getLocalLocation(), client.getPlane())
+		);
+		if (modelOverride.hide)
+			return;
+
+		for (LightDefinition def : NPC_LIGHTS.get(npc.getId())) {
+			// Prevent duplicate lights from being spawned for the same NPC
+			boolean isDuplicate = sceneContext.lights.stream()
+				.anyMatch(light ->
+					light.actor == npc &&
+					light.def == def);
+			if (isDuplicate)
+				continue;
+
+			Light light = new Light(def);
+			light.plane = -1;
+			light.actor = npc;
+			sceneContext.lights.add(light);
+		}
+	}
+
+	private void handleObjectSpawn(TileObject object) {
+		var sceneContext = plugin.getSceneContext();
+		if (sceneContext != null)
+			handleObjectSpawn(sceneContext, object);
+	}
+
+	private void handleObjectSpawn(
+		@Nonnull SceneContext sceneContext,
+		@Nonnull TileObject tileObject
+	) {
+		if (sceneContext.trackedTileObjects.containsKey(tileObject))
+			return;
+
+		var tracker = new TileObjectImpostorTracker(tileObject);
+		sceneContext.trackedTileObjects.put(tileObject, tracker);
+
+		// prevent objects at plane -1 and below from having lights
+		if (tileObject.getPlane() < 0)
+			return;
+
+		ObjectComposition def = client.getObjectDefinition(tileObject.getId());
+		tracker.impostorIds = def.getImpostorIds();
+		if (tracker.impostorIds != null) {
+			tracker.impostorVarbit = def.getVarbitId();
+			tracker.impostorVarp = def.getVarPlayerId();
+			if (tracker.impostorVarbit != -1)
+				sceneContext.trackedVarbits.put(tracker.impostorVarbit, tracker);
+			if (tracker.impostorVarp != -1)
+				sceneContext.trackedVarps.put(tracker.impostorVarp, tracker);
+		}
+
+		trackImpostorChanges(sceneContext, tracker);
+	}
+
+	private void handleObjectDespawn(TileObject tileObject) {
+		var sceneContext = plugin.getSceneContext();
+		if (sceneContext == null)
+			return;
+
+		var tracker = sceneContext.trackedTileObjects.remove(tileObject);
+		if (tracker == null)
+			return;
+
+		if (tracker.spawnedAnyLights) {
+			long hash = tracker.lightHash(tracker.impostorId);
+			removeLightIf(sceneContext, l -> l.hash == hash);
+		}
+
+		if (tracker.impostorVarbit != -1)
+			sceneContext.trackedVarbits.remove(tracker.impostorVarbit, tracker);
+		if (tracker.impostorVarp != -1)
+			sceneContext.trackedVarps.remove(tracker.impostorVarp, tracker);
+	}
+
+	private void trackImpostorChanges(@Nonnull SceneContext sceneContext, TileObjectImpostorTracker tracker) {
+		int impostorId = -1;
+		if (tracker.impostorIds != null) {
+			int impostorIndex = -1;
+			if (tracker.impostorVarbit != -1) {
+				impostorIndex = client.getVarbitValue(tracker.impostorVarbit);
+			} else if (tracker.impostorVarp != -1) {
+				impostorIndex = client.getVarpValue(tracker.impostorVarp);
+			}
+			if (impostorIndex >= 0)
+				impostorId = tracker.impostorIds[Math.min(impostorIndex, tracker.impostorIds.length - 1)];
+		}
+
+		// Don't do anything if the impostor is the same, unless the object just spawned
+		if (impostorId == tracker.impostorId && !tracker.justSpawned)
+			return;
+
+		int sizeX = 1;
+		int sizeY = 1;
+		Renderable[] renderables = new Renderable[2];
+		int[] orientations = new int[2];
+
+		var tileObject = tracker.tileObject;
+		if (tileObject instanceof GroundObject) {
+			var object = (GroundObject) tileObject;
+			renderables[0] = object.getRenderable();
+			orientations[0] = HDUtils.getBakedOrientation(object.getConfig());
+		} else if (tileObject instanceof DecorativeObject) {
+			var object = (DecorativeObject) tileObject;
+			renderables[0] = object.getRenderable();
+			renderables[1] = object.getRenderable2();
+			orientations[0] = orientations[1] = HDUtils.getBakedOrientation(object.getConfig());
+		} else if (tileObject instanceof WallObject) {
+			var object = (WallObject) tileObject;
+			renderables[0] = object.getRenderable1();
+			renderables[1] = object.getRenderable2();
+			orientations[0] = HDUtils.convertWallObjectOrientation(object.getOrientationA());
+			orientations[1] = HDUtils.convertWallObjectOrientation(object.getOrientationB());
+		} else if (tileObject instanceof GameObject) {
+			var object = (GameObject) tileObject;
+			sizeX = object.sizeX();
+			sizeY = object.sizeY();
+			renderables[0] = object.getRenderable();
+			orientations[0] = HDUtils.getBakedOrientation(object.getConfig());
+		} else {
+			log.warn("Unhandled TileObject type: id: {}, hash: {}", tileObject.getId(), tileObject.getHash());
+			return;
+		}
+
+		// Despawn old lights, if we spawned any for the previous impostor
+		if (tracker.spawnedAnyLights) {
+			long oldHash = tracker.lightHash(tracker.impostorId);
+			removeLightIf(sceneContext, l -> l.hash == oldHash);
+			tracker.spawnedAnyLights = false;
+		}
+
+		long newHash = tracker.lightHash(impostorId);
+		List<LightDefinition> lights = OBJECT_LIGHTS.get(impostorId == -1 ? tileObject.getId() : impostorId);
+		HashSet<LightDefinition> onlySpawnOnce = new HashSet<>();
+
+		// Spawn animation-specific lights for each DynamicObject renderable, and non-animation-based lights
+		for (int i = 0; i < 2; i++) {
+			var renderable = renderables[i];
+			if (renderable == null)
+				continue;
+
+			for (LightDefinition def : lights) {
+				// Rarely, it may be necessary to specify which of the two possible renderables the light should be attached to
+				if (def.renderableIndex == -1) {
+					// If unspecified, spawn it for the first non-null renderable
+					if (onlySpawnOnce.contains(def))
+						continue;
+					onlySpawnOnce.add(def);
+				} else if (def.renderableIndex != i) {
+					continue;
+				}
+
+				LocalPoint lp = tileObject.getLocalLocation();
+				int lightX = lp.getX();
+				int lightZ = lp.getY();
+				int plane = tileObject.getPlane();
+
+				int tileExX = HDUtils.clamp(lp.getSceneX() + SceneUploader.SCENE_OFFSET, 0, EXTENDED_SCENE_SIZE - 2);
+				int tileExY = HDUtils.clamp(lp.getSceneY() + SceneUploader.SCENE_OFFSET, 0, EXTENDED_SCENE_SIZE - 2);
+				float lerpX = (lightX % LOCAL_TILE_SIZE) / (float) LOCAL_TILE_SIZE;
+				float lerpZ = (lightZ % LOCAL_TILE_SIZE) / (float) LOCAL_TILE_SIZE;
+				int tileZ = HDUtils.clamp(plane, 0, MAX_Z - 1);
+
+				Tile[][][] tiles = sceneContext.scene.getExtendedTiles();
+				Tile tile = tiles[tileZ][tileExX][tileExY];
+				if (tile != null && tile.getBridge() != null && tileZ < MAX_Z - 1)
+					tileZ++;
+
+				int[][][] tileHeights = sceneContext.scene.getTileHeights();
+				float heightNorth = HDUtils.lerp(
+					tileHeights[tileZ][tileExX][tileExY + 1],
+					tileHeights[tileZ][tileExX + 1][tileExY + 1],
+					lerpX
+				);
+				float heightSouth = HDUtils.lerp(
+					tileHeights[tileZ][tileExX][tileExY],
+					tileHeights[tileZ][tileExX + 1][tileExY],
+					lerpX
+				);
+				float tileHeight = HDUtils.lerp(heightSouth, heightNorth, lerpZ);
+
+				Light light = new Light(def);
+				light.hash = newHash;
+				light.tileObject = tileObject;
+				light.plane = plane;
+				light.preOrientation = orientations[i];
+				light.origin[0] = lightX;
+				light.origin[1] = (int) tileHeight - light.def.height - 1;
+				light.origin[2] = lightZ;
+				light.sizeX = sizeX;
+				light.sizeY = sizeY;
+				sceneContext.lights.add(light);
+				tracker.spawnedAnyLights = true;
+			}
+		}
+
+		tracker.impostorId = impostorId;
+		tracker.justSpawned = false;
+	}
+
+	private void addWorldLight(SceneContext sceneContext, Light light) {
+		assert light.worldPoint != null;
+		var firstlp = sceneContext.worldInstanceToLocals(light.worldPoint).findFirst();
+		if (firstlp.isEmpty())
+			return;
+
+		LocalPoint lp = firstlp.get();
+		int tileExX = lp.getSceneX() + SceneUploader.SCENE_OFFSET;
+		int tileExY = lp.getSceneY() + SceneUploader.SCENE_OFFSET;
+		if (tileExX < 0 || tileExY < 0 || tileExX >= EXTENDED_SCENE_SIZE || tileExY >= EXTENDED_SCENE_SIZE)
+			return;
+
+		light.origin[0] = lp.getX() + LOCAL_HALF_TILE_SIZE;
+		light.origin[1] = sceneContext.scene.getTileHeights()[light.plane][tileExX][tileExY] - light.def.height - 1;
+		light.origin[2] = lp.getY() + LOCAL_HALF_TILE_SIZE;
+		sceneContext.lights.add(light);
+	}
+
+	@Subscribe
+	public void onProjectileMoved(ProjectileMoved projectileMoved) {
+		SceneContext sceneContext = plugin.getSceneContext();
+		if (sceneContext == null)
+			return;
+
+		// Since there's no spawn & despawn events for projectiles, add when they move for the first time
+		Projectile projectile = projectileMoved.getProjectile();
+		if (!sceneContext.knownProjectiles.add(projectile))
+			return;
+
+		int[] refCounter = { 0 };
+		for (LightDefinition lightDef : PROJECTILE_LIGHTS.get(projectile.getId())) {
+			Light light = new Light(lightDef);
+			light.projectile = projectile;
+			light.projectileRefCounter = refCounter;
+			refCounter[0]++;
+			light.origin[0] = (int) projectile.getX();
+			light.origin[1] = (int) projectile.getZ();
+			light.origin[2] = (int) projectile.getY();
+			light.plane = projectile.getFloor();
 
 			sceneContext.lights.add(light);
 		}
 	}
 
-	private void removeObjectLight(TileObject tileObject)
-	{
-		SceneContext sceneContext = plugin.getSceneContext();
-		if (sceneContext == null)
-			return;
-
-		LocalPoint localLocation = tileObject.getLocalLocation();
-		sceneContext.lights.removeIf(light ->
-			light.object == tileObject &&
-			light.x == localLocation.getX() &&
-			light.y == localLocation.getY() &&
-			light.plane == tileObject.getPlane());
+	@Subscribe
+	public void onNpcSpawned(NpcSpawned spawn) {
+		NPC npc = spawn.getNpc();
+		addNpcLights(npc);
+		addSpotAnimLights(npc);
 	}
 
 	@Subscribe
-	public void onGraphicsObjectCreated(GraphicsObjectCreated graphicsObjectCreated)
-	{
+	public void onNpcChanged(NpcChanged change) {
+		// Respawn non-spotanim lights
+		NPC npc = change.getNpc();
+		removeLightIf(light -> light.actor == npc && light.spotAnimId == -1);
+		addNpcLights(change.getNpc());
+	}
+
+	@Subscribe
+	public void onNpcDespawned(NpcDespawned despawn) {
+		NPC npc = despawn.getNpc();
+		removeLightIf(light -> light.actor == npc);
+	}
+
+	@Subscribe
+	public void onPlayerSpawned(PlayerSpawned spawn) {
+		addSpotAnimLights(spawn.getPlayer());
+	}
+
+	@Subscribe
+	public void onPlayerChanged(PlayerChanged change) {
+		// Don't add spotAnim lights on player change events, since it breaks death & respawn lights
+	}
+
+	@Subscribe
+	public void onGraphicChanged(GraphicChanged change) {
+		addSpotAnimLights(change.getActor());
+	}
+
+	@Subscribe
+	public void onPlayerDespawned(PlayerDespawned despawn) {
+		Player player = despawn.getPlayer();
+		removeLightIf(light -> light.actor == player);
+	}
+
+	@Subscribe
+	public void onGraphicsObjectCreated(GraphicsObjectCreated graphicsObjectCreated) {
 		SceneContext sceneContext = plugin.getSceneContext();
 		if (sceneContext == null)
 			return;
 
 		GraphicsObject graphicsObject = graphicsObjectCreated.getGraphicsObject();
-		for (Light l : GRAPHICS_OBJECT_LIGHTS.get(graphicsObject.getId()))
-		{
-			SceneLight light = new SceneLight(
-				0, 0, graphicsObject.getLevel(), l.height, l.alignment, l.radius,
-				l.strength, l.color, l.type, l.duration, l.range, 300);
+		for (LightDefinition lightDef : SPOT_ANIM_LIGHTS.get(graphicsObject.getId())) {
+			Light light = new Light(lightDef);
 			light.graphicsObject = graphicsObject;
-			light.x = graphicsObject.getLocation().getX();
-			light.y = graphicsObject.getLocation().getY();
-			light.z = graphicsObject.getZ();
-
+			var lp = graphicsObject.getLocation();
+			light.origin[0] = lp.getX();
+			light.origin[1] = graphicsObject.getZ();
+			light.origin[2] = lp.getY();
+			light.plane = graphicsObject.getLevel();
 			sceneContext.lights.add(light);
 		}
 	}
 
-	private int tileObjectHash(@Nullable TileObject tileObject)
-	{
-		if (tileObject == null)
-			return 0;
-
-		LocalPoint local = tileObject.getLocalLocation();
-		int hash = local.getX();
-		hash = hash * 31 + local.getY();
-		hash = hash * 31 + tileObject.getPlane();
-		hash = hash * 31 + tileObject.getId();
-		return hash;
-	}
-
-	private void updateWorldLightPosition(SceneContext sceneContext, SceneLight light)
-	{
-		assert light.worldPoint != null;
-
-		Optional<LocalPoint> firstLocalPoint = sceneContext.worldInstanceToLocals(light.worldPoint).stream().findFirst();
-		if (!firstLocalPoint.isPresent())
-		{
-			return;
-		}
-
-		LocalPoint local = firstLocalPoint.get();
-
-		light.x = local.getX() + LOCAL_HALF_TILE_SIZE;
-		light.y = local.getY() + LOCAL_HALF_TILE_SIZE;
-		if (local.isInScene())
-			light.z = sceneContext.scene.getTileHeights()[light.plane][local.getSceneX()][local.getSceneY()] - light.height - 1;
-
-		if (light.alignment == Alignment.NORTH || light.alignment == Alignment.NORTHEAST || light.alignment == Alignment.NORTHWEST)
-		{
-			light.y += LOCAL_HALF_TILE_SIZE;
-		}
-		if (light.alignment == Alignment.EAST || light.alignment == Alignment.NORTHEAST || light.alignment == Alignment.SOUTHEAST)
-		{
-			light.x += LOCAL_HALF_TILE_SIZE;
-		}
-		if (light.alignment == Alignment.SOUTH || light.alignment == Alignment.SOUTHEAST || light.alignment == Alignment.SOUTHWEST)
-		{
-			light.y -= LOCAL_HALF_TILE_SIZE;
-		}
-		if (light.alignment == Alignment.WEST || light.alignment == Alignment.NORTHWEST || light.alignment == Alignment.SOUTHWEST)
-		{
-			light.x -= LOCAL_HALF_TILE_SIZE;
-		}
+	@Subscribe
+	public void onGameObjectSpawned(GameObjectSpawned spawn) {
+		handleObjectSpawn(spawn.getGameObject());
 	}
 
 	@Subscribe
-	public void onGameObjectSpawned(GameObjectSpawned gameObjectSpawned)
-	{
-		SceneContext sceneContext = plugin.getSceneContext();
+	public void onGameObjectDespawned(GameObjectDespawned despawn) {
+		handleObjectDespawn(despawn.getGameObject());
+	}
+
+	@Subscribe
+	public void onWallObjectSpawned(WallObjectSpawned spawn) {
+		handleObjectSpawn(spawn.getWallObject());
+	}
+
+	@Subscribe
+	public void onWallObjectDespawned(WallObjectDespawned despawn) {
+		handleObjectDespawn(despawn.getWallObject());
+	}
+
+	@Subscribe
+	public void onDecorativeObjectSpawned(DecorativeObjectSpawned spawn) {
+		handleObjectSpawn(spawn.getDecorativeObject());
+	}
+
+	@Subscribe
+	public void onDecorativeObjectDespawned(DecorativeObjectDespawned despawn) {
+		handleObjectDespawn(despawn.getDecorativeObject());
+	}
+
+	@Subscribe
+	public void onGroundObjectSpawned(GroundObjectSpawned spawn) {
+		handleObjectSpawn(spawn.getGroundObject());
+	}
+
+	@Subscribe
+	public void onGroundObjectDespawned(GroundObjectDespawned despawn) {
+		handleObjectDespawn(despawn.getGroundObject());
+	}
+
+	@Subscribe
+	public void onVarbitChanged(VarbitChanged event) {
+		var sceneContext = plugin.getSceneContext();
 		if (sceneContext == null)
 			return;
-		GameObject gameObject = gameObjectSpawned.getGameObject();
-		addObjectLight(sceneContext, gameObject, gameObjectSpawned.getTile().getRenderLevel(), gameObject.sizeX(), gameObject.sizeY(), gameObject.getOrientation().getAngle());
-	}
 
-	@Subscribe
-	public void onGameObjectDespawned(GameObjectDespawned gameObjectDespawned)
-	{
-		removeObjectLight(gameObjectDespawned.getGameObject());
-	}
-
-	@Subscribe
-	public void onWallObjectSpawned(WallObjectSpawned wallObjectSpawned)
-	{
-		SceneContext sceneContext = plugin.getSceneContext();
-		if (sceneContext == null)
-			return;
-		WallObject wallObject = wallObjectSpawned.getWallObject();
-		addObjectLight(sceneContext, wallObject, wallObjectSpawned.getTile().getRenderLevel(), 1, 1, wallObject.getOrientationA());
-	}
-
-	@Subscribe
-	public void onWallObjectDespawned(WallObjectDespawned wallObjectDespawned)
-	{
-		removeObjectLight(wallObjectDespawned.getWallObject());
-	}
-
-	@Subscribe
-	public void onDecorativeObjectSpawned(DecorativeObjectSpawned decorativeObjectSpawned)
-	{
-		SceneContext sceneContext = plugin.getSceneContext();
-		if (sceneContext == null)
-			return;
-		addObjectLight(sceneContext, decorativeObjectSpawned.getDecorativeObject(), decorativeObjectSpawned.getTile().getRenderLevel());
-	}
-
-	@Subscribe
-	public void onDecorativeObjectDespawned(DecorativeObjectDespawned decorativeObjectDespawned)
-	{
-		removeObjectLight(decorativeObjectDespawned.getDecorativeObject());
-	}
-
-	@Subscribe
-	public void onGroundObjectSpawned(GroundObjectSpawned groundObjectSpawned)
-	{
-		SceneContext sceneContext = plugin.getSceneContext();
-		if (sceneContext == null)
-			return;
-		addObjectLight(sceneContext, groundObjectSpawned.getGroundObject(), groundObjectSpawned.getTile().getRenderLevel());
-	}
-
-	@Subscribe
-	public void onGroundObjectDespawned(GroundObjectDespawned groundObjectDespawned)
-	{
-		removeObjectLight(groundObjectDespawned.getGroundObject());
+		if (plugin.enableDetailedTimers)
+			frameTimer.begin(Timer.IMPOSTOR_TRACKING);
+		// Check if the event is specifically a varbit change first,
+		// since all varbit changes are necessarily also varp changes
+		if (event.getVarbitId() != -1) {
+			for (var tracker : sceneContext.trackedVarbits.get(event.getVarbitId()))
+				trackImpostorChanges(sceneContext, tracker);
+		} else if (event.getVarpId() != -1) {
+			for (var tracker : sceneContext.trackedVarps.get(event.getVarpId()))
+				trackImpostorChanges(sceneContext, tracker);
+		}
+		if (plugin.enableDetailedTimers)
+			frameTimer.end(Timer.IMPOSTOR_TRACKING);
 	}
 }
