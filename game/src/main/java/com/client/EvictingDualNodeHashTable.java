@@ -50,6 +50,11 @@ public final class EvictingDualNodeHashTable implements RSEvictingDualNodeHashTa
     }
 
     @Override
+    public void put(RSDualNode var1, long var2) {
+        put((DualNode)var1,var2);
+    }
+
+    @Override
     public RSDualNode getDualNode() {
         return dualNode;
     }

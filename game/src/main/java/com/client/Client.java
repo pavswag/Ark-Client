@@ -242,24 +242,50 @@ public class Client extends GameEngine implements RSClient {
 
 	private final Object modelLoaderLock = new Object();
 
-	public EvictingDualNodeHashTable tmpModelDataCache = new EvictingDualNodeHashTable(16);
+	public RSEvictingDualNodeHashTable tmpModelDataCache = newEvictingDualNodeHashTable(16);
 
-	@SneakyThrows
+	RSEvictingDualNodeHashTable newEvictingDualNodeHashTable(int var1) {
+		return new EvictingDualNodeHashTable(var1);
+	}
+
+	@Override
 	public RSModelData loadModelData(int var0)
 	{
-		return null;
+		RSModelData modelData = (RSModelData) this.tmpModelDataCache.get(var0);
+
+		if (modelData == null)
+		{
+			modelData = getModelData(Js5List.models, var0, 0);
+			if (modelData == null)
+			{
+				return null;
+			}
+
+			this.tmpModelDataCache.put((RSDualNode) modelData, (long) var0);
+		}
+
+		return modelData.newModelData(modelData, true, true, true, true);
 	}
 
 	@Override
-	public ModelData mergeModels(ModelData[] models, int length) {
-		return null;
+	public RSModelData mergeModels(ModelData[] var0, int var1) {
+		return newModelData(Arrays.copyOf(var0, var1, getModelDataArray().getClass()), var1);
 	}
 
 	@Override
-	public ModelData mergeModels(ModelData... models) {
-		return null;
+	public RSModelData newModelData(ModelData[] var0, int var1) {
+		return new Mesh((Mesh[]) var0,var1);
 	}
 
+	@Override
+	public RSModelData[] getModelDataArray() {
+		return ObjectDefinition.modelDataArray;
+	}
+
+	@Override
+	public RSModelData mergeModels(ModelData... var0) {
+		return mergeModels(var0, var0.length);
+	}
 	@Override
 	public String[] playerlist() {
 		return friendsList;

@@ -1056,10 +1056,10 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 		return var9;
 	}
 
-	static Mesh[] meshData;
+	public static Mesh[] modelDataArray;
 
 	static {
-		meshData = new Mesh[4];
+		modelDataArray = new Mesh[4];
 	}
 
 	Mesh getModelData(int var1, int var2) {
@@ -1104,12 +1104,12 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 				}
 
 				if (var5 > 1) {
-					meshData[var6] = var3;
+					modelDataArray[var6] = var3;
 				}
 			}
 
 			if (var5 > 1) {
-				var3 = new Mesh(meshData, var5);
+				var3 = new Mesh(modelDataArray, var5);
 			}
 		} else {
 			int var9 = -1;

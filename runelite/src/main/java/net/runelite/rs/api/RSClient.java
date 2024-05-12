@@ -39,6 +39,12 @@ public interface RSClient extends RSGameEngine, Client
 	@Override
 	int getCameraX();
 
+	@Construct
+	RSModelData newModelData(ModelData[] var1, int var2);
+
+	@Import("modelDataArray")
+	RSModelData[] getModelDataArray();
+
 	@Import("cameraZ") // <--- This is correct!
 	@Override
 	int getCameraY();
