@@ -19,7 +19,6 @@ import com.client.utilities.ObjectKeyUtil;
 import com.displee.cache.index.Index;
 import com.google.common.collect.ImmutableSet;
 import net.runelite.api.Perspective;
-import net.runelite.api.hooks.DrawCallbacks;
 import net.runelite.api.model.Jarvis;
 import net.runelite.api.model.Triangle;
 import net.runelite.api.model.Vertex;
@@ -2188,7 +2187,7 @@ public class Model extends Renderable implements RSModel {
                 withinBounds = true;
             }
 
-            if(plane < Client.instance.getPlane() && !OBSTACLE_IDS.contains(ObjectKeyUtil.getObjectId(uid))) {
+            if(plane < Client.instance.getPlane() && !IGNORE_HEIGHT_FIX.contains(ObjectKeyUtil.getObjectId(uid))) {
                 withinBounds = false;
             }
 
@@ -2274,8 +2273,9 @@ public class Model extends Renderable implements RSModel {
             }
         }
     }
-    static final Set<Integer> OBSTACLE_IDS = ImmutableSet.of(
-            BALANCING_LEDGE_23547
+    static final Set<Integer> IGNORE_HEIGHT_FIX = ImmutableSet.of(
+            BALANCING_LEDGE_23547,
+            26503, 26461//bandos door
     );
     final void withinObject(boolean var25, boolean highlighted, long uid, int plane) {
         final boolean gpu = Client.instance.isGpu() && Rasterizer3D.world;
@@ -2305,7 +2305,7 @@ public class Model extends Renderable implements RSModel {
                             continue;
                         }
                         if (highlighted && inBounds(vertexScreenY[triX], vertexScreenY[triY], vertexScreenY[triZ], screenXX, screenXY, screenXZ,size)) {
-                            if(plane >= Client.instance.getPlane() || OBSTACLE_IDS.contains(ObjectKeyUtil.getObjectId(uid)))
+                            if(plane >= Client.instance.getPlane() || IGNORE_HEIGHT_FIX.contains(ObjectKeyUtil.getObjectId(uid)))
                                 hoveringObjects[objectsHovering++] = uid;
                         }
                         continue;
@@ -2313,7 +2313,7 @@ public class Model extends Renderable implements RSModel {
 
                     if (!var25 || screenXX != -5000 && screenXY != -5000 && screenXZ != -5000) {
                         if (highlighted && inBounds(vertexScreenY[triX], vertexScreenY[triY], vertexScreenY[triZ], screenXX, screenXY, screenXZ, size)) {
-                            if(plane >= Client.instance.getPlane() || OBSTACLE_IDS.contains(ObjectKeyUtil.getObjectId(uid)))
+                            if(plane >= Client.instance.getPlane() || IGNORE_HEIGHT_FIX.contains(ObjectKeyUtil.getObjectId(uid)))
                                 hoveringObjects[objectsHovering++] = uid;
                             highlighted = false;
                         }
