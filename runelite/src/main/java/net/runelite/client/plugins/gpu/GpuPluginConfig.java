@@ -65,17 +65,17 @@ public interface GpuPluginConfig extends Config
 	}
 
 	@Range(
-		max = 5
+		max = 0
 	)
 	@ConfigItem(
-		keyName = "expandedMapLoadingChunks",
+		keyName = "expandedMapLoadingChunks1",
 		name = "Extended map loading",
 		description = "Extra map area to load, in 8 tile chunks.",
 		position = 1
 	)
 	default int expandedMapLoadingChunks()
 	{
-		return 3;
+		return 0;
 	}
 
 	@ConfigItem(
