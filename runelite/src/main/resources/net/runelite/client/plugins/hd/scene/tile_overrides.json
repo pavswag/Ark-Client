@@ -133,14 +133,6 @@
     "groundMaterial": "WINTER_JAGGED_STONE_TILE_LIGHT_2"
   },
   {
-    "name": "WINTER_EDGEVILLE_PATH",
-    "groundMaterial": "WINTER_JAGGED_STONE_TILE_LIGHT",
-    "blendedAsOpposite": true,
-    "maxHue": 0,
-    "maxSaturation": 0,
-    "shiftLightness": 8
-  },
-  {
     "name": "WINTER_EAST_ARDOUGNE_CASTLE_PATH_FIX",
     "blended": false,
     "shiftLightness": 3
@@ -1358,162 +1350,6 @@
     ],
     "groundMaterial": "MARBLE_1_GLOSS",
     "blended": false
-  },
-  {
-    "name": "EDGEVILLE_BANK_TILE_1",
-    "area": "EDGEVILLE_BANK",
-    "overlayIds": [
-      3
-    ],
-    "groundMaterial": "MARBLE_2_GLOSS",
-    "blended": false,
-    "blendedAsOpposite": true,
-    "minLightness": 22,
-    "maxLightness": 22
-  },
-  {
-    "name": "EDGEVILLE_BANK_TILE_2",
-    "area": "EDGEVILLE_BANK",
-    "overlayIds": [
-      4
-    ],
-    "groundMaterial": "MARBLE_2_GLOSS",
-    "blended": false,
-    "blendedAsOpposite": true,
-    "minLightness": 30,
-    "maxLightness": 30
-  },
-  {
-    "name": "EDGEVILLE_BANK_TILING_FIX_1",
-    "area": "EDGEVILLE_BANK_TILING",
-    "overlayIds": [
-      10
-    ],
-    "groundMaterial": "MARBLE_2_GLOSS",
-    "blended": false,
-    "blendedAsOpposite": true,
-    "minLightness": 22,
-    "maxLightness": 22
-  },
-  {
-    "name": "EDGEVILLE_BANK_PERIMETER_FIX",
-    "area": "EDGEVILLE_BANK_PERIMETER_FIX",
-    "overlayIds": [
-      10
-    ],
-    "groundMaterial": "MARBLE_2_GLOSS",
-    "minLightness": 30,
-    "maxLightness": 30
-  },
-  {
-    "name": "EDGEVILLE_BANK_PERIMETER",
-    "area": "EDGEVILLE_BANK",
-    "overlayIds": [
-      10
-    ],
-    "groundMaterial": "MARBLE_2_GLOSS",
-    "blended": false,
-    "blendedAsOpposite": true,
-    "minLightness": 30,
-    "maxLightness": 30
-  },
-  {
-    "name": "EDGEVILLE_BANK_SURROUNDING_PATH",
-    "area": "EDGEVILLE_BANK_SURROUNDING_PATH",
-    "overlayIds": [
-      10
-    ],
-    "groundMaterial": "VARROCK_PATHS",
-    "replacements": {
-      "WINTER_JAGGED_STONE_TILE_LIGHT": "season == WINTER"
-    }
-  },
-  {
-    "name": "EDGEVILLE_DORIS_HOUSE_FLOOR",
-    "area": "EDGEVILLE_DORIS_HOUSE",
-    "overlayIds": [
-      119
-    ],
-    "groundMaterial": "TILE_SMALL"
-  },
-  {
-    "name": "EDGEVILLE_FURNACE_FLOOR",
-    "area": "EDGEVILLE_FURNACE_FLOOR",
-    "overlayIds": [
-      10
-    ],
-    "groundMaterial": "TILES_2x2_1",
-    "blended": false,
-    "minLightness": 26,
-    "maxLightness": 26
-  },
-  {
-    "name": "EDGEVILLE_MANS_HOUSE_FLOOR",
-    "area": "EDGEVILLE_MANS_HOUSE_FLOOR",
-    "overlayIds": [
-      10
-    ],
-    "groundMaterial": "TILE_SMALL",
-    "blended": false,
-    "minHue": 5,
-    "maxHue": 5,
-    "minSaturation": 4,
-    "maxSaturation": 4,
-    "shiftLightness": -4
-  },
-  {
-    "name": "EDGEVILLE_GENERAL_STORE_BLEND_FIX",
-    "area": "EDGEVILLE_GENERAL_STORE_FLOOR_FIX",
-    "overlayIds": [
-      10
-    ],
-    "groundMaterial": "TILE_SMALL",
-    "blended": false,
-    "minHue": 5,
-    "maxHue": 5,
-    "minSaturation": 4,
-    "maxSaturation": 4,
-    "shiftLightness": -4
-  },
-  {
-    "name": "EDGEVILLE_GENERAL_STORE_FLOOR",
-    "area": "EDGEVILLE_GENERAL_STORE_FLOOR",
-    "overlayIds": [
-      10
-    ],
-    "groundMaterial": "TILE_SMALL",
-    "minHue": 5,
-    "maxHue": 5,
-    "minSaturation": 4,
-    "maxSaturation": 4,
-    "shiftLightness": -4
-  },
-  {
-    "name": "EDGEVILLE_GUARD_TOWER_FLOOR",
-    "area": "EDGEVILLE_GUARD_TOWER_FLOOR",
-    "overlayIds": [
-      10
-    ],
-    "groundMaterial": "CONCRETE"
-  },
-  {
-    "name": "EDGEVILLE_MONASTERY_FLOOR",
-    "area": "EDGEVILLE_MONASTERY",
-    "overlayIds": [
-      10
-    ],
-    "groundMaterial": "GRAVEL",
-    "blended": false
-  },
-  {
-    "name": "EDGEVILLE_BRIDGE_TEXTURE",
-    "area": "EDGEVILLE_BRIDGE",
-    "overlayIds": [
-      12
-    ],
-    "groundMaterial": "VARROCK_PATHS",
-    "minLightness": 32,
-    "maxLightness": 32
   },
   {
     "name": "ABYSSAL_FLOOR_OVERLAY",
@@ -4677,27 +4513,6 @@
       ],
       "SEASONAL_DIRT": "h <= 8 && s >= 4 && l <= 71",
       "DEFAULT_SAND": true
-    }
-  },
-  {
-    "name": "EDGEVILLE_PATH_OVERLAY_48_CUSTOM_PATH",
-    "groundMaterial": "VARROCK_PATHS",
-    "blendedAsOpposite": true,
-    "maxHue": 0,
-    "maxSaturation": 0,
-    "shiftLightness": 8,
-    "replacements": {
-      "WINTER_EDGEVILLE_PATH": "season == WINTER"
-    }
-  },
-  {
-    "name": "EDGEVILLE_PATH_OVERLAY_48",
-    "area": "EDGEVILLE_PATH_OVERLAY",
-    "groundMaterial": "VARROCK_PATHS",
-    "replacements": {
-      "EDGEVILLE_PATH_OVERLAY_48_CUSTOM_PATH": "blending",
-      "WINTER_GRASS": "season == WINTER",
-      "DEFAULT_GRASS": true
     }
   },
   {

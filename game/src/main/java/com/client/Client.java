@@ -67,6 +67,7 @@ import com.client.graphics.interfaces.dropdown.StretchedModeMenu;
 import com.client.graphics.interfaces.eventcalendar.EventCalendar;
 import com.client.graphics.interfaces.impl.*;
 
+import static com.client.MapRegion.ExpandedRegionSize;
 import static com.client.SceneGraph.pitchRelaxEnabled;
 import static com.client.StringUtils.longForName;
 import static com.client.engine.impl.MouseHandler.*;
@@ -25029,14 +25030,15 @@ public class Client extends GameEngine implements RSClient {
 		return null;
 	}
 
+
 	@Override
 	public int getExpandedMapLoading() {
-		return 0;
+		return ExpandedRegionSize;
 	}
 
 	@Override
 	public void setExpandedMapLoading(int chunks) {
-
+		ExpandedRegionSize = chunks;
 	}
 
 	@Override
