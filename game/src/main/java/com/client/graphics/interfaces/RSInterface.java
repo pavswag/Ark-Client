@@ -9,6 +9,9 @@ import com.client.graphics.interfaces.impl.*;
 import com.client.graphics.interfaces.impl.health_hud.HealthHud;
 import com.client.graphics.interfaces.impl.notification.NotificationInterface;
 import com.google.common.base.Preconditions;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.runelite.api.FontTypeFace;
 import net.runelite.api.SpritePixels;
 import net.runelite.api.widgets.Widget;
@@ -26,6 +29,12 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import static com.client.Client.cacheSprite2;
+import static com.client.Client.cacheSprite3;
+import static com.client.Configuration.CLIENT_TITLE;
+import static com.client.Configuration.developerMode;
+import static com.client.PetSystem.petSelected;
+import static java.lang.Integer.parseInt;
 import static net.runelite.api.SpriteID.*;
 
 public class RSInterface implements RSWidget {
@@ -51,11 +60,11 @@ public class RSInterface implements RSWidget {
 
 	public int getChildIndex() {
 		if(id != parentID) {
-			RSInterface parent = interfaceCache[parentID];
-			if(parent == null || parent.children == null)
+			RSInterface parent = interfaceCache.get(parentID);
+			if (parent == null || parent.children == null)
 				return -1;
-			for(int i = 0; i < parent.children.length; i++) {
-				if(parent.children[i] == id)
+			for (int i = 0; i < parent.children.length; i++) {
+				if (parent.children[i] == id)
 					return i;
 			}
 		}
@@ -63,9 +72,9 @@ public class RSInterface implements RSWidget {
 	}
 
 	public static void changeInterfaceImage(int interfaceId, int imageId) {
-		RSInterface originalInterface = interfaceCache[interfaceId];
+		RSInterface originalInterface = interfaceCache.get(interfaceId);
 		if (originalInterface instanceof InterfaceImage) {
-			InterfaceImage interfaceImage = (InterfaceImage)originalInterface;
+			InterfaceImage interfaceImage = (InterfaceImage) originalInterface;
 			interfaceImage.currentSpriteId = imageId;
 			return;
 		}
@@ -91,8 +100,8 @@ public class RSInterface implements RSWidget {
 	public static void printEmptyInterfaceSections() {
 		int count = 0;
 		int start = 0;
-		for (int index = 0; index < interfaceCache.length; index++) {
-			if (interfaceCache[index] == null) {
+		for (int index = 0; index < interfaceCache.size(); index++) {
+			if (interfaceCache.get(index) == null) {
 				if (start == 0) {
 					start = index;
 				}
@@ -122,7 +131,8 @@ public class RSInterface implements RSWidget {
 
 	public int widgetPet = -1;
 	public static void addPet(int ID, int petid) {
-		RSInterface petCanvas = interfaceCache[ID] = new RSInterface();
+		interfaceCache.put(ID, new RSInterface());
+		RSInterface petCanvas = interfaceCache.get(ID);
 		petCanvas.id = ID;
 		petCanvas.parentID = ID;
 		petCanvas.type = 6;
@@ -135,7 +145,7 @@ public class RSInterface implements RSWidget {
 		petCanvas.modelZoom = (petid == 1013 ? 500 : 800);
 		petCanvas.modelRotation1 = 150;
 		petCanvas.modelRotation2 = 0;
-		PetSystem.petSelected = petid;
+		petSelected = petid;
 		/*petCanvas.disabledAnimationId = -1;
 		petCanvas.enabledAnimationId = -1;*/
 	}
@@ -161,14 +171,14 @@ public class RSInterface implements RSWidget {
 		newFonts = newFontSystem;
 		int i = -1;
 		int j = stream.readUShort();
-		interfaceCache = new RSInterface[j + 80000];
 		while (stream.pos < stream.payload.length) {
 			int k = stream.readUShort();
 			if (k == 65535) {
 				i = stream.readUShort();
 				k = stream.readUShort();
 			}
-			RSInterface rsInterface = interfaceCache[k] = new RSInterface();
+			interfaceCache.put(k, new RSInterface());
+			RSInterface rsInterface = interfaceCache.get(k);
 			rsInterface.id = k;
 			rsInterface.parentID = i;
 			rsInterface.type = stream.readUnsignedByte();
@@ -244,7 +254,7 @@ public class RSInterface implements RSWidget {
 						String s1 = stream.readString();
 						if (streamLoader_1 != null && s1.length() > 0) {
 							int i5 = s1.lastIndexOf(",");
-							rsInterface.sprites[j2] = method207(Integer.parseInt(s1.substring(i5 + 1)), streamLoader_1,
+							rsInterface.sprites[j2] = method207(parseInt(s1.substring(i5 + 1)), streamLoader_1,
 									s1.substring(0, i5));
 						}
 					}
@@ -256,7 +266,7 @@ public class RSInterface implements RSWidget {
 						rsInterface.actions[l3] = null;
 					if (rsInterface.parentID == 3822)
 						rsInterface.actions[4] = "Sell X";
-					 if(rsInterface.parentID == 3822)
+					if (rsInterface.parentID == 3822)
 						rsInterface.actions[4] = "Sell All";
 					if (rsInterface.parentID == 3824)
 						rsInterface.actions[4] = "Buy X";
@@ -274,7 +284,7 @@ public class RSInterface implements RSWidget {
 				rsInterface.textShadow = stream.readUnsignedByte() == 1;
 			}
 			if (rsInterface.type == 4) {
-				rsInterface.message = stream.readString().replaceAll("RuneScape", Configuration.CLIENT_TITLE);
+				rsInterface.message = stream.readString().replaceAll("RuneScape", CLIENT_TITLE);
 
 				if (showIds) {
 					rsInterface.message = Integer.toString(rsInterface.id);
@@ -293,14 +303,14 @@ public class RSInterface implements RSWidget {
 				String s = stream.readString();
 				if (streamLoader_1 != null && s.length() > 0) {
 					int i4 = s.lastIndexOf(",");
-					rsInterface.sprite1 = method207(Integer.parseInt(s.substring(i4 + 1)), streamLoader_1,
+					rsInterface.sprite1 = method207(parseInt(s.substring(i4 + 1)), streamLoader_1,
 							s.substring(0, i4));
 //					System.out.println("Sprite1[" + rsInterface.id + "/" + rsInterface.type + "] - " + Integer.parseInt(s.substring(i4 + 1)) + " - " + s.substring(0, i4));
 				}
 				s = stream.readString();
 				if (streamLoader_1 != null && !s.isEmpty()) {
 					int j4 = s.lastIndexOf(",");
-					rsInterface.sprite2 = method207(Integer.parseInt(s.substring(j4 + 1)), streamLoader_1,
+					rsInterface.sprite2 = method207(parseInt(s.substring(j4 + 1)), streamLoader_1,
 							s.substring(0, j4));
 //					System.out.println("Sprite2[" + rsInterface.id + "/" + rsInterface.type + "] - " + Integer.parseInt(s.substring(j4 + 1)) + " - " + s.substring(0, j4));
 				}
@@ -391,45 +401,6 @@ public class RSInterface implements RSWidget {
 		addInterface(emptyInterface);
 		processChildEvents();
 	}
-	
-	public static int findOpenConfigFrame(int amount) {
-		int start = 0;
-		int found = 0;
-		boolean[] checker = new boolean[3215];
-		for(int v = 0; v < interfaceCache.length; v++) {
-			if (interfaceCache[v] != null && interfaceCache[v].scripts != null) {
-				if (interfaceCache[v].scripts[0].length >= 2) {
-					checker[interfaceCache[v].scripts[0][1]] = true;
-				}
-			}
-		}
-		
-		for(int i = 0; i < checker.length; i++) {
-			if (!checker[i]) {
-				start++;
-				if (amount == start) {
-					found = i;
-					break;
-				}
-			} else {
-				start = 0;
-			}
-		}
-		return found;
-	}
-	
-	public static int findAvailableInterfaceID(int interfaceCount) {
-        l:
-        for (int i = 0; i < RSInterface.interfaceCache.length - interfaceCount; i++) {
-            if (RSInterface.interfaceCache[i] == null) {
-                for (int i2 = 0; i2 < interfaceCount; i2++)
-                    if (RSInterface.interfaceCache[i + i2] != null)
-                        continue l;
-                return i;
-            }
-        }
-        return -1;
-    }
 	
 	public static void addHoverButtonLatest(String spriteName,int buttonId1, int buttonId2, int buttonId3, int spriteId1, int spriteId2,
 			int buttonWidth, int buttonHeight, String buttonHoverText) {
@@ -747,7 +718,7 @@ public class RSInterface implements RSWidget {
 			return;
 		}
 		for (int btn : widget.buttonsToDisable) {
-			RSInterface btnWidget = interfaceCache[btn];
+			RSInterface btnWidget = interfaceCache.get(btn);
 
 			if (btnWidget.active) {
 				btnWidget.active = false;
@@ -841,7 +812,8 @@ public class RSInterface implements RSWidget {
 	public static TextDrawingArea[] defaultTextDrawingAreas;
 
 	private static void addTransparentSprite2(int id, int spriteId, int transparency) {
-		RSInterface tab = interfaceCache[id] = new RSInterface();
+		interfaceCache.put(id, new RSInterface());
+		RSInterface tab = interfaceCache.get(id);
 		tab.id = id;
 		tab.parentID = id;
 		tab.type = 5;
@@ -849,8 +821,8 @@ public class RSInterface implements RSWidget {
 		tab.contentType = 0;
 		tab.transparency = transparency;
 		tab.hoverType = 52;
-		tab.sprite2 = Client.cacheSprite2[spriteId];
-		tab.sprite1 = Client.cacheSprite2[spriteId];
+		tab.sprite2 = cacheSprite2[spriteId];
+		tab.sprite1 = cacheSprite2[spriteId];
 		tab.width = 512;
 		tab.height = 334;
 		tab.drawsTransparent = true;
@@ -1162,8 +1134,8 @@ public class RSInterface implements RSWidget {
 		for (int i = 0; i < 9; i += 3) {
 			RSInterface option = addInterface(33310 + i);
 			addToItemGroup(33311 + i, 1, 1, 0, 0, false, "", "", "");
-			interfaceCache[33311 + i].inventoryItemId = new int[] { 4152 };
-			interfaceCache[33311 + i].inventoryAmounts = new int[] { 1 };
+			interfaceCache.get(33311 + i).inventoryItemId = new int[]{4152};
+			interfaceCache.get(33311 + i).inventoryAmounts = new int[]{1};
 			addButton(33312 + i, 1, "Interfaces/AntiBot/IMAGE", "Select");
 			setChildren(2, option);
 			setBounds(33311 + i, 0, 0, 0, option);
@@ -1246,8 +1218,8 @@ public class RSInterface implements RSWidget {
 			addClickableText(37053 + index, costs[index / 3], costs[index / 3],
 					tda, 0, 0xFF981F, false, true, 40);
 			addToItemGroup(37054 + index, 1, 1, 0, 0, false, "", "", "");
-			interfaceCache[37054 + index].inventoryItemId = new int[] { items[index / 3] + 1 };
-			interfaceCache[37054 + index].inventoryAmounts = new int[] { 1 };
+			interfaceCache.get(37054 + index).inventoryItemId = new int[]{items[index / 3] + 1};
+			interfaceCache.get(37054 + index).inventoryAmounts = new int[]{1};
 			setBounds(37052 + index, x + 32, y, 37 + index, scroll);
 			setBounds(37053 + index, x + 32, y + 16, 37 + index + 1, scroll);
 			setBounds(37054 + index, x, y, 37 + index + 2, scroll);
@@ -1410,7 +1382,8 @@ public class RSInterface implements RSWidget {
 	public static void addItem(int childId, String[] options) {
 		int interfaceId = 39342;
 
-		RSInterface rsi = interfaceCache[childId] = new RSInterface();
+		interfaceCache.put(childId, new RSInterface());
+		RSInterface rsi = interfaceCache.get(childId);
 		rsi.actions = new String[10];
 		rsi.spritesX = new int[20];
 		rsi.inventoryItemId = new int[30];
@@ -1442,7 +1415,8 @@ public class RSInterface implements RSWidget {
 	public static void addItem(int childId, String[] options, int interfaceId) {
 		// int interfaceId = 37342;
 
-		RSInterface rsi = interfaceCache[childId] = new RSInterface();
+		interfaceCache.put(childId, new RSInterface());
+		RSInterface rsi = interfaceCache.get(childId);
 		rsi.actions = new String[10];
 		rsi.spritesX = new int[20];
 		rsi.inventoryItemId = new int[30];
@@ -1531,7 +1505,8 @@ public class RSInterface implements RSWidget {
 	}
 
 	public static RSInterface addFullScreenInterface(int id) {
-		RSInterface rsi = interfaceCache[id] = new RSInterface();
+		interfaceCache.put(id, new RSInterface());
+		RSInterface rsi = interfaceCache.get(id);
 		rsi.id = id;
 		rsi.parentID = id;
 		rsi.width = 765;
@@ -2506,14 +2481,15 @@ public class RSInterface implements RSWidget {
 	public int[] buttonsToDisable;
 
 	public static void addSettingsSprite(int childId, int spriteId) {
-		RSInterface rsi = interfaceCache[childId] = new RSInterface();
+		interfaceCache.put(childId, new RSInterface());
+		RSInterface rsi = interfaceCache.get(childId);
 		rsi.id = childId;
 		rsi.parentID = childId;
 		rsi.type = 5;
 		rsi.atActionType = 0;
 		rsi.contentType = 0;
-		rsi.sprite1 = Client.cacheSprite3[spriteId];
-		rsi.sprite2 = Client.cacheSprite3[spriteId];
+		rsi.sprite1 = cacheSprite3[spriteId];
+		rsi.sprite2 = cacheSprite3[spriteId];
 		rsi.width = rsi.sprite1.subWidth;
 		rsi.height = rsi.sprite2.subHeight - 2;
 	}
@@ -2917,7 +2893,8 @@ public class RSInterface implements RSWidget {
 	}
 
 	public static void addActionButton(int id, int sprite, int sprite2, int width, int height, String s) {
-		RSInterface rsi = interfaceCache[id] = new RSInterface();
+		interfaceCache.put(id, new RSInterface());
+		RSInterface rsi = interfaceCache.get(id);
 		rsi.sprite1 = CustomSpriteLoader(sprite, "");
 		if (sprite2 == sprite)
 			rsi.sprite2 = CustomSpriteLoader(sprite, "a");
@@ -2936,7 +2913,8 @@ public class RSInterface implements RSWidget {
 
 	public static void addButton(int id, int sid, String spriteName, String tooltip, int mOver, int atAction, int width,
 			int height) {
-		RSInterface tab = interfaceCache[id] = new RSInterface();
+		interfaceCache.put(id, new RSInterface());
+		RSInterface tab = interfaceCache.get(id);
 		tab.id = id;
 		tab.parentID = id;
 		tab.type = 5;
@@ -2998,15 +2976,16 @@ public class RSInterface implements RSWidget {
 	}
 
 	public static void sprite1(int id, int sprite) {
-		RSInterface class9 = interfaceCache[id];
+		RSInterface class9 = interfaceCache.get(id);
 		class9.sprite1 = CustomSpriteLoader(sprite, "");
 	}
 	public boolean actionsDisabled = false;
 	public static RSInterface addInterface(int id) {
-		if (interfaceCache[id] != null && Configuration.developerMode) {
+		if (interfaceCache.containsKey(id) && developerMode) {
 			//System.err.println("Overwriting interface id: " + id);
 		}
-		RSInterface rsi = interfaceCache[id] = new RSInterface();
+		interfaceCache.put(id, new RSInterface());
+		RSInterface rsi = interfaceCache.get(id);
 		rsi.id = id;
 		rsi.parentID = id;
 		rsi.width = 512;
@@ -3070,7 +3049,8 @@ public class RSInterface implements RSWidget {
 	}
 
 	public static RSInterface addTab(int i) {
-		RSInterface rsinterface = interfaceCache[i] = new RSInterface();
+		interfaceCache.put(i, new RSInterface());
+		RSInterface rsinterface = interfaceCache.get(i);
 		rsinterface.id = i;
 		rsinterface.parentID = i;
 		rsinterface.type = 0;
@@ -3210,7 +3190,7 @@ public class RSInterface implements RSWidget {
 	}
 
 	public static void removeSomething(int id) {
-		interfaceCache[id] = new RSInterface();
+		interfaceCache.put(id, new RSInterface());
 	}
 
 	public static void setBounds(int ID, int X, int Y, int frame, RSInterface RSinterface) {
@@ -3221,12 +3201,13 @@ public class RSInterface implements RSWidget {
 	}
 
 	public static void textSize(int id, TextDrawingArea tda[], int idx) {
-		RSInterface rsi = interfaceCache[id];
+		RSInterface rsi = interfaceCache.get(id);
 		rsi.textDrawingAreas = tda[idx];
 	}
 
 	public static void addChar(int ID) {
-		RSInterface t = interfaceCache[ID] = new RSInterface();
+		interfaceCache.put(ID, new RSInterface());
+		RSInterface t = interfaceCache.get(ID);
 		t.id = ID;
 		t.parentID = ID;
 		t.type = 6;
@@ -3243,7 +3224,8 @@ public class RSInterface implements RSWidget {
 	}
 
 	public static void addChar(int ID, int zoom) {
-		RSInterface t = interfaceCache[ID] = new RSInterface();
+		interfaceCache.put(ID, new RSInterface());
+		RSInterface t = interfaceCache.get(ID);
 		t.id = ID;
 		t.parentID = ID;
 		t.type = 6;
@@ -3260,7 +3242,8 @@ public class RSInterface implements RSWidget {
 	}
 
 	public static void addTransparentSprite3(int id, int spriteId, String spriteName, int opacity) {
-		RSInterface tab = interfaceCache[id] = new RSInterface();
+		interfaceCache.put(id, new RSInterface());
+		RSInterface tab = interfaceCache.get(id);
 		tab.id = id;
 		tab.parentID = id;
 		tab.type = 5;
@@ -3429,7 +3412,8 @@ public class RSInterface implements RSWidget {
 	}
 
 	public static void addSpriteTransparent(int i, Sprite sprite, int trans) {
-		RSInterface rsinterface = interfaceCache[i] = new RSInterface();
+		interfaceCache.put(i, new RSInterface());
+		RSInterface rsinterface = interfaceCache.get(i);
 		rsinterface.id = i;
 		rsinterface.parentID = i;
 		rsinterface.type = 5;
@@ -3446,7 +3430,8 @@ public class RSInterface implements RSWidget {
 	}
 
 	public static RSInterface addSprite(int i, Sprite sprite) {
-		RSInterface rsinterface = interfaceCache[i] = new RSInterface();
+		interfaceCache.put(i, new RSInterface());
+		RSInterface rsinterface = interfaceCache.get(i);
 		rsinterface.id = i;
 		rsinterface.parentID = i;
 		rsinterface.type = 5;
@@ -3527,7 +3512,8 @@ public class RSInterface implements RSWidget {
 	}
 	public boolean wrapText = false;
 	public static RSInterface addText(int id, String text, TextDrawingArea tda[], int idx, int color, boolean centered) {
-		RSInterface rsi = interfaceCache[id] = new RSInterface();
+		interfaceCache.put(id, new RSInterface());
+		RSInterface rsi = interfaceCache.get(id);
 		if (centered)
 			rsi.centerText = true;
 		rsi.textShadow = true;
@@ -3584,7 +3570,8 @@ public class RSInterface implements RSWidget {
 		tab.anInt239 = 0;
 	}
 	public static void addRectangle(int id, int width, int height, int colour, int alpha, boolean filled) {
-		RSInterface tab = interfaceCache[id] = new RSInterface();
+		interfaceCache.put(id, new RSInterface());
+		RSInterface tab = interfaceCache.get(id);
 		tab.textColor = colour;
 		tab.secondaryColor = colour;
 		tab.filled = filled;
@@ -3658,7 +3645,7 @@ public class RSInterface implements RSWidget {
 	public int opacity;
 	public int hoverType;
 	public static void addHoverBox(int id, String text) {
-		RSInterface rsi = interfaceCache[id];// addTabInterface(id);
+		RSInterface rsi = interfaceCache.get(id);
 		rsi.id = id;
 		rsi.parentID = id;
 		rsi.isMouseoverTriggered = true;
@@ -3686,7 +3673,8 @@ public class RSInterface implements RSWidget {
 		tab.spriteOpacity = 255;
 	}
 	public static void addButton(int id, int sid, String spriteName, String tooltip) {
-		RSInterface tab = interfaceCache[id] = new RSInterface();
+		interfaceCache.put(id, new RSInterface());
+		RSInterface tab = interfaceCache.get(id);
 		tab.id = id;
 		tab.parentID = id;
 		tab.type = 5;
@@ -3703,7 +3691,8 @@ public class RSInterface implements RSWidget {
 
 	public static void addButton(int id, int spriteId, String spriteName, String tooltip, int actionType,
 			int mouseOverTrigger) {
-		RSInterface tab = interfaceCache[id] = new RSInterface();
+		interfaceCache.put(id, new RSInterface());
+		RSInterface tab = interfaceCache.get(id);
 		tab.id = id;
 		tab.parentID = id;
 		tab.type = 5;
@@ -3758,7 +3747,8 @@ public class RSInterface implements RSWidget {
 	}
 
 	public static void addConfigSprite(int id, Sprite sprite1, Sprite sprite2, int configFrame, int configId) {
-		RSInterface tab = interfaceCache[id] = new RSInterface();
+		interfaceCache.put(id, new RSInterface());
+		RSInterface tab = interfaceCache.get(id);
 		tab.id = id;
 		tab.parentID = id;
 		tab.type = 5;
@@ -3780,7 +3770,8 @@ public class RSInterface implements RSWidget {
 	}
 
 	public static void addConfigSprite(int id, int spriteId, String spriteName, int spriteId2, String spriteName2, int configFrame, int configId) {
-		RSInterface tab = interfaceCache[id] = new RSInterface();
+		interfaceCache.put(id, new RSInterface());
+		RSInterface tab = interfaceCache.get(id);
 		tab.id = id;
 		tab.parentID = id;
 		tab.type = 5;
@@ -3803,7 +3794,7 @@ public class RSInterface implements RSWidget {
 	public Sprite[] extraInterfaceSprites;
 	public Sprite[] originalInterfaceSprites;
 	public static void setExtraImageForInterface(int interfaceId, int imageId, String imageLocation) {
-		RSInterface originalInterface = interfaceCache[interfaceId];
+		RSInterface originalInterface = interfaceCache.get(interfaceId);
 		if (originalInterface != null && originalInterface.originalInterfaceSprites == null) {
 			originalInterface.originalInterfaceSprites = new Sprite[50];
 			originalInterface.extraInterfaceSprites = new Sprite[50];
@@ -3813,11 +3804,12 @@ public class RSInterface implements RSWidget {
 			originalInterface.originalInterfaceSprites[0] = originalInterface.sprite1;
 			originalInterface.originalInterfaceSprites[1] = originalInterface.sprite2;
 		}
-        assert originalInterface != null;
-        originalInterface.extraInterfaceSprites[imageId] = imageLoader(imageId, imageLocation);
+		assert originalInterface != null;
+		originalInterface.extraInterfaceSprites[imageId] = imageLoader(imageId, imageLocation);
 	}
 	public static void addSprite(int id, int spriteId, String spriteName) {
-		RSInterface tab = interfaceCache[id] = new RSInterface();
+		interfaceCache.put(id, new RSInterface());
+		RSInterface tab = interfaceCache.get(id);
 		tab.id = id;
 		tab.parentID = id;
 		tab.type = 5;
@@ -3832,7 +3824,8 @@ public class RSInterface implements RSWidget {
 	}
 
 	public static void addAnimatedSprite(int childId, String spriteLocation) {
-		RSInterface tab = interfaceCache[childId] = new RSInterface();
+		interfaceCache.put(childId, new RSInterface());
+		RSInterface tab = interfaceCache.get(childId);
 		tab.id = childId;
 		tab.parentID = childId;
 		tab.type = 91;
@@ -3906,7 +3899,8 @@ public class RSInterface implements RSWidget {
 	}
 
 	public static RSInterface addTabInterface(int id) {
-		RSInterface tab = interfaceCache[id] = new RSInterface();
+		interfaceCache.put(id, new RSInterface());
+		RSInterface tab = interfaceCache.get(id);
 		tab.id = id;// 250
 		tab.parentID = id;// 236
 		tab.type = 0;// 262
@@ -4070,7 +4064,7 @@ public class RSInterface implements RSWidget {
 	public void setNewButtonClicking() {
 		if (children != null) {
 			for (int child : children) {
-				RSInterface childInterface = interfaceCache[child];
+				RSInterface childInterface = interfaceCache.get(child);
 				if (childInterface != null) {
 					childInterface.newButtonClicking = true;
 					childInterface.setNewButtonClicking();
@@ -4080,9 +4074,9 @@ public class RSInterface implements RSWidget {
 	}
 
 	public static RSInterface get(int interfaceId) {
-		if(interfaceCache == null || interfaceId < 0 && interfaceId >= interfaceCache.length || interfaceCache[interfaceId] == null)
+		if(interfaceCache == null || interfaceId < 0 && interfaceId >= interfaceCache.size() || !interfaceCache.containsKey(interfaceId))
 			return null;
-		return interfaceCache[interfaceId];
+		return interfaceCache.get(interfaceId);
 	}
 
 	@Override
@@ -4137,7 +4131,7 @@ public class RSInterface implements RSWidget {
 
 	@Override
 	public Widget getParent() {
-		return interfaceCache[parentID];
+		return interfaceCache.get(parentID);
 	}
 
 	@Override
@@ -4372,13 +4366,13 @@ public class RSInterface implements RSWidget {
 		}
 		if(getId() == 3214) {
 			int childIndex = -1;
-			RSInterface parent = interfaceCache[parentID];
-			for(int i = 0; i < parent.children.length; i++) {
-				if(parent.children[i] == getId()) {
+			RSInterface parent = interfaceCache.get(parentID);
+			for (int i = 0; i < parent.children.length; i++) {
+				if (parent.children[i] == getId()) {
 					childIndex = i;
 				}
 			}
-			if(childIndex != -1) {
+			if (childIndex != -1) {
 				x += parent.childX[childIndex];
 				y += parent.childY[childIndex];
 			}
@@ -4476,13 +4470,13 @@ public class RSInterface implements RSWidget {
 		}
 		if(getId() == 3214) {
 			int childIndex = -1;
-			RSInterface parent = interfaceCache[parentID];
-			for(int i = 0; i < parent.children.length; i++) {
-				if(parent.children[i] == getId()) {
+			RSInterface parent = interfaceCache.get(parentID);
+			for (int i = 0; i < parent.children.length; i++) {
+				if (parent.children[i] == getId()) {
 					childIndex = i;
 				}
 			}
-			if(childIndex != -1) {
+			if (childIndex != -1) {
 				offsetX += parent.childX[childIndex];
 				offsetY += parent.childY[childIndex];
 			}
@@ -4825,10 +4819,10 @@ public class RSInterface implements RSWidget {
 	public static List<WidgetChildEvent> childEvents = new LinkedList<>();
 	private static void processChildEvents() {
 		childEvents.forEach(event -> {
-			if(interfaceCache[event.getInterfaceId()] == null)
+			if (!interfaceCache.containsKey(event.getInterfaceId()))
 				return;
-			interfaceCache[event.getInterfaceId()].x = event.getX();
-			interfaceCache[event.getInterfaceId()].y = event.getY();
+			interfaceCache.get(event.getInterfaceId()).x = event.getX();
+			interfaceCache.get(event.getInterfaceId()).y = event.getY();
 		});
 
 		childEvents.clear();
@@ -5500,7 +5494,7 @@ public class RSInterface implements RSWidget {
 	}
 	public Sprite sprite1;
 	public static int anInt208;
-	public static RSInterface interfaceCache[];
+	public static Int2ObjectMap<RSInterface> interfaceCache = new Int2ObjectOpenHashMap<RSInterface>();
 	public int anIntArray212[];
 	public int contentType;// anInt214
 	public int spritesX[];
@@ -5725,7 +5719,7 @@ public class RSInterface implements RSWidget {
 	public static void addClickableText(int id, String text, String tooltip, TextDrawingArea tda[], int idx, int color,
 										boolean center, boolean shadow, int width, int height) {
 		addClickableText(id, text, tooltip, tda, idx, color, center, shadow, width);
-		interfaceCache[id].height = height;
+		interfaceCache.get(id).height = height;
 	}
 
 	public static void addClickableText(int id, String text, String tooltip, TextDrawingArea tda[], int idx, int color,
@@ -5756,7 +5750,8 @@ public class RSInterface implements RSWidget {
 
 
 	public static void addTransparentSprite(int id, int spriteId, String spriteName, int opacity) {
-		RSInterface tab = interfaceCache[id] = new RSInterface();
+		interfaceCache.put(id, new RSInterface());
+		RSInterface tab = interfaceCache.get(id);
 		tab.id = id;
 		tab.parentID = id;
 		tab.type = 10;
@@ -5813,7 +5808,7 @@ public class RSInterface implements RSWidget {
 
 	public static void addClickableSprites(int id, String tooltip, String path, int... spriteIds) {
 		addSprites(id, path, spriteIds);
-		RSInterface component = interfaceCache[id];
+		RSInterface component = interfaceCache.get(id);
 		component.atActionType = 4;
 		component.tooltip = tooltip;
 		component.width = component.backgroundSprites[0].subWidth;
@@ -5822,7 +5817,7 @@ public class RSInterface implements RSWidget {
 
 	public static void addClickableSprites(int id, String path, int... spriteIds) {
 		addSprites(id, path, spriteIds);
-		RSInterface component = interfaceCache[id];
+		RSInterface component = interfaceCache.get(id);
 		component.atActionType = 0;
 		component.width = (component.backgroundSprites[0]).subWidth;
 		component.height = (component.backgroundSprites[0]).subHeight;

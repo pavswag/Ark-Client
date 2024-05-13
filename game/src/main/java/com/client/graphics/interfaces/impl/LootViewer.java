@@ -170,7 +170,7 @@ public class LootViewer extends RSInterface {
             // Button
             interfaceContainer.child(childIndex++, interfaceId, xCoordinate, yCoordinate);
             addConfigButton(interfaceId, PARENT_ID, 2, 1, "Interfaces/horizontalscroll/SPRITE", 117, 26, button.name, index, 4, 1354);
-            RSInterface.interfaceCache[interfaceId].ignoreConfigClicking = true;
+            interfaceCache.get(interfaceId).ignoreConfigClicking = true;
             interfaceId++;
 
             // Text

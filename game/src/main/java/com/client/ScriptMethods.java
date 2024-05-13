@@ -290,7 +290,7 @@ public class ScriptMethods {
         if (var0 >= 2000) {
             var0 -= 1000;
             var4 = Interpreter_intStack[--Client.Interpreter_intStackSize];
-            var3 = RSInterface.interfaceCache[var4];
+            var3 = RSInterface.interfaceCache.get(var4);
         } else {
             System.out.println("Reached here #64231513");
             //var3 = var2 ? class475.scriptDotWidget : class535.scriptActiveWidget;

@@ -28,6 +28,8 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,7 +45,6 @@ import com.client.graphics.interfaces.impl.health_hud.HealthHud;
 import com.client.graphics.interfaces.impl.notification.NotificationInterface;
 import com.client.graphics.loaders.*;
 import com.client.instruction.InstructionArgs;
-import com.client.instruction.InstructionId;
 import com.client.instruction.InstructionProcessor;
 import com.client.js5.Js5ArchiveIndex;
 import com.client.js5.Js5List;
@@ -62,14 +63,73 @@ import com.client.engine.impl.KeyHandler;
 import com.client.engine.impl.MouseHandler;
 import com.client.draw.Bubble;
 import com.client.features.settings.Preferences;
-import com.client.graphics.interfaces.daily.DailyRewards;
 import com.client.graphics.interfaces.dropdown.StretchedModeMenu;
-import com.client.graphics.interfaces.eventcalendar.EventCalendar;
 import com.client.graphics.interfaces.impl.*;
 
+import static com.client.Configuration.*;
+import static com.client.NPCDropInfo.addEntry;
+import static com.client.PetSystem.petSelected;
+import static com.client.PlayerRights.*;
+import static com.client.Rasterizer2D.*;
+import static com.client.Rasterizer3D.*;
 import static com.client.SceneGraph.pitchRelaxEnabled;
+import static com.client.Skills.SKILL_NAMES_ORDER;
 import static com.client.StringUtils.longForName;
+import static com.client.StringUtils.method586;
+import static com.client.TextInput.method525;
+import static com.client.audio.StaticSound.playJingle;
+import static com.client.audio.StaticSound.playSong;
+import static com.client.broadcast.BroadcastManager.addBoradcast;
+import static com.client.broadcast.BroadcastManager.removeIndex;
+import static com.client.definitions.ItemDefinition.*;
+import static com.client.definitions.SpriteCache.lookup;
+import static com.client.engine.impl.KeyHandler.ctrlDown;
 import static com.client.engine.impl.MouseHandler.*;
+import static com.client.features.ExperienceDrop.START_Y;
+import static com.client.features.gametimers.GameTimerHandler.getSingleton;
+import static com.client.graphics.interfaces.RSInterface.*;
+import static com.client.graphics.interfaces.YoutubeManager.addVideo;
+import static com.client.graphics.interfaces.YoutubeManager.videos;
+import static com.client.graphics.interfaces.daily.DailyRewards.get;
+import static com.client.graphics.interfaces.eventcalendar.EventCalendar.getCalendar;
+import static com.client.graphics.interfaces.impl.Autocast.AUTOCAST_MENU_ACTION_ID;
+import static com.client.graphics.interfaces.impl.Bank.*;
+import static com.client.graphics.interfaces.impl.GrandExchange.*;
+import static com.client.graphics.interfaces.impl.Interfaces.SHOP_CONTAINER;
+import static com.client.graphics.interfaces.impl.QuestTab.onConfigChanged;
+import static com.client.graphics.interfaces.impl.health_hud.HealthHud.*;
+import static com.client.graphics.interfaces.settings.SettingsInterface.*;
+import static com.client.graphics.loaders.SpriteLoader.fetchAnimatedSprite;
+import static com.client.graphics.loaders.SpriteLoader.resetAnimatedSprite;
+import static com.client.instruction.InstructionArgs.createFrom;
+import static com.client.instruction.InstructionId.NOTHING;
+import static com.client.instruction.InstructionId.fromId;
+import static com.client.instruction.InstructionProcessor.invoke;
+import static com.client.js5.Js5List.maps;
+import static com.client.model.Items.*;
+import static com.client.sign.Signlink.*;
+import static com.client.sound.Sound.getSound;
+import static com.client.sound.SoundType.values;
+import static com.client.utilities.settings.SettingsManager.saveSettings;
+import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.collect.Lists.newArrayList;
+import static dorkbox.notify.Notify.create;
+import static dorkbox.notify.Pos.BOTTOM_RIGHT;
+import static java.awt.MouseInfo.getPointerInfo;
+import static java.lang.Boolean.parseBoolean;
+import static java.lang.Byte.parseByte;
+import static java.lang.Integer.parseInt;
+import static java.lang.Math.atan2;
+import static java.lang.Math.sqrt;
+import static java.lang.Short.MAX_VALUE;
+import static java.lang.String.format;
+import static java.lang.System.*;
+import static java.util.Collections.sort;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static net.runelite.api.ChatMessageType.GAMEMESSAGE;
+import static net.runelite.api.ChatMessageType.SPAM;
+import static net.runelite.api.GameState.LOADING;
+import static net.runelite.api.Skill.valueOf;
 
 import com.client.features.EntityTarget;
 import com.client.features.ExperienceDrop;
@@ -77,16 +137,13 @@ import com.client.features.gametimers.GameTimer;
 import com.client.features.gametimers.GameTimerHandler;
 import com.client.features.settings.InformationFile;
 import com.client.graphics.interfaces.settings.Setting;
-import com.client.graphics.interfaces.settings.SettingsInterface;
 import com.client.graphics.textures.TextureProvider;
 import com.client.menu.MenuManager;
-import com.client.model.Items;
 import com.client.music.Class56;
 import com.client.osrs.OSRSCacheLoader;
 import com.client.sign.Signlink;
 import com.client.skillorbs.SkillOrbs;
 import com.client.sound.Music;
-import com.client.sound.Sound;
 import com.client.sound.SoundType;
 import com.client.soundeffects.SoundEffects;
 import com.client.soundeffects.SoundPlayer;
@@ -95,10 +152,8 @@ import com.client.utilities.*;
 import com.client.utilities.settings.Settings;
 import com.client.utilities.settings.SettingsManager;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import com.google.common.primitives.Doubles;
 import dorkbox.notify.Notify;
-import dorkbox.notify.Pos;
 import dorkbox.util.ActionHandler;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -424,11 +479,11 @@ public class Client extends GameEngine implements RSClient {
 
 	public void handleScrollPosition(String text, int frame) {
 		if (text.startsWith(":scp:")) {
-			int scrollPosition = Integer.parseInt(text.split(" ")[1]);
-			RSInterface widget = RSInterface.interfaceCache[frame];
+			int scrollPosition = parseInt(text.split(" ")[1]);
+			RSInterface widget = interfaceCache.get(frame);
 			widget.scrollPosition = scrollPosition;
 		} else if (text.startsWith(":scpfind:")) {
-			RSInterface widget = RSInterface.interfaceCache[frame];
+			RSInterface widget = interfaceCache.get(frame);
 			sendString(7, widget.scrollPosition + "");
 		}
 
@@ -713,11 +768,11 @@ public class Client extends GameEngine implements RSClient {
 
 	public static void updateInterface(int[] children, int parent) {
 		if(children == null) {
-			handleWidgetEvents(RSInterface.interfaceCache[parent], 0, 0);
+			handleWidgetEvents(interfaceCache.get(parent), 0, 0);
 			return;
 		}
 		for(int i = 0; i < children.length; i++) {
-			handleWidgetEvents(RSInterface.interfaceCache[children[i]], RSInterface.interfaceCache[parent].childX[i], RSInterface.interfaceCache[parent].childY[i]);
+			handleWidgetEvents(interfaceCache.get(children[i]), interfaceCache.get(parent).childX[i], interfaceCache.get(parent).childY[i]);
 		}
 
 	}
@@ -854,9 +909,9 @@ public class Client extends GameEngine implements RSClient {
 				newBoldFont.drawCenteredString(clickToContinueString, 259, 60 + yOffset, 0, -1);
 				newBoldFont.drawCenteredString("Click to continue", 259, 80 + yOffset, 128, -1);
 			} else if (backDialogID != -1) {
-				drawInterface(0, 20, RSInterface.interfaceCache[backDialogID], 20 + yOffset);
+				drawInterface(0, 20, interfaceCache.get(backDialogID), 20 + yOffset);
 			} else if (dialogID != -1) {
-				drawInterface(0, 20, RSInterface.interfaceCache[dialogID], 20 + yOffset);
+				drawInterface(0, 20, interfaceCache.get(dialogID), 20 + yOffset);
 			} else {
 				int messageCount = 0;
 				Rasterizer2D.setDrawingArea(122 + yOffset, 8, 497, 7 + yOffset);
@@ -1322,7 +1377,7 @@ public class Client extends GameEngine implements RSClient {
 						|| i1 == 493 || i1 == 847 || i1 == 447 || i1 == 1125) {
 					int l1 = menuManager.getMenuEntry(menuActionRow - 1).getParam0();
 					int j2 = menuManager.getMenuEntry(menuActionRow - 1).getParam1();
-					RSInterface class9 = RSInterface.interfaceCache[j2];
+					RSInterface class9 = interfaceCache.get(j2);
 					if (class9.aBoolean259 || class9.aBoolean235) {
 						aBoolean1242 = false;
 						anInt989 = 0;
@@ -1331,9 +1386,9 @@ public class Client extends GameEngine implements RSClient {
 						activeInterfaceType = 2;
 						anInt1087 = saveClickX;
 						anInt1088 = saveClickY;
-						if (RSInterface.interfaceCache[j2].parentID == openInterfaceID)
+						if (interfaceCache.get(j2).parentID == openInterfaceID)
 							activeInterfaceType = 1;
-						if (RSInterface.interfaceCache[j2].parentID == backDialogID)
+						if (interfaceCache.get(j2).parentID == backDialogID)
 							activeInterfaceType = 3;
 						return true;
 					}
@@ -2186,7 +2241,7 @@ public class Client extends GameEngine implements RSClient {
 
 	// interfaceClick
 	private void buildInterfaceMenu(int xPosition, RSInterface class9, int mouseX, int yPosition, int mouseY, int j1) {
-		if (class9 == null || RSInterface.interfaceCache[class9.parentID].interfaceHidden) {
+		if (class9 == null || interfaceCache.get(class9.parentID).interfaceHidden) {
 			return;
 		}
 		if (class9.type != 0 || class9.children == null || class9.isMouseoverTriggered || class9.actionsDisabled) {
@@ -2210,7 +2265,7 @@ public class Client extends GameEngine implements RSClient {
 			try {
 				int drawX = class9.childX[childIndex] + xPosition - (class9.horizontalScroll ? j1 : 0);
 				int drawY = (class9.childY[childIndex] + yPosition) - (class9.horizontalScroll ? 0 : j1);
-				RSInterface class9_1 = RSInterface.interfaceCache[class9.children[childIndex]];
+				RSInterface class9_1 = interfaceCache.get(class9.children[childIndex]);
 				if (class9_1 == null) {
 					break;
 				}
@@ -2241,7 +2296,7 @@ public class Client extends GameEngine implements RSClient {
 						anInt886 = class9_1.id;
 					}
 				}
-				if (class9_1.atActionType == RSInterface.AT_ACTION_TYPE_OPTION_DROPDOWN) {
+				if (class9_1.atActionType == AT_ACTION_TYPE_OPTION_DROPDOWN) {
 
 					boolean flag = false;
 					class9_1.hovered = false;
@@ -2250,7 +2305,7 @@ public class Client extends GameEngine implements RSClient {
 					if (class9_1.dropdown.isOpen()) {
 
 						// Inverted keybinds dropdown
-						if (class9_1.type == RSInterface.TYPE_KEYBINDS_DROPDOWN && class9_1.inverted && mouseX >= drawX
+						if (class9_1.type == TYPE_KEYBINDS_DROPDOWN && class9_1.inverted && mouseX >= drawX
 								&& mouseX < drawX + (class9_1.dropdown.getWidth() - 16)
 								&& mouseY >= drawY - class9_1.dropdown.getHeight() - 10 && mouseY < drawY) {
 							resetTabInterfaceHover();
@@ -2267,7 +2322,7 @@ public class Client extends GameEngine implements RSClient {
 							resetTabInterfaceHover();
 							int yy = mouseY - (drawY + 19);
 
-							if (class9_1.type == RSInterface.TYPE_KEYBINDS_DROPDOWN && class9_1.dropdown.doesSplit()) {
+							if (class9_1.type == TYPE_KEYBINDS_DROPDOWN && class9_1.dropdown.doesSplit()) {
 								if (mouseX > drawX + (class9_1.dropdown.getWidth() / 2)) {
 									class9_1.dropdownHover = ((yy / 15) * 2) + 1;
 								} else {
@@ -2364,9 +2419,9 @@ public class Client extends GameEngine implements RSClient {
 					RSInterface class9_2;
 					int slot = class9_1.grandExchangeSlot;
 					if (grandExchangeInformation[slot][0] == -1)
-						class9_2 = RSInterface.interfaceCache[GrandExchange.grandExchangeBuyAndSellBoxIds[slot]];
+						class9_2 = interfaceCache.get(grandExchangeBuyAndSellBoxIds[slot]);
 					else
-						class9_2 = RSInterface.interfaceCache[GrandExchange.grandExchangeItemBoxIds[slot]];
+						class9_2 = interfaceCache.get(grandExchangeItemBoxIds[slot]);
 					buildInterfaceMenu(drawX, class9_2, mouseX, drawY, mouseY, j1);
 				}
 				if (class9_1.type == 9 && mouseX >= drawX && mouseY >= drawY && mouseX < drawX + class9_1.width && mouseY < drawY + class9_1.height) {
@@ -2392,7 +2447,7 @@ public class Client extends GameEngine implements RSClient {
 						}
 					}
 				} else {
-					if (class9_1.atActionType == RSInterface.OPTION_OK && mouseX >= drawX && mouseY >= drawY && mouseX < drawX + class9_1.width
+					if (class9_1.atActionType == OPTION_OK && mouseX >= drawX && mouseY >= drawY && mouseX < drawX + class9_1.width
 							&& mouseY < drawY + class9_1.height) {
 						boolean flag = false;
 						if (class9_1.contentType != 0)
@@ -2407,9 +2462,9 @@ public class Client extends GameEngine implements RSClient {
 							setMenuOptionCount(getMenuOptionCount() + 1);
 							callbacks.post(new MenuEntryAdded(menuEntry));
 						}
-						if (class9_1.type == RSInterface.TYPE_HOVER || class9_1.type == RSInterface.TYPE_CONFIG_HOVER
-								|| class9_1.type == RSInterface.TYPE_ADJUSTABLE_CONFIG
-								|| class9_1.type == RSInterface.TYPE_BOX) {
+						if (class9_1.type == TYPE_HOVER || class9_1.type == TYPE_CONFIG_HOVER
+								|| class9_1.type == TYPE_ADJUSTABLE_CONFIG
+								|| class9_1.type == TYPE_BOX) {
 							class9_1.toggled = true;
 						}
 
@@ -2476,11 +2531,11 @@ public class Client extends GameEngine implements RSClient {
 						callbacks.post(new MenuEntryAdded(menuEntry));
 					}
 
-					if (spellSelected == 0 && class9_1.atActionType == RSInterface.AT_ACTION_TYPE_AUTOCAST && mouseX >= drawX && mouseY >= drawY && mouseX < drawX + class9_1.width
+					if (spellSelected == 0 && class9_1.atActionType == AT_ACTION_TYPE_AUTOCAST && mouseX >= drawX && mouseY >= drawY && mouseX < drawX + class9_1.width
 							&& mouseY < drawY + class9_1.height) {
 						MenuEntry menuEntry = (MenuEntry) new MenuEntry(menuActionRow)
 								.setOption(class9_1.tooltip)
-								.setType(Autocast.AUTOCAST_MENU_ACTION_ID)
+								.setType(AUTOCAST_MENU_ACTION_ID)
 								.setWidget(class9)
 								.setParam1(class9_1.id);
 						menuManager.addEntry(menuEntry);
@@ -2564,7 +2619,7 @@ public class Client extends GameEngine implements RSClient {
 						for (int l2 = 0; l2 < class9_1.height; l2++) {
 							for (int i3 = 0; i3 < class9_1.width; i3++) {
 								boolean smallSprite = openInterfaceID == 26000
-										&& GrandExchange.isSmallItemSprite(class9_1.id) || class9_1.smallInvSprites;
+										&& isSmallItemSprite(class9_1.id) || class9_1.smallInvSprites;
 								int size = smallSprite ? 18 : 32;
 								int j3 = drawX + i3 * (size + class9_1.invSpritePadX);
 								int k3 = drawY + l2 * (size + class9_1.invSpritePadY);
@@ -2640,7 +2695,7 @@ public class Client extends GameEngine implements RSClient {
 														setMenuOptionCount(getMenuOptionCount() + 1);
 														callbacks.post(new MenuEntryAdded(menuEntry));
 													} else if (l3 == 4) {
-														if (KeyHandler.ctrlDown) {//oh im a dickhead
+														if (ctrlDown) {//oh im a dickhead
 															MenuEntry menuEntry = (MenuEntry) new MenuEntry(menuActionRow)
 																	.setOption("@lre@" + itemDef.name)
 																	.setIdentifier(10)
@@ -2711,7 +2766,7 @@ public class Client extends GameEngine implements RSClient {
 												if (modifiableXValue > 0) {// so issue is when x = 0
 													if (class9_1.actions.length < 9) {
 														if (variousSettings[222] == 1) {
-															class9_1.actions = new String[] {
+															class9_1.actions = new String[]{
 																	"Store-5",
 																	"Store-5",
 																	"Store-10",
@@ -2720,7 +2775,7 @@ public class Client extends GameEngine implements RSClient {
 																	"Store-All-but-1"
 															};
 														} else if (variousSettings[222] == 2) {
-															class9_1.actions = new String[] {
+															class9_1.actions = new String[]{
 																	"Store-10",
 																	"Store-5",
 																	"Store-10",
@@ -2729,7 +2784,7 @@ public class Client extends GameEngine implements RSClient {
 																	"Store-All-but-1"
 															};
 														} else if (variousSettings[222] == 3) {
-															class9_1.actions = new String[] {
+															class9_1.actions = new String[]{
 																	"Store-" + modifiableXValue,
 																	"Store-5",
 																	"Store-10",
@@ -2738,7 +2793,7 @@ public class Client extends GameEngine implements RSClient {
 																	"Store-All-but-1"
 															};
 														} else if (variousSettings[222] == 4) {
-															class9_1.actions = new String[] {
+															class9_1.actions = new String[]{
 																	"Store-All",
 																	"Store-5",
 																	"Store-10",
@@ -2747,7 +2802,7 @@ public class Client extends GameEngine implements RSClient {
 																	"Store-All-but-1"
 															};
 														} else {
-															class9_1.actions = new String[] {
+															class9_1.actions = new String[]{
 																	"Store-1",
 																	"Store-5",
 																	"Store-10",
@@ -2879,7 +2934,7 @@ public class Client extends GameEngine implements RSClient {
 
 												} else {
 													// Standard containers
-													if (Bank.isBankContainer(class9_1)) {
+													if (isBankContainer(class9_1)) {
 														if (class9_1.id == 5382 && placeHolders && class9_1.inventoryAmounts[k2] <= 0) {
 															class9_1.actions = new String[8];
 															class9_1.actions[1] = "Release";
@@ -2887,7 +2942,7 @@ public class Client extends GameEngine implements RSClient {
 															if (modifiableXValue > 0) {// so issue is when x = 0
 																if (class9_1.actions.length < 9) {
 																	if (variousSettings[222] == 1) {
-																		class9_1.actions = new String[] {
+																		class9_1.actions = new String[]{
 																				"Withdraw-5",
 																				"Withdraw-5",
 																				"Withdraw-10",
@@ -2896,7 +2951,7 @@ public class Client extends GameEngine implements RSClient {
 																				"Withdraw-All-but-1"
 																		};
 																	} else if (variousSettings[222] == 2) {
-																		class9_1.actions = new String[] {
+																		class9_1.actions = new String[]{
 																				"Withdraw-10",
 																				"Withdraw-5",
 																				"Withdraw-10",
@@ -2905,7 +2960,7 @@ public class Client extends GameEngine implements RSClient {
 																				"Withdraw-All-but-1"
 																		};
 																	} else if (variousSettings[222] == 3) {
-																		class9_1.actions = new String[] {
+																		class9_1.actions = new String[]{
 																				"Withdraw-" + modifiableXValue,
 																				"Withdraw-5",
 																				"Withdraw-10",
@@ -2914,7 +2969,7 @@ public class Client extends GameEngine implements RSClient {
 																				"Withdraw-All-but-1"
 																		};
 																	} else if (variousSettings[222] == 4) {
-																		class9_1.actions = new String[] {
+																		class9_1.actions = new String[]{
 																				"Withdraw-All",
 																				"Withdraw-5",
 																				"Withdraw-10",
@@ -2923,7 +2978,7 @@ public class Client extends GameEngine implements RSClient {
 																				"Withdraw-All-but-1"
 																		};
 																	} else {
-																		class9_1.actions = new String[] {
+																		class9_1.actions = new String[]{
 																				"Withdraw-1",
 																				"Withdraw-5",
 																				"Withdraw-10",
@@ -3031,8 +3086,8 @@ public class Client extends GameEngine implements RSClient {
 											callbacks.post(new MenuEntryAdded(menuEntry));
 										} else {
 											if (debugModels) {
-												if (System.currentTimeMillis() - debugDelay > 1000) {
-													debugDelay = System.currentTimeMillis();
+												if (currentTimeMillis() - debugDelay > 1000) {
+													debugDelay = currentTimeMillis();
 													pushMessage("<col=255>" + itemDef.name + ":</col> Male: <col=255>"
 															+ itemDef.maleModel0 + "</col> Female: <col=255>"
 															+ itemDef.femaleModel0 + "</col> Model id: <col=255>"
@@ -4327,7 +4382,7 @@ public class Client extends GameEngine implements RSClient {
 			drawInterface(0,
 					(fixedMode ? 31 + xOffset :
 							canvasWidth - 197 - (stackTabs() ? 16 : 1)),
-					RSInterface.interfaceCache[invOverlayInterfaceID],
+					interfaceCache.get(invOverlayInterfaceID),
 					(fixedMode ? 37 + yOffset :
 							canvasHeight - 275 + (stackTabs() ? 42 : -1) - y + 10));
 		} else if (Client.tabInterfaceIDs[Client.tabID] != -1  && showTabComponents) {
@@ -4335,7 +4390,7 @@ public class Client extends GameEngine implements RSClient {
 				drawInterface(0,
 						(fixedMode ? 31 + xOffset :
 								canvasWidth - 197 - (stackTabs() ? 16 : 1)),
-						RSInterface.interfaceCache[Client.tabInterfaceIDs[Client.tabID]],
+						interfaceCache.get(tabInterfaceIDs[tabID]),
 						(fixedMode ? 37 + yOffset :
 								canvasHeight - 275 + (stackTabs() ? 42 : -1) - y + 10));
 			} catch (Exception e) {
@@ -4344,12 +4399,12 @@ public class Client extends GameEngine implements RSClient {
 		}
 
 		if (drawTabInterfaceHover != 0 && showTabComponents) {
-			RSInterface parent = RSInterface.interfaceCache[drawTabInterfaceHoverParent];
+			RSInterface parent = interfaceCache.get(drawTabInterfaceHoverParent);
 			if (drawTabInterfaceHoverTimer == 0 || drawTabInterfaceHoverLast != drawTabInterfaceHover)
-				drawTabInterfaceHoverTimer = System.currentTimeMillis();
+				drawTabInterfaceHoverTimer = currentTimeMillis();
 			drawTabInterfaceHoverLast = drawTabInterfaceHover;
-			if (System.currentTimeMillis() - drawTabInterfaceHoverTimer >= parent.hoverInterfaceDelay) {
-				RSInterface hover = RSInterface.interfaceCache[drawTabInterfaceHover];
+			if (currentTimeMillis() - drawTabInterfaceHoverTimer >= parent.hoverInterfaceDelay) {
+				RSInterface hover = interfaceCache.get(drawTabInterfaceHover);
 				int xOffset1 = (fixedMode ? 516 + xOffset : 0);
 				int yOffset1 = (fixedMode ? 168 + yOffset : 0);
 				int drawingAreaWidth = canvasWidth - xOffset1;
@@ -5457,17 +5512,17 @@ public class Client extends GameEngine implements RSClient {
 	}
 
 	public void resetAnimation(int i) {
-		RSInterface class9 = RSInterface.interfaceCache[i];
+		RSInterface class9 = interfaceCache.get(i);
 		for (int j = 0; j < class9.children.length; j++) {
 			if (class9.children[j] == -1)
 				break;
-			RSInterface class9_1 = RSInterface.interfaceCache[class9.children[j]];
+			RSInterface class9_1 = interfaceCache.get(class9.children[j]);
 			if (class9_1 == null)
-				System.err.println("Null child of index " + j + " inside interface " + i);
+				err.println("Null child of index " + j + " inside interface " + i);
 			if (class9_1.type == 1)
 				resetAnimation(class9_1.id);
 			class9_1.anInt246 = 0;
-			class9_1.anInt208 = 0;
+			anInt208 = 0;
 		}
 	}
 
@@ -5600,7 +5655,7 @@ public class Client extends GameEngine implements RSClient {
 					processRightClick();
 
 					// Bank interface adding items to another tab via dragging on the tab icons at the top
-					if (Bank.isBankContainer(RSInterface.interfaceCache[draggingItemInterfaceId]) || draggingItemInterfaceId == Bank.SEARCH_CONTAINER) {
+					if (Bank.isBankContainer(interfaceCache.get(draggingItemInterfaceId)) || draggingItemInterfaceId == Bank.SEARCH_CONTAINER) {
 						//System.out.println("BANK TAB SLOT " + mouseX + ", " + mouseY);
 						Point southWest, northEast;
 
@@ -5610,7 +5665,7 @@ public class Client extends GameEngine implements RSClient {
 						int yOffset = !isResized() ? 0: (canvasHeight / 2) - 230;
 
 						if (mouseX >= 25+xOffset && mouseX <= 48+xOffset && mouseY >= 262+yOffset && mouseY <= 282+yOffset) {
-							RSInterface class9 = RSInterface.interfaceCache[draggingItemInterfaceId];
+							RSInterface class9 = interfaceCache.get(draggingItemInterfaceId);
 							int l2 = itemDraggingSlot;
 							int itemID = class9.inventoryItemId[l2];
 							int itemAmount = class9.inventoryAmounts[l2];
@@ -5633,7 +5688,7 @@ public class Client extends GameEngine implements RSClient {
 									&& mouseY >= northEast.getY() && mouseY <= southWest.getY()) {
 
 								if (draggingItemInterfaceId != Bank.SEARCH_CONTAINER) {
-									RSInterface rsi = RSInterface.interfaceCache[58050 + i];
+									RSInterface rsi = interfaceCache.get(58050 + i);
 									if (rsi.isMouseoverTriggered) {
 										continue;
 									}
@@ -5643,10 +5698,10 @@ public class Client extends GameEngine implements RSClient {
 								if (Bank.getCurrentBankTab() == 0) {
 									OptionalInt fromTabOptional = Arrays.stream(Bank.ITEM_CONTAINERS).filter(id -> draggingItemInterfaceId == id).findFirst();
 									if (fromTabOptional.isPresent()) {
-										RSInterface fromTab = RSInterface.interfaceCache[fromTabOptional.getAsInt()];
-										RSInterface toTab = RSInterface.interfaceCache[Bank.ITEM_CONTAINERS[i]];
+										RSInterface fromTab = interfaceCache.get(fromTabOptional.getAsInt());
+										RSInterface toTab = interfaceCache.get(ITEM_CONTAINERS[i]);
 										if (toTab.getInventoryContainerFreeSlots() > 0 && fromTab.id != toTab.id) {
-											RSInterface.insertInventoryItem(fromTab, itemDraggingSlot, toTab);
+											insertInventoryItem(fromTab, itemDraggingSlot, toTab);
 										}
 									}
 								}
@@ -5668,7 +5723,7 @@ public class Client extends GameEngine implements RSClient {
 					}
 
 					try {
-						RSInterface class9 = RSInterface.interfaceCache[draggingItemInterfaceId];
+						RSInterface class9 = interfaceCache.get(draggingItemInterfaceId);
 						if (class9 != null) {
 							if (mouseInvInterfaceIndex != itemDraggingSlot && lastActiveInvInterface == draggingItemInterfaceId) {
 								// Dragging item inside the same container
@@ -5704,7 +5759,7 @@ public class Client extends GameEngine implements RSClient {
 									class9.swapInventoryItems(itemDraggingSlot, mouseInvInterfaceIndex);
 								}
 
-								Bank.shiftTabs();
+								shiftTabs();
 								stream.createFrame(214);
 								stream.method433(draggingItemInterfaceId);
 								stream.method424(insertMode);
@@ -5712,8 +5767,8 @@ public class Client extends GameEngine implements RSClient {
 								stream.method431(mouseInvInterfaceIndex);
 							} else if (class9.allowInvDraggingToOtherContainers && lastActiveInvInterface != draggingItemInterfaceId) {
 								if (lastActiveInvInterface != -1 && draggingItemInterfaceId != -1) {
-									RSInterface draggingFrom = RSInterface.interfaceCache[draggingItemInterfaceId];
-									RSInterface draggingTo = RSInterface.interfaceCache[lastActiveInvInterface];
+									RSInterface draggingFrom = interfaceCache.get(draggingItemInterfaceId);
+									RSInterface draggingTo = interfaceCache.get(lastActiveInvInterface);
 									if (draggingTo != null && draggingFrom != null
 											&& draggingTo.allowInvDraggingToOtherContainers
 											&& draggingFrom.allowInvDraggingToOtherContainers) {
@@ -5726,13 +5781,13 @@ public class Client extends GameEngine implements RSClient {
 										if (insertMode == 1) {
 											// insert
 											if (draggingTo.getInventoryContainerFreeSlots() > 0) {
-												RSInterface.insertInventoryItem(draggingFrom, fromSlot, draggingTo, toSlot);
+												insertInventoryItem(draggingFrom, fromSlot, draggingTo, toSlot);
 											} else {
 												return;
 											}
 										} else {
 											//swap
-											RSInterface.swapInventoryItems(draggingFrom, fromSlot, draggingTo, toSlot);
+											swapInventoryItems(draggingFrom, fromSlot, draggingTo, toSlot);
 										}
 
 										stream.createFrame(242);
@@ -6178,7 +6233,7 @@ public class Client extends GameEngine implements RSClient {
 		if (l >= 2000)
 			l -= 2000;
 		if (l == 1100) {
-			RSInterface button = RSInterface.interfaceCache[buttonPressed];
+			RSInterface button = interfaceCache.get(buttonPressed);
 			button.setMenuVisible(button.isMenuVisible() ? false : true);
 		}
 		if (l == 474) {
@@ -6233,8 +6288,8 @@ public class Client extends GameEngine implements RSClient {
 		}
 
 		if (l == 769) {
-			RSInterface d = RSInterface.interfaceCache[j];
-			RSInterface p = RSInterface.interfaceCache[buttonPressed];
+			RSInterface d = interfaceCache.get(j);
+			RSInterface p = interfaceCache.get(buttonPressed);
 			if (!d.dropdown.isOpen()) {
 				if (p.dropdownOpen != null) {
 					p.dropdownOpen.dropdown.setOpen(false);
@@ -6245,15 +6300,15 @@ public class Client extends GameEngine implements RSClient {
 			}
 			d.dropdown.setOpen(!d.dropdown.isOpen());
 		} else if (l == 770) {
-			RSInterface d = RSInterface.interfaceCache[j];
-			RSInterface p = RSInterface.interfaceCache[buttonPressed];
+			RSInterface d = interfaceCache.get(j);
+			RSInterface p = interfaceCache.get(buttonPressed);
 			if (i1 >= d.dropdown.getOptions().length)
 				return;
 			d.dropdown.setSelected(d.dropdown.getOptions()[i1]);
 			d.dropdown.setOpen(false);
 			d.dropdown.getMenuItem().select(i1, d);
 			try {
-				SettingsManager.saveSettings(Client.instance);
+				saveSettings(instance);
 			} catch (IOException io) {
 				io.printStackTrace();
 			}
@@ -6302,12 +6357,12 @@ public class Client extends GameEngine implements RSClient {
 
 		}
 		if (l == 1200) {
-				stream.createFrame(185);
-				stream.writeWord(buttonPressed);
-				RSInterface item = RSInterface.interfaceCache[buttonPressed];
-				RSInterface menu = RSInterface.interfaceCache[item.mOverInterToTrigger];
-				menu.setMenuItem(item.getMenuItem());
-				menu.setMenuVisible(false);
+			stream.createFrame(185);
+			stream.writeWord(buttonPressed);
+			RSInterface item = interfaceCache.get(buttonPressed);
+			RSInterface menu = interfaceCache.get(item.mOverInterToTrigger);
+			menu.setMenuItem(item.getMenuItem());
+			menu.setMenuVisible(false);
 		}
 		if (l >= 1700 && l <= 1710) {
 			if (buttonPressed == 58073 && l == 1700) {
@@ -6355,9 +6410,9 @@ public class Client extends GameEngine implements RSClient {
 				this.atInventoryInterface = buttonPressed;
 				this.atInventoryIndex = j;
 				this.atInventoryInterfaceType = 2;
-				if ((RSInterface.interfaceCache[buttonPressed]).parentID == openInterfaceID)
+				if ((interfaceCache.get(buttonPressed)).parentID == openInterfaceID)
 					this.atInventoryInterfaceType = 1;
-				if ((RSInterface.interfaceCache[buttonPressed]).parentID == backDialogID)
+				if ((interfaceCache.get(buttonPressed)).parentID == backDialogID)
 					this.atInventoryInterfaceType = 3;
 			} else {
 				stream.createFrame(141);
@@ -6429,9 +6484,9 @@ public class Client extends GameEngine implements RSClient {
 			atInventoryInterface = buttonPressed;
 			atInventoryIndex = j;
 			atInventoryInterfaceType = 2;
-			if (RSInterface.interfaceCache[buttonPressed].parentID == openInterfaceID)
+			if (interfaceCache.get(buttonPressed).parentID == openInterfaceID)
 				atInventoryInterfaceType = 1;
-			if (RSInterface.interfaceCache[buttonPressed].parentID == backDialogID)
+			if (interfaceCache.get(buttonPressed).parentID == backDialogID)
 				atInventoryInterfaceType = 3;
 		}
 		if (l == 315) {
@@ -6446,17 +6501,17 @@ public class Client extends GameEngine implements RSClient {
 				inputTaken = true;
 				return;
 			}
-			RSInterface class9 = RSInterface.interfaceCache[buttonPressed];
-			if(class9.buttonListener != null)
+			RSInterface class9 = interfaceCache.get(buttonPressed);
+			if (class9.buttonListener != null)
 				class9.buttonListener.accept(buttonPressed);
 			boolean flag8 = true;
-			if (class9.type == RSInterface.TYPE_CONFIG || class9.id == 50009) { // Placeholder toggle
+			if (class9.type == TYPE_CONFIG || class9.id == 50009) { // Placeholder toggle
 				class9.active = !class9.active;
-			} else if (class9.type == RSInterface.TYPE_CONFIG_HOVER) {
-				RSInterface.handleConfigHover(class9);
+			} else if (class9.type == TYPE_CONFIG_HOVER) {
+				handleConfigHover(class9);
 			}
 
-			if (!RSInterface.interfaceCache[23374].interfaceHidden && (buttonPressed == 23357 || buttonPressed == 23364)) {
+			if (!interfaceCache.get(23374).interfaceHidden && (buttonPressed == 23357 || buttonPressed == 23364)) {
 				return;
 			}
 			if (buttonPressed >= 58067 && buttonPressed <= 58075) {
@@ -6470,12 +6525,12 @@ public class Client extends GameEngine implements RSClient {
 				SettingsTabWidget.settings(buttonPressed);
 				switch (buttonPressed) {
 					case 23003:
-						Configuration.alwaysLeftClickAttack = !Configuration.alwaysLeftClickAttack;
+						alwaysLeftClickAttack = !alwaysLeftClickAttack;
 						// savePlayerData();
 						updateSettings();
 						break;
 					case 23005:
-						Configuration.hideCombatOverlay = !Configuration.hideCombatOverlay;
+						hideCombatOverlay = !hideCombatOverlay;
 						// savePlayerData();
 						updateSettings();
 						break;
@@ -6502,33 +6557,33 @@ public class Client extends GameEngine implements RSClient {
 					case 37706:
 						Robot robot2;
 						PointerInfo pointer2;
-						pointer2 = MouseInfo.getPointerInfo();
+						pointer2 = getPointerInfo();
 						Point coord2 = pointer2.getLocation();
 						try {
 							robot2 = new Robot();
-							coord2 = MouseInfo.getPointerInfo().getLocation();
+							coord2 = getPointerInfo().getLocation();
 							Color color = robot2.getPixelColor((int) coord2.getX(), (int) coord2.getY());
-							String hex2 = String.format("%02X%02X%02X", color.getRed(), color.getGreen(), color.getBlue());
-							int hex3 = Integer.parseInt(hex2, 16);
+							String hex2 = format("%02X%02X%02X", color.getRed(), color.getGreen(), color.getBlue());
+							int hex3 = parseInt(hex2, 16);
 							// pushMessage("<shad="+hex3+">Yell Color set.</shad>", 0, "");
 							coloredItemColor = hex3;
-							RSInterface.interfaceCache[37707].message = "Current color chosen!";
-							RSInterface.interfaceCache[37707].textColor = coloredItemColor;
+							interfaceCache.get(37707).message = "Current color chosen!";
+							interfaceCache.get(37707).textColor = coloredItemColor;
 						} catch (AWTException e) {
 							e.printStackTrace();
 						}
 						break;
 
 					case 62013:
-						RSInterface input = RSInterface.interfaceCache[RSInterface.selectedItemInterfaceId + 1];
-						RSInterface itemContainer = RSInterface.interfaceCache[RSInterface.selectedItemInterfaceId];
-						if (RSInterface.selectedItemInterfaceId <= 0) {
+						RSInterface input = interfaceCache.get(selectedItemInterfaceId + 1);
+						RSInterface itemContainer = interfaceCache.get(selectedItemInterfaceId);
+						if (selectedItemInterfaceId <= 0) {
 							return;
 						}
 						if (input != null && itemContainer != null) {
 							int amount = -1;
 							try {
-								amount = Integer.parseInt(input.message);
+								amount = parseInt(input.message);
 							} catch (NumberFormatException nfe) {
 								pushMessage("The amount must be a non-negative numerical value.", 0, "");
 								break;
@@ -6540,7 +6595,7 @@ public class Client extends GameEngine implements RSClient {
 								itemContainer.itemSearchSelectedSlot = 0;
 							}
 							stream.createFrame(124);
-							stream.writeInt(RSInterface.selectedItemInterfaceId);
+							stream.writeInt(selectedItemInterfaceId);
 							stream.writeInt(itemContainer.itemSearchSelectedSlot);
 							stream.writeInt(itemContainer.itemSearchSelectedId - 1);
 							stream.writeInt(amount);
@@ -6548,15 +6603,15 @@ public class Client extends GameEngine implements RSClient {
 						break;
 
 					case 32013:
-						RSInterface input2 = RSInterface.interfaceCache[RSInterface.selectedItemInterfaceId + 1];
-						RSInterface itemContainer2 = RSInterface.interfaceCache[RSInterface.selectedItemInterfaceId];
-						if (RSInterface.selectedItemInterfaceId <= 0) {
+						RSInterface input2 = interfaceCache.get(selectedItemInterfaceId + 1);
+						RSInterface itemContainer2 = interfaceCache.get(selectedItemInterfaceId);
+						if (selectedItemInterfaceId <= 0) {
 							return;
 						}
 						if (input2 != null && itemContainer2 != null) {
 							int amount = -1;
 							try {
-								amount = Integer.parseInt(input2.message);
+								amount = parseInt(input2.message);
 							} catch (NumberFormatException nfe) {
 								pushMessage("The amount must be a non-negative numerical value.", 0, "");
 								break;
@@ -6568,7 +6623,7 @@ public class Client extends GameEngine implements RSClient {
 								itemContainer2.itemSearchSelectedSlot = 0;
 							}
 							stream.createFrame(124);
-							stream.writeInt(RSInterface.selectedItemInterfaceId);
+							stream.writeInt(selectedItemInterfaceId);
 							stream.writeInt(itemContainer2.itemSearchSelectedSlot);
 							stream.writeInt(itemContainer2.itemSearchSelectedId - 1);
 							stream.writeInt(amount);
@@ -6580,11 +6635,11 @@ public class Client extends GameEngine implements RSClient {
 						inputTaken = true;
 						break;
 					default:
-						if (RSInterface.get(buttonPressed) != null && RSInterface.get(buttonPressed).newButtonClicking) {
+						if (get(buttonPressed) != null && get(buttonPressed).newButtonClicking) {
 							stream.createFrame(184);
 							stream.writeWord(buttonPressed);
 						} else {
-							RSInterface widget = RSInterface.get(buttonPressed);
+							RSInterface widget = get(buttonPressed);
 
 							// Determine if a special attack button is being pressed
 							if (widget.hasTooltip()) {
@@ -6608,16 +6663,16 @@ public class Client extends GameEngine implements RSClient {
 
 						if (buttonPressed >= 61101 && buttonPressed <= 61200) {
 							int selected = buttonPressed - 61101;
-							for (int ii = 0, slot = -1; ii < ItemDefinition.totalItems && slot < 100; ii++) {
+							for (int ii = 0, slot = -1; ii < totalItems && slot < 100; ii++) {
 								ItemDefinition def = ItemDefinition.lookup(ii);
 
 								if (def.name == null || def.noteTemplateId == ii - 1 || def.noteLinkId == ii - 1
-										|| RSInterface.interfaceCache[61254].message.length() == 0) {
+										|| interfaceCache.get(61254).message.length() == 0) {
 									continue;
 								}
 
 								if (def.name.toLowerCase()
-										.contains(RSInterface.interfaceCache[61254].message.toLowerCase())) {
+										.contains(interfaceCache.get(61254).message.toLowerCase())) {
 									slot++;
 								}
 
@@ -6626,7 +6681,7 @@ public class Client extends GameEngine implements RSClient {
 								}
 
 								int id = def.id;
-								long num = Long.valueOf(RSInterface.interfaceCache[61255].message.replaceAll(",", ""));
+								long num = Long.valueOf(interfaceCache.get(61255).message.replaceAll(",", ""));
 
 								if (num > Integer.MAX_VALUE) {
 									num = Integer.MAX_VALUE;
@@ -6745,9 +6800,9 @@ public class Client extends GameEngine implements RSClient {
 			atInventoryInterface = buttonPressed;
 			atInventoryIndex = j;
 			atInventoryInterfaceType = 2;
-			if (RSInterface.interfaceCache[buttonPressed].parentID == openInterfaceID)
+			if (interfaceCache.get(buttonPressed).parentID == openInterfaceID)
 				atInventoryInterfaceType = 1;
-			if (RSInterface.interfaceCache[buttonPressed].parentID == backDialogID)
+			if (interfaceCache.get(buttonPressed).parentID == backDialogID)
 				atInventoryInterfaceType = 3;
 		}
 		if (l == 337 || l == 42 || l == 792 || l == 322) {
@@ -6781,9 +6836,9 @@ public class Client extends GameEngine implements RSClient {
 			atInventoryInterface = buttonPressed;
 			atInventoryIndex = j;
 			atInventoryInterfaceType = 2;
-			if (RSInterface.interfaceCache[buttonPressed].parentID == openInterfaceID)
+			if (interfaceCache.get(buttonPressed).parentID == openInterfaceID)
 				atInventoryInterfaceType = 1;
-			if (RSInterface.interfaceCache[buttonPressed].parentID == backDialogID)
+			if (interfaceCache.get(buttonPressed).parentID == backDialogID)
 				atInventoryInterfaceType = 3;
 		}
 		if (l == 54) {
@@ -6802,9 +6857,9 @@ public class Client extends GameEngine implements RSClient {
 			atInventoryInterface = buttonPressed;
 			atInventoryIndex = j;
 			atInventoryInterfaceType = 2;
-			if (RSInterface.interfaceCache[buttonPressed].parentID == openInterfaceID)
+			if (interfaceCache.get(buttonPressed).parentID == openInterfaceID)
 				atInventoryInterfaceType = 1;
-			if (RSInterface.interfaceCache[buttonPressed].parentID == backDialogID)
+			if (interfaceCache.get(buttonPressed).parentID == backDialogID)
 				atInventoryInterfaceType = 3;
 		}
 
@@ -6870,9 +6925,9 @@ public class Client extends GameEngine implements RSClient {
 			atInventoryInterface = buttonPressed;
 			atInventoryIndex = j;
 			atInventoryInterfaceType = 2;
-			if (RSInterface.interfaceCache[buttonPressed].parentID == openInterfaceID)
+			if (interfaceCache.get(buttonPressed).parentID == openInterfaceID)
 				atInventoryInterfaceType = 1;
-			if (RSInterface.interfaceCache[buttonPressed].parentID == backDialogID)
+			if (interfaceCache.get(buttonPressed).parentID == backDialogID)
 				atInventoryInterfaceType = 3;
 		}
 		if (l == 847) {
@@ -6885,23 +6940,23 @@ public class Client extends GameEngine implements RSClient {
 			atInventoryInterface = buttonPressed;
 			atInventoryIndex = j;
 			atInventoryInterfaceType = 2;
-			if (RSInterface.interfaceCache[buttonPressed].parentID == openInterfaceID)
+			if (interfaceCache.get(buttonPressed).parentID == openInterfaceID)
 				atInventoryInterfaceType = 1;
-			if (RSInterface.interfaceCache[buttonPressed].parentID == backDialogID)
+			if (interfaceCache.get(buttonPressed).parentID == backDialogID)
 				atInventoryInterfaceType = 3;
 		}
 		if (l == 626) {
-			RSInterface class9_1 = RSInterface.interfaceCache[buttonPressed];
+			RSInterface class9_1 = interfaceCache.get(buttonPressed);
 			spellSelected = 1;
 			spellID = class9_1.id;
-			System.out.println("Set spellID from interface " + class9_1.id);
+			out.println("Set spellID from interface " + class9_1.id);
 			anInt1137 = buttonPressed;
 			spellUsableOn = class9_1.spellUsableOn;
 //			System.out.println("Spell id=" + spellID);
 			itemSelected = 0;
 			needDrawTabArea = true;
 			spellID = class9_1.id;
-			System.out.println("Set spellID from interface " + class9_1.id);
+			out.println("Set spellID from interface " + class9_1.id);
 			String s4 = class9_1.selectedActionName;
 			if (s4.indexOf(" ") != -1)
 				s4 = s4.substring(0, s4.indexOf(" "));
@@ -6921,9 +6976,9 @@ public class Client extends GameEngine implements RSClient {
 			return;
 		}
 		if (l == 104) {
-			RSInterface class9_1 = RSInterface.interfaceCache[buttonPressed];
+			RSInterface class9_1 = interfaceCache.get(buttonPressed);
 			spellID = class9_1.id;
-			System.out.println("Set spellID from interface " + class9_1.id);
+			out.println("Set spellID from interface " + class9_1.id);
 			if (!autocast) {
 				autocast = true;
 				autocastId = class9_1.id;
@@ -6950,9 +7005,9 @@ public class Client extends GameEngine implements RSClient {
 			atInventoryInterface = buttonPressed;
 			atInventoryIndex = j;
 			atInventoryInterfaceType = 2;
-			if (RSInterface.interfaceCache[buttonPressed].parentID == openInterfaceID)
+			if (interfaceCache.get(buttonPressed).parentID == openInterfaceID)
 				atInventoryInterfaceType = 1;
-			if (RSInterface.interfaceCache[buttonPressed].parentID == backDialogID)
+			if (interfaceCache.get(buttonPressed).parentID == backDialogID)
 				atInventoryInterfaceType = 3;
 		}
 		if (l == 27) {
@@ -6996,9 +7051,9 @@ public class Client extends GameEngine implements RSClient {
 			atInventoryInterface = buttonPressed;
 			atInventoryIndex = j;
 			atInventoryInterfaceType = 2;
-			if (RSInterface.interfaceCache[buttonPressed].parentID == openInterfaceID)
+			if (interfaceCache.get(buttonPressed).parentID == openInterfaceID)
 				atInventoryInterfaceType = 1;
-			if (RSInterface.interfaceCache[buttonPressed].parentID == backDialogID)
+			if (interfaceCache.get(buttonPressed).parentID == backDialogID)
 				atInventoryInterfaceType = 3;
 		}
 		if (l == 1050) {
@@ -7200,9 +7255,9 @@ public class Client extends GameEngine implements RSClient {
 			atInventoryInterface = buttonPressed;
 			atInventoryIndex = j;
 			atInventoryInterfaceType = 2;
-			if (RSInterface.interfaceCache[buttonPressed].parentID == openInterfaceID)
+			if (interfaceCache.get(buttonPressed).parentID == openInterfaceID)
 				atInventoryInterfaceType = 1;
-			if (RSInterface.interfaceCache[buttonPressed].parentID == backDialogID)
+			if (interfaceCache.get(buttonPressed).parentID == backDialogID)
 				atInventoryInterfaceType = 3;
 		}
 		if (l == 652) {
@@ -7255,7 +7310,7 @@ public class Client extends GameEngine implements RSClient {
 			stream.createFrame(185);
 			stream.writeWord(buttonPressed);
 			if (!clickConfigButton(buttonPressed)) {
-				RSInterface class9_2 = RSInterface.interfaceCache[buttonPressed];
+				RSInterface class9_2 = interfaceCache.get(buttonPressed);
 				if (!class9_2.ignoreConfigClicking) {
 					if (class9_2.scripts != null && class9_2.scripts[0][0] == 5) {
 						int i2 = class9_2.scripts[0][1];
@@ -7270,7 +7325,7 @@ public class Client extends GameEngine implements RSClient {
 					switch (buttonPressed) {
 						// clan chat
 						case 18129:
-							if (RSInterface.interfaceCache[18135].message.toLowerCase().contains("join")) {
+							if (interfaceCache.get(18135).message.toLowerCase().contains("join")) {
 								inputTaken = true;
 								inputDialogState = 0;
 								messagePromptRaised = true;
@@ -7509,9 +7564,9 @@ public class Client extends GameEngine implements RSClient {
 			atInventoryInterface = buttonPressed;
 			atInventoryIndex = j;
 			atInventoryInterfaceType = 2;
-			if (RSInterface.interfaceCache[buttonPressed].parentID == openInterfaceID)
+			if (interfaceCache.get(buttonPressed).parentID == openInterfaceID)
 				atInventoryInterfaceType = 1;
-			if (RSInterface.interfaceCache[buttonPressed].parentID == backDialogID)
+			if (interfaceCache.get(buttonPressed).parentID == backDialogID)
 				atInventoryInterfaceType = 3;
 		}
 		if (l == 543) {
@@ -7524,9 +7579,9 @@ public class Client extends GameEngine implements RSClient {
 			atInventoryInterface = buttonPressed;
 			atInventoryIndex = j;
 			atInventoryInterfaceType = 2;
-			if (RSInterface.interfaceCache[buttonPressed].parentID == openInterfaceID)
+			if (interfaceCache.get(buttonPressed).parentID == openInterfaceID)
 				atInventoryInterfaceType = 1;
-			if (RSInterface.interfaceCache[buttonPressed].parentID == backDialogID)
+			if (interfaceCache.get(buttonPressed).parentID == backDialogID)
 				atInventoryInterfaceType = 3;
 		}
 		if (l == 606) {
@@ -7537,10 +7592,10 @@ public class Client extends GameEngine implements RSClient {
 					clearTopInterfaces();
 					reportAbuseInput = s2.substring(j2 + 5).trim();
 					canMute = false;
-					for (int i3 = 0; i3 < RSInterface.interfaceCache.length; i3++) {
-						if (RSInterface.interfaceCache[i3] == null || RSInterface.interfaceCache[i3].contentType != 600)
+					for (int i3 = 0; i3 < RSInterface.interfaceCache.size(); i3++) {
+						if (interfaceCache.get(i3) == null || interfaceCache.get(i3).contentType != 600)
 							continue;
-						reportAbuseInterfaceID = openInterfaceID = RSInterface.interfaceCache[i3].parentID;
+						reportAbuseInterfaceID = openInterfaceID = interfaceCache.get(i3).parentID;
 						break;
 					}
 
@@ -7612,9 +7667,9 @@ public class Client extends GameEngine implements RSClient {
 			atInventoryInterface = buttonPressed;
 			atInventoryIndex = j;
 			atInventoryInterfaceType = 2;
-			if (RSInterface.interfaceCache[buttonPressed].parentID == openInterfaceID)
+			if (interfaceCache.get(buttonPressed).parentID == openInterfaceID)
 				atInventoryInterfaceType = 1;
-			if (RSInterface.interfaceCache[buttonPressed].parentID == backDialogID)
+			if (interfaceCache.get(buttonPressed).parentID == backDialogID)
 				atInventoryInterfaceType = 3;
 		}
 		if (l == 696) {
@@ -7664,7 +7719,7 @@ public class Client extends GameEngine implements RSClient {
 			stream.method432(buttonPressed + baseY);
 		}
 		if (l == 1126 || l == 1125) {
-			RSInterface class9_4 = RSInterface.interfaceCache[buttonPressed];
+			RSInterface class9_4 = interfaceCache.get(buttonPressed);
 			if (class9_4 != null) {
 				stream.createFrame(134);
 				stream.writeInt(i1);
@@ -7672,46 +7727,46 @@ public class Client extends GameEngine implements RSClient {
 			}
 		}
 		if (l == 1130) {
-			RSInterface class9_4 = RSInterface.interfaceCache[buttonPressed];
+			RSInterface class9_4 = interfaceCache.get(buttonPressed);
 			if (class9_4 != null) {
 				class9_4.itemSearchSelectedId = class9_4.inventoryItemId[j];
 				class9_4.itemSearchSelectedSlot = j;
-				RSInterface.selectedItemInterfaceId = class9_4.id;
+				selectedItemInterfaceId = class9_4.id;
 			}
 		}
 		if (l == 169) {
 			if (anInt913 == 0) {
 				anInt913 = 1;
-				RSInterface.interfaceCache[58002].active = true;
+				interfaceCache.get(58002).active = true;
 			} else if (anInt913 == 1) {
 				anInt913 = 0;
-				RSInterface.interfaceCache[58002].active = false;
+				interfaceCache.get(58002).active = false;
 			}
-				RSInterface button = RSInterface.get(buttonPressed);
-				button.clicked = true;
-				if (button.newButtonClicking) {
-					stream.createFrame(184);
-					stream.writeWord(buttonPressed);
-					onRealButtonClick(buttonPressed);
-				} else {
-					stream.createFrame(185);
-					stream.writeWord(buttonPressed);
-					if (button.buttonListener != null)
-						button.buttonListener.accept(buttonPressed);
-					if (clientData) {
-						pushMessage("Client side button id: " + buttonPressed);
-					}
+			RSInterface button = get(buttonPressed);
+			button.clicked = true;
+			if (button.newButtonClicking) {
+				stream.createFrame(184);
+				stream.writeWord(buttonPressed);
+				onRealButtonClick(buttonPressed);
+			} else {
+				stream.createFrame(185);
+				stream.writeWord(buttonPressed);
+				if (button.buttonListener != null)
+					button.buttonListener.accept(buttonPressed);
+				if (clientData) {
+					pushMessage("Client side button id: " + buttonPressed);
 				}
+			}
 
-				RSInterface class9_3 = RSInterface.interfaceCache[buttonPressed];
-				if (!class9_3.ignoreConfigClicking) {
-					if (class9_3.scripts != null && class9_3.scripts[0][0] == 5) {
-						int l2 = class9_3.scripts[0][1];
-						variousSettings[l2] = 1 - variousSettings[l2];
-						method33(l2);
-						needDrawTabArea = true;
-					}
+			RSInterface class9_3 = interfaceCache.get(buttonPressed);
+			if (!class9_3.ignoreConfigClicking) {
+				if (class9_3.scripts != null && class9_3.scripts[0][0] == 5) {
+					int l2 = class9_3.scripts[0][1];
+					variousSettings[l2] = 1 - variousSettings[l2];
+					method33(l2);
+					needDrawTabArea = true;
 				}
+			}
 		}
 		if (l == 447) {
 			itemSelected = 1;
@@ -7772,23 +7827,23 @@ public class Client extends GameEngine implements RSClient {
 		setConfigButton(23001, true);
 		setConfigButton(953, true);
 
-		setDropDown(SettingsInterface.OLD_GAMEFRAME, getUserSettings().isOldGameframe());
-		setDropDown(SettingsInterface.GAME_TIMERS, getUserSettings().isGameTimers());
-		setDropDown(SettingsInterface.ANTI_ALIASING, getUserSettings().isAntiAliasing());
-		setDropDown(SettingsInterface.GROUND_ITEM_NAMES, getUserSettings().isGroundItemOverlay());
-		setDropDown(SettingsInterface.FOG, getUserSettings().isFog());
-		setDropDown(SettingsInterface.SMOOTH_SHADING, getUserSettings().isSmoothShading());
-		setDropDown(SettingsInterface.TILE_BLENDING, getUserSettings().isTileBlending());
-		setDropDown(SettingsInterface.BOUNTY_HUNTER, getUserSettings().isBountyHunter());
-		setDropDown(SettingsInterface.ENTITY_TARGET, getUserSettings().isShowEntityTarget());
-		setDropDown(SettingsInterface.CHAT_EFFECT, getUserSettings().getChatColor());
-		setDropDown(SettingsInterface.INVENTORY_MENU, getUserSettings().isInventoryContextMenu() ? 1 : 0);
-		setDropDown(SettingsInterface.STRETCHED_MODE, getUserSettings().isStretchedMode());
+		setDropDown(OLD_GAMEFRAME, getUserSettings().isOldGameframe());
+		setDropDown(GAME_TIMERS, getUserSettings().isGameTimers());
+		setDropDown(ANTI_ALIASING, getUserSettings().isAntiAliasing());
+		setDropDown(GROUND_ITEM_NAMES, getUserSettings().isGroundItemOverlay());
+		setDropDown(FOG, getUserSettings().isFog());
+		setDropDown(SMOOTH_SHADING, getUserSettings().isSmoothShading());
+		setDropDown(TILE_BLENDING, getUserSettings().isTileBlending());
+		setDropDown(BOUNTY_HUNTER, getUserSettings().isBountyHunter());
+		setDropDown(ENTITY_TARGET, getUserSettings().isShowEntityTarget());
+		setDropDown(CHAT_EFFECT, getUserSettings().getChatColor());
+		setDropDown(INVENTORY_MENU, getUserSettings().isInventoryContextMenu() ? 1 : 0);
+		setDropDown(STRETCHED_MODE, getUserSettings().isStretchedMode());
 
-		setDropDown(SettingsInterface.PM_NOTIFICATION, Preferences.getPreferences().pmNotifications ? 0 : 1);
+		setDropDown(PM_NOTIFICATION, Preferences.getPreferences().pmNotifications ? 0 : 1);
 
 		/** Sets the brightness level **/
-		RSInterface class9_2 = RSInterface.interfaceCache[910];
+		RSInterface class9_2 = interfaceCache.get(910);
 		if (class9_2.scripts != null && class9_2.scripts[0][0] == 5) {
 			int i2 = class9_2.scripts[0][1];
 			if (variousSettings[i2] != class9_2.anIntArray212[0]) {
@@ -7920,7 +7975,7 @@ public class Client extends GameEngine implements RSClient {
 	}
 
 	private void setDropDown(Setting setting, Object value) {
-		RSInterface widget = RSInterface.interfaceCache[setting.getInterfaceId()];
+		RSInterface widget = interfaceCache.get(setting.getInterfaceId());
 		if (widget == null) {
 			throw new NullPointerException("Widget is null: " + setting.getInterfaceId());
 		}
@@ -7942,8 +7997,8 @@ public class Client extends GameEngine implements RSClient {
 	public void setConfigButton(int interfaceFrame, boolean configSetting) {
 		int config = configSetting ? 1 : 0;
 		if (variousSettings[interfaceFrame] != config) {
-			if(RSInterface.interfaceCache[interfaceFrame] != null)
-				RSInterface.interfaceCache[interfaceFrame].active = config == 1;
+			if (interfaceCache.get(interfaceFrame) != null)
+				interfaceCache.get(interfaceFrame).active = config == 1;
 			variousSettings[interfaceFrame] = config;
 			needDrawTabArea = true;
 			if (dialogID != -1)
@@ -8650,12 +8705,12 @@ public class Client extends GameEngine implements RSClient {
 					}
 					if (rsi.isItemSearchComponent && rsi.message.length() > 2
 							&& rsi.defaultInputFieldText.equals("Name")) {
-						RSInterface subcomponent = RSInterface.interfaceCache[rsi.id + 2];
-						RSInterface scroll = RSInterface.interfaceCache[rsi.id + 4];
-						RSInterface toggle = RSInterface.interfaceCache[rsi.id + 9];
+						RSInterface subcomponent = interfaceCache.get(rsi.id + 2);
+						RSInterface scroll = interfaceCache.get(rsi.id + 4);
+						RSInterface toggle = interfaceCache.get(rsi.id + 9);
 						scroll.itemSearchSelectedId = 0;
 						scroll.itemSearchSelectedSlot = -1;
-						RSInterface.selectedItemInterfaceId = 0;
+						selectedItemInterfaceId = 0;
 						rsi.itemSearchSelectedSlot = -1;
 						rsi.itemSearchSelectedId = 0;
 						if (subcomponent != null && scroll != null && toggle != null
@@ -8772,7 +8827,7 @@ public class Client extends GameEngine implements RSClient {
 							int widget = Integer.parseInt(splits[1]);
 							String message = splits[2];
 							ScriptEvent scriptEvent = new ScriptEvent();
-							scriptEvent.widget = RSInterface.interfaceCache[widget];
+							scriptEvent.widget = interfaceCache.get(widget);
 							scriptEvent.args = new Object[] {68, widget, message};
 							InstructionProcessor.runScriptEvent(scriptEvent);
 							// ::scr-60968-test script
@@ -8845,14 +8900,14 @@ public class Client extends GameEngine implements RSClient {
 								offset = Integer.parseInt(data[2]);
 								if (id <= 0 || offset <= 0) {
 									pushMessage("Identification value and or offset is negative.", 0, "");
-								} else if (id + offset > RSInterface.interfaceCache.length - 1) {
+								} else if (id + offset > RSInterface.interfaceCache.size() - 1) {
 									pushMessage(
 											"The total sum of the id and offset are greater than the size of the overlays.",
 											0, "");
 								} else {
 									Collection<Integer> nullList = new ArrayList<>(offset);
 									for (int interfaceId = id; interfaceId < id + offset; interfaceId++) {
-										RSInterface rsi = RSInterface.interfaceCache[interfaceId];
+										RSInterface rsi = interfaceCache.get(interfaceId);
 										if (rsi == null) {
 											nullList.add(interfaceId);
 										}
@@ -9065,11 +9120,11 @@ public class Client extends GameEngine implements RSClient {
 
 							if (inputString.startsWith("::setprogressbar")) {
 								try {
-									int childId = Integer.parseInt(inputString.split(" ")[1]);
-									byte progressBarState = Byte.parseByte(inputString.split(" ")[2]);
-									byte progressBarPercentage = Byte.parseByte(inputString.split(" ")[3]);
+									int childId = parseInt(inputString.split(" ")[1]);
+									byte progressBarState = parseByte(inputString.split(" ")[2]);
+									byte progressBarPercentage = parseByte(inputString.split(" ")[3]);
 
-									RSInterface rsi = RSInterface.interfaceCache[childId];
+									RSInterface rsi = interfaceCache.get(childId);
 									rsi.progressBarState = progressBarState;
 									rsi.progressBarPercentage = progressBarPercentage;
 
@@ -10808,7 +10863,7 @@ public class Client extends GameEngine implements RSClient {
 					anInt886 = 0;
 					anInt1315 = 0;
 					buildInterfaceMenu((canvasWidth / 2) - 765 / 2,
-							RSInterface.interfaceCache[fullscreenInterfaceID], mouseX,
+							interfaceCache.get(fullscreenInterfaceID), mouseX,
 							(canvasHeight / 2) - 503 / 2, mouseY, 0);
 					if (anInt886 != anInt1026) {
 						anInt1026 = anInt886;
@@ -10828,13 +10883,13 @@ public class Client extends GameEngine implements RSClient {
 				if (isFullscreenInterface(openInterfaceID)) {
 
 					if(!isResized()) {
-						buildInterfaceMenu(0, RSInterface.interfaceCache[openInterfaceID], mouseX , 0, mouseY - 4,0);
+						buildInterfaceMenu(0, interfaceCache.get(openInterfaceID), mouseX, 0, mouseY - 4, 0);
 					} else {
-						buildInterfaceMenu((int) getOnScreenWidgetOffsets().getX(), RSInterface.interfaceCache[openInterfaceID], mouseX, (int) getOnScreenWidgetOffsets().getY(), mouseY,0);
+						buildInterfaceMenu((int) getOnScreenWidgetOffsets().getX(), interfaceCache.get(openInterfaceID), mouseX, (int) getOnScreenWidgetOffsets().getY(), mouseY, 0);
 					}
 				} else if (getMouseX() > 0 && getMouseY() > 0 && getMouseX() < 516 && getMouseY() < 343) {
 					if (openInterfaceID != -1) {
-						buildInterfaceMenu(0, RSInterface.interfaceCache[openInterfaceID], getMouseX(), 0, getMouseY(), 0);
+						buildInterfaceMenu(0, interfaceCache.get(openInterfaceID), getMouseX(), 0, getMouseY(), 0);
 					} else {
 						build3dScreenMenu();
 					}
@@ -10844,7 +10899,7 @@ public class Client extends GameEngine implements RSClient {
 					int interfaceX = (canvasWidth / 2) - 256 - 99;
 					int interfaceY = (canvasHeight / 2) - 167 - 63;
 					if (openInterfaceID != -1 && openInterfaceID != 44900) {
-						buildInterfaceMenu(interfaceX, RSInterface.interfaceCache[openInterfaceID],
+						buildInterfaceMenu(interfaceX, interfaceCache.get(openInterfaceID),
 								getMouseX(), interfaceY, getMouseY(), 0);
 					}
 					if (openInterfaceID == -1 || getMouseX() < interfaceX || getMouseY() < interfaceY || getMouseX() > interfaceX + 516 || getMouseY() > interfaceY + 338) {
@@ -10866,10 +10921,10 @@ public class Client extends GameEngine implements RSClient {
 			if (!isResized()) {
 				if (getMouseX() > 516 && getMouseY() > 205 && getMouseX() < 765 && getMouseY() < 466) {
 					if (invOverlayInterfaceID != 0) {
-						buildInterfaceMenu(547, RSInterface.interfaceCache[invOverlayInterfaceID], getMouseX(), 205, getMouseY(),
+						buildInterfaceMenu(547, interfaceCache.get(invOverlayInterfaceID), getMouseX(), 205, getMouseY(),
 								0);
 					} else if (tabInterfaceIDs[tabID] != -1) {
-						buildInterfaceMenu(547, RSInterface.interfaceCache[tabInterfaceIDs[tabID]], getMouseX(), 205, getMouseY(),
+						buildInterfaceMenu(547, interfaceCache.get(tabInterfaceIDs[tabID]), getMouseX(), 205, getMouseY(),
 								0);
 					}
 				}
@@ -10878,12 +10933,12 @@ public class Client extends GameEngine implements RSClient {
 				if (getMouseX() >canvasWidth - 197 - (stackTabs() ? 16 : 1) && getMouseY() > canvasHeight - 275 + (stackTabs() ? 42 : -1) - y + 10
 						&& getMouseX() < canvasWidth - 7 && getMouseY() < canvasHeight - 37 - 5 && showTabComponents) {
 					if (invOverlayInterfaceID != 0 && !isFullscreenInterface(openInterfaceID)) {
-						buildInterfaceMenu(canvasWidth - 197 - (stackTabs() ? 16 : 1), RSInterface.interfaceCache[invOverlayInterfaceID],
+						buildInterfaceMenu(canvasWidth - 197 - (stackTabs() ? 16 : 1), interfaceCache.get(invOverlayInterfaceID),
 								getMouseX(), canvasHeight - 275 + (stackTabs() ? 42 : -1) - y + 10, getMouseY(), 0);
 					} else if (tabInterfaceIDs[tabID] != -1 && !isFullscreenInterface(openInterfaceID)) {
 						buildInterfaceMenu(
 								canvasWidth - 197 - (stackTabs() ? 16 : 1),
-								RSInterface.interfaceCache[tabInterfaceIDs[tabID]],
+								interfaceCache.get(tabInterfaceIDs[tabID]),
 								getMouseX(),
 								canvasHeight - 275 + (stackTabs() ? 42 : -1) - y + 10,
 								getMouseY(),
@@ -10908,14 +10963,14 @@ public class Client extends GameEngine implements RSClient {
 			if (!isResized()) {
 				if (getMouseX() > 0 && getMouseY() > 338 && getMouseX() < 490 && getMouseY() < 463) {
 					if (backDialogID != -1)
-						buildInterfaceMenu(20, RSInterface.interfaceCache[backDialogID], getMouseX(), 358, getMouseY(), 0);
+						buildInterfaceMenu(20, interfaceCache.get(backDialogID), getMouseX(), 358, getMouseY(), 0);
 					else if (getMouseY() < 463 && getMouseX() < 490)
 						buildChatAreaMenu(getMouseY() - 338);
 				}
 			} else {
 				if (getMouseX() > 0 && getMouseY() > canvasHeight - 165 && getMouseX() < 490 && getMouseY() < canvasHeight - 40) {
 					if (backDialogID != -1)
-						buildInterfaceMenu(20, RSInterface.interfaceCache[backDialogID], getMouseX(),
+						buildInterfaceMenu(20, interfaceCache.get(backDialogID), getMouseX(),
 								canvasHeight - 145, getMouseY(), 0);
 					else if (getMouseY() < canvasHeight - 40 && getMouseX() < 490)
 						buildChatAreaMenu(getMouseY() - (canvasHeight - 160));
@@ -11233,8 +11288,9 @@ public class Client extends GameEngine implements RSClient {
 				return;
 			}
 			if (responseCode == 2) {
-				Arrays.stream(RSInterface.interfaceCache).filter(Objects::nonNull).forEach(rsi -> rsi.scrollPosition = 0);
-
+				interfaceCache.forEach((id, rsi) -> {
+					rsi.scrollPosition = 0;
+				});
 				Preferences.getPreferences().updateClientConfiguration();
 				Preferences.getPreferences().updateClientConfiguration();
 				@SuppressWarnings("unused")
@@ -12767,25 +12823,25 @@ public class Client extends GameEngine implements RSClient {
 				Client.titleLoadingStage = 130;
 			} else if (Client.titleLoadingStage == 130) {
 				drawLoadingText(98, "Loaded interfaces");
-				TextDrawingArea allFonts[] = { smallText, aTextDrawingArea_1271, chatTextDrawingArea,
-						aTextDrawingArea_1273 };
+				TextDrawingArea allFonts[] = {smallText, aTextDrawingArea_1271, chatTextDrawingArea,
+						aTextDrawingArea_1273};
 
 				FileArchive streamLoader_1 = streamLoaderForName(1, "interface");
 				FileArchive streamLoader_2 = streamLoaderForName(2, "2d graphics");
-				RSInterface.unpack(streamLoader_1, allFonts, streamLoader_2, new RSFont[] {newSmallFont, newRegularFont, newBoldFont, newFancyFont});
+				unpack(streamLoader_1, allFonts, streamLoader_2, new RSFont[]{newSmallFont, newRegularFont, newBoldFont, newFancyFont});
 
 
-				if (Configuration.PRINT_EMPTY_INTERFACE_SECTIONS) {
-					RSInterface.printEmptyInterfaceSections();
+				if (PRINT_EMPTY_INTERFACE_SECTIONS) {
+					printEmptyInterfaceSections();
 				}
 
 				if (anInt913 == 0) {
-					RSInterface.interfaceCache[58002].active = true;
+					interfaceCache.get(58002).active = true;
 				} else if (anInt913 == 1) {
-					RSInterface.interfaceCache[58002].active = false;
+					interfaceCache.get(58002).active = false;
 				}
-				RSInterface.interfaceCache[58010].active = true;
-				Client.titleLoadingStage = 140;
+				interfaceCache.get(58010).active = true;
+				titleLoadingStage = 140;
 			} else if (Client.titleLoadingStage == 140) {
 				drawLoadingText(99, "Loaded world map");
 				setConfigButtonsAtStartup();
@@ -13809,7 +13865,7 @@ public class Client extends GameEngine implements RSClient {
 					if (openInterfaceID != -1) {
 						processWidgetAnimations(tickDelta, openInterfaceID);
 					}
-				} catch(Exception ex) {
+				} catch (Exception ex) {
 
 				}
 				tickDelta = 0;
@@ -13817,7 +13873,7 @@ public class Client extends GameEngine implements RSClient {
 				Rasterizer2D.clear();
 				welcomeScreenRaised = true;
 				if (openInterfaceID != -1) {
-					RSInterface rsInterface_1 = RSInterface.interfaceCache[openInterfaceID];
+					RSInterface rsInterface_1 = interfaceCache.get(openInterfaceID);
 					if (rsInterface_1.width == 512 && rsInterface_1.height == 334
 							&& rsInterface_1.type == 0) {
 						rsInterface_1.width = 765;
@@ -13825,11 +13881,11 @@ public class Client extends GameEngine implements RSClient {
 					}
 					try {
 						drawInterface(0, 0, rsInterface_1, 8);
-					} catch(Exception ex) {
+					} catch (Exception ex) {
 
 					}
 				}
-				RSInterface rsInterface = RSInterface.interfaceCache[fullscreenInterfaceID];
+				RSInterface rsInterface = interfaceCache.get(fullscreenInterfaceID);
 				if (rsInterface.width == 512 && rsInterface.height == 334
 						&& rsInterface.type == 0) {
 					rsInterface.width = 765;
@@ -14073,10 +14129,10 @@ public class Client extends GameEngine implements RSClient {
 				return;
 
 			if(rsInterface.id == HealthHud.WIDGET_ID) {
-				if(RSInterface.interfaceCache[HealthHud.PROGRESS_WIDGET_ID] == null
-				|| RSInterface.interfaceCache[HealthHud.PROGRESS_WIDGET_ID].message == null)
+				if(interfaceCache.get(PROGRESS_WIDGET_ID) == null
+				|| interfaceCache.get(PROGRESS_WIDGET_ID).message == null)
 					return;
-				if(!RSInterface.interfaceCache[HealthHud.PROGRESS_WIDGET_ID].message.contains("/"))
+				if(!interfaceCache.get(PROGRESS_WIDGET_ID).message.contains("/"))
 					return;
 			}
 
@@ -14095,9 +14151,9 @@ public class Client extends GameEngine implements RSClient {
 			int childCount = rsInterface.children.length;
 			for (int childId = 0; childId < childCount; childId++) {
 				try {
-					int _x = rsInterface.childX[childId] + xPosition  - (rsInterface.horizontalScroll ? scrollPosition : 0);
-					int _y = (rsInterface.childY[childId] + yPosition)- (rsInterface.horizontalScroll ? 0 : scrollPosition);
-					RSInterface class9_1 = RSInterface.interfaceCache[rsInterface.children[childId]];
+					int _x = rsInterface.childX[childId] + xPosition - (rsInterface.horizontalScroll ? scrollPosition : 0);
+					int _y = (rsInterface.childY[childId] + yPosition) - (rsInterface.horizontalScroll ? 0 : scrollPosition);
+					RSInterface class9_1 = interfaceCache.get(rsInterface.children[childId]);
 
 					_x += class9_1.anInt263;
 					_y += class9_1.anInt265;
@@ -14129,7 +14185,7 @@ public class Client extends GameEngine implements RSClient {
 					if (class9_1.id == 58073)
 						if (this.modifiableXValue > 0) {
 							class9_1.atActionType = 8;
-							class9_1.tooltips = new String[] { "Set custom quantity", "Default quantity: " + this.modifiableXValue };
+							class9_1.tooltips = new String[]{"Set custom quantity", "Default quantity: " + this.modifiableXValue};
 						} else {
 							this.modifiableXValue = 1;
 							class9_1.atActionType = 1;
@@ -14150,8 +14206,8 @@ public class Client extends GameEngine implements RSClient {
 
 						if (inter.drawHorizontal) {
 							int drawingWidth = inter.progressBarPercentage * inter.width / 100;
-							Rasterizer2D.drawPixels(inter.height, _y, _x, defaultBarColor, inter.width);
-							Rasterizer2D.drawPixels(inter.height, _y, _x, displayColor, drawingWidth);
+							drawPixels(inter.height, _y, _x, defaultBarColor, inter.width);
+							drawPixels(inter.height, _y, _x, displayColor, drawingWidth);
 							Rasterizer2D.fillPixels(_x, inter.width, inter.height, 0, _y);
 
 							// DrawingArea.fillRect(childX, childY, inter.width, inter.height, defaultBarColor);
@@ -14160,12 +14216,12 @@ public class Client extends GameEngine implements RSClient {
 						} else {
 							int drawingHeight = inter.progressBarPercentage * inter.height / 100;
 
-							Rasterizer2D.fillRectangle(_x, _y, inter.width, inter.height, 0x00000);
-							Rasterizer2D.fillRectangle(_x, _y, inter.width, drawingHeight, displayColor);
-							Rasterizer2D.drawRectangle(_x, _y, inter.width, inter.height, 0);
+							fillRectangle(_x, _y, inter.width, inter.height, 0x00000);
+							fillRectangle(_x, _y, inter.width, drawingHeight, displayColor);
+							drawRectangle(_x, _y, inter.width, inter.height, 0);
 
-							Rasterizer2D.drawPixels(inter.height, _y, _x, defaultBarColor, inter.width);
-							Rasterizer2D.drawPixels(drawingHeight,  _y+ inter.height - drawingHeight, _x, displayColor, inter.width);
+							drawPixels(inter.height, _y, _x, defaultBarColor, inter.width);
+							drawPixels(drawingHeight, _y + inter.height - drawingHeight, _x, displayColor, inter.width);
 							Rasterizer2D.fillPixels(_x, inter.width, inter.height, 0, _y);
 						}
 					}
@@ -14189,55 +14245,55 @@ public class Client extends GameEngine implements RSClient {
 							}
 
 						} else {
-						// Hardcodes
-						if (class9_1.scrollMax > class9_1.height) {
-							// clan chat
-							if (class9_1.id == 18143) {
-								int clanMates = 0;
-								for (int i = 18155; i < 18244; i++) {
-									RSInterface line = RSInterface.interfaceCache[i];
-									if (line.message.length() > 0) {
-										clanMates++;
-									}
-								}
-								class9_1.scrollMax = (clanMates * 14) + class9_1.height + 1;
-							}
-							if (class9_1.id == 18322 || class9_1.id == 18423) {
-								int members = 0;
-								for (int i = class9_1.id + 1; i < class9_1.id + 1 + 100; i++) {
-									RSInterface line = RSInterface.interfaceCache[i];
-									if (line != null && line.message != null) {
+							// Hardcodes
+							if (class9_1.scrollMax > class9_1.height) {
+								// clan chat
+								if (class9_1.id == 18143) {
+									int clanMates = 0;
+									for (int i = 18155; i < 18244; i++) {
+										RSInterface line = interfaceCache.get(i);
 										if (line.message.length() > 0) {
-											members++;
+											clanMates++;
 										}
 									}
+									class9_1.scrollMax = (clanMates * 14) + class9_1.height + 1;
 								}
-								class9_1.scrollMax = (members * 14) + 1;
-							}
-							if (rsInterface.parentID == 49000 || rsInterface.parentID == 49100 || rsInterface.parentID == 51100
-									|| rsInterface.parentID == 53100) {
-								int scrollMax = class9_1.scrollMax;
+								if (class9_1.id == 18322 || class9_1.id == 18423) {
+									int members = 0;
+									for (int i = class9_1.id + 1; i < class9_1.id + 1 + 100; i++) {
+										RSInterface line = interfaceCache.get(i);
+										if (line != null && line.message != null) {
+											if (line.message.length() > 0) {
+												members++;
+											}
+										}
+									}
+									class9_1.scrollMax = (members * 14) + 1;
+								}
+								if (rsInterface.parentID == 49000 || rsInterface.parentID == 49100 || rsInterface.parentID == 51100
+										|| rsInterface.parentID == 53100) {
+									int scrollMax = class9_1.scrollMax;
 
-								if (achievementCutoff > 1) {
-									scrollMax = achievementCutoff * 65;
-								} else {
-									achievementCutoff = 282;
+									if (achievementCutoff > 1) {
+										scrollMax = achievementCutoff * 65;
+									} else {
+										achievementCutoff = 282;
+									}
+									class9_1.scrollMax = scrollMax;
 								}
-								class9_1.scrollMax = scrollMax;
-							}
-							if (scrollbarVisible(class9_1)) {
-								drawScrollbar(class9_1.height, class9_1.scrollPosition, _y, _x + class9_1.width,
-										class9_1.scrollMax);
+								if (scrollbarVisible(class9_1)) {
+									drawScrollbar(class9_1.height, class9_1.scrollPosition, _y, _x + class9_1.width,
+											class9_1.scrollMax);
+								}
 							}
 						}
-					}
 					} else if (class9_1.type != 1)
 						if (class9_1.type == 2) {
 							if (interfaceText) {
 								newSmallFont.drawBasicString("Container: " + class9_1.id, _x, _y);
 							}
 							try {
-								Bank.setupMainTab(class9_1, _x, _y);
+								setupMainTab(class9_1, _x, _y);
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
@@ -14261,7 +14317,7 @@ public class Client extends GameEngine implements RSClient {
 									}
 								}
 
-								RSInterface scrollable = RSInterface.interfaceCache[class9_1.invAutoScrollInterfaceId];
+								RSInterface scrollable = interfaceCache.get(class9_1.invAutoScrollInterfaceId);
 								scrollable.scrollMax = scrollable.height + 1;
 								int heightPerRow = class9_1.invSpritePadY + 32;
 								if (heightPerRow * rowCount > scrollable.scrollMax) {
@@ -14280,7 +14336,7 @@ public class Client extends GameEngine implements RSClient {
 										j6 += class9_1.spritesY[i3];
 									}
 									if (class9_1.inventoryItemId[i3] > 0) {
-										if (class9_1.id == Interfaces.SHOP_CONTAINER) {
+										if (class9_1.id == SHOP_CONTAINER) {
 											if (hoverShopTile == i3) {
 												shopSpriteHover.drawSprite(k5 - 7, j6 - 4);
 											} else {
@@ -14293,8 +14349,8 @@ public class Client extends GameEngine implements RSClient {
 /*										if (class9_1.id == 23231) {
 											j9 = (class9_1.inventoryItemId[i3] & 0x7FFF) - 1;
 										}*/
-										if (k5 > Rasterizer2D.Rasterizer2D_xClipStart - 32 && k5 < Rasterizer2D.Rasterizer2D_xClipEnd && j6 > Rasterizer2D.Rasterizer2D_yClipStart - 32
-												&& j6 < Rasterizer2D.Rasterizer2D_yClipEnd || activeInterfaceType != 0 && itemDraggingSlot == i3) {
+										if (k5 > Rasterizer2D_xClipStart - 32 && k5 < Rasterizer2D_xClipEnd && j6 > Rasterizer2D_yClipStart - 32
+												&& j6 < Rasterizer2D_yClipEnd || activeInterfaceType != 0 && itemDraggingSlot == i3) {
 											int l9 = 0;
 											if (itemSelected == 1 && anInt1283 == i3 && anInt1284 == class9_1.id)
 												l9 = 0xffffff;
@@ -14323,23 +14379,20 @@ public class Client extends GameEngine implements RSClient {
 											}
 
 											boolean smallSprite = openInterfaceID == 26000
-													&& GrandExchange.isSmallItemSprite(class9_1.id) || class9_1.smallInvSprites;
+													&& isSmallItemSprite(class9_1.id) || class9_1.smallInvSprites;
 
 											ItemDefinition itemDef = ItemDefinition.lookup(j9);
 											if (smallSprite) {
-												itemSprite = ItemDefinition.getSmallSprite(j9, class9_1.inventoryAmounts[i3]);
-												if (itemDef.customSmallSpriteLocation != null)
-												{
+												itemSprite = getSmallSprite(j9, class9_1.inventoryAmounts[i3]);
+												if (itemDef.customSmallSpriteLocation != null) {
 													itemSprite = new Sprite(itemDef.customSmallSpriteLocation);
-												} else if (itemDef.customSpriteLocation != -1)
-												{
-													itemSprite = SpriteCache.lookup(itemDef.customSpriteLocation);
+												} else if (itemDef.customSpriteLocation != -1) {
+													itemSprite = lookup(itemDef.customSpriteLocation);
 												}
 											} else {
-												itemSprite = ItemDefinition.getSprite(j9, class9_1.inventoryAmounts[i3], l9);
-												if (itemDef.customSpriteLocation != -1)
-												{
-													itemSprite = SpriteCache.lookup(itemDef.customSpriteLocation);
+												itemSprite = getSprite(j9, class9_1.inventoryAmounts[i3], l9);
+												if (itemDef.customSpriteLocation != -1) {
+													itemSprite = lookup(itemDef.customSpriteLocation);
 												}
 											}
 
@@ -14363,8 +14416,8 @@ public class Client extends GameEngine implements RSClient {
 														j7 = 0;
 													}
 													itemSprite.drawTransparentSprite(k5 + k6, j6 + j7, 128);
-													if (j6 + j7 < Rasterizer2D.Rasterizer2D_yClipStart && rsInterface.scrollPosition > 0) {
-														int i10 = (tickDelta * (Rasterizer2D.Rasterizer2D_yClipStart - j6 - j7)) / 3;
+													if (j6 + j7 < Rasterizer2D_yClipStart && rsInterface.scrollPosition > 0) {
+														int i10 = (tickDelta * (Rasterizer2D_yClipStart - j6 - j7)) / 3;
 														if (i10 > tickDelta * 10)
 															i10 = tickDelta * 10;
 														if (i10 > rsInterface.scrollPosition)
@@ -14372,10 +14425,10 @@ public class Client extends GameEngine implements RSClient {
 														rsInterface.scrollPosition -= i10;
 														anInt1088 += i10;
 													}
-													if (j6 + j7 + 32 > Rasterizer2D.Rasterizer2D_yClipEnd
+													if (j6 + j7 + 32 > Rasterizer2D_yClipEnd
 															&& rsInterface.scrollPosition < rsInterface.scrollMax
 															- rsInterface.height) {
-														int j10 = (tickDelta * ((j6 + j7 + 32) - Rasterizer2D.Rasterizer2D_yClipEnd)) / 3;
+														int j10 = (tickDelta * ((j6 + j7 + 32) - Rasterizer2D_yClipEnd)) / 3;
 														if (j10 > tickDelta * 10)
 															j10 = tickDelta * 10;
 														if (j10 > rsInterface.scrollMax - rsInterface.height
@@ -14394,38 +14447,38 @@ public class Client extends GameEngine implements RSClient {
 												 * Draws item sprite
 												 */
 													itemSprite.drawTransparentSprite(k5, j6, itemSpriteOpacity);
-												if (class9_1.id == RSInterface.selectedItemInterfaceId
+												if (class9_1.id == selectedItemInterfaceId
 														&& class9_1.itemSearchSelectedSlot > -1
 														&& class9_1.itemSearchSelectedSlot == i3) {
 													for (int i = 32; i > 0; i--) {
-														Rasterizer2D.method338(j6 + j7, i, 256 - Byte.MAX_VALUE, 0x395D84, i,
+														method338(j6 + j7, i, 256 - Byte.MAX_VALUE, 0x395D84, i,
 																k5 + k6);
 													}
-													Rasterizer2D.method338(j6 + j7, 32, 256, 0x395D84, 32, k5 + k6);
+													method338(j6 + j7, 32, 256, 0x395D84, 32, k5 + k6);
 												}
 
 												if (class9_1.forceInvStackSizes || !smallSprite && !class9_1.hideInvStackSizes) {
 													if (class9_1.parentID < 58040 || class9_1.parentID > 58048) {
 														if (itemSprite.width == 33 || class9_1.inventoryAmounts[i3] != 1) {
 															if (class9_1.id != 23121 || class9_1.id == 23121 && ((class9_1.inventoryItemId[i3] >> 15) & 0x1) == 0) {
-																if (class9_1.invAlwaysInfinity || class9_1.id == Interfaces.SHOP_CONTAINER && class9_1.inventoryAmounts[i3] == 1_000_000_000) {
+																if (class9_1.invAlwaysInfinity || class9_1.id == SHOP_CONTAINER && class9_1.inventoryAmounts[i3] == 1_000_000_000) {
 																	infinity.drawSprite(k5 + k6, j6 + j7);
 																} else {
 																	int k10 = class9_1.inventoryAmounts[i3];
 																	int xOffset = class9_1.forceInvStackSizes ? 10 : 0;
 																	if (k10 >= 1)
 																		smallText.method385(0xFFFF00, intToKOrMil(k10), j6 + 9 + j7,
-																				xOffset+ k5 + k6);
-																	smallText.method385(0, intToKOrMil(k10), j6 + 10 + j7, xOffset+ k5 + 1 + k6);
+																				xOffset + k5 + k6);
+																	smallText.method385(0, intToKOrMil(k10), j6 + 10 + j7, xOffset + k5 + 1 + k6);
 																	if (k10 > 99999 && k10 < 10000000) {
 																		smallText.method385(0xFFFFFF, intToKOrMil(k10), j6 + 9 + j7,
-																				xOffset+ k5 + k6);
+																				xOffset + k5 + k6);
 																	} else if (k10 > 9999999) {
 																		smallText.method385(0x00ff80, intToKOrMil(k10), j6 + 9 + j7,
-																				xOffset+ k5 + k6);
+																				xOffset + k5 + k6);
 																	} else {
 																		smallText.method385(0xFFFF00, intToKOrMil(k10), j6 + 9 + j7,
-																				xOffset+ k5 + k6);
+																				xOffset + k5 + k6);
 																	}
 																}
 															}
@@ -14464,19 +14517,19 @@ public class Client extends GameEngine implements RSClient {
 							}
 							if (class9_1.opacity == 0) {
 								if (class9_1.filled)
-									Rasterizer2D.drawBox(_x, _y, class9_1.width, class9_1.height, colour
+									drawBox(_x, _y, class9_1.width, class9_1.height, colour
 									);
 								else
-									Rasterizer2D.drawBoxOutline(_x, _y, class9_1.width,
+									drawBoxOutline(_x, _y, class9_1.width,
 											class9_1.height, colour);
 							} else if (class9_1.filled)
-								Rasterizer2D.drawTransparentBox(_x, _y, class9_1.width, class9_1.height, colour,
+								drawTransparentBox(_x, _y, class9_1.width, class9_1.height, colour,
 										256 - (class9_1.opacity & 0xff));
 							else
-								Rasterizer2D.drawTransparentBoxOutline(_x, _y, class9_1.width, class9_1.height,
+								drawTransparentBoxOutline(_x, _y, class9_1.width, class9_1.height,
 										colour, 256 - (class9_1.opacity & 0xff)
 								);
-						} else if (class9_1.type == 4 || class9_1.type == RSInterface.TYPE_TEXT_DRAW_FROM_LEFT) {
+						} else if (class9_1.type == 4 || class9_1.type == TYPE_TEXT_DRAW_FROM_LEFT) {
 							TextDrawingArea textDrawingArea = class9_1.textDrawingAreas;
 							String s = class9_1.message;
 							if (interfaceStringText) {
@@ -14522,11 +14575,11 @@ public class Client extends GameEngine implements RSClient {
 									i4 = class9_1.hoverTextColor;
 								}
 							}
-							if((backDialogID != -1 || dialogID != -1 || class9_1.message.contains("Click here to continue")) &&
-									(rsInterface.id == backDialogID || rsInterface.id == dialogID )){
-								if(i4 == 0xffff00)
+							if ((backDialogID != -1 || dialogID != -1 || class9_1.message.contains("Click here to continue")) &&
+									(rsInterface.id == backDialogID || rsInterface.id == dialogID)) {
+								if (i4 == 0xffff00)
 									i4 = 255;
-								if(i4 == 49152)
+								if (i4 == 49152)
 									i4 = 0xffffff;
 							}
 							for (int l6 = _y + textDrawingArea.anInt1497; s.length() > 0; l6 += textDrawingArea.anInt1497) {
@@ -14601,11 +14654,11 @@ public class Client extends GameEngine implements RSClient {
 								if (interfaceStringText) {
 									s1 = "" + class9_1.id;
 								}
-								if(class9_1.wrapText) {
+								if (class9_1.wrapText) {
 									font.drawInterfaceText(s1, _x, l6,
-											class9_1.width, 0,i4, class9_1.textShadow ? 0 : -1, 255, 1, 0, 0);
+											class9_1.width, 0, i4, class9_1.textShadow ? 0 : -1, 255, 1, 0, 0);
 								} else {
-									if (class9_1.type == RSInterface.TYPE_TEXT_DRAW_FROM_LEFT) {
+									if (class9_1.type == TYPE_TEXT_DRAW_FROM_LEFT) {
 										int width = font.getTextWidth(s1);
 										font.drawBasicString(s1, _x - width, l6, i4, class9_1.textShadow ? 0 : -1);
 									} else if (class9_1.centerText) {
@@ -14617,23 +14670,22 @@ public class Client extends GameEngine implements RSClient {
 							}
 						} else if (class9_1.type == 5) {
 							Sprite sprite;
-							if(interfaceIsSelected(class9_1) || class9_1.active) {
+							if (interfaceIsSelected(class9_1) || class9_1.active) {
 								sprite = class9_1.getSprite2();
 							} else {
 								sprite = class9_1.getSprite1();
 							}
 
 
-
-							if(spellSelected == 1 && class9_1.id == spellID && spellID != 0 && sprite != null) {
+							if (spellSelected == 1 && class9_1.id == spellID && spellID != 0 && sprite != null) {
 								sprite.drawSprite(_x, _y, 0xffffff);
 							}
 
-							if(sprite != null) {
+							if (sprite != null) {
 								if (class9_1.drawsTransparent) {
 									sprite.drawTransparentSprite(_x, _y, class9_1.transparency);
 								} else {
-									if(sprite.advancedSprite) {
+									if (sprite.advancedSprite) {
 										sprite.drawAdvancedSprite(_x, _y);
 									} else {
 										sprite.drawSprite(_x, _y);
@@ -14641,13 +14693,13 @@ public class Client extends GameEngine implements RSClient {
 								}
 							}
 						} else if (class9_1.type == 6) {
-							Rasterizer3D.renderOnGpu = true;
-							int k3 = Rasterizer3D.originViewX;
-							int j4 = Rasterizer3D.originViewY;
-							Rasterizer3D.originViewX = _x + class9_1.width / 2;
-							Rasterizer3D.originViewY = _y + class9_1.height / 2;
-							int i5 = Rasterizer3D.SINE[class9_1.modelRotation1] * class9_1.modelZoom >> 16;
-							int l5 = Rasterizer3D.COSINE[class9_1.modelRotation1] * class9_1.modelZoom >> 16;
+							renderOnGpu = true;
+							int k3 = originViewX;
+							int j4 = originViewY;
+							originViewX = _x + class9_1.width / 2;
+							originViewY = _y + class9_1.height / 2;
+							int i5 = SINE[class9_1.modelRotation1] * class9_1.modelZoom >> 16;
+							int l5 = COSINE[class9_1.modelRotation1] * class9_1.modelZoom >> 16;
 							boolean flag2 = interfaceIsSelected(class9_1);
 							int i7;
 							if (flag2)
@@ -14664,17 +14716,17 @@ public class Client extends GameEngine implements RSClient {
 								}
 
 								model = class9_1.method209(animation.secondaryFrameIds[class9_1.anInt246],
-									animation.frameIDs[class9_1.anInt246], flag2);
+										animation.frameIDs[class9_1.anInt246], flag2);
 							}
 							if (model != null) {
-								Rasterizer3D.world = false;
+								world = false;
 								model.renderModel(class9_1.modelRotation2, 0, class9_1.modelRotation1, 0, i5, l5);
-								Rasterizer3D.world = true;
+								world = true;
 							}
 
-							Rasterizer3D.originViewX = k3;
-							Rasterizer3D.originViewY = j4;
-							Rasterizer3D.renderOnGpu = false;
+							originViewX = k3;
+							originViewY = j4;
+							renderOnGpu = false;
 						} else if (class9_1.type == 7) {
 							TextDrawingArea textDrawingArea_1 = class9_1.textDrawingAreas;
 							int k4 = 0;
@@ -14711,7 +14763,7 @@ public class Client extends GameEngine implements RSClient {
 							 */
 
 							TextDrawingArea textDrawingArea_2 = aTextDrawingArea_1271;
-							for (String s1 = class9_1.message; s1.length() > 0;) {
+							for (String s1 = class9_1.message; s1.length() > 0; ) {
 								if (s1.indexOf("%") != -1) {
 									do {
 										int k7 = s1.indexOf("%1");
@@ -14807,7 +14859,7 @@ public class Client extends GameEngine implements RSClient {
 									yPos = canvasHeight - 118 - boxHeight;
 								}
 							}
-							Rasterizer2D.drawPixels(boxHeight, yPos, xPos, 0xFFFFA0, boxWidth);
+							drawPixels(boxHeight, yPos, xPos, 0xFFFFA0, boxWidth);
 							Rasterizer2D.fillPixels(xPos, boxWidth, boxHeight, 0, yPos);
 							String s2 = class9_1.message;
 							for (int j11 = yPos + textDrawingArea_2.anInt1497 + 2; s2
@@ -14872,7 +14924,7 @@ public class Client extends GameEngine implements RSClient {
 								}
 							}
 
-						} else if (class9_1.type == RSInterface.TYPE_HOVER || class9_1.type == RSInterface.TYPE_CONFIG_HOVER) {
+						} else if (class9_1.type == TYPE_HOVER || class9_1.type == TYPE_CONFIG_HOVER) {
 							// Draw sprite
 							boolean flag = false;
 
@@ -14901,15 +14953,15 @@ public class Client extends GameEngine implements RSClient {
 								// class9_1.rsFont.drawBasicString(class9_1.message, _x + 5, _y + class9_1.msgY,
 								// flag ? class9_1.anInt216 : class9_1.textColor, 0);
 							}
-						} else if (class9_1.type == RSInterface.TYPE_CONFIG) {
+						} else if (class9_1.type == TYPE_CONFIG) {
 							Sprite sprite = class9_1.active ? class9_1.getSprite2() : class9_1.getSprite1();
 							sprite.drawSprite(_x, _y);
-						} else if (class9_1.type == RSInterface.TYPE_SLIDER) {
+						} else if (class9_1.type == TYPE_SLIDER) {
 							Slider slider = class9_1.slider;
 							if (slider != null) {
 								slider.draw(_x, _y, 255);
 							}
-						} else if (class9_1.type == RSInterface.TYPE_DROPDOWN) {
+						} else if (class9_1.type == TYPE_DROPDOWN) {
 
 							DropdownMenu d = class9_1.dropdown;
 
@@ -14923,9 +14975,9 @@ public class Client extends GameEngine implements RSClient {
 								bgColour = class9_1.dropdownColours[3];
 							}
 
-							Rasterizer2D.drawPixels(20, _y, _x, class9_1.dropdownColours[0], d.getWidth());
-							Rasterizer2D.drawPixels(18, _y + 1, _x + 1, class9_1.dropdownColours[1], d.getWidth() - 2);
-							Rasterizer2D.drawPixels(16, _y + 2, _x + 2, bgColour, d.getWidth() - 4);
+							drawPixels(20, _y, _x, class9_1.dropdownColours[0], d.getWidth());
+							drawPixels(18, _y + 1, _x + 1, class9_1.dropdownColours[1], d.getWidth() - 2);
+							drawPixels(16, _y + 2, _x + 2, bgColour, d.getWidth() - 4);
 
 							int xOffset = class9_1.centerText ? 3 : 16;
 							if (rsInterface.id == 41900) {
@@ -14940,19 +14992,19 @@ public class Client extends GameEngine implements RSClient {
 								// Up arrow
 								cacheSprite3[29].drawSprite(_x + d.getWidth() - 18, _y + 2);
 
-								Rasterizer2D.drawPixels(d.getHeight(), _y + 19, _x, class9_1.dropdownColours[0], d.getWidth());
-								Rasterizer2D.drawPixels(d.getHeight() - 2, _y + 20, _x + 1, class9_1.dropdownColours[1],
+								drawPixels(d.getHeight(), _y + 19, _x, class9_1.dropdownColours[0], d.getWidth());
+								drawPixels(d.getHeight() - 2, _y + 20, _x + 1, class9_1.dropdownColours[1],
 										d.getWidth() - 2);
-								Rasterizer2D.drawPixels(d.getHeight() - 4, _y + 21, _x + 2, class9_1.dropdownColours[3],
+								drawPixels(d.getHeight() - 4, _y + 21, _x + 2, class9_1.dropdownColours[3],
 										d.getWidth() - 4);
 
 								int yy = 2;
 								for (int i = 0; i < d.getOptions().length; i++) {
 									if (class9_1.dropdownHover == i) {
 										if (class9_1.id == 28102) {
-											Rasterizer2D.drawAlphaBox(_x + 2, _y + 19 + yy, d.getWidth() - 4, 13, 0xd0914d, 80);
+											drawAlphaBox(_x + 2, _y + 19 + yy, d.getWidth() - 4, 13, 0xd0914d, 80);
 										} else {
-											Rasterizer2D.drawPixels(13, _y + 19 + yy, _x + 2, class9_1.dropdownColours[4],
+											drawPixels(13, _y + 19 + yy, _x + 2, class9_1.dropdownColours[4],
 													d.getWidth() - 4);
 										}
 										if (rsInterface.id == 41900) {
@@ -14964,7 +15016,7 @@ public class Client extends GameEngine implements RSClient {
 										}
 
 									} else {
-										Rasterizer2D.drawPixels(13, _y + 19 + yy, _x + 2, class9_1.dropdownColours[3],
+										drawPixels(13, _y + 19 + yy, _x + 2, class9_1.dropdownColours[3],
 												d.getWidth() - 4);
 										if (rsInterface.id == 41900) {
 											newRegularFont.drawCenteredString(d.getOptions()[i],
@@ -14983,7 +15035,7 @@ public class Client extends GameEngine implements RSClient {
 							} else {
 								cacheSprite3[downArrow].drawSprite(_x + d.getWidth() - 18, _y + 2);
 							}
-						} else if (class9_1.type == RSInterface.TYPE_KEYBINDS_DROPDOWN) {
+						} else if (class9_1.type == TYPE_KEYBINDS_DROPDOWN) {
 
 							DropdownMenu d = class9_1.dropdown;
 
@@ -14993,14 +15045,14 @@ public class Client extends GameEngine implements RSClient {
 								continue;
 							}
 
-							Rasterizer2D.drawPixels(18, _y + 1, _x + 1, 0x544834, d.getWidth() - 2);
-							Rasterizer2D.drawPixels(16, _y + 2, _x + 2, 0x2e281d, d.getWidth() - 4);
+							drawPixels(18, _y + 1, _x + 1, 0x544834, d.getWidth() - 2);
+							drawPixels(16, _y + 2, _x + 2, 0x2e281d, d.getWidth() - 4);
 							newRegularFont.drawBasicString(d.getSelected(), _x + 7, _y + 15, 0xff8a1f, 0);
 							cacheSprite3[82].drawSprite(_x + d.getWidth() - 18, _y + 2); // Arrow TODO
 
 							if (d.isOpen()) {
 
-								RSInterface.interfaceCache[class9_1.id - 1].active = true; // Alter stone colour
+								interfaceCache.get(class9_1.id - 1).active = true;
 
 								int yPos = _y + 18;
 
@@ -15010,8 +15062,8 @@ public class Client extends GameEngine implements RSClient {
 									dropdownInversionFlag = 2;
 								}
 
-								Rasterizer2D.drawPixels(d.getHeight() + 12, yPos, _x + 1, 0x544834, d.getWidth() - 2);
-								Rasterizer2D.drawPixels(d.getHeight() + 10, yPos + 1, _x + 2, 0x2e281d, d.getWidth() - 4);
+								drawPixels(d.getHeight() + 12, yPos, _x + 1, 0x544834, d.getWidth() - 2);
+								drawPixels(d.getHeight() + 10, yPos + 1, _x + 2, 0x2e281d, d.getWidth() - 4);
 
 								int yy = 2;
 								int xx = 0;
@@ -15037,19 +15089,19 @@ public class Client extends GameEngine implements RSClient {
 									}
 								}
 							} else {
-								RSInterface.interfaceCache[class9_1.id - 1].active = false;
+								interfaceCache.get(class9_1.id - 1).active = false;
 							}
-						} else if (class9_1.type == RSInterface.TYPE_ADJUSTABLE_CONFIG) {
+						} else if (class9_1.type == TYPE_ADJUSTABLE_CONFIG) {
 							if (class9_1.id != 37010) {
-								Rasterizer2D.setDrawingArea(canvasHeight, 0, canvasHeight, 0);
+								setDrawingArea(canvasHeight, 0, canvasHeight, 0);
 							}
-							if(class9_1.id == 37100) {
+							if (class9_1.id == 37100) {
 								if (_y < 41 || _y > 230) {
 									return;
 								}
 							}
-							Rasterizer2D.drawAlphaBox(_x, _y, class9_1.width, class9_1.height, class9_1.fillColor, class9_1.opacity);
-							Rasterizer2D.setDrawingArea(yPosition + class9_1.height, xPosition, xPosition + class9_1.width, yPosition);
+							drawAlphaBox(_x, _y, class9_1.width, class9_1.height, class9_1.fillColor, class9_1.opacity);
+							setDrawingArea(yPosition + class9_1.height, xPosition, xPosition + class9_1.width, yPosition);
 							/**
 							 int totalWidth = class9_1.width;
 							 int spriteWidth = class9_1.sprite2.myWidth;
@@ -15070,16 +15122,16 @@ public class Client extends GameEngine implements RSClient {
 							 **/
 						} else if (class9_1.type == 16) {
 							drawInputField(class9_1, _x, _y, class9_1.width, class9_1.height);
-						}else if (class9_1.type == RSInterface.TYPE_BOX) {
+						} else if (class9_1.type == TYPE_BOX) {
 							// Draw outline
-							Rasterizer2D.drawBox(_x - 2, _y - 2, class9_1.width + 4, class9_1.height + 4, 0x0e0e0c);
-							Rasterizer2D.drawBox(_x - 1, _y - 1, class9_1.width + 2, class9_1.height + 2, 0x474745);
+							drawBox(_x - 2, _y - 2, class9_1.width + 4, class9_1.height + 4, 0x0e0e0c);
+							drawBox(_x - 1, _y - 1, class9_1.width + 2, class9_1.height + 2, 0x474745);
 							// Draw base box
 							if (class9_1.toggled) {
-								Rasterizer2D.drawBox(_x, _y, class9_1.width, class9_1.height, class9_1.anInt239);
+								drawBox(_x, _y, class9_1.width, class9_1.height, class9_1.anInt239);
 								class9_1.toggled = false;
 							} else {
-								Rasterizer2D.drawBox(_x, _y, class9_1.width, class9_1.height, class9_1.hoverTextColor);
+								drawBox(_x, _y, class9_1.width, class9_1.height, class9_1.hoverTextColor);
 							}
 						} else if (class9_1.type == 19) {
 							if (class9_1.backgroundSprites.length > 1) {
@@ -15087,13 +15139,13 @@ public class Client extends GameEngine implements RSClient {
 									class9_1.getSprite1().drawAdvancedSprite(_x, _y);
 								}
 							}
-						} else if (class9_1.type == RSInterface.TYPE_STRING_CONTAINER) {
+						} else if (class9_1.type == TYPE_STRING_CONTAINER) {
 							int x = _x;
 							int y = _y;
 
 							// Set the scroll max based on the strings
 							if (class9_1.scrollableContainerInterfaceId != 0) {
-								RSInterface container = RSInterface.get(class9_1.scrollableContainerInterfaceId);
+								RSInterface container = get(class9_1.scrollableContainerInterfaceId);
 								int scrollMax = class9_1.invAutoScrollHeightOffset;
 								for (String string : class9_1.stringContainer)
 									scrollMax += class9_1.invSpritePadY;
@@ -15115,7 +15167,7 @@ public class Client extends GameEngine implements RSClient {
 								}
 								y += class9_1.invSpritePadY;
 							}
-						} else if (class9_1.type == RSInterface.TYPE_HORIZONTAL_STRING_CONTAINER) {
+						} else if (class9_1.type == TYPE_HORIZONTAL_STRING_CONTAINER) {
 							int x = _x;
 							int y = _y;
 
@@ -15132,13 +15184,13 @@ public class Client extends GameEngine implements RSClient {
 									x = _x;
 								}
 							}
-						} else if (class9_1.type == RSInterface.TYPE_PROGRESS_BAR) {
-							Rasterizer2D.drawPixels(class9_1.height, _y, _x, class9_1.fillColor, class9_1.width);
+						} else if (class9_1.type == TYPE_PROGRESS_BAR) {
+							drawPixels(class9_1.height, _y, _x, class9_1.fillColor, class9_1.width);
 						} else if (class9_1.type == 67) {
-							Rasterizer2D.drawBox(_x, _y, class9_1.width, class9_1.height, class9_1.borderWidth, class9_1.borderColor, class9_1.secondaryColor, class9_1.transparency);
+							drawBox(_x, _y, class9_1.width, class9_1.height, class9_1.borderWidth, class9_1.borderColor, class9_1.secondaryColor, class9_1.transparency);
 
 							if (class9_1.filled) {
-								Rasterizer2D.fill_Rectangle(class9_1.fillColor, _y + class9_1.borderWidth, class9_1.width - class9_1.borderWidth * 2 + 1, class9_1.height - class9_1.borderWidth * 2 - 1, 0, _x + class9_1.borderWidth);
+								fill_Rectangle(class9_1.fillColor, _y + class9_1.borderWidth, class9_1.width - class9_1.borderWidth * 2 + 1, class9_1.height - class9_1.borderWidth * 2 - 1, 0, _x + class9_1.borderWidth);
 							}
 						} else if (class9_1.type == 66) {
 							try {
@@ -15148,9 +15200,9 @@ public class Client extends GameEngine implements RSClient {
 									continue;
 								}
 
-								int current = Integer.parseInt(progress.substring(0, progress.indexOf("/")));
+								int current = parseInt(progress.substring(0, progress.indexOf("/")));
 
-								int maximum = Integer.parseInt(progress.substring(progress.indexOf("/") + 1));
+								int maximum = parseInt(progress.substring(progress.indexOf("/") + 1));
 								if (current > maximum) {
 									current = maximum;
 								}
@@ -15159,32 +15211,32 @@ public class Client extends GameEngine implements RSClient {
 								int height = class9_1.height;
 								int color = class9_1.fillColor;
 
-								Rasterizer2D.drawRectangle(_x - 1, _y - 1, class9_1.width - 5, class9_1.height + 2, 0, 250);
-								Rasterizer2D.draw_filled_rect(_x, _y, width - 7, height, class9_1.progressBackColor, class9_1.progressBackAlpha);
-								Rasterizer2D.draw_filled_rect(_x, _y, (int) ((double) current / maximum * width - 7), height, color, 200);
+								drawRectangle(_x - 1, _y - 1, class9_1.width - 5, class9_1.height + 2, 0, 250);
+								draw_filled_rect(_x, _y, width - 7, height, class9_1.progressBackColor, class9_1.progressBackAlpha);
+								draw_filled_rect(_x, _y, (int) ((double) current / maximum * width - 7), height, color, 200);
 
-									RSFont font = class9_1.font == null ? newSmallFont : class9_1.font;
-									font.drawCenteredString(current + " / " + maximum, _x + (width - 8) / 2, _y + height / 2 + 5, 0xFFFFFF, 0);
+								RSFont font = class9_1.font == null ? newSmallFont : class9_1.font;
+								font.drawCenteredString(current + " / " + maximum, _x + (width - 8) / 2, _y + height / 2 + 5, 0xFFFFFF, 0);
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
-						} else if (class9_1.type == RSInterface.TYPE_PROGRESS_BAR_2021) {
+						} else if (class9_1.type == TYPE_PROGRESS_BAR_2021) {
 							double percentage = class9_1.progressBar2021Percentage;
-							int color = RSInterface.getRgbProgressColor(percentage);
+							int color = getRgbProgressColor(percentage);
 
 							int progressBarWidth = (int) ((double) class9_1.width * percentage);
-							Rasterizer2D.drawPixels(class9_1.height, _y, _x, color, progressBarWidth);
-							Rasterizer2D.drawBorder(_x, _y, class9_1.width, class9_1.height, class9_1.fillColor);
-						} else if (class9_1.type == RSInterface.TYPE_DRAW_BOX) {
+							drawPixels(class9_1.height, _y, _x, color, progressBarWidth);
+							drawBorder(_x, _y, class9_1.width, class9_1.height, class9_1.fillColor);
+						} else if (class9_1.type == TYPE_DRAW_BOX) {
 							//DrawingArea.drawRoundedRectangle(_x, _y, class9_1.width, class9_1.height, class9_1.fillColor, class9_1.transparency, true, true);
 
-							Rasterizer2D.drawTransparentBox(_x, _y, class9_1.width, class9_1.height, class9_1.fillColor, class9_1.transparency);
-							Rasterizer2D.drawBorder(_x, _y, class9_1.width, class9_1.height, class9_1.borderColor);
+							drawTransparentBox(_x, _y, class9_1.width, class9_1.height, class9_1.fillColor, class9_1.transparency);
+							drawBorder(_x, _y, class9_1.width, class9_1.height, class9_1.borderColor);
 						} else if (class9_1.type == 91) {
 
-							AnimatedSprite gif = SpriteLoader.fetchAnimatedSprite(class9_1.gifLocation);
+							AnimatedSprite gif = fetchAnimatedSprite(class9_1.gifLocation);
 							if (gif != null) {
-								gif.getInstance(class9_1.width, class9_1.height).drawAdvancedSprite(_x, _y,255);
+								gif.getInstance(class9_1.width, class9_1.height).drawAdvancedSprite(_x, _y, 255);
 							}
 
 						}
@@ -15259,7 +15311,7 @@ public class Client extends GameEngine implements RSClient {
 	}
 
 	public void updateProgressBar(int childId, int interfaceState, int percentage, int interfaceState2) {
-		RSInterface rsi = RSInterface.interfaceCache[childId];
+		RSInterface rsi = interfaceCache.get(childId);
 		if (rsi == null) {
 			return;
 		}
@@ -15871,7 +15923,7 @@ public class Client extends GameEngine implements RSClient {
 		}
 		if (snowVisible && Configuration.CHRISTMAS && !Client.instance.isResized()) {
 			processWidgetAnimations(tickDelta, 11877);
-			drawInterface(0, 0, RSInterface.interfaceCache[11877], 0);
+			drawInterface(0, 0, interfaceCache.get(11877), 0);
 		}
 
 		if (getUserSettings().isShowEntityTarget()) {
@@ -15908,7 +15960,7 @@ public class Client extends GameEngine implements RSClient {
 		if (openWalkableWidgetID != -1) {
 			processWidgetAnimations(tickDelta, openWalkableWidgetID);
 			if (!Nightmare.instance.drawNightmareInterfaces(openWalkableWidgetID)) {
-				RSInterface rsinterface = RSInterface.interfaceCache[openWalkableWidgetID];
+				RSInterface rsinterface = interfaceCache.get(openWalkableWidgetID);
 				if (!isResized()) {
 					drawInterface(0, 0, rsinterface, 0);
 				} else {
@@ -15931,17 +15983,17 @@ public class Client extends GameEngine implements RSClient {
 						/** Duel arena interface **/
 						drawInterface(0, canvasWidth - 510, rsinterface, -110);
 					} else if (openWalkableWidgetID == 35424 || openWalkableWidgetID == 65000) {
-						drawInterface(0, (canvasWidth / 2) - 340, rsinterface,0);
-					}  else if (openWalkableWidgetID == 63000) {
-						drawInterface(0, (canvasWidth / 2) - 340, rsinterface,-295);
+						drawInterface(0, (canvasWidth / 2) - 340, rsinterface, 0);
+					} else if (openWalkableWidgetID == 63000) {
+						drawInterface(0, (canvasWidth / 2) - 340, rsinterface, -295);
 					} else if (centerInterface() || openInterfaceID == 29230) {
 						drawInterface(0, (canvasWidth / 2) - 356, rsinterface,
 								!isResized() ? 0 : (canvasHeight / 2) - 230);
 					} else {
 						if (canvasWidth >= 900 && canvasHeight >= 650) {
-							drawInterface(0, (canvasWidth / 2) - 356, RSInterface.interfaceCache[openWalkableWidgetID], !isResized() ? 0 : (canvasHeight / 2) - 230);
+							drawInterface(0, (canvasWidth / 2) - 356, interfaceCache.get(openWalkableWidgetID), !isResized() ? 0 : (canvasHeight / 2) - 230);
 						} else {
-							drawInterface(0, 0, RSInterface.interfaceCache[openWalkableWidgetID], 0);
+							drawInterface(0, 0, interfaceCache.get(openWalkableWidgetID), 0);
 						}
 					}
 				}
@@ -16020,7 +16072,7 @@ public class Client extends GameEngine implements RSClient {
 
 		if (openInterfaceID != -1) {
 			processWidgetAnimations(tickDelta, openInterfaceID);
-			RSInterface rsinterface = RSInterface.interfaceCache[openInterfaceID];
+			RSInterface rsinterface = interfaceCache.get(openInterfaceID);
 			if (!isResized())
 				drawInterface(0, 0, rsinterface, 0);
 			else
@@ -16296,11 +16348,11 @@ public class Client extends GameEngine implements RSClient {
 
 	private boolean processWidgetAnimations(int tick, int interfaceId) {
 		boolean flag1 = false;
-		RSInterface class9 = RSInterface.interfaceCache[interfaceId];
+		RSInterface class9 = interfaceCache.get(interfaceId);
 		for (int k = 0; k < class9.children.length; k++) {
 			if (class9.children[k] == -1)
 				break;
-			RSInterface class9_1 = RSInterface.interfaceCache[class9.children[k]];
+			RSInterface class9_1 = interfaceCache.get(class9.children[k]);
 			if (class9_1.type == 1)
 				flag1 |= processWidgetAnimations(tick, class9_1.id);
 			if (class9_1.type == 6 && (class9_1.disabledAnimationId != -1 || class9_1.enabledAnimationId != -1)) {
@@ -16312,8 +16364,8 @@ public class Client extends GameEngine implements RSClient {
 					l = class9_1.disabledAnimationId;
 				if (l != -1) {
 					SequenceDefinition animation = SequenceDefinition.get(l);
-					for (class9_1.anInt208 += tick; class9_1.anInt208 > animation.getDuration(class9_1.anInt246);) {
-						class9_1.anInt208 -= animation.getDuration(class9_1.anInt246) + 1;
+					for (anInt208 += tick; anInt208 > animation.getDuration(class9_1.anInt246); ) {
+						anInt208 -= animation.getDuration(class9_1.anInt246) + 1;
 						class9_1.anInt246++;
 						if (class9_1.anInt246 >= animation.frameCount) {
 							class9_1.anInt246 -= animation.frameStep;
@@ -16477,9 +16529,9 @@ public class Client extends GameEngine implements RSClient {
 				if (instruction == 3)
 					value = currentExp[script[counter++]];
 				if (instruction == 4) { // Check for item inside interface, interfaceId = ai[l++]
-					RSInterface inventoryContainer = RSInterface.interfaceCache[script[counter++]];
+					RSInterface inventoryContainer = interfaceCache.get(script[counter++]);
 					int item = script[counter++];
-					if (item >= 0 && item < ItemDefinition.totalItems
+					if (item >= 0 && item < totalItems
 							&& (!ItemDefinition.lookup(item).members || isMembers)) {
 						int itemId = item + 1;
 						int actualItemId = item;
@@ -16489,44 +16541,44 @@ public class Client extends GameEngine implements RSClient {
 						}
 
 						if (inventoryContainer.id == 3214) {
-							RSInterface equipment = RSInterface.interfaceCache[1688];
+							RSInterface equipment = interfaceCache.get(1688);
 
-							if (actualItemId == Items.DEATH_RUNE) {
+							if (actualItemId == DEATH_RUNE) {
 
 							}
 
-							if (actualItemId == Items.NATURE_RUNE) {
-								if (equipment.hasItem(Items.BRYOPHYTAS_STAFF)) {
+							if (actualItemId == NATURE_RUNE) {
+								if (equipment.hasItem(BRYOPHYTAS_STAFF)) {
 									return Integer.MAX_VALUE;
 								}
 							}
 
-							if (actualItemId == Items.FIRE_RUNE) {
-								if (equipment.hasItem(Items.TOME_OF_FIRE) || equipment.hasItem(12000) || equipment.hasItem(21198)) {
+							if (actualItemId == FIRE_RUNE) {
+								if (equipment.hasItem(TOME_OF_FIRE) || equipment.hasItem(12000) || equipment.hasItem(21198)) {
 									return Integer.MAX_VALUE;
 								}
 							}
 
-							if (actualItemId == Items.AIR_RUNE) {
+							if (actualItemId == AIR_RUNE) {
 								if (equipment.hasItem(1405) || equipment.hasItem(12000)) {
 									return Integer.MAX_VALUE;
 								}
 							}
 
-							if (actualItemId == Items.EARTH_RUNE) {
+							if (actualItemId == EARTH_RUNE) {
 								if (equipment.hasItem(21198)) {
 									return Integer.MAX_VALUE;
 								}
 							}
 
-							if (actualItemId == Items.WATER_RUNE) {
-								if (equipment.hasItem(Items.KODAI_WAND)) {
+							if (actualItemId == WATER_RUNE) {
+								if (equipment.hasItem(KODAI_WAND)) {
 									return Integer.MAX_VALUE;
 								}
 							}
 
-							if (actualItemId == Items.GUTHIX_STAFF) {
-								if (equipment.hasItem(Items.STAFF_OF_BALANCE)) {
+							if (actualItemId == GUTHIX_STAFF) {
+								if (equipment.hasItem(STAFF_OF_BALANCE)) {
 									return 1;
 								}
 							}
@@ -16560,9 +16612,9 @@ public class Client extends GameEngine implements RSClient {
 							value += maximumLevels[l1];
 				}
 				if (instruction == 10) {
-					RSInterface equipmentContainer = RSInterface.interfaceCache[script[counter++]];
+					RSInterface equipmentContainer = interfaceCache.get(script[counter++]);
 					int item = script[counter++] + 1;
-					if (item >= 0 && item < ItemDefinition.totalItems
+					if (item >= 0 && item < totalItems
 							&& (!ItemDefinition.lookup(item).members || isMembers)) {
 						for (int stored = 0; stored < equipmentContainer.inventoryItemId.length; stored++) {
 							if (equipmentContainer.inventoryItemId[stored] != item)
@@ -17075,8 +17127,8 @@ public class Client extends GameEngine implements RSClient {
 	private void loadHpOrb(int xOffset) {
 		int yOff = !isResized() ? 0 : -5;
 		int xOff = !isResized() ? 0 : -6;
-		String cHP = RSInterface.interfaceCache[4016].message;
-		String mHP = RSInterface.interfaceCache[4017].message;
+		String cHP = interfaceCache.get(4016).message;
+		String mHP = interfaceCache.get(4017).message;
 		int currentHP = Integer.parseInt(cHP);
 		int maxHP = Integer.parseInt(mHP);
 		int health = (int) (((double) currentHP / (double) maxHP) * 100D);
@@ -17146,7 +17198,7 @@ public class Client extends GameEngine implements RSClient {
 		Sprite fg = prayClicked ? new Sprite("Gameframe/newprayclicked") : cacheSprite1[1];
 		bg.drawSprite(0 + xOffset - xOff, 75 - yOff);
 		fg.drawSprite(27 + xOffset - xOff, 79 - yOff);
-		int level = Integer.parseInt(RSInterface.interfaceCache[4012].message.replaceAll("%", ""));
+		int level = Integer.parseInt(interfaceCache.get(4012).message.replaceAll("%", ""));
 		int max = maximumLevels[5];
 		double percent = level / (double) max;
 		cacheSprite1[14].subHeight = (int) (26 * (1 - percent));
@@ -17166,7 +17218,7 @@ public class Client extends GameEngine implements RSClient {
 	}
 
 	private void loadRunOrb(int xOffset) {
-		int current = Integer.parseInt(RSInterface.interfaceCache[22539].message.replaceAll("%", ""));
+		int current = Integer.parseInt(interfaceCache.get(22539).message.replaceAll("%", ""));
 		int yOff = Configuration.osbuddyGameframe ? !isResized() ? 15 : 5
 				: !isResized() ? 1 : -4;
 		int xMinus = Configuration.osbuddyGameframe ? !isResized() ? 11 : 5
@@ -18818,7 +18870,7 @@ public class Client extends GameEngine implements RSClient {
 	}
 
 	public void sendFrame126(String str, int i) {
-		RSInterface component = RSInterface.interfaceCache[i];
+		RSInterface component = interfaceCache.get(i);
 		if (component != null) {
 			component.message = str;
 			if (component.type == 4 && component.atActionType == 1) {
@@ -18936,39 +18988,39 @@ public class Client extends GameEngine implements RSClient {
 							intInstructions.add((Integer) arguments[index]);
 						}
 					}
-					System.out.println("Script arguments = " + arguments.length);
+					out.println("Script arguments = " + arguments.length);
 
 					int scriptId = inStream.readUShort();
-					if(InstructionId.fromId(scriptId) == InstructionId.NOTHING) {
+					if (fromId(scriptId) == NOTHING) {
 						ScriptEvent scriptEvent = new ScriptEvent();
-						scriptEvent.args = new Object[] {scriptId, arguments};
+						scriptEvent.args = new Object[]{scriptId, arguments};
 						InstructionProcessor.runScriptEvent(scriptEvent);
 					} else {
-						InstructionArgs instructionArgs = InstructionArgs.createFrom(intInstructions.toArray(new Integer[0]), stringInstructions.toArray(new String[0]));
-						InstructionProcessor.invoke(scriptId, instructionArgs);
+						InstructionArgs instructionArgs = createFrom(intInstructions.toArray(new Integer[0]), stringInstructions.toArray(new String[0]));
+						invoke(scriptId, instructionArgs);
 					}
 					incomingPacket = -1;
 					return true;
 				case 12:
 					int soundId = inStream.readUShort();
 //					int areaType = inStream.readUnsignedByte();
-					SoundType incomingSoundType = SoundType.values()[inStream.readUnsignedByte()];
+					SoundType incomingSoundType = values()[inStream.readUnsignedByte()];
 					int entitySoundSource = inStream.readUShort();
 					if (entitySoundSource == 0) {
-						Sound.getSound().playSound(soundId, incomingSoundType, 0);
+						getSound().playSound(soundId, incomingSoundType, 0);
 					} else {
 						Entity entity;
-						if (entitySoundSource >= Short.MAX_VALUE) {
-							entitySoundSource -= Short.MAX_VALUE;
+						if (entitySoundSource >= MAX_VALUE) {
+							entitySoundSource -= MAX_VALUE;
 							entity = players[entitySoundSource];
 						} else {
 							entity = npcs[entitySoundSource];
 						}
 
 						if (entity != null) {
-							Sound.getSound().playSound(soundId, incomingSoundType, localPlayer.getDistanceFrom(entity));
+							getSound().playSound(soundId, incomingSoundType, localPlayer.getDistanceFrom(entity));
 						} else {
-							Sound.getSound().playSound(soundId, incomingSoundType, 0);
+							getSound().playSound(soundId, incomingSoundType, 0);
 						}
 					}
 					incomingPacket = -1;
@@ -18987,27 +19039,27 @@ public class Client extends GameEngine implements RSClient {
 				case 5:
 					int stringContainerId = inStream.readUShort();
 					int strings = inStream.readUShort();
-					RSInterface stringContainer = RSInterface.get(stringContainerId);
-					Preconditions.checkState(stringContainer != null && stringContainer.stringContainer != null, "No string container at id: " + stringContainer);
+					RSInterface stringContainer = get(stringContainerId);
+					checkState(stringContainer != null && stringContainer.stringContainer != null, "No string container at id: " + stringContainer);
 					stringContainer.stringContainer.clear();
 					for (int index = 0; index < strings; index++) {
 						stringContainer.stringContainer.add(inStream.readString());
 					}
-					EventCalendar.getCalendar().onStringContainerUpdated(stringContainerId);
+					getCalendar().onStringContainerUpdated(stringContainerId);
 					incomingPacket = -1;
 					return true;
 
 				// Reset scroll position
 				case 2:
 					int resetScrollInterfaceId = inStream.readUShort();
-					RSInterface.interfaceCache[resetScrollInterfaceId].scrollPosition = 0;
+					interfaceCache.get(resetScrollInterfaceId).scrollPosition = 0;
 					incomingPacket = -1;
 					return true;
 
 				case 3:
 					int setScrollMaxInterfaceId = inStream.readUShort();
 					int scrollMax = inStream.readUShort();
-					RSInterface.interfaceCache[setScrollMaxInterfaceId].scrollMax = scrollMax;
+					interfaceCache.get(setScrollMaxInterfaceId).scrollMax = scrollMax;
 					incomingPacket = -1;
 					return true;
 
@@ -19021,7 +19073,7 @@ public class Client extends GameEngine implements RSClient {
 						byte progressBarState = inStream.readSignedByte();
 						byte progressBarPercentage = inStream.readSignedByte();
 
-						RSInterface rsInterface = RSInterface.interfaceCache[interfaceId];
+						RSInterface rsInterface = interfaceCache.get(interfaceId);
 						rsInterface.progressBarState = progressBarState;
 						rsInterface.progressBarPercentage = progressBarPercentage;
 					}
@@ -19058,7 +19110,7 @@ public class Client extends GameEngine implements RSClient {
 				case 223:
 					int timerId = inStream.readUnsignedByte();
 					int secondsToAdd = inStream.readUShort();
-					GameTimerHandler.getSingleton().startGameTimer(timerId, TimeUnit.SECONDS, secondsToAdd, 0);
+					getSingleton().startGameTimer(timerId, SECONDS, secondsToAdd, 0);
 					incomingPacket = -1;
 					return true;
 
@@ -19066,7 +19118,7 @@ public class Client extends GameEngine implements RSClient {
 					timerId = inStream.readUShort();
 					int itemId = inStream.readUShort();
 					secondsToAdd = inStream.readUShort();
-					GameTimerHandler.getSingleton().startGameTimer(timerId, TimeUnit.SECONDS, secondsToAdd, itemId);
+					getSingleton().startGameTimer(timerId, SECONDS, secondsToAdd, itemId);
 					incomingPacket = -1;
 					return true;
 
@@ -19080,15 +19132,14 @@ public class Client extends GameEngine implements RSClient {
 					}
 
 
-
 					ExperienceDrop drop = new ExperienceDrop(experience, skills);
 
 					if (!experienceDrops.isEmpty()) {
 						List<ExperienceDrop> sorted = new ArrayList<ExperienceDrop>(experienceDrops);
-						Collections.sort(sorted, HIGHEST_POSITION);
+						sort(sorted, HIGHEST_POSITION);
 						ExperienceDrop highest = sorted.get(0);
-						if (highest.getYPosition() >= ExperienceDrop.START_Y - 5) {
-							drop.increasePosition(highest.getYPosition() - ExperienceDrop.START_Y + 20);
+						if (highest.getYPosition() >= START_Y - 5) {
+							drop.increasePosition(highest.getYPosition() - START_Y + 20);
 						}
 					}
 
@@ -19109,17 +19160,17 @@ public class Client extends GameEngine implements RSClient {
 					anInt1193 = inStream.method440();
 					daysSinceLastLogin = inStream.readUShort();
 					if (anInt1193 != 0 && openInterfaceID == -1) {
-						Signlink.dnslookup(StringUtils.method586(anInt1193));
+						dnslookup(method586(anInt1193));
 						clearTopInterfaces();
 						char c = '\u028A';
 						if (daysSinceRecovChange != 201 || membersInt == 1)
 							c = '\u028F';
 						reportAbuseInput = "";
 						canMute = false;
-						for (int k9 = 0; k9 < RSInterface.interfaceCache.length; k9++) {
-							if (RSInterface.interfaceCache[k9] == null || RSInterface.interfaceCache[k9].contentType != c)
+						for (int k9 = 0; k9 < interfaceCache.size(); k9++) {
+							if (interfaceCache.get(k9) == null || interfaceCache.get(k9).contentType != c)
 								continue;
-							openInterfaceID = RSInterface.interfaceCache[k9].parentID;
+							openInterfaceID = interfaceCache.get(k9).parentID;
 
 						}
 					}
@@ -19150,21 +19201,21 @@ public class Client extends GameEngine implements RSClient {
 					String text = inStream.readString();
 					byte state = inStream.readSignedByte();
 					byte seconds = inStream.readSignedByte();
-					int drawingWidth = !Client.instance.isResized() ? 519 : Client.canvasWidth;
-					int drawingHeight = !Client.instance.isResized() ? 338 : Client.canvasHeight;
+					int drawingWidth = !instance.isResized() ? 519 : canvasWidth;
+					int drawingHeight = !instance.isResized() ? 338 : canvasHeight;
 
 					incomingPacket = -1;
 					return true;
 
 				case 185:
 					int k = inStream.method436();
-					RSInterface.interfaceCache[k].anInt233 = 3;
+					interfaceCache.get(k).anInt233 = 3;
 					if (localPlayer.npcDefinition == null)
-						RSInterface.interfaceCache[k].mediaID = (localPlayer.anIntArray1700[0] << 25)
+						interfaceCache.get(k).mediaID = (localPlayer.anIntArray1700[0] << 25)
 								+ (localPlayer.anIntArray1700[4] << 20) + (localPlayer.equipment[0] << 15)
 								+ (localPlayer.equipment[8] << 10) + (localPlayer.equipment[11] << 5) + localPlayer.equipment[1];
 					else
-						RSInterface.interfaceCache[k].mediaID = (int) (0x12345678L + localPlayer.npcDefinition.id);
+						interfaceCache.get(k).mediaID = (int) (0x12345678L + localPlayer.npcDefinition.id);
 					incomingPacket = -1;
 					return true;
 
@@ -19193,7 +19244,7 @@ public class Client extends GameEngine implements RSClient {
 
 				case 72:
 					int i1 = inStream.method434();
-					RSInterface class9 = RSInterface.interfaceCache[i1];
+					RSInterface class9 = interfaceCache.get(i1);
 					for (int k15 = 0; k15 < class9.inventoryItemId.length; k15++) {
 						class9.inventoryItemId[k15] = -1;
 						class9.inventoryItemId[k15] = 0;
@@ -19237,12 +19288,13 @@ public class Client extends GameEngine implements RSClient {
 					expAdded = currentExp[skillId] - xp;
 					try {
 						callbacks.post(new StatChanged(
-								Skill.valueOf(Skills.SKILL_NAMES_ORDER[skillId].toUpperCase()),
+								valueOf(SKILL_NAMES_ORDER[skillId].toUpperCase()),
 								experience2,
 								currentLevel,
 								3
 						));
-					} catch (Exception exception) {}
+					} catch (Exception exception) {
+					}
 					for (int k20 = 0; k20 < 98; k20++)
 						if (experience2 >= SKILL_EXPERIENCE[k20])
 							maximumLevels[skillId] = k20 + 2;
@@ -19263,7 +19315,7 @@ public class Client extends GameEngine implements RSClient {
 
 				case 74:
 					int songId = inStream.method434();
-					StaticSound.playSong(songId);
+					playSong(songId);
 					incomingPacket = -1;
 					return true;
 
@@ -19285,7 +19337,7 @@ public class Client extends GameEngine implements RSClient {
 				case 7:
 					int componentId = inStream.readDWord();
 					byte spriteIndex = inStream.readSignedByte();
-					RSInterface component = RSInterface.interfaceCache[componentId];
+					RSInterface component = interfaceCache.get(componentId);
 					if (component != null) {
 						if (component.backgroundSprites != null && spriteIndex <= component.backgroundSprites.length - 1) {
 							Sprite sprite = component.backgroundSprites[spriteIndex];
@@ -19306,7 +19358,7 @@ public class Client extends GameEngine implements RSClient {
 					int k2 = inStream.readSignedWord();
 					int l10 = inStream.method437();
 					int i16 = inStream.method434();
-					RSInterface class9_5 = RSInterface.interfaceCache[i16];
+					RSInterface class9_5 = interfaceCache.get(i16);
 					class9_5.anInt263 = k2;
 					class9_5.anInt265 = l10;
 					incomingPacket = -1;
@@ -19322,7 +19374,7 @@ public class Client extends GameEngine implements RSClient {
 				case 225:
 					int widgetId = inStream.readUShort();
 //					System.out.println("widgetId " + widgetId);
-					WheelOfFortune wheel = RSInterface.interfaceCache[widgetId].wheel;
+					WheelOfFortune wheel = interfaceCache.get(widgetId).wheel;
 					int xc = inStream.readUnsignedByte();
 					int len = inStream.readUnsignedByte();
 //					System.out.println("xc " + xc + " / len " + len);
@@ -19339,7 +19391,7 @@ public class Client extends GameEngine implements RSClient {
 
 				case 73:
 				case 241:
-					setGameState(GameState.LOADING);
+					setGameState(LOADING);
 					int mapRegionX = currentRegionX;
 					int mapRegionY = currentRegionY;
 					if (incomingPacket == 73) {
@@ -19377,9 +19429,9 @@ public class Client extends GameEngine implements RSClient {
 					if (currentRegionX / 8 == 48 && currentRegionY / 8 == 148)
 						inTutorialIsland = true;
 					loadingStage = 1;
-					longStartTime = System.currentTimeMillis();
+					longStartTime = currentTimeMillis();
 
-					setGameState(GameState.LOADING);
+					setGameState(LOADING);
 
 					if (incomingPacket == 73) {
 						int regionCount = 0;
@@ -19393,7 +19445,7 @@ public class Client extends GameEngine implements RSClient {
 						regionLandIds = new int[regionCount];
 						regionLocIds = new int[regionCount];
 						regionCount = 0;
-						List<Integer> mapFiles = Lists.newArrayList();
+						List<Integer> mapFiles = newArrayList();
 						for (int x = (currentRegionX - 6) / 8; x <= (currentRegionX + 6) / 8; x++) {
 							for (int y = (currentRegionY - 6) / 8; y <= (currentRegionY + 6) / 8; y++) {
 								regions[regionCount] = (x << 8) + y;
@@ -19405,8 +19457,8 @@ public class Client extends GameEngine implements RSClient {
 								} else {
 									int id = y + (x << 8);
 									regions[regionCount] = id;
-									regionLandIds[regionCount] = Js5List.maps.getGroupId("m" + x + "_" + y);
-									regionLocIds[regionCount] = Js5List.maps.getGroupId("l" + x + "_" + y);
+									regionLandIds[regionCount] = maps.getGroupId("m" + x + "_" + y);
+									regionLocIds[regionCount] = maps.getGroupId("l" + x + "_" + y);
 									++regionCount;
 								}
 							}
@@ -19444,8 +19496,8 @@ public class Client extends GameEngine implements RSClient {
 							int region = regions[idx] = totalChunks[idx];
 							int constructedRegionX = region >> 8 & 0xff;
 							int constructedRegionY = region & 0xff;
-							regionLandIds[totalLegitChunks] = Js5List.maps.getGroupId("m" + constructedRegionX + "_" + constructedRegionY);
-							regionLocIds[totalLegitChunks] = Js5List.maps.getGroupId("l" + constructedRegionX + "_" + constructedRegionY);
+							regionLandIds[totalLegitChunks] = maps.getGroupId("m" + constructedRegionX + "_" + constructedRegionY);
+							regionLocIds[totalLegitChunks] = maps.getGroupId("l" + constructedRegionX + "_" + constructedRegionY);
 						}
 					}
 					int dx = baseX - previousAbsoluteX;
@@ -19537,8 +19589,8 @@ public class Client extends GameEngine implements RSClient {
 				case 75:
 					int j3 = inStream.method436();
 					int j11 = inStream.method436();
-					RSInterface.interfaceCache[j11].anInt233 = 2;
-					RSInterface.interfaceCache[j11].mediaID = j3;
+					interfaceCache.get(j11).anInt233 = 2;
+					interfaceCache.get(j11).mediaID = j3;
 					incomingPacket = -1;
 					return true;
 
@@ -19574,8 +19626,8 @@ public class Client extends GameEngine implements RSClient {
 
 				case 174:
 					int id = inStream.readUShort();
-					if(id != -1)
-						StaticSound.playJingle(id);
+					if (id != -1)
+						playJingle(id);
 					incomingPacket = -1;
 					return true;
 
@@ -19600,10 +19652,10 @@ public class Client extends GameEngine implements RSClient {
 
 				case 253:
 					String s = inStream.readString();
-					if(s.startsWith("[SPAM]")) {
+					if (s.startsWith("[SPAM]")) {
 						net.runelite.api.events.ChatMessage chatMessage = new net.runelite.api.events.ChatMessage();
-						chatMessage.setType(ChatMessageType.GAMEMESSAGE);
-						chatMessage.setType(ChatMessageType.SPAM);
+						chatMessage.setType(GAMEMESSAGE);
+						chatMessage.setType(SPAM);
 						chatMessage.setMessage(s.replace("[SPAM]", ""));
 						callbacks.post(chatMessage);
 						incomingPacket = -1;
@@ -19611,8 +19663,8 @@ public class Client extends GameEngine implements RSClient {
 					}
 					if (s.startsWith("[COSMETICCOST]")) {
 						String[] args = s.replace("[COSMETICCOST]", "").split("-");
-						int item_id = Integer.parseInt(args[0]);
-						int cosmeticcost = Integer.parseInt(args[1]);
+						int item_id = parseInt(args[0]);
+						int cosmeticcost = parseInt(args[1]);
 
 						if (!cosmetic_cost.containsKey(item_id)) {
 							cosmetic_cost.put(item_id, cosmeticcost);
@@ -19624,9 +19676,9 @@ public class Client extends GameEngine implements RSClient {
 					if (s.startsWith("[YT]")) {
 						String[] args = s.replace("[YT]", "").split("-");
 
-						int totalVideos = Integer.parseInt(args[0]);
+						int totalVideos = parseInt(args[0]);
 						try {
-							YoutubeManager.videos.clear();
+							videos.clear();
 							for (int index = 0; index < totalVideos; index++) {
 								String videoId = args[1];
 								String uploader = args[2];
@@ -19635,9 +19687,9 @@ public class Client extends GameEngine implements RSClient {
 
 								YouTubeVideo video = new YouTubeVideo(videoId, uploader, title, description);
 
-								System.out.println(videoId + ", " + uploader);
+								out.println(videoId + ", " + uploader);
 
-								YoutubeManager.addVideo(video);
+								addVideo(video);
 							}
 
 							YoutubeManager.update();
@@ -19658,12 +19710,11 @@ public class Client extends GameEngine implements RSClient {
 						incomingPacket = -1;
 						return true;
 					} else if (s.equals(":resetpost:")) {
-						RSInterface listingWidget = RSInterface.interfaceCache[48020];
+						RSInterface listingWidget = interfaceCache.get(48020);
 						if (listingWidget != null) {
 							listingWidget.scrollPosition = 0;
 						}
-					}
-					else if (s.equals(":resetBox")) {
+					} else if (s.equals(":resetBox")) {
 						reset();
 						incomingPacket = -1;
 						return true;
@@ -19803,7 +19854,7 @@ public class Client extends GameEngine implements RSClient {
 							friendsList[i22] = newDisplayName;
 							friendsListAsLongs[i22] = newDisplayNameLong;
 							needDrawTabArea = true;
-							pushMessage(String.format("Friend '%s' updated display name to '%s'.", oldDisplayName, newDisplayName));
+							pushMessage(format("Friend '%s' updated display name to '%s'.", oldDisplayName, newDisplayName));
 						}
 					}
 
@@ -19868,8 +19919,8 @@ public class Client extends GameEngine implements RSClient {
 						inputTaken = true;
 					}
 					if (i5 == 55000) {
-						RSInterface.interfaceCache[55010].scrollPosition = 0;
-						RSInterface.interfaceCache[55050].scrollPosition = 0;
+						interfaceCache.get(55010).scrollPosition = 0;
+						interfaceCache.get(55050).scrollPosition = 0;
 					}
 					openInterfaceID = i5;
 					invOverlayInterfaceID = k12;
@@ -19882,7 +19933,7 @@ public class Client extends GameEngine implements RSClient {
 				case 79:
 					int j5 = inStream.method434();
 					int l12 = inStream.readUShortA();
-					RSInterface class9_3 = RSInterface.interfaceCache[j5];
+					RSInterface class9_3 = interfaceCache.get(j5);
 					if (class9_3 != null && class9_3.type == 0) {
 						if (l12 < 0)
 							l12 = 0;
@@ -19901,9 +19952,9 @@ public class Client extends GameEngine implements RSClient {
 					String l5 = inStream.readNullTerminatedString();
 					long l5Long = longForName(l5.toLowerCase());
 					inStream.readDWord();
-					Pair<Integer, PlayerRights[]> rights = PlayerRights.readRightsFromPacket(inStream);
+					Pair<Integer, PlayerRights[]> rights = readRightsFromPacket(inStream);
 					boolean flag5 = false;
-					if (!PlayerRights.hasRightsBetween(rights.getRight(), 1, 4)) {
+					if (!hasRightsBetween(rights.getRight(), 1, 4)) {
 						for (int l29 = 0; l29 < ignoreCount; l29++) {
 							if (ignoreListAsLongs[l29] != l5Long)
 								continue;
@@ -19913,15 +19964,15 @@ public class Client extends GameEngine implements RSClient {
 					}
 					if (!flag5 && anInt1251 == 0)
 						try {
-							String s9 = TextInput.method525(packetSize - 4 - (l5.length() + 1) - rights.getLeft() - 1, inStream);
-							String rightsString = PlayerRights.buildCrownString(rights.getRight());
+							String s9 = method525(packetSize - 4 - (l5.length() + 1) - rights.getLeft() - 1, inStream);
+							String rightsString = buildCrownString(rights.getRight());
 							pushMessage(s9, 7, rightsString + l5);
 							if (Preferences.getPreferences().pmNotifications && !appFrame.isFocused()) {
-								Notify.create()
-										.title(Configuration.CLIENT_TITLE + " private message from " + l5)
+								create()
+										.title(CLIENT_TITLE + " private message from " + l5)
 										.text(s9)
-										.position(Pos.BOTTOM_RIGHT)
-										.onAction( new ActionHandler<Notify>() {
+										.position(BOTTOM_RIGHT)
+										.onAction(new ActionHandler<Notify>() {
 											@Override
 											public void handle(Notify value) {
 												pmTabToReply(l5);
@@ -19934,7 +19985,7 @@ public class Client extends GameEngine implements RSClient {
 							}
 						} catch (Exception exception1) {
 							exception1.printStackTrace();
-							Signlink.reporterror("cde1");
+							reporterror("cde1");
 						}
 					incomingPacket = -1;
 					return true;
@@ -19966,25 +20017,25 @@ public class Client extends GameEngine implements RSClient {
 					}
 					if (i6 >= 43000) {
 //						System.out.println("Interface ID: " + i6 + ", Npc ID: " + k18 + ", Zoom: " +i13);
-						RSInterface npcOnInsterface1 = RSInterface.interfaceCache[i6];
+						RSInterface npcOnInsterface1 = interfaceCache.get(i6);
 						npcOnInsterface1.type = 6;
 						npcOnInsterface1.contentType = 32921;
-						PetSystem.petSelected = k18;
+						petSelected = k18;
 						npcOnInsterface1.modelZoom = i13;
 						incomingPacket = -1;
 						return true;
 					}
 					if (k18 == 65535) {
-						RSInterface.interfaceCache[i6].anInt233 = 0;
+						interfaceCache.get(i6).anInt233 = 0;
 						incomingPacket = -1;
 						return true;
 					} else {
 						ItemDefinition itemDef = ItemDefinition.lookup(k18);
-						RSInterface.interfaceCache[i6].anInt233 = 4;
-						RSInterface.interfaceCache[i6].mediaID = k18;
-						RSInterface.interfaceCache[i6].modelRotation1 = itemDef.xan2d;
-						RSInterface.interfaceCache[i6].modelRotation2 = itemDef.yan2d;
-						RSInterface.interfaceCache[i6].modelZoom = (itemDef.zoom2d * 100) / i13;
+						interfaceCache.get(i6).anInt233 = 4;
+						interfaceCache.get(i6).mediaID = k18;
+						interfaceCache.get(i6).modelRotation1 = itemDef.xan2d;
+						interfaceCache.get(i6).modelRotation2 = itemDef.yan2d;
+						interfaceCache.get(i6).modelZoom = (itemDef.zoom2d * 100) / i13;
 						incomingPacket = -1;
 						return true;
 					}
@@ -19992,9 +20043,9 @@ public class Client extends GameEngine implements RSClient {
 				case 171:
 					boolean flag1 = inStream.readUnsignedByte() == 1;
 					int j13 = inStream.readUShort();
-					if (RSInterface.interfaceCache[j13] != null) {
-						RSInterface.interfaceCache[j13].isMouseoverTriggered = flag1;
-						RSInterface.interfaceCache[j13].interfaceHidden = flag1;
+					if (interfaceCache.get(j13) != null) {
+						interfaceCache.get(j13).isMouseoverTriggered = flag1;
+						interfaceCache.get(j13).interfaceHidden = flag1;
 					}
 					incomingPacket = -1;
 					return true;
@@ -20034,43 +20085,43 @@ public class Client extends GameEngine implements RSClient {
 							return true;
 						}
 						if (text.startsWith(":pollHeight")) {
-							int rows = Integer.parseInt(text.split("-")[1]);
-							RSInterface rsi = RSInterface.interfaceCache[21406];
+							int rows = parseInt(text.split("-")[1]);
+							RSInterface rsi = interfaceCache.get(21406);
 							rsi.childY[0] = (rows * 14);
 							incomingPacket = -1;
 							return true;
 						}
 						if (text.startsWith(":pollOn")) {
 							String option[] = text.split("-");
-							pollActive = Boolean.parseBoolean(option[1]);
+							pollActive = parseBoolean(option[1]);
 							incomingPacket = -1;
 							return true;
 						}
 						if (text.startsWith("sendGifChange")) {
 							String[] args = text.split(" ");
-							int gifChildId = Integer.parseInt(args[1]);
+							int gifChildId = parseInt(args[1]);
 							String gifName = args[2];
 
-							RSInterface gif = RSInterface.interfaceCache[gifChildId];
-							gif.gifLocation = Signlink.getCacheDirectory() + "sprites/gifs/" + gifName + ".gif";
+							RSInterface gif = interfaceCache.get(gifChildId);
+							gif.gifLocation = getCacheDirectory() + "sprites/gifs/" + gifName + ".gif";
 
-							SpriteLoader.resetAnimatedSprite(gif.gifLocation);
+							resetAnimatedSprite(gif.gifLocation);
 							incomingPacket = -1;
 							return true;
 
 						}
 						if (text.startsWith("task:")) {
-							System.out.println(text);
+							out.println(text);
 							String[] args = text.split(" ");
 							String[] agz = {args[1], args[2], args[3], args[4]};
 							CommandExecuted commandExecuted = new CommandExecuted("task", agz);
 							VarbitChanged varbitChanged = new VarbitChanged();
 							varbitChanged.setVarbitId(4068);
-							varbitChanged.setValue(Integer.parseInt(args[4]));
+							varbitChanged.setValue(parseInt(args[4]));
 							callbacks.post(varbitChanged);
 							VarbitChanged varbitChanged1 = new VarbitChanged();
 							varbitChanged1.setVarbitId(4069);
-							varbitChanged1.setValue(Integer.parseInt(args[3]));
+							varbitChanged1.setValue(parseInt(args[3]));
 							callbacks.post(varbitChanged1);
 							callbacks.post(commandExecuted);
 							text = capitalizeJustFirst(args[1].replace("_", " ")) + " " + args[2];
@@ -20105,7 +20156,7 @@ public class Client extends GameEngine implements RSClient {
 						int broadcastIndex = inStream.readUnsignedByte();
 
 						if (broadcastType == -1) {
-							BroadcastManager.removeIndex(broadcastIndex);
+							removeIndex(broadcastIndex);
 							return true;
 						}
 
@@ -20125,7 +20176,7 @@ public class Client extends GameEngine implements RSClient {
 							broadcast.z = inStream.readUnsignedByte();
 						}
 						broadcast.setExpireDelay();
-						BroadcastManager.addBoradcast(broadcast);
+						addBoradcast(broadcast);
 						onBroadcast(broadcast.message);
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -20159,8 +20210,8 @@ public class Client extends GameEngine implements RSClient {
 				case 8:
 					int k6 = inStream.method436();
 					int l13 = inStream.readUShort();
-					RSInterface.interfaceCache[k6].anInt233 = 1;
-					RSInterface.interfaceCache[k6].mediaID = l13;
+					interfaceCache.get(k6).anInt233 = 1;
+					interfaceCache.get(k6).mediaID = l13;
 					incomingPacket = -1;
 					return true;
 
@@ -20170,14 +20221,14 @@ public class Client extends GameEngine implements RSClient {
 					int i19 = i14 >> 10 & 0x1f;
 					int i22 = i14 >> 5 & 0x1f;
 					int l24 = i14 & 0x1f;
-					RSInterface.interfaceCache[l6].textColor = (i19 << 19) + (i22 << 11) + (l24 << 3);
+					interfaceCache.get(l6).textColor = (i19 << 19) + (i22 << 11) + (l24 << 3);
 					incomingPacket = -1;
 					return true;
 
 				case 53:
 					needDrawTabArea = true;
 					int i7 = inStream.readUShort();
-					RSInterface class9_1 = RSInterface.interfaceCache[i7];
+					RSInterface class9_1 = interfaceCache.get(i7);
 					int j19 = inStream.readUShort();
 
 					try {
@@ -20209,7 +20260,7 @@ public class Client extends GameEngine implements RSClient {
 						}*/
 
 					} catch (Exception e) {
-						System.err.println("Error in container " + i7 + ", length " + j19 + ", actual length " + class9_1.inventoryItemId.length);
+						err.println("Error in container " + i7 + ", length " + j19 + ", actual length " + class9_1.inventoryItemId.length);
 						e.printStackTrace();
 					}
 					incomingPacket = -1;
@@ -20220,9 +20271,9 @@ public class Client extends GameEngine implements RSClient {
 					int j14 = inStream.readUShort();
 					int k19 = inStream.readUShort();
 					int k22 = inStream.method436();
-					RSInterface.interfaceCache[j14].modelRotation1 = k19;
-					RSInterface.interfaceCache[j14].modelRotation2 = k22;
-					RSInterface.interfaceCache[j14].modelZoom = j7;
+					interfaceCache.get(j14).modelRotation1 = k19;
+					interfaceCache.get(j14).modelRotation2 = k22;
+					interfaceCache.get(j14).modelZoom = j7;
 					incomingPacket = -1;
 					return true;
 
@@ -20247,9 +20298,9 @@ public class Client extends GameEngine implements RSClient {
 						int l22 = k7 - xCameraPos;
 						int k25 = i20 - zCameraPos;
 						int j28 = k14 - yCameraPos;
-						int i30 = (int) Math.sqrt(l22 * l22 + j28 * j28);
-						yCameraCurve = (int) (Math.atan2(k25, i30) * 325.94900000000001D) & 0x7ff;
-						xCameraCurve = (int) (Math.atan2(l22, j28) * -325.94900000000001D) & 0x7ff;
+						int i30 = (int) sqrt(l22 * l22 + j28 * j28);
+						yCameraCurve = (int) (atan2(k25, i30) * 325.94900000000001D) & 0x7ff;
+						xCameraCurve = (int) (atan2(l22, j28) * -325.94900000000001D) & 0x7ff;
 						if (yCameraCurve < 128)
 							yCameraCurve = 128;
 						if (yCameraCurve > 383)
@@ -20357,13 +20408,13 @@ public class Client extends GameEngine implements RSClient {
 				case 87:
 					int j8 = inStream.method434();
 					int l14 = inStream.method439();
-					Bank.onConfigChanged(j8, l14);
+					onConfigChanged(j8, l14);
 					Nightmare.instance.handleConfig(j8, l14);
 					Autocast.getSingleton().onConfigChanged(j8, l14);
-					DailyRewards.get().onConfigReceived(j8, l14);
+					get().onConfigReceived(j8, l14);
 					DonatorRewards.getInstance().onConfigChanged(j8, l14);
 					if (variousSettings[j8] != l14) {
-						QuestTab.onConfigChanged(j8, l14);
+						onConfigChanged(j8, l14);
 						MonsterDropViewer.onConfigChanged(j8, l14);
 						variousSettings[j8] = l14;
 //						System.out.println("Varbit [" + Varbits.varbitNames.getOrDefault(j8, "UNIDENTIFIED{" + j8 + "}") + "] value is [" +l14 + "]");
@@ -20386,14 +20437,14 @@ public class Client extends GameEngine implements RSClient {
 				case 36:
 					int k8 = inStream.method434();
 					byte byte0 = inStream.readSignedByte();
-					Bank.onConfigChanged(k8, byte0);
-					EventCalendar.getCalendar().onConfigReceived(k8, byte0);
+					onConfigChanged(k8, byte0);
+					getCalendar().onConfigReceived(k8, byte0);
 					Nightmare.instance.handleConfig(k8, byte0);
 					Autocast.getSingleton().onConfigChanged(k8, byte0);
-					DailyRewards.get().onConfigReceived(k8, byte0);
+					get().onConfigReceived(k8, byte0);
 					DonatorRewards.getInstance().onConfigChanged(k8, byte0);
 					if (variousSettings[k8] != byte0) {
-						QuestTab.onConfigChanged(k8, byte0);
+						onConfigChanged(k8, byte0);
 						MonsterDropViewer.onConfigChanged(k8, byte0);
 						variousSettings[k8] = byte0;
 
@@ -20421,8 +20472,8 @@ public class Client extends GameEngine implements RSClient {
 					NPCDropInfo info = new NPCDropInfo();
 					info.message = message;
 					info.npcIndex = npcIndex;
-					NPCDropInfo.addEntry(info);
-					System.err.println(" "+message+" - "+npcIndex);
+					addEntry(info);
+					err.println(" " + message + " - " + npcIndex);
 					pushMessage(message, 99, "");
 					incomingPacket = -1;
 					return true;
@@ -20430,14 +20481,14 @@ public class Client extends GameEngine implements RSClient {
 				case 200:
 					int l8 = inStream.readUShort();
 					int i15 = inStream.readSignedWord();
-					RSInterface class9_4 = RSInterface.interfaceCache[l8];
+					RSInterface class9_4 = interfaceCache.get(l8);
 					class9_4.disabledAnimationId = i15;
 					if (i15 == 591 || i15 == 588) {
 						class9_4.modelZoom = 900; // anInt269
 					}
 					if (i15 == -1) {
 						class9_4.anInt246 = 0;
-						class9_4.anInt208 = 0;
+						anInt208 = 0;
 					}
 					incomingPacket = -1;
 					return true;
@@ -20458,7 +20509,7 @@ public class Client extends GameEngine implements RSClient {
 					}
 					if (this.isFieldInFocus()) {
 						this.resetInputFieldFocus();
-						Client.inputString = "";
+						inputString = "";
 					}
 					openInterfaceID = -1;
 					aBoolean1149 = false;
@@ -20472,7 +20523,7 @@ public class Client extends GameEngine implements RSClient {
 						incomingPacket = -1;
 						return true;
 					}
-					RSInterface class9_2 = RSInterface.interfaceCache[i9];
+					RSInterface class9_2 = interfaceCache.get(i9);
 					while (inStream.pos < packetSize) {
 						int j20 = inStream.readDWord();
 						int i23 = inStream.readUShort(); //Item ID
@@ -20564,27 +20615,21 @@ public class Client extends GameEngine implements RSClient {
 			return;
 		}
 
-		RSInterface items = RSInterface.interfaceCache[47100];
-		RSInterface boxes = RSInterface.interfaceCache[47200];
+		RSInterface items = interfaceCache.get(47100);
+		RSInterface boxes = interfaceCache.get(47200);
 		if (spins < 100) {
 			shift(items, boxes, 8);
-		}
-		else if (spins < 200) {
+		} else if (spins < 200) {
 			shift(items, boxes, 5);
-		}
-		else if (spins < 300) {
+		} else if (spins < 300) {
 			shift(items, boxes, 4);
-		}
-		else if (spins < 400) {
+		} else if (spins < 400) {
 			shift(items, boxes, 3);
-		}
-		else if (spins < 488) {
+		} else if (spins < 488) {
 			shift(items, boxes, 2);
-		}
-		else if (spins < 562) {
+		} else if (spins < 562) {
 			shift(items, boxes, 1);
-		}
-		else {
+		} else {
 			spinComplete();
 		}
 	}
@@ -20612,7 +20657,7 @@ public class Client extends GameEngine implements RSClient {
 			return false;
 		}
 
-		RSInterface items = RSInterface.interfaceCache[frame];
+		RSInterface items = interfaceCache.get(frame);
 		while (inStream.pos < packetSize) {
 			int slot = inStream.readSmart();
 			int itemId = inStream.readUShort();
@@ -20640,11 +20685,11 @@ public class Client extends GameEngine implements RSClient {
 		//System.out.println("test2");
 
 		spinNum = 0;
-		RSInterface items = RSInterface.interfaceCache[47100];
-		RSInterface boxes = RSInterface.interfaceCache[47200];
+		RSInterface items = interfaceCache.get(47100);
+		RSInterface boxes = interfaceCache.get(47200);
 		items.childX[0] = 0;
 		int x = 0;
-		for (int z=0; z<BOXES64; z++) {
+		for (int z = 0; z < BOXES64; z++) {
 			boxes.childX[z] = x;
 			x += 2880;
 		}
@@ -21398,10 +21443,10 @@ public class Client extends GameEngine implements RSClient {
 				} else {
 					int xPosition = 512 / 2 - widget.width / 2;
 					int yPosition = 334 / 2 - widget.height / 2;
-					RSInterface.interfaceCache[HealthHud.WIDGET_ID].x = xPosition;
-					RSInterface.interfaceCache[HealthHud.WIDGET_ID].y = yPosition;
-					if (widget.id == HealthHud.WIDGET_ID) {
-						if(getGameCycle() >= HealthHud.healthHudTimeoutTick)
+					interfaceCache.get(WIDGET_ID).x = xPosition;
+					interfaceCache.get(WIDGET_ID).y = yPosition;
+					if (widget.id == WIDGET_ID) {
+						if (getGameCycle() >= healthHudTimeoutTick)
 							continue;
 						xPosition = !isResized() ? 0 : getViewportWidth() / 2 - 358;
 						yPosition = 0;
@@ -21527,27 +21572,31 @@ public class Client extends GameEngine implements RSClient {
 		}
 	}
 	public void setInputFieldFocusOwner(RSInterface owner) {
-		for (RSInterface rsi : RSInterface.interfaceCache)
+		interfaceCache.forEach((id, rsi) -> {
 			if (rsi != null)
 				if (rsi == owner)
 					rsi.isInFocus = true;
 				else
 					rsi.isInFocus = false;
+		});
 	}
 
 	public RSInterface getInputFieldFocusOwner() {
-		for (RSInterface rsi : RSInterface.interfaceCache)
+		AtomicReference<RSInterface> r = null;
+		interfaceCache.forEach((id, rsi) -> {
 			if (rsi != null)
 				if (rsi.isInFocus)
-					return rsi;
-		return null;
+					r.set(rsi);
+		});
+		return r.get();
 	}
 
 	public void resetInputFieldFocus() {
-		for (RSInterface rsi : RSInterface.interfaceCache)
+		interfaceCache.forEach((id, rsi) -> {
 			if (rsi != null)
 				rsi.isInFocus = false;
-		RSInterface.currentInputFieldId = -1;
+			RSInterface.currentInputFieldId = -1;
+		});
 	}
 
 	public boolean lockChatbox = false;
@@ -21558,23 +21607,24 @@ public class Client extends GameEngine implements RSClient {
 		if (openInterfaceID == -1 && invOverlayInterfaceID <= 0) {
 			return false;
 		}
-		for (RSInterface rsi : RSInterface.interfaceCache) {
+		AtomicBoolean inFocus = new AtomicBoolean(false);
+		interfaceCache.forEach((id, rsi) -> {
 			if (rsi != null) {
 				if (rsi.type == 16 && rsi.isInFocus) {
-					return true;
+					inFocus.set(true);
 				}
 			}
-		}
-		return false;
+		});
+		return inFocus.get();
 	}
 
 	public static boolean scrollbarVisible(RSInterface widget) {
 		if (widget.id == 55010) {
-			if (RSInterface.interfaceCache[55024].message.length() <= 0) {
+			if (interfaceCache.get(55024).message.length() <= 0) {
 				return false;
 			}
 		} else if (widget.id == 55050) {
-			if (RSInterface.interfaceCache[55064].message.length() <= 0) {
+			if (interfaceCache.get(55064).message.length() <= 0) {
 				return false;
 			}
 		}
@@ -22468,7 +22518,7 @@ public class Client extends GameEngine implements RSClient {
 			return null;
 		if(packedID == 100037)
 			return chatboxInterface;
-		return RSInterface.interfaceCache[packedID];
+		return interfaceCache.get(packedID);
 	}
 
 	@Override
@@ -22659,7 +22709,7 @@ public class Client extends GameEngine implements RSClient {
 
 	@Override
 	public int getEnergy() {
-		return Integer.parseInt(RSInterface.interfaceCache[22539].message.replaceAll("%", ""));
+		return Integer.parseInt(interfaceCache.get(22539).message.replaceAll("%", ""));
 	}
 
 	@Override
@@ -23204,12 +23254,12 @@ public class Client extends GameEngine implements RSClient {
 	@Override
 	public Widget getChatboxInterface() {
 		if(messagePromptRaised || inputDialogState != 0)
-			return RSInterface.interfaceCache[968];
+			return interfaceCache.get(968);
 		if(backDialogID != -1) {
-			return RSInterface.interfaceCache[backDialogID];
+			return interfaceCache.get(backDialogID);
 		}
 		if(dialogID != -1) {
-			return RSInterface.interfaceCache[dialogID];
+			return interfaceCache.get(dialogID);
 		}
 		return null;
 	}

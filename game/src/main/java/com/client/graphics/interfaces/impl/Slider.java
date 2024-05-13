@@ -7,7 +7,9 @@ import com.client.audio.StaticSound;
 import com.client.features.settings.Preferences;
 import com.client.graphics.interfaces.RSInterface;
 
+import static com.client.Client.tabAreaAltered;
 import static com.client.features.settings.Preferences.setSliderValue;
+import static com.client.graphics.interfaces.RSInterface.interfaceCache;
 import static com.client.graphics.interfaces.impl.SettingsTabWidget.*;
 
 public class Slider {
@@ -156,39 +158,39 @@ public class Slider {
 
 			if (tabInterfaceId != -1) {
 
-				if (tabInterfaceId == 42500) {
-					tabInterfaceId = RSInterface.interfaceCache[42500].children[9];
-				} // Settings tab adjustment
-				RSInterface widget = RSInterface.interfaceCache[tabInterfaceId];
+                if (tabInterfaceId == 42500) {
+                    tabInterfaceId = interfaceCache.get(42500).children[9];
+                } // Settings tab adjustment
+                RSInterface widget = interfaceCache.get(tabInterfaceId);
 
-				if (widget == null ||
-						widget.children == null) {
-					return;
-				}
+                if (widget == null ||
+                        widget.children == null) {
+                    return;
+                }
 
-				for (int childId : widget.children) {
-					RSInterface child = RSInterface.interfaceCache[childId];
-					if (child == null || child.slider == null)
-						continue;
-					child.slider.handleClick(mX, mY, 0,0, child.contentType);
-				}
-				Client.tabAreaAltered = true;
-			}
+                for (int childId : widget.children) {
+                    RSInterface child = interfaceCache.get(childId);
+                    if (child == null || child.slider == null)
+                        continue;
+                    child.slider.handleClick(mX, mY, 0, 0, child.contentType);
+                }
+                tabAreaAltered = true;
+            }
 
 			int interfaceId = Client.instance.openInterfaceID;
 			if (interfaceId != -1) {
-				RSInterface widget = RSInterface.interfaceCache[interfaceId];
-				if (widget == null ||
-						widget.children == null) {
-					return;
-				}
-				for (int childId : widget.children) {
-					RSInterface child = RSInterface.interfaceCache[childId];
-					if (child == null || child.slider == null)
-						continue;
-					child.slider.handleClick(mX, mY, 4, 4, child.contentType);
-				}
-			}
+                RSInterface widget = interfaceCache.get(interfaceId);
+                if (widget == null ||
+                        widget.children == null) {
+                    return;
+                }
+                for (int childId : widget.children) {
+                    RSInterface child = interfaceCache.get(childId);
+                    if (child == null || child.slider == null)
+                        continue;
+                    child.slider.handleClick(mX, mY, 4, 4, child.contentType);
+                }
+            }
 		}catch (Exception e) {
 
 		}
