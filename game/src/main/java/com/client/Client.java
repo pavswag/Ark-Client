@@ -1700,9 +1700,18 @@ public class Client extends GameEngine implements RSClient {
 		Signlink.midisave(abyte0, abyte0.length);
 	}
 	public MapRegion currentMapRegion;
+	static int loadingType;
+	static int mapsLoaded;
+	static int totalMaps;
+
+	public static int objectsLoaded;
+
+	static int totalObjects;
 	public final void loadRegion() {
 		try {
 			setGameState(GameState.LOADING);
+
+			mapsLoaded = 0;
 
 			boolean var1 = true;
 			int var2;
@@ -1711,6 +1720,7 @@ public class Client extends GameEngine implements RSClient {
 					regionLandArchives[var2] = Js5List.maps.getFile(regionLandIds[var2], 0);
 					if (regionLandArchives[var2] == null) {
 						var1 = false;
+						++Client.mapsLoaded;
 					}
 				}
 				if (regionMapArchives[var2] == null && regionLocIds[var2] != -1) {
@@ -1718,6 +1728,7 @@ public class Client extends GameEngine implements RSClient {
 						regionMapArchives[var2] = Js5List.maps.getFile(regionLocIds[var2], 0);
 						if (regionMapArchives[var2] == null) {
 							var1 = false;
+							++Client.mapsLoaded;
 						}
 					} catch (Throwable e) {
 						e.printStackTrace();
@@ -1726,202 +1737,207 @@ public class Client extends GameEngine implements RSClient {
 				}
 			}
 
-			StaticSound.playPcmPlayers();
-			anInt985 = -1;
-			StaticSound.resetSoundCount();
-			incompleteAnimables.removeAll();
-			projectiles.removeAll();
 
-			release();
-			scene.initToNull();
-			System.gc();
-			load_objects();
+			if (!var1) {
+				Client.loadingType = 1;
+			} else {
+				StaticSound.playPcmPlayers();
+				anInt985 = -1;
+				StaticSound.resetSoundCount();
+				incompleteAnimables.removeAll();
+				projectiles.removeAll();
 
-			for (int i = 0; i < 4; i++)
-				collisionMaps[i].setDefault();
+				release();
+				scene.initToNull();
+				System.gc();
+				load_objects();
 
-			for (int l = 0; l < 4; l++) {
-				for (int k1 = 0; k1 < 104; k1++) {
-					for (int j2 = 0; j2 < 104; j2++)
-						tileFlags[l][k1][j2] = 0;
-				}
-			}
-			StaticSound.playPcmPlayers();
-			currentMapRegion = new MapRegion(tileFlags, tileHeights);
-			ObjectSound.clearObjectSounds();
-			int k2 = regionLandArchives.length;
+				for (int i = 0; i < 4; i++)
+					collisionMaps[i].setDefault();
 
-			/*
-			 * int k18 = 62; for (int A = 0; A < k2; A++) for (int B = 0; B < 2000; B++) if
-			 * (anIntArray1234[A] == positions[B]) { anIntArray1235[A] = landScapes[B];
-			 * anIntArray1236[A] = objects[B]; }
-			 */
-
-			stream.createFrame(0);
-
-			if (!isDynamicRegion) {
-				for (int i3 = 0; i3 < k2; i3++) {
-					int i4 = (regions[i3] >> 8) * 64 - baseX;
-					int k5 = (regions[i3] & 0xff) * 64 - baseY;
-
-					byte abyte0[] = regionLandArchives[i3];
-
-					if (abyte0 != null) {
-						StaticSound.playPcmPlayers();
-						currentMapRegion.method180(abyte0, k5, i4, (currentRegionX - 6) * 8, (currentRegionY - 6) * 8,
-								collisionMaps);
+				for (int l = 0; l < 4; l++) {
+					for (int k1 = 0; k1 < 104; k1++) {
+						for (int j2 = 0; j2 < 104; j2++)
+							tileFlags[l][k1][j2] = 0;
 					}
 				}
+				StaticSound.playPcmPlayers();
+				currentMapRegion = new MapRegion(tileFlags, tileHeights);
+				ObjectSound.clearObjectSounds();
+				int k2 = regionLandArchives.length;
 
-				for (int j4 = 0; j4 < k2; j4++) {
-					int l5 = (regions[j4] >> 8) * 64 - baseX;
-					int k7 = (regions[j4] & 0xff) * 64 - baseY;
-					byte abyte2[] = regionLandArchives[j4];
-					if (abyte2 == null && currentRegionY < 800) {
-						StaticSound.playPcmPlayers();
-						currentMapRegion.initiateVertexHeights(k7, 64, 64, l5);
-					}
-				}
+				/*
+				 * int k18 = 62; for (int A = 0; A < k2; A++) for (int B = 0; B < 2000; B++) if
+				 * (anIntArray1234[A] == positions[B]) { anIntArray1235[A] = landScapes[B];
+				 * anIntArray1236[A] = objects[B]; }
+				 */
 
-				anInt1097++;
-				if (anInt1097 > 160) {
-					anInt1097 = 0;
-					stream.createFrame(238);
-					stream.writeUnsignedByte(96);
-
-				}
 				stream.createFrame(0);
 
-				for (int i6 = 0; i6 < k2; i6++) {
-					byte abyte1[] = regionMapArchives[i6];
-					if (abyte1 != null) {
-						int l8 = (regions[i6] >> 8) * 64 - baseX;
-						int k9 = (regions[i6] & 0xff) * 64 - baseY;
-						StaticSound.playPcmPlayers();
-						currentMapRegion.loadObjectsInScene(l8, collisionMaps, k9, scene, abyte1);
+				if (!isDynamicRegion) {
+					for (int i3 = 0; i3 < k2; i3++) {
+						int i4 = (regions[i3] >> 8) * 64 - baseX;
+						int k5 = (regions[i3] & 0xff) * 64 - baseY;
+
+						byte abyte0[] = regionLandArchives[i3];
+
+						if (abyte0 != null) {
+							StaticSound.playPcmPlayers();
+							currentMapRegion.method180(abyte0, k5, i4, (currentRegionX - 6) * 8, (currentRegionY - 6) * 8,
+									collisionMaps);
+						}
 					}
+
+					for (int j4 = 0; j4 < k2; j4++) {
+						int l5 = (regions[j4] >> 8) * 64 - baseX;
+						int k7 = (regions[j4] & 0xff) * 64 - baseY;
+						byte abyte2[] = regionLandArchives[j4];
+						if (abyte2 == null && currentRegionY < 800) {
+							StaticSound.playPcmPlayers();
+							currentMapRegion.initiateVertexHeights(k7, 64, 64, l5);
+						}
+					}
+
+					anInt1097++;
+					if (anInt1097 > 160) {
+						anInt1097 = 0;
+						stream.createFrame(238);
+						stream.writeUnsignedByte(96);
+
+					}
+					stream.createFrame(0);
+
+					for (int i6 = 0; i6 < k2; i6++) {
+						byte abyte1[] = regionMapArchives[i6];
+						if (abyte1 != null) {
+							int l8 = (regions[i6] >> 8) * 64 - baseX;
+							int k9 = (regions[i6] & 0xff) * 64 - baseY;
+							StaticSound.playPcmPlayers();
+							currentMapRegion.loadObjectsInScene(l8, collisionMaps, k9, scene, abyte1);
+						}
+					}
+
 				}
+				if (isDynamicRegion) {
+					for (int j3 = 0; j3 < 4; j3++) {
+						StaticSound.playPcmPlayers();
+						for (int k4 = 0; k4 < 13; k4++) {
+							for (int j6 = 0; j6 < 13; j6++) {
+								int l7 = constructRegionData[j3][k4][j6];
+								if (l7 != -1) {
+									int i9 = l7 >> 24 & 3;
+									int l9 = l7 >> 1 & 3;
+									int j10 = l7 >> 14 & 0x3ff;
+									int l10 = l7 >> 3 & 0x7ff;
+									int j11 = (j10 / 8 << 8) + l10 / 8;
+									for (int l11 = 0; l11 < regions.length; l11++) {
+										if (regions[l11] != j11 || regionLandArchives[l11] == null)
+											continue;
+										currentMapRegion.loadMapChunk(i9, l9, collisionMaps, k4 * 8, (j10 & 7) * 8,
+												regionLandArchives[l11], (l10 & 7) * 8, j3, j6 * 8);
+										break;
+									}
 
-			}
-			if (isDynamicRegion) {
-				for (int j3 = 0; j3 < 4; j3++) {
-					StaticSound.playPcmPlayers();
-					for (int k4 = 0; k4 < 13; k4++) {
-						for (int j6 = 0; j6 < 13; j6++) {
-							int l7 = constructRegionData[j3][k4][j6];
-							if (l7 != -1) {
-								int i9 = l7 >> 24 & 3;
-								int l9 = l7 >> 1 & 3;
-								int j10 = l7 >> 14 & 0x3ff;
-								int l10 = l7 >> 3 & 0x7ff;
-								int j11 = (j10 / 8 << 8) + l10 / 8;
-								for (int l11 = 0; l11 < regions.length; l11++) {
-									if (regions[l11] != j11 || regionLandArchives[l11] == null)
-										continue;
-									currentMapRegion.loadMapChunk(i9, l9, collisionMaps, k4 * 8, (j10 & 7) * 8,
-											regionLandArchives[l11], (l10 & 7) * 8, j3, j6 * 8);
-									break;
 								}
-
 							}
+
+						}
+
+					}
+
+					for (int l4 = 0; l4 < 13; l4++) {
+						for (int k6 = 0; k6 < 13; k6++) {
+							int i8 = constructRegionData[0][l4][k6];
+							if (i8 == -1)
+								currentMapRegion.initiateVertexHeights(k6 * 8, 8, 8, l4 * 8);
+						}
+
+					}
+
+					stream.createFrame(0);
+
+					for (int l6 = 0; l6 < 4; l6++) {
+						StaticSound.playPcmPlayers();
+						for (int j8 = 0; j8 < 13; j8++) {
+							for (int j9 = 0; j9 < 13; j9++) {
+								int chunkBits = constructRegionData[l6][j8][j9];
+								if (chunkBits != -1) {
+									int z = chunkBits >> 24 & 3;
+									int rotation = chunkBits >> 1 & 3;
+									int xCoord = chunkBits >> 14 & 0x3ff;
+									int yCoord = chunkBits >> 3 & 0x7ff;
+									int mapRegion = (xCoord / 8 << 8) + yCoord / 8;
+									for (int k12 = 0; k12 < regions.length; k12++) {
+										if (regions[k12] != mapRegion || regionMapArchives[k12] == null)
+											continue;
+										currentMapRegion.loadMapChunk(z, rotation, collisionMaps, x * 8, (xCoord & 7) * 8,
+												regionLandArchives[k12], (yCoord & 7) * 8, plane, y * 8);
+
+										break;
+									}
+
+								}
+							}
+
 						}
 
 					}
 
 				}
-
-				for (int l4 = 0; l4 < 13; l4++) {
-					for (int k6 = 0; k6 < 13; k6++) {
-						int i8 = constructRegionData[0][l4][k6];
-						if (i8 == -1)
-							currentMapRegion.initiateVertexHeights(k6 * 8, 8, 8, l4 * 8);
-					}
-
-				}
+				stream.createFrame(0);
+				StaticSound.playPcmPlayers();
+				currentMapRegion.createRegionScene(collisionMaps, scene);
 
 				stream.createFrame(0);
 
-				for (int l6 = 0; l6 < 4; l6++) {
-					StaticSound.playPcmPlayers();
-					for (int j8 = 0; j8 < 13; j8++) {
-						for (int j9 = 0; j9 < 13; j9++) {
-							int chunkBits = constructRegionData[l6][j8][j9];
-							if (chunkBits != -1) {
-								int z = chunkBits >> 24 & 3;
-								int rotation = chunkBits >> 1 & 3;
-								int xCoord = chunkBits >> 14 & 0x3ff;
-								int yCoord = chunkBits >> 3 & 0x7ff;
-								int mapRegion = (xCoord / 8 << 8) + yCoord / 8;
-								for (int k12 = 0; k12 < regions.length; k12++) {
-									if (regions[k12] != mapRegion || regionMapArchives[k12] == null)
-										continue;
-									currentMapRegion.loadMapChunk(z, rotation, collisionMaps, x * 8, (xCoord & 7) * 8,
-											regionLandArchives[k12], (yCoord & 7) * 8, plane, y * 8);
+				int k3 = MapRegion.maximumPlane;
+				if (k3 > plane)
+					k3 = plane;
 
-									break;
-								}
+				if (k3 < plane - 1)
+					k3 = plane - 1;
+				if (lowMem)
 
-							}
-						}
-
+					scene.method275(MapRegion.maximumPlane);
+				else
+					scene.method275(0);
+				for (int i5 = 0; i5 < 104; i5++) {
+					for (int i7 = 0; i7 < 104; i7++) {
+						updateGroundItems(i5, i7);
 					}
-
 				}
 
-			}
-			stream.createFrame(0);
-			StaticSound.playPcmPlayers();
-			currentMapRegion.createRegionScene(collisionMaps, scene);
+				StaticSound.playPcmPlayers();
+				anInt1051++;
+				if (anInt1051 > 98) {
+					anInt1051 = 0;
+					stream.createFrame(150);
+				}
+				method63();
+				ObjectDefinition.modelsCached.clear();
+				stream.createFrame(210);
+				stream.writeInt(0x3f008edd);
+				System.gc();
 
-			stream.createFrame(0);
-
-			int k3 = MapRegion.maximumPlane;
-			if (k3 > plane)
-				k3 = plane;
-
-			if (k3 < plane - 1)
-				k3 = plane - 1;
-			if (lowMem)
-
-				scene.method275(MapRegion.maximumPlane);
-			else
-				scene.method275(0);
-			for (int i5 = 0; i5 < 104; i5++) {
-				for (int i7 = 0; i7 < 104; i7++) {
-					updateGroundItems(i5, i7);
+				int k = (currentRegionX - 6) / 8 - 1;
+				int j1 = (currentRegionX + 6) / 8 + 1;
+				int i2 = (currentRegionY - 6) / 8 - 1;
+				int l2 = (currentRegionY + 6) / 8 + 1;
+				if (inTutorialIsland) {
+					k = 49;
+					j1 = 50;
+					i2 = 49;
+					l2 = 50;
+				}
+				setGameState(GameState.LOGGED_IN);
+				StaticSound.playPcmPlayers();
+				if (drawCallbacks != null) {
+					drawCallbacks.loadScene(scene);
+					drawCallbacks.swapScene(scene);
 				}
 			}
-
-			StaticSound.playPcmPlayers();
-			anInt1051++;
-			if (anInt1051 > 98) {
-				anInt1051 = 0;
-				stream.createFrame(150);
-			}
-			method63();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		ObjectDefinition.modelsCached.clear();
-		stream.createFrame(210);
-		stream.writeInt(0x3f008edd);
-		System.gc();
-
-		int k = (currentRegionX - 6) / 8 - 1;
-		int j1 = (currentRegionX + 6) / 8 + 1;
-		int i2 = (currentRegionY - 6) / 8 - 1;
-		int l2 = (currentRegionY + 6) / 8 + 1;
-		if (inTutorialIsland) {
-			k = 49;
-			j1 = 50;
-			i2 = 49;
-			l2 = 50;
-		}
-		setGameState(GameState.LOGGED_IN);
-		StaticSound.playPcmPlayers();
-		if (drawCallbacks != null) {
-			drawCallbacks.loadScene(scene);
-			drawCallbacks.swapScene(scene);
 		}
 	}
 
@@ -15672,7 +15688,24 @@ public class Client extends GameEngine implements RSClient {
 		} else if (gameState == GameState.CONNECTION_LOST.getState()) {
 			drawLoadingMessage("Connection lost" + "<br>" + "Please wait - attempting to reestablish");
 		} else if (gameState == GameState.LOADING.getState()) {
-			drawLoadingMessage("Loading - please wait.");
+			int percentage;
+			if (loadingType == 1) {
+				if (mapsLoaded > totalMaps) {
+					totalMaps = mapsLoaded;
+				}
+
+				percentage = (totalMaps * 50 - mapsLoaded * 50) / totalMaps;
+				drawLoadingMessage("Loading - please wait." + "<br>" + " (" + percentage + "%" + ")");
+			} else if (loadingType == 2) {
+				if (objectsLoaded > totalObjects) {
+					totalObjects = objectsLoaded;
+				}
+
+				percentage = (totalObjects * 50 - objectsLoaded * 50) / totalObjects + 50;
+				drawLoadingMessage("Loading - please wait." + "<br>" + " (" + percentage + "%" + ")");
+			} else {
+				drawLoadingMessage("Loading - please wait.");
+			}
 		} else if (gameState == GameState.LOGGED_IN.getState()) {
 			drawGameScreen();
 		}
