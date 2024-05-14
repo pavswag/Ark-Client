@@ -5,6 +5,9 @@ import com.client.RSFont;
 
 import java.util.ArrayList;
 
+import static com.client.Client.instance;
+import static com.client.graphics.interfaces.RSInterface.interfaceCache;
+
 /**
  * @author ArkCane
  * @social Discord: ArkCane
@@ -30,22 +33,22 @@ public class YoutubeManager {
 
             boolean visible = childId < videos.size();
 
-            RSInterface.interfaceCache[itemChildId].invisible = !visible;
-            RSInterface.interfaceCache[itemChildId + 1].invisible = !visible;
-            RSInterface.interfaceCache[itemChildId + 2].invisible = !visible;
+            interfaceCache.get(itemChildId).invisible = !visible;
+            interfaceCache.get(itemChildId + 1).invisible = !visible;
+            interfaceCache.get(itemChildId + 2).invisible = !visible;
 
-            RSInterface.interfaceCache[itemChildId + 3].invisible = !visible;
-            RSInterface.interfaceCache[itemChildId + 4].invisible = !visible;
-            RSInterface.interfaceCache[itemChildId + 5].invisible = !visible;
-            RSInterface.interfaceCache[itemChildId + 6].invisible = !visible;
+            interfaceCache.get(itemChildId + 3).invisible = !visible;
+            interfaceCache.get(itemChildId + 4).invisible = !visible;
+            interfaceCache.get(itemChildId + 5).invisible = !visible;
+            interfaceCache.get(itemChildId + 6).invisible = !visible;
 
             YouTubeVideo youTubeVideo = visible ? videos.get(childId) : null;
 
-            if(youTubeVideo != null) {
-                RSInterface.interfaceCache[itemChildId].setSprite("https://img.youtube.com/vi/" + youTubeVideo.getVideoId() + "/mqdefault.jpg", 115, 64);
-                RSInterface.interfaceCache[itemChildId + 1].message = youTubeVideo.getTitle();
-                RSInterface.interfaceCache[itemChildId + 2].message = wrapLine(Client.instance.newSmallFont, youTubeVideo.getDescription(), 300);
-                RSInterface.interfaceCache[itemChildId + 3].message = youTubeVideo.getUploader();
+            if (youTubeVideo != null) {
+                interfaceCache.get(itemChildId).setSprite("https://img.youtube.com/vi/" + youTubeVideo.getVideoId() + "/mqdefault.jpg", 115, 64);
+                interfaceCache.get(itemChildId + 1).message = youTubeVideo.getTitle();
+                interfaceCache.get(itemChildId + 2).message = wrapLine(instance.newSmallFont, youTubeVideo.getDescription(), 300);
+                interfaceCache.get(itemChildId + 3).message = youTubeVideo.getUploader();
             }
 
             itemChildId += 7;

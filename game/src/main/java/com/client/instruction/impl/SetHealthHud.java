@@ -7,6 +7,10 @@ import com.client.graphics.interfaces.impl.health_hud.HealthHud;
 import com.client.instruction.InstructionArgs;
 import com.client.instruction.VoidInstruction;
 
+import static com.client.Client.instance;
+import static com.client.graphics.interfaces.impl.health_hud.HealthHud.*;
+import static com.client.graphics.interfaces.impl.health_hud.HealthHud.HudType.values;
+
 public class SetHealthHud implements VoidInstruction {
 
     @Override
@@ -14,16 +18,16 @@ public class SetHealthHud implements VoidInstruction {
         int type = args.getNextInt();
         int currentHealth = args.getNextInt();
         int maxHealth = args.getNextInt();
-        if(type >= 0 || type < HealthHud.HudType.values().length)
-            HealthHud.setHudType(HealthHud.HudType.values()[type]);
-        RSInterface header = RSInterface.interfaceCache[HealthHud.HEADER_ID];
+        if (type >= 0 || type < values().length)
+            setHudType(values()[type]);
+        RSInterface header = interfaceCache.get(HEADER_ID);
         header.message = args.getNextString();
-        if(maxHealth == 0) {
-            RSInterface.interfaceCache[HealthHud.PROGRESS_WIDGET_ID].message = "";
+        if (maxHealth == 0) {
+            interfaceCache.get(PROGRESS_WIDGET_ID).message = "";
         } else {
-            RSInterface.interfaceCache[HealthHud.PROGRESS_WIDGET_ID].message = currentHealth + "/" + maxHealth;
+            interfaceCache.get(PROGRESS_WIDGET_ID).message = currentHealth + "/" + maxHealth;
         }
-        HealthHud.healthHudTimeoutTick = Client.instance.getGameCycle() + (50 * 5);
+        healthHudTimeoutTick = instance.getGameCycle() + (50 * 5);
         return null;
     }
 }

@@ -9,6 +9,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import static com.client.Client.instance;
+
 public class NotificationInterface extends RSInterface {
     public static double currentY = -73.0D;//-73.0D;
 
@@ -52,18 +54,18 @@ public class NotificationInterface extends RSInterface {
             dropDownTicks++;
         } else if (notificationQueue.size() > 0) {
             currentNotification = notificationQueue.get(0);
-            (RSInterface.interfaceCache[46502]).message = currentNotification.getTitle();
-            (RSInterface.interfaceCache[46503]).message = currentNotification.getTopDescription();
-            (RSInterface.interfaceCache[46504]).message = currentNotification.getBottomDescription();
-            interfaceCache[46508].inventoryItemId[0] = currentNotification.getItem() + 1;
-            interfaceCache[46509].inventoryItemId[0] = currentNotification.getItem() + 1;
+            interfaceCache.get(46502).message = currentNotification.getTitle();
+            interfaceCache.get(46503).message = currentNotification.getTopDescription();
+            interfaceCache.get(46504).message = currentNotification.getBottomDescription();
+            interfaceCache.get(46508).inventoryItemId[0] = currentNotification.getItem() + 1;
+            interfaceCache.get(46509).inventoryItemId[0] = currentNotification.getItem() + 1;
             if (currentNotification.getBottomDescription().length() > 1) {
-                RSInterface.changeInterfaceImage(46501, 0);
-                (RSInterface.interfaceCache[46507]).height = 73;
+                changeInterfaceImage(46501, 0);
+                interfaceCache.get(46507).height = 73;
             } else {
-                RSInterface.changeInterfaceImage(46501, 1);
-                (RSInterface.interfaceCache[46504]).message = "";
-                (RSInterface.interfaceCache[46507]).height = 59;
+                changeInterfaceImage(46501, 1);
+                interfaceCache.get(46504).message = "";
+                interfaceCache.get(46507).height = 59;
             }
             notificationQueue.remove(0);
             currentY = -73.0D;
@@ -80,18 +82,18 @@ public class NotificationInterface extends RSInterface {
         addText(46503, "<img=82>@ora@Testing line @or2@1@ora@ description", 16750623, true, true, 0, tda, 1);
         addText(46504, "<img=62> @ora@Testing line @or2@2@ora@ description", 16750623, true, true, 0, tda, 1);
         addClickableText(46507, "", "click notification", tda, 0, 16750623, false, false, 315);
-        (RSInterface.interfaceCache[46507]).width = 315;
-        (RSInterface.interfaceCache[46507]).height = 73;
+        interfaceCache.get(46507).width = 315;
+        interfaceCache.get(46507).height = 73;
         addItem(46508, new String[0]);
         addItem(46509, new String[0]);
-        interfaceCache[46508].parentID = 46500;
-        interfaceCache[46509].parentID = 46500;
-        interfaceCache[46508].inventoryItemId[0] = 4152;
-        interfaceCache[46509].inventoryItemId[0] = 4152;
-        interfaceCache[46508].inventoryAmounts[0] = 1;
-        interfaceCache[46509].inventoryAmounts[0] = 1;
-        interfaceCache[46508].hideInvStackSizes = true;
-        interfaceCache[46509].hideInvStackSizes = true;
+        interfaceCache.get(46508).parentID = 46500;
+        interfaceCache.get(46509).parentID = 46500;
+        interfaceCache.get(46508).inventoryItemId[0] = 4152;
+        interfaceCache.get(46509).inventoryItemId[0] = 4152;
+        interfaceCache.get(46508).inventoryAmounts[0] = 1;
+        interfaceCache.get(46509).inventoryAmounts[0] = 1;
+        interfaceCache.get(46508).hideInvStackSizes = true;
+        interfaceCache.get(46509).hideInvStackSizes = true;
         int interfaceWidth = 315;
         tab.totalChildren(7);
         int id = 0;
@@ -102,6 +104,6 @@ public class NotificationInterface extends RSInterface {
         tab.child(id++, 46507, 0, 0);
         tab.child(id++, 46508, 4, 18);
         tab.child(id++, 46509, 281, 18);
-        Client.instance.parallelWidgetList.add(tab);
+        instance.parallelWidgetList.add(tab);
     }
 }

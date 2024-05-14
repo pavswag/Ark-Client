@@ -8,6 +8,8 @@ import com.client.graphics.interfaces.RSInterface;
 
 import java.util.HashMap;
 
+import static com.client.graphics.interfaces.InterfaceAnimations.moveInterface;
+
 /**
  * @author ArkCane
  * @social Discord: ArkCane
@@ -31,7 +33,7 @@ public class BlackJack extends RSInterface {
         int startX = 5, startY = 5;
 
         addSprite(INTERFACE_ID+index++, 0, dir);
-        interfaceCache[60951].sprite1.advancedSprite = true;
+        interfaceCache.get(60951).sprite1.advancedSprite = true;
         configHoverButton(INTERFACE_ID+index, "Close Interfaces", dir, 3,4,3,3, false, INTERFACE_ID+index++);
 
         addSprite(INTERFACE_ID+index++, 15, dir);
@@ -123,7 +125,7 @@ public class BlackJack extends RSInterface {
         setBounds(INTERFACE_ID+index++, 289, 290, child++, main);
         clearInterfaceForNextGame();
         for(int i = 60953; i <= 60968; i++)
-            RSInterface.interfaceCache[i].setHidden(true);
+            interfaceCache.get(i).setHidden(true);
     }
     public static void open() {
 
@@ -149,9 +151,9 @@ public class BlackJack extends RSInterface {
     public static void clearInterfaceForNextGame() {
 
         for(int i = 60953; i <= 60968; i++) {
-            interfaceCache[i].sprite1 = imageLoader(15, BlackJack.dir);
-            interfaceCache[i].sprite2 = imageLoader(15, BlackJack.dir);
-            InterfaceAnimations.moveInterface(INTERFACE_ID, i, -1, -1, 409, 5 + 56, 16, true);
+            interfaceCache.get(i).sprite1 = imageLoader(15, dir);
+            interfaceCache.get(i).sprite2 = imageLoader(15, dir);
+            moveInterface(INTERFACE_ID, i, -1, -1, 409, 5 + 56, 16, true);
         }
 
         /*

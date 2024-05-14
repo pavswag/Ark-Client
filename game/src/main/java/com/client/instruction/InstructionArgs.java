@@ -83,9 +83,9 @@ public class InstructionArgs {
 
     public RSInterface getNextInterface() {
         int id = getNextInt();
-        if(id < 0 || id >= RSInterface.interfaceCache.length)
+        if(id < 0)
             return null;
-        return RSInterface.interfaceCache[id];
+        return RSInterface.interfaceCache.get(id);
     }
 
     /**

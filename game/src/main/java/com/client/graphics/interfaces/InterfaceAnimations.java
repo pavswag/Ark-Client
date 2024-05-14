@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import static com.client.graphics.interfaces.RSInterface.interfaceCache;
+import static java.lang.Integer.valueOf;
+
 /**
  * @author ArkCane
  * @social Discord: ArkCane
@@ -19,7 +22,7 @@ public class InterfaceAnimations {
         moveInterface(parentId, childId, startX, startY, endX, endY, timeInMainGameTicks, false);
     }
     public static void moveInterfaceIfShould(int parentId, int childId, int startX, int startY, int endX, int endY, int timeInMainGameTicks, boolean hideOncedone) {
-        RSInterface parentInterface = RSInterface.interfaceCache[parentId];
+        RSInterface parentInterface = interfaceCache.get(parentId);
         if (parentInterface == null)
             return;
         int childInterfaceIndex = -1;
@@ -33,7 +36,7 @@ public class InterfaceAnimations {
             return;
 
         if (startX != -1 && startY != -1) {
-            if(parentInterface.childX[childInterfaceIndex] != startX || parentInterface.childY[childInterfaceIndex] != startY)
+            if (parentInterface.childX[childInterfaceIndex] != startX || parentInterface.childY[childInterfaceIndex] != startY)
                 return;
             parentInterface.childX[childInterfaceIndex] = startX;
             parentInterface.childY[childInterfaceIndex] = startY;
@@ -41,8 +44,8 @@ public class InterfaceAnimations {
             startX = parentInterface.childX[childInterfaceIndex];
             startY = parentInterface.childY[childInterfaceIndex];
         }
-        if(RSInterface.interfaceCache[childId].isHidden())
-            RSInterface.interfaceCache[childId].setHidden(false);
+        if (interfaceCache.get(childId).isHidden())
+            interfaceCache.get(childId).setHidden(false);
         if (timeInMainGameTicks == 0) {
             parentInterface.childX[childInterfaceIndex] = endX;
             parentInterface.childY[childInterfaceIndex] = endY;
@@ -50,10 +53,10 @@ public class InterfaceAnimations {
         }
         if (startX == endX && startY == endY)
             return;
-        interfaceAnimations.put(Integer.valueOf(childId), new InterfaceAnimation(parentId, childId, timeInMainGameTicks, startX, startY, endX, endY, hideOncedone));
+        interfaceAnimations.put(valueOf(childId), new InterfaceAnimation(parentId, childId, timeInMainGameTicks, startX, startY, endX, endY, hideOncedone));
     }
     public static void moveInterface(int parentId, int childId, int startX, int startY, int endX, int endY, int timeInMainGameTicks, boolean hideOncedone) {
-        RSInterface parentInterface = RSInterface.interfaceCache[parentId];
+        RSInterface parentInterface = interfaceCache.get(parentId);
         if (parentInterface == null)
             return;
         int childInterfaceIndex = -1;
@@ -65,8 +68,8 @@ public class InterfaceAnimations {
         }
         if (childInterfaceIndex == -1)
             return;
-        if(RSInterface.interfaceCache[childId].interfaceHidden)
-            RSInterface.interfaceCache[childId].interfaceHidden = false;
+        if (interfaceCache.get(childId).interfaceHidden)
+            interfaceCache.get(childId).interfaceHidden = false;
         if (timeInMainGameTicks == 0) {
             parentInterface.childX[childInterfaceIndex] = endX;
             parentInterface.childY[childInterfaceIndex] = endY;
@@ -80,11 +83,11 @@ public class InterfaceAnimations {
             startY = parentInterface.childY[childInterfaceIndex];
         }
         if (startX == endX && startY == endY) {
-            if(hideOncedone)
-                RSInterface.interfaceCache[childId].interfaceHidden = true;
+            if (hideOncedone)
+                interfaceCache.get(childId).interfaceHidden = true;
             return;
         }
-        interfaceAnimations.put(Integer.valueOf(childId), new InterfaceAnimation(parentId, childId, timeInMainGameTicks, startX, startY, endX, endY, hideOncedone));
+        interfaceAnimations.put(valueOf(childId), new InterfaceAnimation(parentId, childId, timeInMainGameTicks, startX, startY, endX, endY, hideOncedone));
     }
 
     public static void processAnimations() {
@@ -92,7 +95,7 @@ public class InterfaceAnimations {
             for (Iterator<Map.Entry<Integer, InterfaceAnimation>> it = interfaceAnimations.entrySet().iterator(); it.hasNext(); ) {
                 Map.Entry<Integer, InterfaceAnimation> entry = it.next();
                 InterfaceAnimation interfaceAnimation = entry.getValue();
-                RSInterface parentInterface = RSInterface.interfaceCache[interfaceAnimation.parentId];
+                RSInterface parentInterface = interfaceCache.get(interfaceAnimation.parentId);
                 if (parentInterface == null) {
                     it.remove();
                     return;
@@ -111,12 +114,12 @@ public class InterfaceAnimations {
                 int currentY = parentInterface.childY[childInterfaceIndex];
                 double totalMovementToMakeX = interfaceAnimation.xMovementPerTick + interfaceAnimation.xMovementLeft;
                 interfaceAnimation.xMovementLeft = totalMovementToMakeX % 1.0D;
-                totalMovementToMakeX = (int)totalMovementToMakeX;
+                totalMovementToMakeX = (int) totalMovementToMakeX;
                 double totalMovementToMakeY = interfaceAnimation.yMovementPerTick + interfaceAnimation.yMovementLeft;
                 interfaceAnimation.yMovementLeft = totalMovementToMakeY % 1.0D;
-                totalMovementToMakeY = (int)totalMovementToMakeY;
-                parentInterface.childX[childInterfaceIndex] = currentX + (int)totalMovementToMakeX;
-                parentInterface.childY[childInterfaceIndex] = currentY + (int)totalMovementToMakeY;
+                totalMovementToMakeY = (int) totalMovementToMakeY;
+                parentInterface.childX[childInterfaceIndex] = currentX + (int) totalMovementToMakeX;
+                parentInterface.childY[childInterfaceIndex] = currentY + (int) totalMovementToMakeY;
                 boolean isXGoingUp = (interfaceAnimation.xMovementPerTick > 0.0D);
                 boolean isYGoingUp = (interfaceAnimation.yMovementPerTick > 0.0D);
                 if (isXGoingUp && parentInterface.childX[childInterfaceIndex] > interfaceAnimation.endX) {
@@ -130,8 +133,8 @@ public class InterfaceAnimations {
                     parentInterface.childY[childInterfaceIndex] = interfaceAnimation.endY;
                 }
                 if (parentInterface.childX[childInterfaceIndex] == interfaceAnimation.endX && parentInterface.childY[childInterfaceIndex] == interfaceAnimation.endY) {
-                    if(interfaceAnimation.hideOnceDone) {
-                        RSInterface.interfaceCache[parentInterface.children[childInterfaceIndex]].setHidden(true);
+                    if (interfaceAnimation.hideOnceDone) {
+                        interfaceCache.get(parentInterface.children[childInterfaceIndex]).setHidden(true);
                     }
                     it.remove();
                 }

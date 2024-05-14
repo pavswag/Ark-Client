@@ -51,6 +51,8 @@ dependencies {
     implementation("com.thoughtworks.xstream:xstream:1.4.20")
 
     implementation("org.reflections:reflections:0.10.2")
+    implementation("it.unimi.dsi:fastutil:8.5.13")
+
 
     val lombok = module("org.projectlombok", "lombok", "1.18.26")
     compileOnly(lombok)

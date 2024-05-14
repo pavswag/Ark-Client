@@ -31,7 +31,7 @@ public class RSInputField extends RSInterface {
 	 * 				should the field be editable
 	 */
 	public RSInputField(int identity, int characterLimit, int color, String text, int width, int height, boolean asterisks, boolean updatesEveryInput, String regex, boolean editable) {
-		RSInterface.interfaceCache[identity] = this;
+		interfaceCache.put(identity, this);
 		super.id = identity;
 		super.type = 16;
 		super.atActionType = 8;

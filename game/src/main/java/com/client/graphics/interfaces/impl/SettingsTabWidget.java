@@ -8,6 +8,11 @@ import com.client.graphics.interfaces.RSInterface;
 import com.client.graphics.interfaces.dropdown.NpcAttackOptionMenu;
 import com.client.graphics.interfaces.dropdown.PlayerAttackOptionMenu;
 
+import static com.client.Client.cameraZoom;
+import static com.client.Configuration.npcAttackOptionPriority;
+import static com.client.Configuration.playerAttackOptionPriority;
+import static com.client.features.settings.Preferences.getPreferences;
+
 public class SettingsTabWidget extends RSInterface {
 
 	public static void widget(TextDrawingArea[] tda) {
@@ -228,7 +233,7 @@ public class SettingsTabWidget extends RSInterface {
 				break;
 			case 42521:
 				Client.cameraZoom = 600;
-				Slider slider = RSInterface.interfaceCache[ZOOM_SLIDER].slider;
+				Slider slider = interfaceCache.get(ZOOM_SLIDER).slider;
 				slider.setValue(600);
 				break;
 			case 42552:
@@ -240,33 +245,33 @@ public class SettingsTabWidget extends RSInterface {
 	public static void switchSettings(int button) {
 		int tab = button - 42502;
 		int[] tabs = new int[] { 42520, 42530, 42540, 42550 };
-		RSInterface.interfaceCache[42500].children[9] = tabs[tab];
+		interfaceCache.get(42500).children[9] = tabs[tab];
 	}
 
 	public static void toggleHidePetOption() {
-		Preferences.getPreferences().hidePetOptions = !Preferences.getPreferences().hidePetOptions;
-		RSInterface.interfaceCache[SettingsTabWidget.HIDE_LOCAL_PET_OPTIONS].active = Preferences.getPreferences().hidePetOptions;
+        getPreferences().hidePetOptions = !getPreferences().hidePetOptions;
+        interfaceCache.get(HIDE_LOCAL_PET_OPTIONS).active = getPreferences().hidePetOptions;
 //		System.out.println(Preferences.getPreferences().hidePetOptions);
-	}
+    }
 
 	public static void updateSettings() {
-		/* Settings */
-		RSInterface.interfaceCache[ACCEPT_AID].active = true;
-		//RSInterface.interfaceCache[RUN].active = Client.instance.settings[152] == 1;
-		RSInterface.interfaceCache[CHAT_EFFECTS].active = true;
-		RSInterface.interfaceCache[SPLIT_PRIVATE_CHAT].active = false;
-		RSInterface.interfaceCache[MOUSE_BUTTONS].active = true;
+        /* Settings */
+        interfaceCache.get(ACCEPT_AID).active = true;
+        //RSInterface.interfaceCache[RUN].active = Client.instance.settings[152] == 1;
+        interfaceCache.get(CHAT_EFFECTS).active = true;
+        interfaceCache.get(SPLIT_PRIVATE_CHAT).active = false;
+        interfaceCache.get(MOUSE_BUTTONS).active = true;
 
-		//RSInterface.interfaceCache[SHIFT_CLICK_DROP].active = Configuration.enableShiftClickDrop;
+        //RSInterface.interfaceCache[SHIFT_CLICK_DROP].active = Configuration.enableShiftClickDrop;
 
-		RSInterface.interfaceCache[PLAYER_ATTACK_DROPDOWN].dropdown.setSelected(RSInterface.interfaceCache[42554].dropdown.getOptions()[Configuration.playerAttackOptionPriority]);
-		RSInterface.interfaceCache[NPC_ATTACK_DROPDOWN].dropdown.setSelected(RSInterface.interfaceCache[42556].dropdown.getOptions()[Configuration.npcAttackOptionPriority]);
+		interfaceCache.get(PLAYER_ATTACK_DROPDOWN).dropdown.setSelected(interfaceCache.get(42554).dropdown.getOptions()[playerAttackOptionPriority]);
+		interfaceCache.get(NPC_ATTACK_DROPDOWN).dropdown.setSelected(interfaceCache.get(42556).dropdown.getOptions()[npcAttackOptionPriority]);
 
-		RSInterface.interfaceCache[ZOOM_SLIDER].slider.setValue(Client.cameraZoom);
-		//RSInterface.interfaceCache[BRIGHTNESS_SLIDER].slider.setValue(Client.brightnessState);
-		RSInterface.interfaceCache[MUSIC_SLIDER].slider.setValue(Preferences.getPreferences().musicVolume);
-		RSInterface.interfaceCache[SOUND_SLIDER].slider.setValue(Preferences.getPreferences().soundVolume);
-	}
+		interfaceCache.get(ZOOM_SLIDER).slider.setValue(cameraZoom);
+        //RSInterface.interfaceCache[BRIGHTNESS_SLIDER].slider.setValue(Client.brightnessState);
+		interfaceCache.get(MUSIC_SLIDER).slider.setValue(getPreferences().musicVolume);
+		interfaceCache.get(SOUND_SLIDER).slider.setValue(getPreferences().soundVolume);
+    }
 
 	public static final int PLAYER_ATTACK_DROPDOWN = 42554;
 	public static final int NPC_ATTACK_DROPDOWN = 42556;
