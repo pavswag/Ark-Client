@@ -166,7 +166,7 @@ public class RSInterface implements RSWidget {
 
 	public static void unpack(FileArchive streamLoader, TextDrawingArea textDrawingAreas[],
 							  FileArchive streamLoader_1, RSFont[] newFontSystem) {
-		aMRUNodes_238 = new EvictingDualNodeHashTable(50000);
+		aMRUNodes_238 = new EvictingDualNodeHashTable(750);
 		Buffer stream = new Buffer(streamLoader.readFile("data"));
 		newFonts = newFontSystem;
 		int i = -1;
