@@ -21513,7 +21513,7 @@ public class Client extends GameEngine implements RSClient {
 	}
 
 	public RSInterface getInputFieldFocusOwner() {
-		AtomicReference<RSInterface> r = null;
+		AtomicReference<RSInterface> r = new AtomicReference<RSInterface>(null);
 
 		interfaceCache.forEach((id, rsi) -> {
 			if (rsi != null)
