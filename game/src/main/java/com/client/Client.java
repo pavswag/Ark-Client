@@ -13946,7 +13946,7 @@ public class Client extends GameEngine implements RSClient {
 		}
 
 
-		ObjectSound.updateObjectSounds(plane, localPlayer.x, localPlayer.y, tickDelta); // L:
+		//ObjectSound.updateObjectSounds(plane, localPlayer.x, localPlayer.y, tickDelta); // L:
 		tickDelta = 0;
 	}
 
