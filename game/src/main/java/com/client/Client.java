@@ -19341,10 +19341,8 @@ public class Client extends GameEngine implements RSClient {
 						mapRegionX = inStream.readUShort();
 						isDynamicRegion = true;
 					}
-					if (currentRegionX == mapRegionX && currentRegionY == mapRegionY && loadingStage == 2) {
-						incomingPacket = -1;
-						return true;
-					}
+
+					System.out.println("I AM HERE");
 					currentRegionX = mapRegionX;
 					currentRegionY = mapRegionY;
 					baseX = (currentRegionX - 6) * 8;
@@ -19388,6 +19386,7 @@ public class Client extends GameEngine implements RSClient {
 							}
 						}
 					}
+					System.out.println("incmoing: " + incomingPacket);
 					if (incomingPacket == 241) {
 						int totalLegitChunks = 0;
 						int totalChunks[] = new int[676];
@@ -19416,13 +19415,21 @@ public class Client extends GameEngine implements RSClient {
 						regions = new int[totalLegitChunks];
 						regionLandIds = new int[totalLegitChunks];
 						regionLocIds = new int[totalLegitChunks];
-						for (int idx = 0; idx < totalLegitChunks; idx++) {
-							int region = regions[idx] = totalChunks[idx];
-							int constructedRegionX = region >> 8 & 0xff;
-							int constructedRegionY = region & 0xff;
-							regionLandIds[totalLegitChunks] = Js5List.maps.getGroupId("m" + constructedRegionX + "_" + constructedRegionY);
-							regionLocIds[totalLegitChunks] = Js5List.maps.getGroupId("l" + constructedRegionX + "_" + constructedRegionY);
-						}
+
+
+						try {
+							for (int idx = 0; idx < totalLegitChunks; idx++) {
+								int region = regions[idx] = totalChunks[idx];
+								int constructedRegionX = 16;
+								int constructedRegionY = 39;//do it manually see what happens
+								System.out.println("Region X:" + constructedRegionX);
+								System.out.println("Region Y:" + constructedRegionY);
+								regionLandIds[totalLegitChunks] = Js5List.maps.getGroupId("m" + constructedRegionX + "_" + constructedRegionY);
+								regionLocIds[totalLegitChunks] = Js5List.maps.getGroupId("l" + constructedRegionX + "_" + constructedRegionY);
+							}
+							//this is fine coz of xteas of region around the empty map im copying from
+						}catch (Exception e){}
+
 					}
 					int dx = baseX - previousAbsoluteX;
 					int dy = baseY - previousAbsoluteY;
