@@ -58,6 +58,12 @@ public enum InstructionId {
         @Override
         public VoidInstruction getInstruction() { return new UpdateNewNotification(); }
     },
+    SET_PET_MANAGEMENT_NPC(13_020) {
+        @Override
+        public VoidInstruction getInstruction() {
+            return new SetPetManagementNpc();
+        }
+    },
 
     ; // End of enum
 
