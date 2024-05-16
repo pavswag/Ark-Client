@@ -95,7 +95,6 @@ import com.client.utilities.*;
 import com.client.utilities.settings.Settings;
 import com.client.utilities.settings.SettingsManager;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import com.google.common.primitives.Doubles;
 import dorkbox.notify.Notify;
 import dorkbox.notify.Pos;
@@ -1700,230 +1699,284 @@ public class Client extends GameEngine implements RSClient {
 		Signlink.midisave(abyte0, abyte0.length);
 	}
 	public MapRegion currentMapRegion;
+
+	static int loadingType;
+	static int mapsLoaded;
+	static int totalMaps;
+
+	public static int objectsLoaded;
+
+	static int totalObjects;
+
+	private StringBuilder objectMaps = new StringBuilder();
+	private StringBuilder floorMaps = new StringBuilder();
+
 	public final void loadRegion() {
-		try {
-			setGameState(GameState.LOADING);
+		if (!floorMaps.equals("") || !objectMaps.equals("")) {
+			floorMaps = new StringBuilder();
+			objectMaps = new StringBuilder();
+		}
+		Client.mapsLoaded = 0;
+		boolean var1 = true;
 
-			boolean var1 = true;
-			int var2;
-			for (var2 = 0; var2 < regionLandArchives.length; var2++) {
-				if (regionLandArchives[var2] == null && regionLandIds[var2] != -1) {
-					regionLandArchives[var2] = Js5List.maps.getFile(regionLandIds[var2], 0);
-					if (regionLandArchives[var2] == null) {
+		int var2;
+		for (var2 = 0; var2 < regionLandArchives.length; var2++) {
+			floorMaps.append("  ").append(regionMapArchiveIds[var2]);
+			objectMaps.append("  ").append(regionLandArchiveIds[var2]);
+			if (regionLandArchives[var2] == null && regionMapArchiveIds[var2] != -1) {
+				regionLandArchives[var2] = Js5List.maps.getFile(regionMapArchiveIds[var2], 0);
+				if (regionLandArchives[var2] == null) {
+					var1 = false;
+					++Client.mapsLoaded;
+				}
+			}
+			if (regionMapArchives[var2] == null && regionLandArchiveIds[var2] != -1) {
+				try {
+					regionMapArchives[var2] = Js5List.maps.getFile(regionLandArchiveIds[var2], 0);
+					if (regionMapArchives[var2] == null) {
 						var1 = false;
+						++Client.mapsLoaded;
 					}
+				} catch (Throwable e) {
+					log.info("Missing xteas for region: {}", regions[var2]);
 				}
-				if (regionMapArchives[var2] == null && regionLocIds[var2] != -1) {
-					try {
-						regionMapArchives[var2] = Js5List.maps.getFile(regionLocIds[var2], 0);
-						if (regionMapArchives[var2] == null) {
-							var1 = false;
-						}
-					} catch (Throwable e) {
-						e.printStackTrace();
-						log.info("Missing xteas for region: {}", regions[var2]);
-                    }
+			}
+		}
+
+		if (!var1) {
+			Client.loadingType = 1;
+		} else {
+			Client.objectsLoaded = 0;
+			var1 = true;
+
+			int xChunk;
+			int yChunk;
+			for (var2 = 0; var2 < regionLandArchives.length; ++var2) {
+				byte[] var3 = regionMapArchives[var2];
+				if (var3 != null) {
+					xChunk = 64 * (regions[var2] >> 8) - baseX;
+					yChunk = 64 * (regions[var2] & 255) - baseY;
+					if (isDynamicRegion) {
+						xChunk = 10;
+						yChunk = 10;
+					}
+					var1 &= MapRegion.method787(var3, xChunk, yChunk);
 				}
 			}
 
-			StaticSound.playPcmPlayers();
-			anInt985 = -1;
-			StaticSound.resetSoundCount();
-			incompleteAnimables.removeAll();
-			projectiles.removeAll();
-
-			release();
-			scene.initToNull();
-			System.gc();
-			load_objects();
-
-			for (int i = 0; i < 4; i++)
-				collisionMaps[i].setDefault();
-
-			for (int l = 0; l < 4; l++) {
-				for (int k1 = 0; k1 < 104; k1++) {
-					for (int j2 = 0; j2 < 104; j2++)
-						tileFlags[l][k1][j2] = 0;
+			if (!var1) {
+				Client.loadingType = 2;
+			} else {
+				if (0 != Client.loadingType) {
+					drawLoadingMessage("Loading - please wait." + "<br>" + " (" + 100 + "%" + ")");
 				}
-			}
-			StaticSound.playPcmPlayers();
-			currentMapRegion = new MapRegion(tileFlags, tileHeights);
-			ObjectSound.clearObjectSounds();
-			int k2 = regionLandArchives.length;
 
-			/*
-			 * int k18 = 62; for (int A = 0; A < k2; A++) for (int B = 0; B < 2000; B++) if
-			 * (anIntArray1234[A] == positions[B]) { anIntArray1235[A] = landScapes[B];
-			 * anIntArray1236[A] = objects[B]; }
-			 */
+				setGameState(GameState.LOADING);
 
-			stream.createFrame(0);
+				StaticSound.playPcmPlayers();
+				lastKnownPlane = -1;
+				StaticSound.resetSoundCount();
+				incompleteAnimables.removeAll();
+				projectiles.removeAll();
 
-			if (!isDynamicRegion) {
-				for (int i3 = 0; i3 < k2; i3++) {
-					int i4 = (regions[i3] >> 8) * 64 - baseX;
-					int k5 = (regions[i3] & 0xff) * 64 - baseY;
+				release();
+				scene.initToNull();
+				System.gc();
+				load_objects();
 
-					byte abyte0[] = regionLandArchives[i3];
+				for (int i = 0; i < 4; i++)
+					collisionMaps[i].setDefault();
 
-					if (abyte0 != null) {
-						StaticSound.playPcmPlayers();
-						currentMapRegion.method180(abyte0, k5, i4, (currentRegionX - 6) * 8, (currentRegionY - 6) * 8,
-								collisionMaps);
+				for (int l = 0; l < 4; l++) {
+					for (int k1 = 0; k1 < 104; k1++) {
+						for (int j2 = 0; j2 < 104; j2++)
+							tileFlags[l][k1][j2] = 0;
 					}
 				}
+				StaticSound.playPcmPlayers();
+				currentMapRegion = new MapRegion(tileFlags, tileHeights);
+				ObjectSound.clearObjectSounds();
+				int k2 = regionLandArchives.length;
 
-				for (int j4 = 0; j4 < k2; j4++) {
-					int l5 = (regions[j4] >> 8) * 64 - baseX;
-					int k7 = (regions[j4] & 0xff) * 64 - baseY;
-					byte abyte2[] = regionLandArchives[j4];
-					if (abyte2 == null && currentRegionY < 800) {
-						StaticSound.playPcmPlayers();
-						currentMapRegion.initiateVertexHeights(k7, 64, 64, l5);
-					}
-				}
-
-				anInt1097++;
-				if (anInt1097 > 160) {
-					anInt1097 = 0;
-					stream.createFrame(238);
-					stream.writeUnsignedByte(96);
-
-				}
-				stream.createFrame(0);
-
-				for (int i6 = 0; i6 < k2; i6++) {
-					byte abyte1[] = regionMapArchives[i6];
-					if (abyte1 != null) {
-						int l8 = (regions[i6] >> 8) * 64 - baseX;
-						int k9 = (regions[i6] & 0xff) * 64 - baseY;
-						StaticSound.playPcmPlayers();
-						currentMapRegion.loadObjectsInScene(l8, collisionMaps, k9, scene, abyte1);
-					}
-				}
-
-			}
-			if (isDynamicRegion) {
-				for (int j3 = 0; j3 < 4; j3++) {
-					StaticSound.playPcmPlayers();
-					for (int k4 = 0; k4 < 13; k4++) {
-						for (int j6 = 0; j6 < 13; j6++) {
-							int l7 = constructRegionData[j3][k4][j6];
-							if (l7 != -1) {
-								int i9 = l7 >> 24 & 3;
-								int l9 = l7 >> 1 & 3;
-								int j10 = l7 >> 14 & 0x3ff;
-								int l10 = l7 >> 3 & 0x7ff;
-								int j11 = (j10 / 8 << 8) + l10 / 8;
-								for (int l11 = 0; l11 < regions.length; l11++) {
-									if (regions[l11] != j11 || regionLandArchives[l11] == null)
-										continue;
-									currentMapRegion.loadMapChunk(i9, l9, collisionMaps, k4 * 8, (j10 & 7) * 8,
-											regionLandArchives[l11], (l10 & 7) * 8, j3, j6 * 8);
-									break;
-								}
-
-							}
-						}
-
-					}
-
-				}
-
-				for (int l4 = 0; l4 < 13; l4++) {
-					for (int k6 = 0; k6 < 13; k6++) {
-						int i8 = constructRegionData[0][l4][k6];
-						if (i8 == -1)
-							currentMapRegion.initiateVertexHeights(k6 * 8, 8, 8, l4 * 8);
-					}
-
-				}
+				/*
+				 * int k18 = 62; for (int A = 0; A < k2; A++) for (int B = 0; B < 2000; B++) if
+				 * (anIntArray1234[A] == positions[B]) { anIntArray1235[A] = landScapes[B];
+				 * anIntArray1236[A] = objects[B]; }
+				 */
 
 				stream.createFrame(0);
 
-				for (int l6 = 0; l6 < 4; l6++) {
-					StaticSound.playPcmPlayers();
-					for (int j8 = 0; j8 < 13; j8++) {
-						for (int j9 = 0; j9 < 13; j9++) {
-							int chunkBits = constructRegionData[l6][j8][j9];
-							if (chunkBits != -1) {
-								int z = chunkBits >> 24 & 3;
-								int rotation = chunkBits >> 1 & 3;
-								int xCoord = chunkBits >> 14 & 0x3ff;
-								int yCoord = chunkBits >> 3 & 0x7ff;
-								int mapRegion = (xCoord / 8 << 8) + yCoord / 8;
-								for (int k12 = 0; k12 < regions.length; k12++) {
-									if (regions[k12] != mapRegion || regionMapArchives[k12] == null)
-										continue;
-									currentMapRegion.loadMapChunk(z, rotation, collisionMaps, x * 8, (xCoord & 7) * 8,
-											regionLandArchives[k12], (yCoord & 7) * 8, plane, y * 8);
+				if (!isDynamicRegion) {
+					for (int i3 = 0; i3 < k2; i3++) {
+						int i4 = (regions[i3] >> 8) * 64 - baseX;
+						int k5 = (regions[i3] & 0xff) * 64 - baseY;
 
-									break;
+						byte abyte0[] = regionLandArchives[i3];
+
+						if (abyte0 != null) {
+							StaticSound.playPcmPlayers();
+							currentMapRegion.method180(abyte0, k5, i4, (currentRegionX - 6) * 8, (currentRegionY - 6) * 8, collisionMaps);
+						}
+					}
+
+					for (int j4 = 0; j4 < k2; j4++) {
+						int l5 = (regions[j4] >> 8) * 64 - baseX;
+						int k7 = (regions[j4] & 0xff) * 64 - baseY;
+						byte abyte2[] = regionLandArchives[j4];
+						if (abyte2 == null && currentRegionY < 800) {
+							StaticSound.playPcmPlayers();
+							currentMapRegion.initiateVertexHeights(k7, 64, 64, l5);
+						}
+					}
+
+					anInt1097++;
+					if (anInt1097 > 160) {
+						anInt1097 = 0;
+						stream.createFrame(238);
+						stream.writeUnsignedByte(96);
+
+					}
+					stream.createFrame(0);
+
+					for (int i6 = 0; i6 < k2; i6++) {
+						byte abyte1[] = regionMapArchives[i6];
+						if (abyte1 != null) {
+							int l8 = (regions[i6] >> 8) * 64 - baseX;
+							int k9 = (regions[i6] & 0xff) * 64 - baseY;
+							StaticSound.playPcmPlayers();
+							currentMapRegion.loadObjectsInScene(l8, collisionMaps, k9, scene, abyte1);
+						}
+					}
+
+				}
+				if (isDynamicRegion) {
+					for (int j3 = 0; j3 < 4; j3++) {
+						StaticSound.playPcmPlayers();
+						for (int k4 = 0; k4 < 13; k4++) {
+							for (int j6 = 0; j6 < 13; j6++) {
+								int l7 = instanceChunkTemplates[j3][k4][j6];
+								if (l7 != -1) {
+									int i9 = l7 >> 24 & 3;
+									int l9 = l7 >> 1 & 3;
+									int j10 = l7 >> 14 & 0x3ff;
+									int l10 = l7 >> 3 & 0x7ff;
+									int j11 = (j10 / 8 << 8) + l10 / 8;
+									for (int l11 = 0; l11 < regions.length; l11++) {
+										if (regions[l11] != j11 || regionLandArchives[l11] == null)
+											continue;
+										System.out.println("HERE 1");
+										currentMapRegion.loadMapChunk(i9, l9, collisionMaps, k4 * 8, (j10 & 7) * 8,
+												regionLandArchives[l11], (l10 & 7) * 8, j3, j6 * 8);
+										break;
+									}
+
 								}
-
 							}
+
+						}
+
+					}
+
+					for (int l4 = 0; l4 < 13; l4++) {
+						for (int k6 = 0; k6 < 13; k6++) {
+							int i8 = instanceChunkTemplates[0][l4][k6];
+							if (i8 == -1)
+								currentMapRegion.initiateVertexHeights(k6 * 8, 8, 8, l4 * 8);
+						}
+
+					}
+
+					stream.createFrame(0);
+
+					for (var2 = 0; var2 < 4; var2++) {
+						StaticSound.playPcmPlayers();
+						for (int var3 = 0; var3 < 13; var3++) {
+							for (int var4 = 0; var4 < 13; var4++) {
+								int var5 = instanceChunkTemplates[var2][var3][var4];
+								if (var5 != -1) {
+									int var6 = var5 >> 24 & 3;
+									int var7 = var5 >> 1 & 3;
+									int var8 = var5 >> 14 & 1023;
+									int var9 = var5 >> 3 & 2047;
+									int var10 = (var8 / 8 << 8) + var9 / 8;
+
+									for (int k12 = 0; k12 < regions.length; k12++) {
+										if (regions[k12] == var10 && regionMapArchives[k12] != null) {
+											currentMapRegion.method2260(regionMapArchives[k12], var2, var3 * 8, var4 * 8, var6, (var8 & 7) * 8, (var9 & 7) * 8, var7, scene, collisionMaps);
+											break;
+										}
+									}
+
+								}
+							}
+
 						}
 
 					}
 
 				}
+				stream.createFrame(0);
+				StaticSound.playPcmPlayers();
+				currentMapRegion.createRegionScene(collisionMaps, scene);
 
-			}
-			stream.createFrame(0);
-			StaticSound.playPcmPlayers();
-			currentMapRegion.createRegionScene(collisionMaps, scene);
+				stream.createFrame(0);
 
-			stream.createFrame(0);
+				int k3 = MapRegion.maximumPlane;
+				if (k3 > plane)
+					k3 = plane;
 
-			int k3 = MapRegion.maximumPlane;
-			if (k3 > plane)
-				k3 = plane;
+				if (k3 < plane - 1)
+					k3 = plane - 1;
+				if (lowMem)
 
-			if (k3 < plane - 1)
-				k3 = plane - 1;
-			if (lowMem)
-
-				scene.method275(MapRegion.maximumPlane);
-			else
-				scene.method275(0);
-			for (int i5 = 0; i5 < 104; i5++) {
-				for (int i7 = 0; i7 < 104; i7++) {
-					updateGroundItems(i5, i7);
+					scene.method275(MapRegion.maximumPlane);
+				else
+					scene.method275(0);
+				for (int i5 = 0; i5 < 104; i5++) {
+					for (int i7 = 0; i7 < 104; i7++) {
+						updateGroundItems(i5, i7);
+					}
 				}
-			}
 
-			StaticSound.playPcmPlayers();
-			anInt1051++;
-			if (anInt1051 > 98) {
-				anInt1051 = 0;
-				stream.createFrame(150);
-			}
-			method63();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		ObjectDefinition.modelsCached.clear();
-		stream.createFrame(210);
-		stream.writeInt(0x3f008edd);
-		System.gc();
+				StaticSound.playPcmPlayers();
+				anInt1051++;
+				if (anInt1051 > 98) {
+					anInt1051 = 0;
+					stream.createFrame(150);
+				}
+				method63();
 
-		int k = (currentRegionX - 6) / 8 - 1;
-		int j1 = (currentRegionX + 6) / 8 + 1;
-		int i2 = (currentRegionY - 6) / 8 - 1;
-		int l2 = (currentRegionY + 6) / 8 + 1;
-		if (inTutorialIsland) {
-			k = 49;
-			j1 = 50;
-			i2 = 49;
-			l2 = 50;
-		}
-		setGameState(GameState.LOGGED_IN);
-		StaticSound.playPcmPlayers();
-		if (drawCallbacks != null) {
-			drawCallbacks.loadScene(scene);
-			drawCallbacks.swapScene(scene);
+				ObjectDefinition.modelsCached.clear();
+				stream.createFrame(210);
+				stream.writeInt(0x3f008edd);
+				System.gc();
+
+				if (!isDynamicRegion) {
+					xChunk = (currentRegionX - 6) / 8;
+					yChunk = (currentRegionX + 6) / 8;
+					int tileBits = (currentRegionY - 6) / 8;
+					int level = (currentRegionY + 6) / 8;
+
+					for (int rotation = xChunk - 1; rotation <= 1 + yChunk; ++rotation) {
+						for (int worldX = tileBits - 1; worldX <= level + 1; ++worldX) {
+							if (rotation < xChunk || rotation > yChunk || worldX < tileBits || worldX > level) {
+								Js5List.maps.loadRegionFromName("m" + rotation + "_" + worldX);
+								Js5List.maps.loadRegionFromName("l" + rotation + "_" + worldX);
+							}
+						}
+					}
+				}
+
+				if (plane != lastKnownPlane) {
+					lastKnownPlane = plane;
+					renderMapScene(plane);
+				}
+				setGameState(GameState.LOGGED_IN);
+				StaticSound.playPcmPlayers();
+			}
 		}
 	}
+
 
 	public void release() {
 
@@ -5268,69 +5321,8 @@ public class Client extends GameEngine implements RSClient {
 		return instance;
 	}
 
-	public void loadingStages() {
-		if (lowMem && loadingStage == 2 && MapRegion.anInt131 != plane) {
 
-			//setGameState(GameState.LOADING);
 
-			loadingStage = 1;
-			longStartTime = System.currentTimeMillis();
-		}
-		if (loadingStage == 1) {
-			int j = getMapLoadingState();
-			if (j != 0 && System.currentTimeMillis() - longStartTime > 0x57e40L) {
-				Signlink.reporterror(
-						myUsername + " glcfb " + aLong1215 + "," + j + "," + lowMem + ","
-								 + plane + "," + currentRegionX + "," + currentRegionY);
-				longStartTime = System.currentTimeMillis();
-			}
-		}
-		if (loadingStage == 2 && plane != anInt985) {
-			anInt985 = plane;
-			renderMapScene(plane);
-			stream.createFrame(121);
-		}
-	}
-
-	private int getMapLoadingState() {
-		for (int i = 0; i < regionLandArchives.length; i++) {
-			if (regionLandArchives[i] == null && regionLandIds[i] != -1)
-				return -1;
-			if (regionMapArchives[i] == null && regionLocIds[i] != -1)
-				return -2;
-		}
-		boolean flag = true;
-		for (int j = 0; j < regionLandArchives.length; j++) {
-			byte abyte0[] = regionMapArchives[j];
-			if (abyte0 != null) {
-				try {
-					int k = (regions[j] >> 8) * 64 - baseX;
-					int l = (regions[j] & 0xff) * 64 - baseY;
-					if (isDynamicRegion) {
-						k = 10;
-						l = 10;
-					}
-					flag &= MapRegion.method189(k, abyte0, l);
-				} catch (Exception e) {
-					if (regionLocIds[j] != -1)
-						System.err.println("Error on map file: " + regionLocIds[j]);
-					e.printStackTrace();
-				}
-			}
-		}
-		if (!flag)
-			return -3;// couldn't parse all landscapes
-		if (loadingMap) {
-			return -4;
-		} else {
-			loadingStage = 2;
-			MapRegion.anInt131 = plane;
-			loadRegion();
-			stream.createFrame(121);
-//			logger.debug("Map region loaded.");
-			return 0;
-		}
-	}
 
 	public void method55() {
 		for (Projectile projectile = (Projectile) projectiles
@@ -5524,7 +5516,9 @@ public class Client extends GameEngine implements RSClient {
 			stream.createFrame(3);
 			stream.writeUnsignedByte(0);
 		}
-		loadingStages();
+		if (gameState != 30) {
+			return;
+		}
 		method115();
 		// method90();
 		anInt1009++;
@@ -5791,9 +5785,9 @@ public class Client extends GameEngine implements RSClient {
 		} else if (anInt1501 > 0) {
 			anInt1501--;
 		}
-		if (loadingStage == 2)
+		if (Client.instance.gameState == GameState.LOGGED_IN.getState())
 			method108();
-		if (loadingStage == 2 && inCutScene)
+		if (Client.instance.gameState == GameState.LOGGED_IN.getState() && inCutScene)
 			calcCameraPos();
 		for (int i1 = 0; i1 < 5; i1++)
 			anIntArray1030[i1]++;
@@ -8243,8 +8237,8 @@ public class Client extends GameEngine implements RSClient {
 		regions = null;
 		regionLandArchives = null;
 		regionMapArchives = null;
-		regionLandIds = null;
-		regionLocIds = null;
+		regionMapArchiveIds = null;
+		regionLandArchiveIds = null;
 		tileHeights = null;
 		tileFlags = null;
 		scene = null;
@@ -11258,11 +11252,10 @@ public class Client extends GameEngine implements RSClient {
 
 				itemSelected = 0;
 				spellSelected = 0;
-				loadingStage = 0;
 				setNorth();
 				setBounds();
 				minimapState = 0;
-				anInt985 = -1;
+				lastKnownPlane = -1;
 				destX = 0;
 				destY = 0;
 				playerCount = 0;
@@ -11435,7 +11428,6 @@ public class Client extends GameEngine implements RSClient {
 				anInt1104 = 0;
 				menuActionRow = 0;
 				menuOpen = false;
-				longStartTime = System.currentTimeMillis();
 				return;
 			}
 			if (responseCode == 16) {
@@ -13786,8 +13778,8 @@ public class Client extends GameEngine implements RSClient {
 
 	private void drawGameScreen() {
 		handleRegionChangeMusic();
-		if (fullscreenInterfaceID != -1 && loadingStage == 2) {
-			if (loadingStage == 2) {
+		if (fullscreenInterfaceID != -1 && gameState == GameState.LOADING.ordinal()) {
+			if (Client.instance.gameState == GameState.LOGGED_IN.getState()) {
 				try {
 					processWidgetAnimations(tickDelta, fullscreenInterfaceID);
 					if (openInterfaceID != -1) {
@@ -13909,7 +13901,7 @@ public class Client extends GameEngine implements RSClient {
 		if (inputTaken) {
 			inputTaken = false;
 		}
-		if (loadingStage == 2) {
+		if (Client.instance.gameState == GameState.LOGGED_IN.getState()) {
 			moveCameraWithPlayer();
 
 			if (menuOpen) {
@@ -15672,7 +15664,24 @@ public class Client extends GameEngine implements RSClient {
 		} else if (gameState == GameState.CONNECTION_LOST.getState()) {
 			drawLoadingMessage("Connection lost" + "<br>" + "Please wait - attempting to reestablish");
 		} else if (gameState == GameState.LOADING.getState()) {
-			drawLoadingMessage("Loading - please wait.");
+			int percentage;
+			if (loadingType == 1) {
+				if (mapsLoaded > totalMaps) {
+					totalMaps = mapsLoaded;
+				}
+
+				percentage = (totalMaps * 50 - mapsLoaded * 50) / totalMaps;
+				drawLoadingMessage("Loading - please wait." + "<br>" + " (" + percentage + "%" + ")");
+			} else if (loadingType == 2) {
+				if (objectsLoaded > totalObjects) {
+					totalObjects = objectsLoaded;
+				}
+
+				percentage = (totalObjects * 50 - objectsLoaded * 50) / totalObjects + 50;
+				drawLoadingMessage("Loading - please wait." + "<br>" + " (" + percentage + "%" + ")");
+			} else {
+				drawLoadingMessage("Loading - please wait.");
+			}
 		} else if (gameState == GameState.LOGGED_IN.getState()) {
 			drawGameScreen();
 		}
@@ -15959,17 +15968,17 @@ public class Client extends GameEngine implements RSClient {
 			} else {
 				aTextDrawingArea_1271.method385(0xffff00, "Current Region: 0" + mapx + ", 0" + mapy, 55, 5);
 			}
-			for (int num = 0; num < regionLandIds.length; num++) {
-				int[] flo = regionLandIds;
+			for (int num = 0; num < regionMapArchiveIds.length; num++) {
+				int[] flo = regionMapArchiveIds;
 				aTextDrawingArea_1271.method385(0xffff00, "Floor map: " + Arrays.toString(flo), 69, 5);
 			}
-			for (int num = 0; num < regionLocIds.length; num++) {
-				int[] obj = regionLocIds;
+			for (int num = 0; num < regionLandArchiveIds.length; num++) {
+				int[] obj = regionLandArchiveIds;
 				aTextDrawingArea_1271.method385(0xffff00, "Object map: " + Arrays.toString(obj), 83, 5);
 				// output: "Object map: "[1, 3, 5, 7, 9]"
 			}
 
-			aTextDrawingArea_1271.method385(0xffff00, "Map Data: " + regionLandIds[0] + ".dat", 97, 5);
+			aTextDrawingArea_1271.method385(0xffff00, "Map Data: " + regionMapArchiveIds[0] + ".dat", 97, 5);
 			aTextDrawingArea_1271.method385(0xffff00, "Fps: " + super.fps, 111, 5);
 			aTextDrawingArea_1271.method385(0xffff00, "Memory Used: " + j1/1024 + "MB", 125, 5);
 			aTextDrawingArea_1271.method385(0xffff00,
@@ -16079,7 +16088,7 @@ public class Client extends GameEngine implements RSClient {
 	}
 
 	private void method115() {
-		if (loadingStage == 2) {
+		if (Client.instance.gameState == GameState.LOGGED_IN.getState()) {
 			boolean passedRequest = false;
 			for (SpawnedObject spawnedObject = (SpawnedObject) spawns
 					.reverseGetFirst(); spawnedObject != null; spawnedObject = (SpawnedObject) spawns
@@ -16372,8 +16381,7 @@ public class Client extends GameEngine implements RSClient {
 				}
 			}
 		}
-		if ((tileFlags[plane][localPlayer.x >> 7][localPlayer.y >> 7] & 4) != 0)
-			j = plane;
+
 		return j;
 	}
 
@@ -16814,7 +16822,7 @@ public class Client extends GameEngine implements RSClient {
 		}
 
 		// If not loaded in don't draw mapback
-		if (loadingStage == 2) {
+		if (Client.instance.gameState == GameState.LOGGED_IN.getState()) {
 
 			int i = viewRotation + minimapRotation & 0x7ff;
 			int j = 48 + localPlayer.x / 32;
@@ -19305,186 +19313,15 @@ public class Client extends GameEngine implements RSClient {
 					return true;
 
 				case 73:
-				case 241:
-					setGameState(GameState.LOADING);
-					int mapRegionX = currentRegionX;
-					int mapRegionY = currentRegionY;
-					if (incomingPacket == 73) {
-						mapRegionX = inStream.readUShortA();
-						mapRegionY = inStream.readUShort();
-						isDynamicRegion = false;
-					}
-					if (incomingPacket == 241) {
-						mapRegionY = inStream.readUShortA();
-						inStream.initBitAccess();
-						for (int z = 0; z < 4; z++) {
-							for (int x = 0; x < 13; x++) {
-								for (int y = 0; y < 13; y++) {
-									int visible = inStream.readBits(1);
-									if (visible == 1)
-										constructRegionData[z][x][y] = inStream.readBits(26);
-									else
-										constructRegionData[z][x][y] = -1;
-								}
-							}
-						}
-						inStream.finishBitAccess();
-						mapRegionX = inStream.readUShort();
-						isDynamicRegion = true;
-					}
-					if (currentRegionX == mapRegionX && currentRegionY == mapRegionY && loadingStage == 2) {
-						incomingPacket = -1;
-						return true;
-					}
-					currentRegionX = mapRegionX;
-					currentRegionY = mapRegionY;
-					baseX = (currentRegionX - 6) * 8;
-					baseY = (currentRegionY - 6) * 8;
-					inTutorialIsland = (currentRegionX / 8 == 48 || currentRegionX / 8 == 49) && currentRegionY / 8 == 48;
-					if (currentRegionX / 8 == 48 && currentRegionY / 8 == 148)
-						inTutorialIsland = true;
-					loadingStage = 1;
-					longStartTime = System.currentTimeMillis();
-
-					setGameState(GameState.LOADING);
-
-					if (incomingPacket == 73) {
-						int regionCount = 0;
-						for (int x = (currentRegionX - 6) / 8; x <= (currentRegionX + 6) / 8; x++) {
-							for (int y = (currentRegionY - 6) / 8; y <= (currentRegionY + 6) / 8; y++)
-								regionCount++;
-						}
-						regionLandArchives = new byte[regionCount][];
-						regionMapArchives = new byte[regionCount][];
-						regions = new int[regionCount];
-						regionLandIds = new int[regionCount];
-						regionLocIds = new int[regionCount];
-						regionCount = 0;
-						List<Integer> mapFiles = Lists.newArrayList();
-						for (int x = (currentRegionX - 6) / 8; x <= (currentRegionX + 6) / 8; x++) {
-							for (int y = (currentRegionY - 6) / 8; y <= (currentRegionY + 6) / 8; y++) {
-								regions[regionCount] = (x << 8) + y;
-								if (inTutorialIsland
-										&& (y == 49 || y == 149 || y == 147 || x == 50 || x == 49 && y == 47)) {
-									regionLandIds[regionCount] = -1;
-									regionLocIds[regionCount] = -1;
-									regionCount++;
-								} else {
-									int id = y + (x << 8);
-									regions[regionCount] = id;
-									regionLandIds[regionCount] = Js5List.maps.getGroupId("m" + x + "_" + y);
-									regionLocIds[regionCount] = Js5List.maps.getGroupId("l" + x + "_" + y);
-									++regionCount;
-								}
-							}
-						}
-					}
-					if (incomingPacket == 241) {
-						int totalLegitChunks = 0;
-						int totalChunks[] = new int[676];
-						for (int z = 0; z < 4; z++) {
-							for (int x = 0; x < 13; x++) {
-								for (int y = 0; y < 13; y++) {
-									int tileBits = constructRegionData[z][x][y];
-									if (tileBits != -1) {
-										int xCoord = tileBits >> 14 & 0x3ff;
-										int yCoord = tileBits >> 3 & 0x7ff;
-										int mapRegion = (xCoord / 8 << 8) + yCoord / 8;
-										for (int idx = 0; idx < totalLegitChunks; idx++) {
-											if (totalChunks[idx] != mapRegion)
-												continue;
-											mapRegion = -1;
-
-										}
-										if (mapRegion != -1)
-											totalChunks[totalLegitChunks++] = mapRegion;
-									}
-								}
-							}
-						}
-						regionLandArchives = new byte[totalLegitChunks][];
-						regionMapArchives = new byte[totalLegitChunks][];
-						regions = new int[totalLegitChunks];
-						regionLandIds = new int[totalLegitChunks];
-						regionLocIds = new int[totalLegitChunks];
-						for (int idx = 0; idx < totalLegitChunks; idx++) {
-							int region = regions[idx] = totalChunks[idx];
-							int constructedRegionX = region >> 8 & 0xff;
-							int constructedRegionY = region & 0xff;
-							regionLandIds[totalLegitChunks] = Js5List.maps.getGroupId("m" + constructedRegionX + "_" + constructedRegionY);
-							regionLocIds[totalLegitChunks] = Js5List.maps.getGroupId("l" + constructedRegionX + "_" + constructedRegionY);
-						}
-					}
-					int dx = baseX - previousAbsoluteX;
-					int dy = baseY - previousAbsoluteY;
-					previousAbsoluteX = baseX;
-					previousAbsoluteY = baseY;
-					for (int index = 0; index < 65536; index++) {
-						Npc npc = npcs[index];
-						if (npc != null) {
-							for (int poiint = 0; poiint < 10; poiint++) {
-								npc.pathX[poiint] -= dx;
-								npc.pathY[poiint] -= dy;
-							}
-							npc.x -= dx * 128;
-							npc.y -= dy * 128;
-						}
-					}
-					for (int index = 0; index < maxPlayers; index++) {
-						Player player = players[index];
-						if (player != null) {
-							for (int i31 = 0; i31 < 10; i31++) {
-								player.pathX[i31] -= dx;
-								player.pathY[i31] -= dy;
-							}
-							player.x -= dx * 128;
-							player.y -= dy * 128;
-						}
-					}
-					loadingMap = true;
-					byte startX = 0;
-					byte endX = 104;
-					byte stepX = 1;
-					if (dx < 0) {
-						startX = 103;
-						endX = -1;
-						stepX = -1;
-					}
-					byte startY = 0;
-					byte endY = 104;
-					byte stepY = 1;
-					if (dy < 0) {
-						startY = 103;
-						endY = -1;
-						stepY = -1;
-					}
-					for (int x = startX; x != endX; x += stepX) {
-						for (int y = startY; y != endY; y += stepY) {
-							int shiftedX = x + dx;
-							int shiftedY = y + dy;
-							for (int plane = 0; plane < 4; plane++)
-								if (shiftedX >= 0 && shiftedY >= 0 && shiftedX < 104 && shiftedY < 104)
-									groundItems[plane][x][y] = groundItems[plane][shiftedX][shiftedY];
-								else
-									groundItems[plane][x][y] = null;
-						}
-					}
-					for (SpawnedObject object = (SpawnedObject) spawns
-							.reverseGetFirst(); object != null; object = (SpawnedObject) spawns
-							.reverseGetNext()) {
-						object.x -= dx;
-						object.y -= dy;
-						if (object.x < 0 || object.y < 0 || object.x >= 104
-								|| object.y >= 104)
-							object.remove();
-					}
-					if (destX != 0) {
-						destX -= dx;
-						destY -= dy;
-					}
-					inCutScene = false;
+					loadRegions(false, inStream);
 					incomingPacket = -1;
 					return true;
+					
+				case 241:
+					loadRegions(true, inStream);
+					incomingPacket = -1;
+					return true;
+
 
 				case 208:
 					int i3 = inStream.readUShort();
@@ -20518,6 +20355,214 @@ public class Client extends GameEngine implements RSClient {
 		return true;
 	}
 
+	 public void loadRegions(boolean var0, Buffer var1) {
+		isDynamicRegion = var0;
+		int var2;
+		int var3;
+		int var5;
+		int var6;
+		int var7;
+		if (!isDynamicRegion) {
+			var2 = var1.readUShortA();
+			var3 = var1.readUShort();
+			int regionCount = 0;
+			currentRegionX = var2;
+			currentRegionY = var3;
+			for (int x = (currentRegionX - 6) / 8; x <= (currentRegionX + 6) / 8; x++) {
+				for (int y = (currentRegionY - 6) / 8; y <= (currentRegionY + 6) / 8; y++)
+					regionCount++;
+			}
+
+			regions = new int[regionCount];
+			regionMapArchiveIds = new int[regionCount];
+			regionLandArchiveIds = new int[regionCount];
+			regionLandArchives = new byte[regionCount][];
+			regionMapArchives = new byte[regionCount][];
+			regionCount = 0;
+
+			for (var5 = (var2 - 6) / 8; var5 <= (var2 + 6) / 8; ++var5) {
+				for (var6 = (var3 - 6) / 8; var6 <= (var3 + 6) / 8; ++var6) {
+					var7 = var6 + (var5 << 8);
+					regions[regionCount] = var7;
+
+					System.out.println("THIS");
+					regionMapArchiveIds[regionCount] = Js5List.maps.getGroupId("m" + var5 + "_" + var6);
+					regionLandArchiveIds[regionCount] = Js5List.maps.getGroupId("l" + var5 + "_" + var6);
+					++regionCount;
+				}
+			}
+
+			method3708(var2, var3, true);
+		} else {
+			System.out.println("READ DYNAMIC");
+			var2 = var1.readUnsignedShort();
+			var3 = var1.readUShortA();
+			currentRegionX = var2;
+			currentRegionY = var3;
+			boolean var15 = true;
+
+			var1.initBitAccess();
+
+			int var8;
+			int var9;
+			for (var6 = 0; var6 < 4; ++var6) {
+				for (var7 = 0; var7 < 13; ++var7) {
+					for (var8 = 0; var8 < 13; ++var8) {
+						var9 = var1.readBits(1);
+						if (var9 == 1) {
+							instanceChunkTemplates[var6][var7][var8] = var1.readBits(26);
+						} else {
+							instanceChunkTemplates[var6][var7][var8] = -1;
+						}
+					}
+				}
+			}
+
+			var1.finishBitAccess();
+
+			int totalLegitChunks = 0;
+			int totalChunks[] = new int[676];
+			for (int z = 0; z < 4; z++) {
+				for (int x = 0; x < 13; x++) {
+					for (int y = 0; y < 13; y++) {
+						int tileBits = instanceChunkTemplates[z][x][y];
+						if (tileBits != -1) {
+							int xCoord = tileBits >> 14 & 0x3ff;
+							int yCoord = tileBits >> 3 & 0x7ff;
+							int mapRegion = (xCoord / 8 << 8) + yCoord / 8;
+							for (int idx = 0; idx < totalLegitChunks; idx++) {
+								if (totalChunks[idx] != mapRegion)
+									continue;
+								mapRegion = -1;
+
+							}
+							if (mapRegion != -1)
+								totalChunks[totalLegitChunks++] = mapRegion;
+						}
+					}
+				}
+			}
+
+
+			regions = new int[totalLegitChunks];
+			regionMapArchiveIds = new int[totalLegitChunks];
+			regionLandArchiveIds = new int[totalLegitChunks];
+			regionLandArchives = new byte[totalLegitChunks][];
+			regionMapArchives = new byte[totalLegitChunks][];
+			var5 = 0;
+
+			for (var6 = 0; var6 < 4; ++var6) {
+				for (var7 = 0; var7 < 13; ++var7) {
+					for (var8 = 0; var8 < 13; ++var8) {
+						var9 = instanceChunkTemplates[var6][var7][var8];
+						if (var9 != -1) {
+							int var10 = var9 >> 14 & 1023;
+							int var11 = var9 >> 3 & 2047;
+							int var12 = (var10 / 8 << 8) + var11 / 8;
+
+							int var13;
+							for (var13 = 0; var13 < var5; ++var13) {
+								if (regions[var13] == var12) {
+									var12 = -1;
+									break;
+								}
+							}
+
+							if (var12 != -1) {
+								regions[var5] = var12;
+								var13 = var12 >> 8 & 255;
+								int var14 = var12 & 255;
+								regionMapArchiveIds[var5] = Js5List.maps.getGroupId("m" + var13 + "_" + var14);
+								regionLandArchiveIds[var5] = Js5List.maps.getGroupId("l" + var13 + "_" + var14);
+								++var5;
+							}
+						}
+					}
+				}
+			}
+
+			method3708(var2, var3, !var15);
+		}
+
+	}
+
+	private void method3708(int var2, int var3, boolean b) {
+
+		setGameState(GameState.LOADING);
+		drawLoadingMessage("Loading - please wait.");
+		baseX = (currentRegionX - 6) * 8;
+		baseY = (currentRegionY - 6) * 8;
+
+		int dx = baseX - previousAbsoluteX;
+		int dy = baseY - previousAbsoluteY;
+		previousAbsoluteX = baseX;
+		previousAbsoluteY = baseY;
+		for (int index = 0; index < 65536; index++) {
+			Npc npc = npcs[index];
+			if (npc != null) {
+				for (int poiint = 0; poiint < 10; poiint++) {
+					npc.pathX[poiint] -= dx;
+					npc.pathY[poiint] -= dy;
+				}
+				npc.x -= dx * 128;
+				npc.y -= dy * 128;
+			}
+		}
+		for (int index = 0; index < maxPlayers; index++) {
+			Player player = players[index];
+			if (player != null) {
+				for (int i31 = 0; i31 < 10; i31++) {
+					player.pathX[i31] -= dx;
+					player.pathY[i31] -= dy;
+				}
+				player.x -= dx * 128;
+				player.y -= dy * 128;
+			}
+		}
+		loadingMap = true;
+		byte startX = 0;
+		byte endX = 104;
+		byte stepX = 1;
+		if (dx < 0) {
+			startX = 103;
+			endX = -1;
+			stepX = -1;
+		}
+		byte startY = 0;
+		byte endY = 104;
+		byte stepY = 1;
+		if (dy < 0) {
+			startY = 103;
+			endY = -1;
+			stepY = -1;
+		}
+		for (int x = startX; x != endX; x += stepX) {
+			for (int y = startY; y != endY; y += stepY) {
+				int shiftedX = x + dx;
+				int shiftedY = y + dy;
+				for (int plane = 0; plane < 4; plane++)
+					if (shiftedX >= 0 && shiftedY >= 0 && shiftedX < 104 && shiftedY < 104)
+						groundItems[plane][x][y] = groundItems[plane][shiftedX][shiftedY];
+					else
+						groundItems[plane][x][y] = null;
+			}
+		}
+		for (SpawnedObject object = (SpawnedObject) spawns
+				.reverseGetFirst(); object != null; object = (SpawnedObject) spawns
+				.reverseGetNext()) {
+			object.x -= dx;
+			object.y -= dy;
+			if (object.x < 0 || object.y < 0 || object.x >= 104
+					|| object.y >= 104)
+				object.remove();
+		}
+		if (destX != 0) {
+			destX -= dx;
+			destY -= dy;
+		}
+		inCutScene = false;
+	}
+
 	public static final int INTERFACE_ID = 47000;
 	public static final int BOXES64 = 28; // 28 * 64 boxes
 	private boolean spinClick;
@@ -20838,7 +20883,7 @@ public class Client extends GameEngine implements RSClient {
 		anIntArray981 = new int[anInt975];
 		anIntArray982 = new int[anInt975];
 		aStringArray983 = new String[anInt975];
-		anInt985 = -1;
+		lastKnownPlane = -1;
 		hitMarks = new Sprite[20];
 		characterDesignColours = new int[5];
 		aBoolean994 = false;
@@ -20876,7 +20921,7 @@ public class Client extends GameEngine implements RSClient {
 		aString1121 = "";
 		atPlayerActions = new String[8];
 		atPlayerArray = new boolean[8];
-		constructRegionData = new int[4][13][13];
+		instanceChunkTemplates = new int[4][13][13];
 		mapIconSprite = new Sprite[1000];
 		inTutorialIsland = false;
 		aBoolean1149 = false;
@@ -20944,7 +20989,7 @@ public class Client extends GameEngine implements RSClient {
 
 	private IndexedImage titleButton;
 	private int ignoreCount;
-	private long longStartTime;
+
 	private int[][] anIntArrayArray825;
 	public int[] friendsNodeIDs;
 	private Deque[][][] groundItems;
@@ -21074,7 +21119,7 @@ public class Client extends GameEngine implements RSClient {
 	private final int[] anIntArray982;
 	private final String[] aStringArray983;
 	private int field556;
-	private int anInt985;
+	private int lastKnownPlane;
 	private int anInt986;
 	private Sprite[] hitMarks;
 	private int anInt989;
@@ -21116,7 +21161,7 @@ public class Client extends GameEngine implements RSClient {
 	private static final int[] SKILL_EXPERIENCE;
 	private int minimapState;
 	private int anInt1022;
-	private int loadingStage;
+
 	private Sprite scrollBar1;
 	private Sprite scrollBar2;
 	private int anInt1026;
@@ -21210,7 +21255,7 @@ public class Client extends GameEngine implements RSClient {
 	private final String[] atPlayerActions;
 	private final boolean[] atPlayerArray;
 	private final int[] atPlayerOptions = new int[8];
-	private final int[][][] constructRegionData;
+	private final int[][][] instanceChunkTemplates;
 	public final static int[] tabInterfaceIDs = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
 	private int cameraOffsetY;
 	public int menuActionRow;
@@ -21295,8 +21340,8 @@ public class Client extends GameEngine implements RSClient {
 	private CollisionMap[] collisionMaps;
 	public static int anIntArray1232[];
 	private int[] regions;
-	private int[] regionLandIds;
-	private int[] regionLocIds;
+	private int[] regionMapArchiveIds;
+	private int[] regionLandArchiveIds;
 	private int anInt1237;
 	private int anInt1238;
 	public final int anInt1239 = 100;
@@ -22061,6 +22106,19 @@ public class Client extends GameEngine implements RSClient {
 			if (state != 20 && state != 40) {
 				//Resets some Socket
 			}
+
+
+			jagexNetThread.writePacket(true);
+
+			if (gameState == 25) {
+				System.out.println("RESETTTT");
+				Client.loadingType = 0;
+				Client.mapsLoaded = 0;
+				Client.totalMaps = 1;
+				Client.objectsLoaded = 0;
+				Client.totalObjects = 1;
+			}
+
 
 			if (state != 5 && state != 10) { // L: 1270
 				if (state == 20) { // L: 1278
@@ -23011,7 +23069,7 @@ public class Client extends GameEngine implements RSClient {
 
 	@Override
 	public int[][][] getInstanceTemplateChunks() {
-		return constructRegionData;
+		return instanceChunkTemplates;
 	}
 
 	@Override

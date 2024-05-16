@@ -822,6 +822,21 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 		System.out.println("Loaded [" + totalObjects + "] Object Definitions.");
 	}
 
+	public final boolean needsModelFiles() {
+		if (this.objectTypes == null) {
+			return true;
+		} else {
+			boolean var1 = true;
+
+			for (int var2 = 0; var2 < this.objectTypes.length; ++var2) {
+				System.out.println("sdfsdfds");
+				var1 &= Js5List.models.tryLoadFile(this.objectTypes[var2] & 65535, 0);
+			}
+
+			return var1;
+		}
+	}
+
 	public boolean modelTypeCached(int var1) {
 		if (this.objectTypes != null) {
 			for (int var4 = 0; var4 < this.objectTypes.length; ++var4) {

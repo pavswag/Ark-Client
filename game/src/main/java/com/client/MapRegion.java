@@ -6,6 +6,7 @@ import com.client.definitions.FloorUnderlayDefinition;
 import com.client.definitions.ObjectDefinition;
 import com.client.utilities.ChunkUtil;
 import com.client.utilities.ObjectKeyUtil;
+import net.runelite.api.Scene;
 
 public final class MapRegion {
 
@@ -500,18 +501,18 @@ public final class MapRegion {
 		}
 	}
 
-	private void renderObject(int y, SceneGraph scene, CollisionMap class11, int type, int plane, int x, int objectId, int face) {
-		if (lowMem && (tileFlags[0][x][y] & BRIDGE_TILE) == 0) {
-			if ((tileFlags[plane][x][y] & 0x10) != 0) {
+	private void renderObject(int var2, SceneGraph scene, CollisionMap class11, int type, int var0, int var1, int objectId, int face) {
+		if (lowMem && (tileFlags[0][var1][var2] & BRIDGE_TILE) == 0) {
+			if ((tileFlags[var0][var1][var2] & 0x10) != 0) {
 				return;
 			}
 
-			if (getCollisionPlane(y, plane, x) != anInt131) {
+			if (getCollisionPlane(var2, var0, var1) != anInt131) {
 				return;
 			}
 		}
-		if (plane < maximumPlane) {
-			maximumPlane = plane;
+		if (var0 < maximumPlane) {
+			maximumPlane = var0;
 		}
 		int mX = Client.instance.currentRegionX - 6;
 		int mY = Client.instance.currentRegionY - 6;
@@ -533,34 +534,34 @@ public final class MapRegion {
 
 		int editX;
 		int editX2;
-		if (x + objectSizeX <= 104) {
-			editX = x + (objectSizeX >> 1);
-			editX2 = x + (1 + objectSizeX >> 1);
+		if (var1 + objectSizeX <= 104) {
+			editX = var1 + (objectSizeX >> 1);
+			editX2 = var1 + (1 + objectSizeX >> 1);
 		} else {
-			editX = x;
-			editX2 = 1 + x;
+			editX = var1;
+			editX2 = 1 + var1;
 		}
 
 		int editY;
 		int editY2;
-		if (objectSizeY + y <= 104) {
-			editY = (objectSizeY >> 1) + y;
-			editY2 = y + (1 + objectSizeY >> 1);
+		if (objectSizeY + var2 <= 104) {
+			editY = (objectSizeY >> 1) + var2;
+			editY2 = var2 + (1 + objectSizeY >> 1);
 		} else {
-			editY = y;
-			editY2 = 1 + y;
+			editY = var2;
+			editY2 = 1 + var2;
 		}
-		center = tileHeights[plane][editX][editY];
-		east = tileHeights[plane][editX2][editY];
-		northEast = tileHeights[plane][editX2][editY2];
-		north = tileHeights[plane][editX][editY2];
+		center = tileHeights[var0][editX][editY];
+		east = tileHeights[var0][editX2][editY];
+		northEast = tileHeights[var0][editX2][editY2];
+		north = tileHeights[var0][editX][editY2];
 
-		int[][] heights = tileHeights[plane];
+		int[][] heights = tileHeights[var0];
 		int mean = center + east + northEast + north >> 2;
-		int vertexX = (x << 7) + (objectSizeX << 6);
-		int vertexY = (y << 7) + (objectSizeY << 6);
+		int vertexX = (var1 << 7) + (objectSizeX << 6);
+		int vertexY = (var2 << 7) + (objectSizeY << 6);
 
-		long key = (long) ((long) face << 20 | (long) type << 14 | ((long) y << 7 | x) + 0x40000000);
+		long key = (long) ((long) face << 20 | (long) type << 14 | ((long) var2 << 7 | var1) + 0x40000000);
 		if (definition.interactive == 0)
 			key |= ~0x7fffffffffffffffL;
 		if(definition.supportItems == 1) {
@@ -576,11 +577,11 @@ public final class MapRegion {
 			if (definition.animation == -1 && definition.transforms == null) {
 				obj = definition.getEntity(22, face, heights, vertexX, mean, vertexY);
 			} else {
-				obj = new SceneObject(objectId, face, 22, plane, x, y, definition.animation,definition.randomAnimStart);
+				obj = new SceneObject(objectId, face, 22, var0, var1, var2, definition.animation,definition.randomAnimStart);
 			}
-			scene.addGroundDecoration(plane, mean, y, ((Renderable) (obj)), config, key, x);
+			scene.addGroundDecoration(var0, mean, var2, ((Renderable) (obj)), config, key, var1);
 			if (definition.solid == 1 && definition.interactive != 0 && class11 != null) {
-				class11.block(x, y);
+				class11.block(var1, var2);
 			}
 			return;
 		}
@@ -589,7 +590,7 @@ public final class MapRegion {
 			if (definition.animation == -1 && definition.transforms == null) {
 				obj1 = definition.getEntity(10, face, heights, vertexX, mean, vertexY);
 			} else {
-				obj1 = new SceneObject(objectId, face, 10, plane, x, y, definition.animation, definition.randomAnimStart);
+				obj1 = new SceneObject(objectId, face, 10, var0, var1, var2, definition.animation, definition.randomAnimStart);
 			}
 			if (obj1 != null) {
 				int i5 = 0;
@@ -605,7 +606,7 @@ public final class MapRegion {
 					j4 = definition.sizeX;
 					l4 = definition.sizeY;
 				}
-				if (scene.addTiledObject(key, config, mean, l4, ((Renderable) (obj1)), j4, plane, i5, y, x) && definition.clipped) {
+				if (scene.addTiledObject(key, config, mean, l4, ((Renderable) (obj1)), j4, var0, i5, var2, var1) && definition.clipped) {
 					Renderable model = definition.getEntity(10, face, heights, vertexX, mean, vertexY);
 
 					int var24 = 0;
@@ -617,8 +618,8 @@ public final class MapRegion {
 					}
 					for (int j5 = 0; j5 <= j4; j5++) {
 						for (int k5 = 0; k5 <= l4; k5++) {
-							if (var24 > shading[plane][x + j5][y + k5]) {
-								shading[plane][x + j5][y + k5] = (byte) var24;
+							if (var24 > shading[var0][var1 + j5][var2 + k5]) {
+								shading[var0][var1 + j5][var2 + k5] = (byte) var24;
 							}
 						}
 
@@ -626,7 +627,7 @@ public final class MapRegion {
 				}
 			}
 			if (definition.solid == 1 && class11 != null) {
-				class11.method212(definition.impenetrable, definition.sizeX, definition.sizeY, x, y, face);
+				class11.method212(definition.impenetrable, definition.sizeX, definition.sizeY, var1, var2, face);
 			}
 			return;
 		}
@@ -635,15 +636,15 @@ public final class MapRegion {
 			if (definition.animation == -1 && definition.transforms == null) {
 				obj2 = definition.getEntity(type, face, heights, vertexX, mean, vertexY);
 			} else {
-				obj2 = new SceneObject(objectId, face, type, plane, x, y, definition.animation, definition.randomAnimStart);
+				obj2 = new SceneObject(objectId, face, type, var0, var1, var2, definition.animation, definition.randomAnimStart);
 			}
-			scene.addTiledObject(key, config, mean, 1, ((Renderable) (obj2)), 1, plane, 0, y, x);
-			if (type <= 17 && type != 13 && plane > 0) {
-				anIntArrayArrayArray135[plane][x][y] |= 0x924;
+			scene.addTiledObject(key, config, mean, 1, ((Renderable) (obj2)), 1, var0, 0, var2, var1);
+			if (type <= 17 && type != 13 && var0 > 0) {
+				anIntArrayArrayArray135[var0][var1][var2] |= 0x924;
 			}
 			if (definition.solid == 1 && class11 != null) {
 				class11.method212(definition.impenetrable, definition.sizeX, definition.sizeY,
-						x, y, face);
+						var1, var2, face);
 			}
 			return;
 		}
@@ -652,48 +653,48 @@ public final class MapRegion {
 			if (definition.animation == -1 && definition.transforms == null) {
 				obj3 = definition.getEntity(0, face, heights, vertexX, mean, vertexY);
 			} else {
-				obj3 = new SceneObject(objectId, face, 0, plane, x, y, definition.animation, definition.randomAnimStart);
+				obj3 = new SceneObject(objectId, face, 0, var0, var1, var2, definition.animation, definition.randomAnimStart);
 			}
-			scene.addWallObject(anIntArray152[face], ((Renderable) (obj3)), key, y, config, x, null, mean,
-					0, plane);
+			scene.addWallObject(anIntArray152[face], ((Renderable) (obj3)), key, var2, config, var1, null, mean,
+					0, var0);
 			if (face == 0) {
 				if (definition.clipped) {
-					shading[plane][x][y] = 50;
-					shading[plane][x][y + 1] = 50;
+					shading[var0][var1][var2] = 50;
+					shading[var0][var1][var2 + 1] = 50;
 				}
 				if (definition.modelClipped) {
-					anIntArrayArrayArray135[plane][x][y] |= 0x249;
+					anIntArrayArrayArray135[var0][var1][var2] |= 0x249;
 				}
 			} else if (face == 1) {
 				if (definition.clipped) {
-					shading[plane][x][y + 1] = 50;
-					shading[plane][x + 1][y + 1] = 50;
+					shading[var0][var1][var2 + 1] = 50;
+					shading[var0][var1 + 1][var2 + 1] = 50;
 				}
 				if (definition.modelClipped) {
-					anIntArrayArrayArray135[plane][x][y + 1] |= 0x492;
+					anIntArrayArrayArray135[var0][var1][var2 + 1] |= 0x492;
 				}
 			} else if (face == 2) {
 				if (definition.clipped) {
-					shading[plane][x + 1][y] = 50;
-					shading[plane][x + 1][y + 1] = 50;
+					shading[var0][var1 + 1][var2] = 50;
+					shading[var0][var1 + 1][var2 + 1] = 50;
 				}
 				if (definition.modelClipped) {
-					anIntArrayArrayArray135[plane][x + 1][y] |= 0x249;
+					anIntArrayArrayArray135[var0][var1 + 1][var2] |= 0x249;
 				}
 			} else {
 				if (definition.clipped) {
-					shading[plane][x][y] = 50;
-					shading[plane][x + 1][y] = 50;
+					shading[var0][var1][var2] = 50;
+					shading[var0][var1 + 1][var2] = 50;
 				}
 				if (definition.modelClipped) {
-					anIntArrayArrayArray135[plane][x][y] |= 0x492;
+					anIntArrayArrayArray135[var0][var1][var2] |= 0x492;
 				}
 			}
 			if (definition.solid == 1 && class11 != null) {
-				class11.method211(y, face, x, type, definition.impenetrable);
+				class11.method211(var2, face, var1, type, definition.impenetrable);
 			}
 			if (definition.decorDisplacement != 16) {
-				scene.method290(y, definition.decorDisplacement, x, plane);
+				scene.method290(var2, definition.decorDisplacement, var1, var0);
 			}
 			return;
 		}
@@ -702,23 +703,23 @@ public final class MapRegion {
 			if (definition.animation == -1 && definition.transforms == null) {
 				obj4 = definition.getEntity(1, face, heights, vertexX, mean, vertexY);
 			} else {
-				obj4 = new SceneObject(objectId, face, 1, plane, x, y, definition.animation, definition.randomAnimStart);
+				obj4 = new SceneObject(objectId, face, 1, var0, var1, var2, definition.animation, definition.randomAnimStart);
 			}
-			scene.addWallObject(anIntArray140[face], ((Renderable) (obj4)), key, y, config, x, null, mean,
-					0, plane);
+			scene.addWallObject(anIntArray140[face], ((Renderable) (obj4)), key, var2, config, var1, null, mean,
+					0, var0);
 			if (definition.clipped) {
 				if (face == 0) {
-					shading[plane][x][y + 1] = 50;
+					shading[var0][var1][var2 + 1] = 50;
 				} else if (face == 1) {
-					shading[plane][x + 1][y + 1] = 50;
+					shading[var0][var1 + 1][var2 + 1] = 50;
 				} else if (face == 2) {
-					shading[plane][x + 1][y] = 50;
+					shading[var0][var1 + 1][var2] = 50;
 				} else {
-					shading[plane][x][y] = 50;
+					shading[var0][var1][var2] = 50;
 				}
 			}
 			if (definition.solid == 1 && class11 != null) {
-				class11.method211(y, face, x, type, definition.impenetrable);
+				class11.method211(var2, face, var1, type, definition.impenetrable);
 			}
 			return;
 		}
@@ -730,31 +731,31 @@ public final class MapRegion {
 				obj11 = definition.getEntity(2, 4 + face, heights, vertexX, mean, vertexY);
 				obj12 = definition.getEntity(2, i3, heights, vertexX, mean, vertexY);
 			} else {
-				obj11 = new SceneObject(objectId, 4 + face, 2, plane, x, y, definition.animation, definition.randomAnimStart);
-				obj12 = new SceneObject(objectId, 4 + face, 2, plane, x, y, definition.animation, definition.randomAnimStart);
+				obj11 = new SceneObject(objectId, 4 + face, 2, var0, var1, var2, definition.animation, definition.randomAnimStart);
+				obj12 = new SceneObject(objectId, 4 + face, 2, var0, var1, var2, definition.animation, definition.randomAnimStart);
 			}
-			scene.addWallObject(anIntArray152[face], ((Renderable) (obj11)), key, y, config, x,
-					((Renderable) (obj12)), mean, anIntArray152[i3], plane);
+			scene.addWallObject(anIntArray152[face], ((Renderable) (obj11)), key, var2, config, var1,
+					((Renderable) (obj12)), mean, anIntArray152[i3], var0);
 			if (definition.modelClipped) {
 				if (face == 0) {
-					anIntArrayArrayArray135[plane][x][y] |= 0x249;
-					anIntArrayArrayArray135[plane][x][y + 1] |= 0x492;
+					anIntArrayArrayArray135[var0][var1][var2] |= 0x249;
+					anIntArrayArrayArray135[var0][var1][var2 + 1] |= 0x492;
 				} else if (face == 1) {
-					anIntArrayArrayArray135[plane][x][y + 1] |= 0x492;
-					anIntArrayArrayArray135[plane][x + 1][y] |= 0x249;
+					anIntArrayArrayArray135[var0][var1][var2 + 1] |= 0x492;
+					anIntArrayArrayArray135[var0][var1 + 1][var2] |= 0x249;
 				} else if (face == 2) {
-					anIntArrayArrayArray135[plane][x + 1][y] |= 0x249;
-					anIntArrayArrayArray135[plane][x][y] |= 0x492;
+					anIntArrayArrayArray135[var0][var1 + 1][var2] |= 0x249;
+					anIntArrayArrayArray135[var0][var1][var2] |= 0x492;
 				} else {
-					anIntArrayArrayArray135[plane][x][y] |= 0x492;
-					anIntArrayArrayArray135[plane][x][y] |= 0x249;
+					anIntArrayArrayArray135[var0][var1][var2] |= 0x492;
+					anIntArrayArrayArray135[var0][var1][var2] |= 0x249;
 				}
 			}
 			if (definition.solid == 1 && class11 != null) {
-				class11.method211(y, face, x, type, definition.impenetrable);
+				class11.method211(var2, face, var1, type, definition.impenetrable);
 			}
 			if (definition.decorDisplacement != 16) {
-				scene.method290(y, definition.decorDisplacement, x, plane);
+				scene.method290(var2, definition.decorDisplacement, var1, var0);
 			}
 			return;
 		}
@@ -763,23 +764,23 @@ public final class MapRegion {
 			if (definition.animation == -1 && definition.transforms == null) {
 				obj5 = definition.getEntity(3, face, heights, vertexX, mean, vertexY);
 			} else {
-				obj5 = new SceneObject(objectId, face, 3, plane, x, y, definition.animation, definition.randomAnimStart);
+				obj5 = new SceneObject(objectId, face, 3, var0, var1, var2, definition.animation, definition.randomAnimStart);
 			}
-			scene.addWallObject(anIntArray140[face], ((Renderable) (obj5)), key, y, config, x, null, mean,
-					0, plane);
+			scene.addWallObject(anIntArray140[face], ((Renderable) (obj5)), key, var2, config, var1, null, mean,
+					0, var0);
 			if (definition.clipped) {
 				if (face == 0) {
-					shading[plane][x][y + 1] = 50;
+					shading[var0][var1][var2 + 1] = 50;
 				} else if (face == 1) {
-					shading[plane][x + 1][y + 1] = 50;
+					shading[var0][var1 + 1][var2 + 1] = 50;
 				} else if (face == 2) {
-					shading[plane][x + 1][y] = 50;
+					shading[var0][var1 + 1][var2] = 50;
 				} else {
-					shading[plane][x][y] = 50;
+					shading[var0][var1][var2] = 50;
 				}
 			}
 			if (definition.solid == 1 && class11 != null) {
-				class11.method211(y, face, x, type, definition.impenetrable);
+				class11.method211(var2, face, var1, type, definition.impenetrable);
 			}
 			return;
 		}
@@ -788,12 +789,12 @@ public final class MapRegion {
 			if (definition.animation == -1 && definition.transforms == null) {
 				obj6 = definition.getEntity(type, face, heights, vertexX, mean, vertexY);
 			} else {
-				obj6 = new SceneObject(objectId, face, type, plane, x, y, definition.animation, definition.randomAnimStart);
+				obj6 = new SceneObject(objectId, face, type, var0, var1, var2, definition.animation, definition.randomAnimStart);
 			}
-			scene.addTiledObject(key, config, mean, 1, ((Renderable) (obj6)), 1, plane, 0, y, x);
+			scene.addTiledObject(key, config, mean, 1, ((Renderable) (obj6)), 1, var0, 0, var2, var1);
 			if (definition.solid == 1 && class11 != null) {
 				class11.method212(definition.impenetrable, definition.sizeX, definition.sizeY,
-						x, y, face);
+						var1, var2, face);
 			}
 			return;
 		}
@@ -803,15 +804,15 @@ public final class MapRegion {
 			if (definition.animation == -1 && definition.transforms == null) {
 				obj7 = definition.getEntity(4, 0, heights, vertexX, mean, vertexY);
 			} else {
-				obj7 = new SceneObject(objectId, 0, 4, plane, x, y, definition.animation, definition.randomAnimStart);
+				obj7 = new SceneObject(objectId, 0, 4, var0, var1, var2, definition.animation, definition.randomAnimStart);
 			}
-			scene.addWallDecoration(key, y, face * 512, plane, 0, mean, ((Renderable) (obj7)), x, config, 0,
+			scene.addWallDecoration(key, var2, face * 512, var0, 0, mean, ((Renderable) (obj7)), var1, config, 0,
 					anIntArray152[face]);
 			return;
 		}
 		if (type == 5) {
 			int i4 = 16;
-			long k4 = scene.getWallObjectUid(plane, x, y);
+			long k4 = scene.getWallObjectUid(var0, var1, var2);
 			if (k4 > 0) {
 				i4 = ObjectDefinition.lookup(ObjectKeyUtil.getObjectId(k4)).decorDisplacement;
 			}
@@ -819,10 +820,10 @@ public final class MapRegion {
 			if (definition.animation == -1 && definition.transforms == null) {
 				obj13 = definition.getEntity(4, 0, heights, vertexX, mean, vertexY);
 			} else {
-				obj13 = new SceneObject(objectId, 0, 4, plane, x, y, definition.animation, definition.randomAnimStart);
+				obj13 = new SceneObject(objectId, 0, 4, var0, var1, var2, definition.animation, definition.randomAnimStart);
 			}
-			scene.addWallDecoration(key, y, face * 512, plane, COSINE_VERTICES[face] * i4, mean,
-					((Renderable) (obj13)), x, config, SINE_VERTICIES[face] * i4, anIntArray152[face]);
+			scene.addWallDecoration(key, var2, face * 512, var0, COSINE_VERTICES[face] * i4, mean,
+					((Renderable) (obj13)), var1, config, SINE_VERTICIES[face] * i4, anIntArray152[face]);
 			return;
 		}
 		if (type == 6) {
@@ -830,9 +831,9 @@ public final class MapRegion {
 			if (definition.animation == -1 && definition.transforms == null) {
 				obj8 = definition.getEntity(4, 0, heights, vertexX, mean, vertexY);
 			} else {
-				obj8 = new SceneObject(objectId, 0, 4, plane, x, y, definition.animation, definition.randomAnimStart);
+				obj8 = new SceneObject(objectId, 0, 4, var0, var1, var2, definition.animation, definition.randomAnimStart);
 			}
-			scene.addWallDecoration(key, y, face, plane, 0, mean, ((Renderable) (obj8)), x, config, 0, 256);
+			scene.addWallDecoration(key, var2, face, var0, 0, mean, ((Renderable) (obj8)), var1, config, 0, 256);
 			return;
 		}
 		if (type == 7) {
@@ -840,9 +841,9 @@ public final class MapRegion {
 			if (definition.animation == -1 && definition.transforms == null) {
 				obj9 = definition.getEntity(4, 0, heights, vertexX, mean, vertexY);
 			} else {
-				obj9 = new SceneObject(objectId, 0, 4, plane, x, y, definition.animation, definition.randomAnimStart);
+				obj9 = new SceneObject(objectId, 0, 4, var0, var1, var2, definition.animation, definition.randomAnimStart);
 			}
-			scene.addWallDecoration(key, y, face, plane, 0, mean, ((Renderable) (obj9)), x, config, 0, 512);
+			scene.addWallDecoration(key, var2, face, var0, 0, mean, ((Renderable) (obj9)), var1, config, 0, 512);
 			return;
 		}
 		if (type == 8) {
@@ -850,9 +851,9 @@ public final class MapRegion {
 			if (definition.animation == -1 && definition.transforms == null) {
 				obj10 = definition.getEntity(4, 0, heights, vertexX, mean, vertexY);
 			} else {
-				obj10 = new SceneObject(objectId, 0, 4, plane, x, y, definition.animation, definition.randomAnimStart);
+				obj10 = new SceneObject(objectId, 0, 4, var0, var1, var2, definition.animation, definition.randomAnimStart);
 			}
-			scene.addWallDecoration(key, y, face, plane, 0, mean, ((Renderable) (obj10)), x, config, 0, 768);
+			scene.addWallDecoration(key, var2, face, var0, 0, mean, ((Renderable) (obj10)), var1, config, 0, 768);
 		}
 	}
 
@@ -1393,49 +1394,154 @@ public final class MapRegion {
 		}
 	}
 
-	public static boolean method189(int i, byte[] is, int i_250_) // xxx bad
-	// method,
-	// decompiled
-	// with JODE
-	{
-		boolean bool = true;
-		Buffer stream = new Buffer(is);
-		int i_252_ = -1;
-		for (;;) {
-			int i_253_ = stream.readUnsignedIntSmartShortCompat();
-			if (i_253_ == 0)
-				break;
-			i_252_ += i_253_;
-			int i_254_ = 0;
-			boolean bool_255_ = false;
-			for (;;) {
-				if (bool_255_) {
-					int i_256_ = stream.readUSmart();
-					if (i_256_ == 0)
-						break;
-					stream.readUnsignedByte();
-				} else {
-					int i_257_ = stream.readUSmart();
-					if (i_257_ == 0)
-						break;
-					i_254_ += i_257_ - 1;
-					int i_258_ = i_254_ & 0x3f;
-					int i_259_ = i_254_ >> 6 & 0x3f;
-					int i_260_ = stream.readUnsignedByte() >> 2;
-					int i_261_ = i_259_ + i;
-					int i_262_ = i_258_ + i_250_;
-					if (i_261_ > 0 && i_262_ > 0 && i_261_ < 103 && i_262_ < 103) {
-						ObjectDefinition class46 = ObjectDefinition.lookup(i_252_);
-						if (i_260_ != 22 || !lowMem || class46.interactive != 0 || class46.obstructive) {
-							bool &= class46.modelCached();
-							bool_255_ = true;
+	public static boolean method787(byte[] var0, int var1, int var2) {
+		boolean var3 = true;
+		Buffer var4 = new Buffer(var0);
+		int var5 = -1;
+
+		label57:
+		while (true) {
+			int var6 = var4.get_unsignedsmart_byteorshort_increments();
+			if (var6 == 0) {
+				return var3;
+			}
+
+			var5 += var6;
+			int var7 = 0;
+			boolean var8 = false;
+
+			while (true) {
+				int var9;
+				while (!var8) {
+					var9 = var4.get_unsignedsmart_byteorshort();
+					if (var9 == 0) {
+						continue label57;
+					}
+
+					var7 += var9 - 1;
+					int var10 = var7 & 63;
+					int var11 = var7 >> 6 & 63;
+					int var12 = var4.readUnsignedByte() >> 2;
+					int var13 = var11 + var1;
+					int var14 = var10 + var2;
+					if (var13 > 0 && var14 > 0 && var13 < 103 && var14 < 103) {
+						ObjectDefinition def = ObjectDefinition.lookup(var5);
+						System.out.println("LOOKUP");
+						if (var12 != 22 || !lowMem || def.interactive != 0 || def.obstructive) {
+							if (!def.needsModelFiles()) {
+								++Client.objectsLoaded;
+								var3 = false;
+							}
+
+							var8 = true;
 						}
+					}
+				}
+
+				var9 = var4.get_unsignedsmart_byteorshort();
+				if (var9 == 0) {
+					break;
+				}
+
+				var4.readUnsignedByte();
+			}
+		}
+	}
+
+
+	public static int method5908(int var0, int var1, int var2, int var3, int var4, int var5) {
+		if ((var5 & 1) == 1) {
+			int var6 = var3;
+			var3 = var4;
+			var4 = var6;
+		}
+
+		var2 &= 3;
+		if (var2 == 0) {
+			return var1;
+		} else if (var2 == 1) {
+			return 7 - var0 - (var3 - 1);
+		} else {
+			return var2 == 2 ? 7 - var1 - (var4 - 1) : var0;
+		}
+	}
+
+
+	 public void method2260(byte[] var0, int var1, int var2, int var3, int var4, int var5, int var6, int var7, SceneGraph var8, CollisionMap[] var9) {
+		Buffer var10 = new Buffer(var0);
+		int var11 = -1;
+
+		while (true) {
+			int var12 = var10.readIncrSmallSmart();
+			if (var12 == 0) {
+				return;
+			}
+
+			var11 += var12;
+			int var13 = 0;
+
+			while (true) {
+				int var14 = var10.readUShortSmart1();
+				if (var14 == 0) {
+					break;
+				}
+
+				var13 += var14 - 1;
+				int var15 = var13 & 63;
+				int var16 = var13 >> 6 & 63;
+				int var17 = var13 >> 12;
+				int var18 = var10.readUnsignedByte();
+				int var19 = var18 >> 2;
+				int var20 = var18 & 3;
+				if (var17 == var4 && var16 >= var5 && var16 < var5 + 8 && var15 >= var6 && var15 < var6 + 8) {
+					ObjectDefinition var21 = ObjectDefinition.lookup(var11);
+					int var24 = var16 & 7;
+					int var25 = var15 & 7;
+					int var27 = var21.sizeX;
+					int var28 = var21.sizeY;
+					int var29;
+					if ((var20 & 1) == 1) {
+						var29 = var27;
+						var27 = var28;
+						var28 = var29;
+					}
+
+					int var26 = var7 & 3;
+					int var23;
+					if (var26 == 0) {
+						var23 = var24;
+					} else if (var26 == 1) {
+						var23 = var25;
+					} else if (var26 == 2) {
+						var23 = 7 - var24 - (var27 - 1);
+					} else {
+						var23 = 7 - var25 - (var28 - 1);
+					}
+
+					var29 = var23 + var2;
+					int var30 = var3 + method5908(var16 & 7, var15 & 7, var7, var21.sizeX, var21.sizeY, var20);
+					if (var29 > 0 && var30 > 0 && var29 < 103 && var30 < 103) {
+						int var31 = var1;
+						if ((tileFlags[1][var29][var30] & 2) == 2) {
+							var31 = var1 - 1;
+						}
+
+						CollisionMap var32 = null;
+						if (var31 >= 0) {
+							var32 = var9[var31];
+						}
+
+						addObjects(var1, var29, var30, var11, var20 + var7 & 3, var19, var8, var32);
 					}
 				}
 			}
 		}
-		return bool;
 	}
+
+	public final void addObjects(int var0, int var1, int var2, int var3, int var4, int var5, SceneGraph var6, CollisionMap var7) {
+		renderObject(var2,var6,var7,var5,var0,var1,var3,var4);
+	}
+
 
 	public final void loadObjectsInScene(int i, CollisionMap aclass11[], int j, SceneGraph scene, byte abyte0[]) {
 		label0: {

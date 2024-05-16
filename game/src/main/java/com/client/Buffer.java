@@ -126,6 +126,35 @@ public final class Buffer extends Cacheable implements RSBuffer {
         pos = 0;
     }
 
+    public int get_unsignedsmart_byteorshort() {
+        int var2 = this.payload[this.pos] & 255;
+        return var2 < 128 ? this.readUnsignedByte() : this.readUShort() - 32768;
+    }
+
+
+    public int get_unsignedsmart_byteorshort_increments() {
+        int var2 = 0;
+
+        int var3;
+        for (var3 = this.readUShortSmart(); var3 == 32767; var3 = this.readUShortSmart()) {
+            var2 += 32767;
+        }
+
+        return var2 + var3;
+    }
+
+    public int readIncrSmallSmart() {
+        int var1 = 0;
+
+        int var2;
+        for (var2 = this.readUShortSmart(); var2 == 32767; var2 = this.readUShortSmart()) {
+            var1 += 32767;
+        }
+
+        var1 += var2;
+        return var1;
+    }
+
     public void createFrame(int i) {
         if (Configuration.developerMode)
             Client.instance.devConsole.print_message("Outgoing Packet " + i, 0);
@@ -407,6 +436,12 @@ public final class Buffer extends Cacheable implements RSBuffer {
         var2 += var3;
         return var2;
     }
+
+    public int readUShortSmart1() {
+        int var1 = this.payload[this.pos] & 255;
+        return var1 < 128 ? this.readUnsignedByte() : this.readUnsignedShort() - 32768;
+    }
+
 
     public int readUShortSmart() {
         int var2 = this.payload[this.pos] & 0xFF;
