@@ -12507,7 +12507,7 @@ public class Client extends GameEngine implements RSClient {
 					for (int index = 0; index < clanIcons.length; index++) {
 						clanIcons[index] = new Sprite("Clan Chat/Icons/" + index);
 					}
-					Sprite[] iconPack = new Sprite[300];
+					Sprite[] iconPack = new Sprite[304];
 					for (int index = 0; index < iconPack.length; index++) {
 						iconPack[index] = new Sprite("icon_pack/" + index);
 					}
