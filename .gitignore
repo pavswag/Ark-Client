@@ -177,7 +177,7 @@ buildNumber.properties
 
 *.pem
 *.cert
-game/proguard_obfuscation_map.txt
+proguard/proguard_obfuscation_map.txt
 
 game/online_hashes.json
 
