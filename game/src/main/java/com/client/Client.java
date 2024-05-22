@@ -9988,6 +9988,8 @@ public class Client extends GameEngine implements RSClient {
 							characterDisplay.recolor(anIntArray1204[0], anIntArray1204[characterDesignColours[l2]]);
 					}
 				int staticFrame = localPlayer.seqStandID;
+				if(characterDisplay == null)
+					return;
 				characterDisplay.prepareSkeleton();
 				characterDisplay.interpolate(SequenceDefinition.get(staticFrame).frameIDs[0]);
 				// characterDisplay.method479(64, 850, -30, -50, -30, true);
