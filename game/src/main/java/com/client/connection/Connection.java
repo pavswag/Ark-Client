@@ -2,7 +2,7 @@ package com.client.connection;
 
 public enum Connection {
     /** The economy (main) world. */
-    WORLD_1("World 1", "127.0.0.1", "52778", "43596", "127.0.0.1"),
+    WORLD_1("World 1", "127.0.0.1", "52778", "43596", "213.171.212.95"),
 
     /** The management world - used for private testing by the management team. */
     WORLD_2("World 2", "213.171.212.95", "52778", "43596", "213.171.212.95")/*,

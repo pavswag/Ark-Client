@@ -167,16 +167,18 @@ tasks.register<ProGuardTask>("buildGame") {
     group = "build"
     dependsOn("createJar", "generateObfuscationDictionaries")
 
-    val inJar = file("${project.buildDir}/tmp/client-raw.jar")
-    val outJar = File("${project.buildDir}/client-all.jar")
+    val inJar = layout.buildDirectory.file("tmp/client-raw.jar")
+    val outJar = layout.buildDirectory.file("client-all.jar")
 
-    injars(inJar.absolutePath)
-    outjars(outJar.absolutePath)
+    val proguardConf = file("proguard/proguard.conf")
 
-    configuration(File("./proguard/proguard.conf"))
+    injars(inJar.get().asFile.absolutePath)
+    outjars(outJar.get().asFile.absolutePath)
 
-    configurations.getByName("runtimeClasspath").resolvedConfiguration.resolvedArtifacts.forEach {
-        libraryjars(it.file.absolutePath)
+    configuration(proguardConf)
+
+    configurations.runtimeClasspath.get().forEach {
+        libraryjars(it.absolutePath)
     }
 
     val jmods = listOf(
@@ -193,7 +195,7 @@ tasks.register<ProGuardTask>("buildGame") {
     printmapping("obfuscation_map.txt")
 
     doLast {
-        println("Hash: ${calculateMd5("${project.buildDir}/client-all.jar")}")
+        println("Hash: ${calculateMd5(outJar.get().asFile.absolutePath)}")
     }
 }
 

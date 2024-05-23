@@ -182,3 +182,7 @@ proguard/proguard_obfuscation_map.txt
 game/online_hashes.json
 
 game/temp/
+proguard/package_obfuscation_dictionary.txt
+proguard/obfuscation_dictionary.txt
+proguard/class_obfuscation_dictionary.txt
+obfuscation_map.txt
