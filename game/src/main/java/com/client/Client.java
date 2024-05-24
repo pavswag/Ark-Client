@@ -20370,6 +20370,7 @@ public class Client extends GameEngine implements RSClient {
 		int var5;
 		int var6;
 		int var7;
+
 		if (!isDynamicRegion) {
 			var2 = var1.readUShortA();
 			var3 = var1.readUShort();
@@ -20393,7 +20394,6 @@ public class Client extends GameEngine implements RSClient {
 					var7 = var6 + (var5 << 8);
 					regions[regionCount] = var7;
 
-					System.out.println("THIS");
 					regionMapArchiveIds[regionCount] = Js5List.maps.getGroupId("m" + var5 + "_" + var6);
 					regionLandArchiveIds[regionCount] = Js5List.maps.getGroupId("l" + var5 + "_" + var6);
 					++regionCount;
@@ -22126,7 +22126,6 @@ public class Client extends GameEngine implements RSClient {
 			jagexNetThread.writePacket(true);
 
 			if (gameState == 25) {
-				System.out.println("RESETTTT");
 				Client.loadingType = 0;
 				Client.mapsLoaded = 0;
 				Client.totalMaps = 1;

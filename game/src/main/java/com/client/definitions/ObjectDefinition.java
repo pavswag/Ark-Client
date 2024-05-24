@@ -829,7 +829,6 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 			boolean var1 = true;
 
 			for (int var2 = 0; var2 < this.objectTypes.length; ++var2) {
-				System.out.println("sdfsdfds");
 				var1 &= Js5List.models.tryLoadFile(this.objectTypes[var2] & 65535, 0);
 			}
 

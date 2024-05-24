@@ -80,6 +80,10 @@ public final class SceneGraph implements RSScene {
                 if (tileArray[zLoc][xLoc][yLoc] == null)
                     tileArray[zLoc][xLoc][yLoc] = new Tile(zLoc, xLoc, yLoc);
         }
+        if (Client.instance.drawCallbacks != null) {
+            Client.instance.drawCallbacks.loadScene(this);
+            Client.instance.drawCallbacks.swapScene(this);
+        }
     }
 
     public void applyBridgeMode(int yLoc, int xLoc) {
