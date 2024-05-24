@@ -247,26 +247,30 @@ public class TileOverrideManager {
 		var match = TileOverride.NONE;
 
 		outer:
-		for (int id : ids) {
-			var entries = idMatchOverrides.get(id);
-			for (var entry : entries) {
-				var area = entry.getKey();
-				if (area.containsPoint(worldPos)) {
-					match = entry.getValue();
-					match.queriedAsOverlay = (id & OVERLAY_FLAG) != 0;
-					break outer;
+		if(idMatchOverrides != null) {
+			for (int id : ids) {
+				var entries = idMatchOverrides.get(id);
+				for (var entry : entries) {
+					var area = entry.getKey();
+					if (area.containsPoint(worldPos)) {
+						match = entry.getValue();
+						match.queriedAsOverlay = (id & OVERLAY_FLAG) != 0;
+						break outer;
+					}
 				}
 			}
 		}
 
-		for (var entry : anyMatchOverrides) {
-			var override = entry.getValue();
-			if (override.index > match.index)
-				break;
-			var area = entry.getKey();
-			if (area.containsPoint(worldPos)) {
-				match = override;
-				break;
+		if(anyMatchOverrides == null) {
+			for (var entry : anyMatchOverrides) {
+				var override = entry.getValue();
+				if (override.index > match.index)
+					break;
+				var area = entry.getKey();
+				if (area.containsPoint(worldPos)) {
+					match = override;
+					break;
+				}
 			}
 		}
 

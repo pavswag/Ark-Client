@@ -7,6 +7,12 @@ import com.client.graphics.interfaces.RSInterface;
 
 import java.util.Arrays;
 
+import static com.client.Client.instance;
+import static com.client.Configuration.CLIENT_TITLE;
+import static com.client.definitions.ItemDefinition.lookup;
+import static com.client.graphics.interfaces.RSInterface.AlignPolicy.CENTER;
+import static java.lang.Integer.parseInt;
+
 public class Bank extends RSInterface {
 
     public static final int EMPTY_CHILD = 41582;
@@ -85,7 +91,7 @@ public class Bank extends RSInterface {
     }
 
     private static boolean moreTabsBelow(int index) {
-        return index + 1 < ITEM_CONTAINERS.length && interfaceCache[ITEM_CONTAINERS[index + 1]].getItemContainerRows() > 0;
+        return index + 1 < ITEM_CONTAINERS.length && interfaceCache.get(ITEM_CONTAINERS[index + 1]).getItemContainerRows() > 0;
     }
 
     public static boolean isSearchingBank() {
@@ -95,11 +101,11 @@ public class Bank extends RSInterface {
     public static void openBankSearch() {
         bankScrollable.children[mainTabChildren[0]] = SEARCH_CONTAINER;
         Client.inputDialogState = 9;
-        interfaceCache[SEARCH_CONTAINER].resetItems();
+        interfaceCache.get(SEARCH_CONTAINER).resetItems();
     }
 
     public static void closeBankSearch() {
-        interfaceCache[SEARCH_CONTAINER].resetItems();
+        interfaceCache.get(SEARCH_CONTAINER).resetItems();
         Client.inputDialogState = 0;
         searchingBankString = "";
     }
@@ -107,10 +113,10 @@ public class Bank extends RSInterface {
     public static void handleButton(int buttonId) {
         for (int index = 1; index < COLLAPSE_BUTTONS.length; index++) {
             if (buttonId == COLLAPSE_BUTTONS[index]) {
-                RSInterface tab = interfaceCache[ITEM_CONTAINERS[index]];
-                RSInterface main = interfaceCache[ITEM_CONTAINERS[0]];
+                RSInterface tab = interfaceCache.get(ITEM_CONTAINERS[index]);
+                RSInterface main = interfaceCache.get(ITEM_CONTAINERS[0]);
                 if (main.getInventoryContainerFreeSlots() >= tab.inventoryItemId.length - tab.getInventoryContainerFreeSlots()) {
-                    RSInterface.addAllItems(tab, main);
+                    addAllItems(tab, main);
                     shiftTabs();
                     openBankTab(0);
                 }
@@ -138,7 +144,7 @@ public class Bank extends RSInterface {
      */
     public static void shiftTabs() {
         for (int tabIndex = 1; tabIndex < ITEM_CONTAINERS.length; tabIndex++) {
-            RSInterface container = interfaceCache[ITEM_CONTAINERS[tabIndex]];
+            RSInterface container = interfaceCache.get(ITEM_CONTAINERS[tabIndex]);
             // Shift items left
             container.shiftItems();
 
@@ -147,8 +153,8 @@ public class Bank extends RSInterface {
                 for (int shiftTabIndex = tabIndex; shiftTabIndex < ITEM_CONTAINERS.length; shiftTabIndex++) {
                     // shift from shiftTabIndex + 1 to shiftTabIndex
                     if (shiftTabIndex + 1 < ITEM_CONTAINERS.length) {
-                        container = interfaceCache[ITEM_CONTAINERS[shiftTabIndex]];
-                        RSInterface shiftLeft = interfaceCache[ITEM_CONTAINERS[shiftTabIndex + 1]];
+                        container = interfaceCache.get(ITEM_CONTAINERS[shiftTabIndex]);
+                        RSInterface shiftLeft = interfaceCache.get(ITEM_CONTAINERS[shiftTabIndex + 1]);
                         container.inventoryItemId = shiftLeft.inventoryItemId.clone();
                         container.inventoryAmounts = shiftLeft.inventoryAmounts.clone();
                     }
@@ -164,23 +170,23 @@ public class Bank extends RSInterface {
         // Show/hide tabs based on whether they have items in them
         boolean newTabDisplayed = false;
         for (int tabIndex = 1; tabIndex < TAB_INTERFACE_IDS.length; tabIndex++) {
-            if (interfaceCache[ITEM_CONTAINERS[tabIndex]].getInventoryContainerFreeSlots() != interfaceCache[ITEM_CONTAINERS[tabIndex]].inventoryItemId.length) {
-                RSInterface.interfaceCache[TAB_INTERFACE_IDS[tabIndex]].isMouseoverTriggered = false;
-                RSInterface.interfaceCache[TAB_SPRITE_DISPLAYS[tabIndex]].sprite1 = TAB_WITHOUT_PLUS;
-                RSInterface.interfaceCache[TAB_SPRITE_DISPLAYS[tabIndex]].sprite1.spriteName = "3-banktab/tab";
+            if (interfaceCache.get(ITEM_CONTAINERS[tabIndex]).getInventoryContainerFreeSlots() != interfaceCache.get(ITEM_CONTAINERS[tabIndex]).inventoryItemId.length) {
+                interfaceCache.get(TAB_INTERFACE_IDS[tabIndex]).isMouseoverTriggered = false;
+                interfaceCache.get(TAB_SPRITE_DISPLAYS[tabIndex]).sprite1 = TAB_WITHOUT_PLUS;
+                interfaceCache.get(TAB_SPRITE_DISPLAYS[tabIndex]).sprite1.spriteName = "3-banktab/tab";
             } else if (!newTabDisplayed) {
-                RSInterface.interfaceCache[TAB_INTERFACE_IDS[tabIndex]].isMouseoverTriggered = false;
-                RSInterface.interfaceCache[TAB_SPRITE_DISPLAYS[tabIndex]].sprite1 = TAB_WITH_PLUS;
+                interfaceCache.get(TAB_INTERFACE_IDS[tabIndex]).isMouseoverTriggered = false;
+                interfaceCache.get(TAB_SPRITE_DISPLAYS[tabIndex]).sprite1 = TAB_WITH_PLUS;
                 newTabDisplayed = true;
             } else {
-                RSInterface.interfaceCache[TAB_INTERFACE_IDS[tabIndex]].isMouseoverTriggered = true;
+                interfaceCache.get(TAB_INTERFACE_IDS[tabIndex]).isMouseoverTriggered = true;
             }
         }
 
         // Update the items displayed at the top of the bank
         for (int index = 1; index < BANK_TAB_ITEM_DISPLAYS.length; index++) {
-            interfaceCache[BANK_TAB_ITEM_DISPLAYS[index]].inventoryItemId[0] = interfaceCache[ITEM_CONTAINERS[index]].inventoryItemId[0];
-            interfaceCache[BANK_TAB_ITEM_DISPLAYS[index]].inventoryAmounts[0] = interfaceCache[ITEM_CONTAINERS[index]].inventoryAmounts[0];
+            interfaceCache.get(BANK_TAB_ITEM_DISPLAYS[index]).inventoryItemId[0] = interfaceCache.get(ITEM_CONTAINERS[index]).inventoryItemId[0];
+            interfaceCache.get(BANK_TAB_ITEM_DISPLAYS[index]).inventoryAmounts[0] = interfaceCache.get(ITEM_CONTAINERS[index]).inventoryAmounts[0];
         }
     }
 
@@ -203,17 +209,17 @@ public class Bank extends RSInterface {
             bankScrollable.children[mainTabChildren[0]] = SEARCH_CONTAINER;
 
             // Update title
-            interfaceCache[TITLE_INTERFACE_ID].message = "Results for '" + searchingBankString + "'";
+            interfaceCache.get(TITLE_INTERFACE_ID).message = "Results for '" + searchingBankString + "'";
 
             // Update search container items
-            RSInterface searchContainer = interfaceCache[SEARCH_CONTAINER];
+            RSInterface searchContainer = interfaceCache.get(SEARCH_CONTAINER);
             searchContainer.resetItems();
             if (searchingBankString.length() > 0) {
                 for (int index = 0; index < ITEM_CONTAINERS.length; index++) {
-                    RSInterface container = interfaceCache[ITEM_CONTAINERS[index]];
+                    RSInterface container = interfaceCache.get(ITEM_CONTAINERS[index]);
                     for (int itemIndex = 0; itemIndex < container.inventoryItemId.length; itemIndex++) {
                         if (container.inventoryItemId[itemIndex] > 0) {
-                            ItemDefinition definition = ItemDefinition.lookup(container.inventoryItemId[itemIndex] - 1);
+                            ItemDefinition definition = lookup(container.inventoryItemId[itemIndex] - 1);
                             if (definition != null && definition.name != null && definition.name.toLowerCase().contains(searchingBankString.toLowerCase())) {
                                 searchContainer.addItem(container.inventoryItemId[itemIndex], container.inventoryAmounts[itemIndex]);
                             }
@@ -225,7 +231,7 @@ public class Bank extends RSInterface {
             bankUpdates();
 
             // Reset title
-            interfaceCache[TITLE_INTERFACE_ID].message = "";
+            interfaceCache.get(TITLE_INTERFACE_ID).message = "";
 
             if (getCurrentBankTab() == 0) {
                 // Init the main tab view
@@ -233,30 +239,30 @@ public class Bank extends RSInterface {
                     bankScrollable.children[mainTabChildren[index]] = EMPTY_CHILD;
                 int itemContainerIndex = 0;
                 for (int index = 0; index < mainTabChildren.length; index++) {
-                    RSInterface container = interfaceCache[ITEM_CONTAINERS[index]];
+                    RSInterface container = interfaceCache.get(ITEM_CONTAINERS[index]);
                     if (index == 0 || container.getInventoryContainerFreeSlots() != container.inventoryItemId.length) {
                         bankScrollable.children[mainTabChildren[itemContainerIndex++]] = ITEM_CONTAINERS[index];
                     }
                 }
-            } else if (interfaceCache[ITEM_CONTAINERS[getCurrentBankTab()]].getInventoryContainerFreeSlots() ==
-                    interfaceCache[ITEM_CONTAINERS[getCurrentBankTab()]].inventoryItemId.length) {
+            } else if (interfaceCache.get(ITEM_CONTAINERS[getCurrentBankTab()]).getInventoryContainerFreeSlots() ==
+                    interfaceCache.get(ITEM_CONTAINERS[getCurrentBankTab()]).inventoryItemId.length) {
                 openBankTab(0);
             }
 
             // Update the item count
             int size = 0;
             for (int container : ITEM_CONTAINERS) {
-                size += interfaceCache[container].inventoryItemId.length - interfaceCache[container].getInventoryContainerFreeSlots();
+                size += interfaceCache.get(container).inventoryItemId.length - interfaceCache.get(container).getInventoryContainerFreeSlots();
             }
-            interfaceCache[ITEM_COUNT_INTERFACE_ID].message = "<ul>" + size + "</ul>";
+            interfaceCache.get(ITEM_COUNT_INTERFACE_ID).message = "<ul>" + size + "</ul>";
 
             // Hide/display the main tab containers
             if (getCurrentBankTab() == 0) {
                 int height = 4;
                 for (int index = 0; index < ITEM_CONTAINERS.length; index++) {
-                    RSInterface container = interfaceCache[ITEM_CONTAINERS[index]];
+                    RSInterface container = interfaceCache.get(ITEM_CONTAINERS[index]);
                     if (index != 0 && moreTabsBelow(index - 1)) {
-                        Client.instance.bankDivider.drawSprite(x, height + y);
+                        instance.bankDivider.drawSprite(x, height + y);
                         height += 10; // buffer for tab separator
                     }
                     bankScrollable.childY[mainTabChildren[index]] = height;
@@ -272,7 +278,7 @@ public class Bank extends RSInterface {
 
     public static void openBankTab(int tab) {
         // Don't open if tab is empty.
-        if (interfaceCache[ITEM_CONTAINERS[tab]].getInventoryContainerFreeSlots() == interfaceCache[ITEM_CONTAINERS[tab]].inventoryItemId.length && tab != 0) {
+        if (interfaceCache.get(ITEM_CONTAINERS[tab]).getInventoryContainerFreeSlots() == interfaceCache.get(ITEM_CONTAINERS[tab]).inventoryItemId.length && tab != 0) {
             return;
         }
 
@@ -319,11 +325,11 @@ public class Bank extends RSInterface {
 
     private void editBank(TextDrawingArea[] tda) {
         // Store the bank scrollable
-        bankScrollable = interfaceCache[5385];
+        bankScrollable = interfaceCache.get(5385);
 
         // Fixing container placement on interface
         bankScrollable.height -= 2;
-        RSInterface bank = interfaceCache[BANK_INTERFACE_ID];
+        RSInterface bank = interfaceCache.get(BANK_INTERFACE_ID);
         for (int index = 0; index < bank.children.length; index++) {
             if (bank.children[index] == bankScrollable.id) {
                 bank.childY[index] += 2;
@@ -331,7 +337,7 @@ public class Bank extends RSInterface {
         }
 
         // Remove old container
-        if (!RSInterface.deleteChild(OLD_CONTAINER_INTERFACE_ID, bankScrollable)) {
+        if (!deleteChild(OLD_CONTAINER_INTERFACE_ID, bankScrollable)) {
 //            System.out.println("Skipping bank reload.");
             return;
         }
@@ -342,8 +348,8 @@ public class Bank extends RSInterface {
         // Adding new container for main tab
         int newContainersStartIndex = expandChildren(ITEM_CONTAINERS.length, bankScrollable);
         for (int index = 0; index < ITEM_CONTAINERS.length; index++) {
-            RSInterface container = addInventoryContainer(ITEM_CONTAINERS[index], 9, BANK_CONTAINER_HEIGHT,14, 2, true);
-            container.actions = new String[] {"Withdraw 1", "Withdraw 5", "Withdraw 10", "Withdraw All", "Withdraw X", "Withdraw All but one"};
+            RSInterface container = addInventoryContainer(ITEM_CONTAINERS[index], 9, BANK_CONTAINER_HEIGHT, 14, 2, true);
+            container.actions = new String[]{"Withdraw 1", "Withdraw 5", "Withdraw 10", "Withdraw All", "Withdraw X", "Withdraw All but one"};
             container.contentType = 206;
             mainTabChildren[index] = newContainersStartIndex;
             bankScrollable.child(newContainersStartIndex++, ITEM_CONTAINERS[index], 38, 0);
@@ -351,11 +357,11 @@ public class Bank extends RSInterface {
 
         // Turn on dragging to other item containers
         for (int container : ITEM_CONTAINERS) {
-            interfaceCache[container].allowInvDraggingToOtherContainers = true;
+            interfaceCache.get(container).allowInvDraggingToOtherContainers = true;
         }
 
-        RSInterface container = addInventoryContainer(SEARCH_CONTAINER, 9, BANK_CONTAINER_HEIGHT,14, 2, true);
-        container.actions = new String[] {"Withdraw 1", "Withdraw 5", "Withdraw 10", "Withdraw All", "Withdraw X", "Withdraw All but one"};
+        RSInterface container = addInventoryContainer(SEARCH_CONTAINER, 9, BANK_CONTAINER_HEIGHT, 14, 2, true);
+        container.actions = new String[]{"Withdraw 1", "Withdraw 5", "Withdraw 10", "Withdraw All", "Withdraw X", "Withdraw All but one"};
 
 
     }
@@ -365,11 +371,11 @@ public class Bank extends RSInterface {
         rs.message = "";
         rs.textChangeListener = ((w, s) -> {
             for (int i = 0; i < 9; i++)
-                (interfaceCache[58031 + i]).active = false;
-            int tabId = Integer.parseInt(s);
-            (interfaceCache[58031 + tabId]).active = true;
+                interfaceCache.get(58031 + i).active = false;
+            int tabId = parseInt(s);
+            interfaceCache.get(58031 + tabId).active = true;
         });
-        rs.alignmentPolicy = AlignPolicy.CENTER;
+        rs.alignmentPolicy = CENTER;
         addSprite(58001, 0, "banktab/07/bank");
 //        addSprite(59003, 0, "banktab/07/BREAKER");
 
@@ -390,7 +396,7 @@ public class Bank extends RSInterface {
         addClickableSprites(58010, "Enable/Disable Noted Withdrawal", "BankTab/updated/SPRITE",
                 219, 220, 220);
 
-        addButton(59116,236, "BankTab/updated/SPRITE", 23, 25, new String[]{"Incinerate Bank"} );
+        addButton(59116, 236, "BankTab/updated/SPRITE", 23, 25, new String[]{"Incinerate Bank"});
 
         addClickableSprites(58014, "Enable/disable placeholders", "BankTab/updated/SPRITE",
                 232, 233, 232);
@@ -404,12 +410,12 @@ public class Bank extends RSInterface {
             addInterface(58050 + i);
             if (i == 0) {
                 addConfigButton(58031, 5292, 0, 1, "banktab/tab",
-                        48, 38, new String[] { "Price Check", "View" }, 1, 1111);
-                (interfaceCache[58031]).disabledHover = imageLoader(1, "banktab/tab");
+                        48, 38, new String[]{"Price Check", "View"}, 1, 1111);
+                interfaceCache.get(58031).disabledHover = imageLoader(1, "banktab/tab");
             } else {
                 addConfigButton(58031 + i, 5292, 4, 3, "banktab/tab",
-                        48, 38, new String[] { "Price check", "Collapse", "View" }, 1, 1111 + i);
-                (interfaceCache[58031 + i]).disabledHover = imageLoader(2, "banktab/tab");
+                        48, 38, new String[]{"Price check", "Collapse", "View"}, 1, 1111 + i);
+                interfaceCache.get(58031 + i).disabledHover = imageLoader(2, "banktab/tab");
             }
             addToItemGroup(58040 + i, 1, 1, 0, 0, false, "", "", "");
         }
@@ -418,7 +424,7 @@ public class Bank extends RSInterface {
         addText(58061, "-", tda, 0, 15108608, true, true);
         addText(58062, "-", tda, 0, 15108608, true, true);
         addInputField(58063, 50, 15108608, "", 100, 23, false, true);
-        addText(58064, "Bank Of " + Configuration.CLIENT_TITLE, tda, 2, 15108608, true, true);
+        addText(58064, "Bank Of " + CLIENT_TITLE, tda, 2, 15108608, true, true);
 
 /*        addBankHover(18929, 4, 18930, 0, 1, "BankTab/updated/FLOW",
                 50, 22, 305, 1, "Swap Item Movement Mode", 18931, 7, 6,
@@ -450,15 +456,15 @@ public class Bank extends RSInterface {
         addTextButton(58073, "X", "Default quantity: X", 16750623, 16777215, true, true, tda, 1, 25, 22, 0, 3);
         addConfigButton(58074, 5292, 0, 1, "Interfaces/Bank X/SPRITE", 25, 2, "", 4, 0, 222);
         addTextButton(58075, "All", "Default quantity: All", 16750623, 16777215, true, true, tda, 1, 25, 22, 0, 3);
-        RSInterface Interface = interfaceCache[5385];
+        RSInterface Interface = interfaceCache.get(5385);
         Interface.width += 21;
         Interface.height -= 15;
         Interface.scrollMax = 1444;
-        Interface = interfaceCache[5382];
+        Interface = interfaceCache.get(5382);
         Interface.contentType = 206;
         Interface.inventoryItemId = new int[800];
         Interface.inventoryAmounts = new int[800];
-        Interface.actions = new String[] { "Withdraw 1", "Withdraw 5", "Withdraw 10", "Withdraw All", "Withdraw X", "Withdraw All-but-1" };
+        Interface.actions = new String[]{"Withdraw 1", "Withdraw 5", "Withdraw 10", "Withdraw All", "Withdraw X", "Withdraw All-but-1"};
         setChildren(48, rs);
         setBounds(58001, 12, 2, 0, rs);
         int close_x = 476;
@@ -477,7 +483,7 @@ public class Bank extends RSInterface {
         int x = 55;
         for (int j = 0; j < 9; j++) {
             setBounds(58050 + j, 0, 0, 11 + j, rs);
-            RSInterface rsi = interfaceCache[58050 + j];
+            RSInterface rsi = interfaceCache.get(58050 + j);
             setChildren(2, rsi);
             setBounds(58031 + j, x, 37, 0, rsi);
             setBounds(58040 + j, x + 5, 40, 1, rsi);
@@ -500,15 +506,15 @@ public class Bank extends RSInterface {
 //        setBounds(18934, 170, 306, 43, rs);
         int subtract_x = 210;
         setBounds(58066, 242 - subtract_x, quantity_y, 30, rs);
-        setBounds(58067, 242 - subtract_x, quantity_y+3, 31, rs);
-        setBounds(58068, 267 - subtract_x+2, quantity_y, 32, rs);
-        setBounds(58069, 267 - subtract_x+2, quantity_y+3, 33, rs);
-        setBounds(58070, 292 - subtract_x+4, quantity_y, 34, rs);
-        setBounds(58071, 292 - subtract_x+4, quantity_y+3, 35, rs);
-        setBounds(58072, 317 - subtract_x+6, quantity_y, 36, rs);
-        setBounds(58073, 317 - subtract_x+6, quantity_y+3, 37, rs);
-        setBounds(58074, 342 - subtract_x+8, quantity_y, 38, rs);
-        setBounds(58075, 342 - subtract_x+8, quantity_y+3, 39, rs);
+        setBounds(58067, 242 - subtract_x, quantity_y + 3, 31, rs);
+        setBounds(58068, 267 - subtract_x + 2, quantity_y, 32, rs);
+        setBounds(58069, 267 - subtract_x + 2, quantity_y + 3, 33, rs);
+        setBounds(58070, 292 - subtract_x + 4, quantity_y, 34, rs);
+        setBounds(58071, 292 - subtract_x + 4, quantity_y + 3, 35, rs);
+        setBounds(58072, 317 - subtract_x + 6, quantity_y, 36, rs);
+        setBounds(58073, 317 - subtract_x + 6, quantity_y + 3, 37, rs);
+        setBounds(58074, 342 - subtract_x + 8, quantity_y, 38, rs);
+        setBounds(58075, 342 - subtract_x + 8, quantity_y + 3, 39, rs);
         setBounds(58002, 20, 85, 20, rs); // Rearrange mode
 //        setBounds(58003, 20, 306, 21, rs);
         setBounds(58010, 20, 119, 22, rs); // Noting

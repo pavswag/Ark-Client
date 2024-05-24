@@ -41,14 +41,21 @@ public class PetPerk extends RSInterface {
         hoverButton(22740, dir, "Upgrade Perk", 1, 2);
 
 
+        hoverButton(22761, dir, "Re-roll Perk", 27, 28);
+        hoverButton(22762, dir, "Re-roll Perk", 27, 28);
+        hoverButton(22763, dir, "Re-roll Perk", 27, 28);
+        hoverButton(22764, dir, "Re-roll Perk", 27, 28);
+        hoverButton(22765, dir, "Re-roll Perk", 27, 28);
+
+
         addSprite(22741, 3, dir);
         get(22741).sprite1.advancedSprite = true;
 
-        addText(22742, "<col=ff9933>Perk name</col>\\n<col=ffffff>Level: 1</col>", tda, 2, 0, false);
-        addText(22743, "<col=ff9933>Perk name</col>\\n<col=ffffff>Level: 1</col>", tda, 2, 0, false);
-        addText(22744, "<col=ff9933>Perk name</col>\\n<col=ffffff>Level: 1</col>", tda, 2, 0, false);
-        addText(22745, "<col=ff9933>Perk name</col>\\n<col=ffffff>Level: 1</col>", tda, 2, 0, false);
-        addText(22746, "<col=ff9933>Perk name</col>\\n<col=ffffff>Level: 1</col>", tda, 2, 0, false);
+        addText(22742, "<col=ff9933>Perk name</col>\\n<col=ffffff>Level: 1</col>", tda, 1, 0, false);
+        addText(22743, "", tda, 1, 0, false);
+        addText(22744, "", tda, 1, 0, false);
+        addText(22745, "", tda, 1, 0, false);
+        addText(22746, "", tda, 1, 0, false);
 
         addText(22747, "<col=ff9933>Vote Pet", tda, 2, 0, true);
         addPet(22748, 327);
@@ -80,36 +87,41 @@ public class PetPerk extends RSInterface {
 
 
 
-        main.totalChildren(28);
+        main.totalChildren(33);
 
         main.child(0, 22732, 5, 5);
         main.child(1, 22733, 256, 14);
         main.child(2, 22734, 351, 217);
         main.child(3, 22735, 423, 244);
-        main.child(4, 22736, 465, 47); // + 34 on y for button
+        main.child(4, 22736, 465, 47);
         main.child(5, 22737, 465, 47 + (34 * 1));
         main.child(6, 22738, 465, 47 + (34 * 2));
         main.child(7, 22739, 465, 47 + (34 * 3));
         main.child(8, 22740, 465, 47 + (34 * 4));
-        main.child(9, 22741, 353, 219);
-        main.child(10, 22742, 358, 47 + (34 * 0));
-        main.child(11, 22743, 358, 47 + (34 * 1));
-        main.child(12, 22744, 358, 47 + (34 * 2));
-        main.child(13, 22745, 358, 47 + (34 * 3));
-        main.child(14, 22746, 358, 47 + (34 * 4));
-        main.child(15, 22747, 255, 47 + (34 * 0));
-        main.child(16, 22748, 190, 105);
-        main.child(17, 22749, 17, 117);
-        main.child(18, 22750, 88, 135);
-        main.child(19, 22751, 88, 191);
-        main.child(20, 22752, 88, 47);
-        main.child(21, 22753, 480, 15);
-        main.child(22, 22754, 45, 73);
-        main.child(23, 22755, 118, 73);
-        main.child(24, 22756, 86, 98);
-        main.child(25, 33934, 17, 211);
-        main.child(26, 48848, 0, 0);
-        main.child(27, 39350, 0, 0);
+        main.child(9, 22761, 438, 47);
+        main.child(10, 22762, 438, 47 + (34 * 1));
+        main.child(11, 22763, 438, 47 + (34 * 2));
+        main.child(12, 22764, 438, 47 + (34 * 3));
+        main.child(13, 22765, 438, 47 + (34 * 4));
+        main.child(14, 22741, 353, 219);
+        main.child(15, 22742, 356, 47 + (34 * 0));
+        main.child(16, 22743, 356, 47 + (34 * 1));
+        main.child(17, 22744, 356, 47 + (34 * 2));
+        main.child(18, 22745, 356, 47 + (34 * 3));
+        main.child(19, 22746, 356, 47 + (34 * 4));
+        main.child(20, 22747, 255, 47 + (34 * 0));
+        main.child(21, 22748, 190, 105);
+        main.child(22, 22749, 17, 117);
+        main.child(23, 22750, 88, 135);
+        main.child(24, 22751, 88, 191);
+        main.child(25, 22752, 88, 47);
+        main.child(26, 22753, 480, 15);
+        main.child(27, 22754, 45, 73);
+        main.child(28, 22755, 118, 73);
+        main.child(29, 22756, 86, 98);
+        main.child(30, 33934, 17, 211);
+        main.child(31, 48848, 0, 0);
+        main.child(32, 39350, 0, 0);
 
 
         RSInterface petDescription = addInterface(48848);
@@ -160,32 +172,10 @@ public class PetPerk extends RSInterface {
             get(i).secondaryColor = 0x252220;
             get(i).atActionType = 1;
             get(i).tooltip = "<col=ff9933>Find out about your pet!";
-            int finalI = i;
-            get(i).buttonListener = (id) -> {
-                if(id == finalI) {
-                    switch (id) {
-                        case 33935:
-                            get(22747).message = "<col=ff9933>Kree'arra Pet";
-                            get(22748).widgetPet = 6643;
-                            get(22748).animationFrame = 0;
-                            get(22748).animationCycle = 0;
-                            updateWidget();
-                            break;
-                        case 33936:
-                            get(22747).message = "<col=ff9933>Vote Pet";
-                            get(22748).widgetPet = 327;
-                            get(22748).animationFrame = 0;
-                            get(22748).animationCycle = 0;
-                            updateWidget();
-                            break;
-                    }
-                    Client.instance.pushMessage("Clicked cosmetic override [" + id + "]");
-                }
-            };
             cosmeticOverrides.child(child++, i, 0, yPosition);
         }
         for(int i = 33966; i <= 33996; i++) {
-            addText(i, "Cosmetic Override[" + i + "]", tda, 0, 0xff9933, false);
+            addText(i, "", tda, 0, 0xff9933, false);
             int yPosition = 3 + (18 * (i - 33966));
             cosmeticOverrides.child(child++, i, 2, yPosition);
         }
@@ -261,24 +251,4 @@ public class PetPerk extends RSInterface {
         petDescription.child(22, 39372, 280, 56 + (54 * 4));
     }
 
-    private static void updateWidget() {
-        get(48854).message = PetDescriptions.getDescription().description;
-    }
-
-    @RequiredArgsConstructor
-    private enum PetDescriptions {
-        VOTE_PET(327, "The Vote Genie Pet is a beloved pet on ArkCane, obtaining with a rare chance upon claiming a vote or purchased from the vote store."),
-        KREE_ARRA(6643, "The Kree'arra pet is a rare pet obtained as a drop from the respective Armadyl Godwards boss, Kree'Arra. This pet is often saught for its looks, being one of the only flying pets in the game."),
-
-
-        UNKNOWN(7041, "A pet description for your current pet has not yet been added, please report this on Discord.")
-        ;
-
-        private final int npcId;
-        private final String description;
-
-        public static PetDescriptions getDescription() {
-            return Arrays.stream(values()).filter(it -> it.npcId == get(22748).widgetPet).findFirst().orElse(UNKNOWN);
-        }
-    }
 }

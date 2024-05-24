@@ -84,7 +84,7 @@ public class HealthHud extends InterfaceBuilder {
             int currentHealth = value & 0xFFFF;
             int maxHealth = value >> 16 & 0xFFFF;
 
-            RSInterface progress = RSInterface.interfaceCache[PROGRESS_WIDGET_ID];
+            RSInterface progress = interfaceCache.get(PROGRESS_WIDGET_ID);
             progress.message = currentHealth + "/" + maxHealth;
         } else if (id == VARP_TYPE) {
             setHudType(HudType.values()[value]);
@@ -92,14 +92,14 @@ public class HealthHud extends InterfaceBuilder {
     }
 
     public static void setHudType(HudType type) {
-        RSInterface progress = RSInterface.interfaceCache[PROGRESS_WIDGET_ID];
+        RSInterface progress = interfaceCache.get(PROGRESS_WIDGET_ID);
         progress.fillColor = type.getMainColor();
         progress.progressBackColor = type.getBackColor();
         progress.progressBackAlpha = type.getBackAlpha();
     }
 
     public static HudType getHudType() {
-        return  RSInterface.interfaceCache[PROGRESS_WIDGET_ID].hudType;
+        return interfaceCache.get(PROGRESS_WIDGET_ID).hudType;
     }
 
 }

@@ -29,6 +29,6 @@ public class ProgressBar extends RSInterface {
         this.tooltip = tooltip;
         this.shadow = shadow;
         this.defaultColorTypes = defaultColorTypes;
-        RSInterface.interfaceCache[childId] = this;
+        interfaceCache.put(childId, this);
     }
 }

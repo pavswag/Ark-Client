@@ -2,6 +2,7 @@ package com.client.definitions;
 
 import com.client.*;
 import com.client.cache.DualNode;
+import com.client.definitions.server.ItemDef;
 import com.client.js5.Js5List;
 import com.client.js5.util.Js5ConfigType;
 import com.client.util.BufferExt;
@@ -12,6 +13,7 @@ import net.runelite.rs.api.RSItemComposition;
 import net.runelite.rs.api.RSIterableNodeHashTable;
 
 import java.util.HashMap;
+import java.util.List;
 
 public final class ItemDefinition extends DualNode implements RSItemComposition {
 
@@ -5112,6 +5114,7 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 if (itemDef.noteTemplateId != -1 && itemDef.noteLinkId != -1) {
                     itemDef.toNote();
                 }
+                itemDef.sortBurntFood();
                 cache.put(itemDef, itemId);
             }
         }
@@ -5120,6 +5123,15 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
             itemDef = customItems(itemDef);
         }
         return itemDef;
+    }
+
+    private void sortBurntFood() {
+        if(!burntFish.contains(id))
+            return;
+        if(interfaceOptions == null) {
+            interfaceOptions = new String[5];
+        }
+        interfaceOptions[0] = "Eat";
     }
 
 
@@ -5621,6 +5633,23 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
 
     public int customSpriteLocation;
     public String customSmallSpriteLocation;
+
+    private static final List<Integer> burntFish = List.of(
+            323,
+            367,
+            357,
+            343,
+            2144,
+            2146,
+            381,
+            375,
+            387,
+            399,
+            393,
+            11938,
+            13443,
+            3148
+    );
 
 
     public Model getEquippedModel(int gender) {

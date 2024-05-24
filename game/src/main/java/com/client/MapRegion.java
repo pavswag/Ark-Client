@@ -29,6 +29,7 @@ public final class MapRegion {
 	public static int maximumPlane = 99;
 	private final int regionSizeX;
 	private final int regionSizeY;
+	public static int ExpandedRegionSize = 0;
 	private final byte[][][] overlayOrientations;
 	private final byte[][][] tileFlags;
 	public static boolean lowMem = false;

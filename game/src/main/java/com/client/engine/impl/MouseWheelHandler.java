@@ -9,8 +9,12 @@ import java.awt.event.*;
 import com.client.graphics.interfaces.RSInterface;
 import com.client.graphics.interfaces.impl.SettingsTabWidget;
 
+import static com.client.Client.*;
 import static com.client.engine.impl.MouseHandler.mouseX;
 import static com.client.engine.impl.MouseHandler.mouseY;
+import static com.client.graphics.interfaces.RSInterface.interfaceCache;
+import static com.client.graphics.interfaces.impl.SettingsTabWidget.ZOOMTOGGLE;
+import static com.client.graphics.interfaces.impl.SettingsTabWidget.ZOOM_SLIDER;
 
 public class MouseWheelHandler implements MouseWheelListener, RSMouseWheelHandler {
 
@@ -87,8 +91,8 @@ public class MouseWheelHandler implements MouseWheelListener, RSMouseWheelHandle
 
 
                     if (Client.openInterfaceID == -1 && zoom) {
-                        RSInterface.interfaceCache[SettingsTabWidget.ZOOMTOGGLE].active = true;
-                        RSInterface.interfaceCache[SettingsTabWidget.ZOOM_SLIDER].slider.setValue(Client.cameraZoom);
+                        interfaceCache.get(ZOOMTOGGLE).active = true;
+                        interfaceCache.get(ZOOM_SLIDER).slider.setValue(cameraZoom);
                     }
             }
         }
@@ -150,7 +154,7 @@ public class MouseWheelHandler implements MouseWheelListener, RSMouseWheelHandle
 
         if (tab.children != null) {
             for (int index = 0; index < tab.children.length; index++) {
-                RSInterface child = RSInterface.interfaceCache[tab.children[index]];
+                RSInterface child = interfaceCache.get(tab.children[index]);
                 handleTabInterfaceScrolling(child, rotation, offsetX + tab.childX[index], offsetY + tab.childY[index]);
                 if (child.scrollMax > 0) {
                     childID = index;
@@ -164,7 +168,7 @@ public class MouseWheelHandler implements MouseWheelListener, RSMouseWheelHandle
         }
         if (mouseX > offsetX + positionX && MouseHandler.mouseY > offsetY + positionY && mouseX < offsetX + positionX + width
                 && MouseHandler.mouseY < offsetY + positionY + height) {
-            RSInterface rsInterface = RSInterface.interfaceCache[tab.children[childID]];
+            RSInterface rsInterface = interfaceCache.get(tab.children[childID]);
             int newScrollPosition = rsInterface.scrollPosition + (rotation * 30);
             if (newScrollPosition < 0) {
                 rsInterface.scrollPosition = 0;
@@ -173,26 +177,26 @@ public class MouseWheelHandler implements MouseWheelListener, RSMouseWheelHandle
             } else {
                 rsInterface.scrollPosition += rotation * 30;
             }
-            Client.tabAreaAltered = true;
-            Client.needDrawTabArea = true;
+            tabAreaAltered = true;
+            needDrawTabArea = true;
             return;
         }
     }
 
     private boolean handleMainInterfaceScrolling(int interfaceId, int offsetX, int offsetY, int rotation) {
-        RSInterface rsi = RSInterface.interfaceCache[interfaceId];
+        RSInterface rsi = interfaceCache.get(interfaceId);
         if (rsi.children != null) {
             for (int index = 0; index < rsi.children.length; index++) {
                 handleMainInterfaceScrolling(rsi.children[index], offsetX + rsi.childX[index], offsetY + rsi.childY[index], rotation);
-                if (RSInterface.interfaceCache[rsi.children[index]].scrollMax <= 0) {
+                if (interfaceCache.get(rsi.children[index]).scrollMax <= 0) {
                     continue;
                 }
-                if (mouseX > offsetX + rsi.childX[index] && MouseHandler.mouseY > offsetY + rsi.childY[index]
-                        && mouseX < offsetX + rsi.childX[index] + RSInterface.interfaceCache[rsi.children[index]].width + 16
-                        && MouseHandler.mouseY < offsetY + rsi.childY[index]
-                        + RSInterface.interfaceCache[rsi.children[index]].height) {
+                if (mouseX > offsetX + rsi.childX[index] && mouseY > offsetY + rsi.childY[index]
+                        && mouseX < offsetX + rsi.childX[index] + interfaceCache.get(rsi.children[index]).width + 16
+                        && mouseY < offsetY + rsi.childY[index]
+                        + interfaceCache.get(rsi.children[index]).height) {
 
-                    RSInterface rsInterface = RSInterface.interfaceCache[rsi.children[index]];
+                    RSInterface rsInterface = interfaceCache.get(rsi.children[index]);
                     int newScrollPosition = rsInterface.scrollPosition + (rotation * 30);
                     rsInterface.scrollPosition += rotation * 30;
                     if (newScrollPosition < 0) {

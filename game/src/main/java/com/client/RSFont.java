@@ -1,5 +1,6 @@
 package com.client;
 
+import com.client.graphics.loaders.AnimatedSprite;
 import com.client.graphics.loaders.SpriteLoader;
 import com.client.sign.Signlink;
 import com.client.util.AssetUtils;
@@ -10,10 +11,12 @@ import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
-
+	private static Map<Integer, AnimatedSprite> animatedSprites = new HashMap<>();
 	public int ascent = 0;
 	public int maxAscent;
 	public int maxDescent;
@@ -615,7 +618,7 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 
 											int iconModY = icon.subHeight;
 											if (imageId >= 40 && imageId <= 50) {
-												icon = SpriteLoader.fetchAnimatedSprite(Signlink.getCacheDirectory()+"/sprites/gifs/" +imageId+".gif").getInstance(icon.subWidth, icon.subHeight);
+												icon = SpriteLoader.fetchAnimatedSprite(Signlink.getCacheDirectory()+"gifs/" +imageId+".gif").getInstance(icon.subWidth, icon.subHeight);
 												iconModY -=2;
 											}
 											if (transparency == 256) {
@@ -635,12 +638,24 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 									if (sub.length() > 0) {
 										int imageId = Integer.parseInt(sub);
 										if (imageId > -1) {
+											if(imageId >= 9997 && imageId <= 9999) {
+												AnimatedSprite animatedIcon = SpriteLoader.fetchAnimatedSprite(Signlink.getCacheDirectory() + "gifs/" + imageId + ".gif").getInstance(13, 13);
+												int iconModY = animatedIcon.subHeight;
+												if (transparency == 256) {
+													animatedIcon.drawSprite(drawX, (drawY + ascent - iconModY));
+												} else {
+													animatedIcon.drawSprite(drawX, (drawY + ascent - iconModY), transparency);
+												}
+												drawX += animatedIcon.subWidth;
+												continue;
+											}
+
 											Sprite icon = iconPack[imageId];
 											int iconModY = icon.subHeight;
 											if (transparency == 256) {
-												icon.drawSprite(drawX, (drawY + ascent - iconModY));
+												icon.drawAdvancedSprite(drawX, (drawY + ascent - iconModY));
 											} else {
-												icon.drawSprite(drawX, (drawY + ascent - iconModY), transparency);
+												icon.drawAdvancedSprite(drawX, (drawY + ascent - iconModY), transparency);
 											}
 											drawX += icon.subWidth;
 										}
@@ -794,7 +809,7 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 								int iconOffsetY = icon.height;
 
 								if (iconId >= 40 && iconId <= 50) {
-									icon = SpriteLoader.fetchAnimatedSprite(Signlink.getCacheDirectory() + "/sprites/gifs/" + iconId + ".gif").getInstance(icon.subWidth, icon.subHeight);
+									icon = SpriteLoader.fetchAnimatedSprite(Signlink.getCacheDirectory() + "/gifs/" + iconId + ".gif").getInstance(icon.subWidth, icon.subHeight);
 									iconId -= 2;
 								}
 
@@ -1032,7 +1047,7 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 
 								Sprite icon = chatImages[iconId];
 								if (iconId >= 40 && iconId <= 50) {
-									icon = SpriteLoader.fetchAnimatedSprite(Signlink.getCacheDirectory()+"/sprites/gifs/" +iconId+".gif").getInstance(icon.subWidth, icon.subHeight);
+									icon = SpriteLoader.fetchAnimatedSprite(Signlink.getCacheDirectory()+"/gifs/" +iconId+".gif").getInstance(icon.subWidth, icon.subHeight);
 								}
 								finalWidth += icon.width;
 							} catch (Exception exception) {
@@ -1051,7 +1066,12 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 						if (effectString.startsWith(startIcon)) {
 							try {// <img=
 								int iconId = Integer.valueOf(effectString.substring(5));
-								finalWidth += iconPack[iconId].width;
+
+								if(iconId >= 9997 && iconId <= 9999) {
+									finalWidth += 15;
+								} else {
+									finalWidth += iconPack[iconId].width;
+								}
 							} catch (Exception exception) {
 								exception.printStackTrace();
 							}

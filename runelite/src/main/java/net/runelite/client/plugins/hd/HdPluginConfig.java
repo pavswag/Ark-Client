@@ -82,9 +82,9 @@ public interface HdPluginConfig extends Config
 		return 50;
 	}
 
-	String KEY_EXPANDED_MAP_LOADING_CHUNKS = "expandedMapLoadingChunks1";
+	String KEY_EXPANDED_MAP_LOADING_CHUNKS = "expandedMapLoadingChunks";
 	@Range(
-		max = 0
+		max = 5
 	)
 	@ConfigItem(
 		keyName = KEY_EXPANDED_MAP_LOADING_CHUNKS,
@@ -664,7 +664,7 @@ public interface HdPluginConfig extends Config
 		position = 1,
 		section = modelCachingSettings
 	)
-	default boolean modelBatching() {return true;}
+	default boolean modelBatching() {return false;}
 
 	String KEY_MODEL_CACHING = "useModelCaching";
 	@ConfigItem(
@@ -676,7 +676,7 @@ public interface HdPluginConfig extends Config
 		position = 2,
 		section = modelCachingSettings
 	)
-	default boolean modelCaching() {return true;}
+	default boolean modelCaching() {return false;}
 
 	String KEY_MODEL_CACHE_SIZE = "modelCacheSizeMiBv2";
 	@Range(

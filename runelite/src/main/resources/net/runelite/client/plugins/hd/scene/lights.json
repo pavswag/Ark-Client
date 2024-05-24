@@ -17703,7 +17703,8 @@
     "range": 0,
     "npcIds": [
       8518,
-      8493
+      8493,
+      2309
     ]
   },
   {
@@ -34679,6 +34680,109 @@
     "range": 20,
     "objectIds": [
       2501
+    ]
+  },
+  {
+    "description": "Jack-O-Lantern",
+    "height": 100,
+    "alignment": "CENTER",
+    "radius": 400,
+    "strength": 10,
+    "color": [
+      239,
+      165,
+      17
+    ],
+    "type": "FLICKER",
+    "duration": 0,
+    "range": 0,
+    "objectIds": [
+      46268,
+      46273,
+      46261
+    ]
+  },
+  {
+    "description": "KRATOS",
+    "height": 80,
+    "alignment": "CENTER",
+    "radius": 200,
+    "strength": 15,
+    "color": [
+      239,
+      165,
+      17
+    ],
+    "type": "FLICKER",
+    "duration": 0,
+    "range": 10,
+    "npcIds": [
+      7668
+    ]
+  },
+  {
+    "description": "CHRISTMAS",
+    "height": 80,
+    "alignment": "CENTER",
+    "radius": 200,
+    "strength": 15,
+    "color": [
+      255,
+      255,
+      255
+    ],
+    "type": "FLICKER",
+    "duration": 0,
+    "range": 10,
+    "npcIds": [
+      5507,
+      8054,
+      5509,
+      2314,
+      2317
+    ]
+  },
+  {
+    "description": "PUMPKIN",
+    "height": 80,
+    "alignment": "BACK",
+    "radius": 250,
+    "strength": 15,
+    "color": [
+      235,
+      121,
+      0
+    ],
+    "type": "FLICKER",
+    "duration": 0,
+    "range": 20,
+    "npcIds": [
+      7633,
+      8368,
+      7623
+    ]
+  },
+  {
+    "description": "Great cauldron",
+    "height": 100,
+    "alignment": "CENTER",
+    "radius": 400,
+    "strength": 10,
+    "color": [
+      239,
+      165,
+      17
+    ],
+    "type": "FLICKER",
+    "duration": 0,
+    "range": 0,
+    "objectIds": [
+      46255,
+      46256,
+      46257,
+      46258,
+      46259,
+      40385
     ]
   }
 ]

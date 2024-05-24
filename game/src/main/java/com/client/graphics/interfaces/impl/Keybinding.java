@@ -6,6 +6,9 @@ import com.client.graphics.interfaces.RSInterface;
 
 import java.awt.event.KeyEvent;
 
+import static com.client.Configuration.escapeCloseInterface;
+import static com.client.graphics.interfaces.RSInterface.interfaceCache;
+
 public class Keybinding {
 
 	public static final int MIN_FRAME = 53009;
@@ -59,13 +62,13 @@ public class Keybinding {
 		for (int i = 0; i < KEYBINDINGS.length; i++) {
 			if (KEYS[key] == KEYBINDINGS[i] && i != index && KEYBINDINGS[i] != -1) {
 				KEYBINDINGS[i] = -1;
-				RSInterface.interfaceCache[MIN_FRAME+3*i].dropdown.setSelected("None");
+				interfaceCache.get(MIN_FRAME + 3 * i).dropdown.setSelected("None");
 			}
 		}
 		if (index != -1 && KEYS[key] == KeyEvent.VK_ESCAPE && Configuration.escapeCloseInterface) {
-			Configuration.escapeCloseInterface = !Configuration.escapeCloseInterface;
-			RSInterface.interfaceCache[ESCAPE_CONFIG].active = Configuration.escapeCloseInterface;
-		}
+            escapeCloseInterface = !escapeCloseInterface;
+            interfaceCache.get(ESCAPE_CONFIG).active = escapeCloseInterface;
+        }
 	}
 
 	public static void bind(int index, int key) {
@@ -86,23 +89,23 @@ public class Keybinding {
 
 	public static void updateInterface() {
 
-		for (int i=0; i<OPTIONS.length; i++) {
+        for (int i = 0; i < OPTIONS.length; i++) {
 
-			int key = KEYBINDINGS[i];
-			String current = "None";
+            int key = KEYBINDINGS[i];
+            String current = "None";
 
-			if (key == -1) {
-				// None
-			} else if (key == 27) {
-				// Esc
-				current = OPTIONS[13];
-			} else {
-				// F1 - F12: 112 - 123
-				current = OPTIONS[key-111];
-			}
+            if (key == -1) {
+                // None
+            } else if (key == 27) {
+                // Esc
+                current = OPTIONS[13];
+            } else {
+                // F1 - F12: 112 - 123
+                current = OPTIONS[key - 111];
+            }
 
-			RSInterface.interfaceCache[MIN_FRAME+3*i].dropdown.setSelected(current);
-		}
-		RSInterface.interfaceCache[ESCAPE_CONFIG].active = Configuration.escapeCloseInterface;
-	}
+			interfaceCache.get(MIN_FRAME + 3 * i).dropdown.setSelected(current);
+        }
+        interfaceCache.get(ESCAPE_CONFIG).active = escapeCloseInterface;
+    }
 }

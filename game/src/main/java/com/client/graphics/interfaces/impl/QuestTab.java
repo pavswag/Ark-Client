@@ -6,6 +6,8 @@ import com.client.StringUtils;
 import com.client.TextDrawingArea;
 import com.client.graphics.interfaces.RSInterface;
 
+import static com.client.StringUtils.fixName;
+
 public class QuestTab extends RSInterface {
 
     public static final int INTERFACE_ID = 50414; // 586 free ids past this
@@ -78,8 +80,8 @@ public class QuestTab extends RSInterface {
     }
 
     private static void setContainer(Button button) {
-        RSInterface placeholder = RSInterface.interfaceCache[button.getPlaceholderInterface()];
-        RSInterface container = RSInterface.interfaceCache[containerInterfaceId];
+        RSInterface placeholder = interfaceCache.get(button.getPlaceholderInterface());
+        RSInterface container = interfaceCache.get(containerInterfaceId);
         container.children = placeholder.children;
         container.childX = placeholder.childX;
         container.childY = placeholder.childY;
@@ -93,7 +95,7 @@ public class QuestTab extends RSInterface {
             master.childY[containerChildIndex] = 25;
             containerChild.width = 255;
             containerChild.height = 255;
-            master.children[smallBoxChildId] = RSInterface.emptyInterface;
+            master.children[smallBoxChildId] = emptyInterface;
         } else {
             containerChild.width = containerDefaultWidth;
             containerChild.height = containerDefaultHeight;
@@ -133,9 +135,9 @@ public class QuestTab extends RSInterface {
         for (Button button : Button.values()) {
             int tabX = x + (button.ordinal() * TAB_0.subWidth) - button.ordinal();
             int tabY = y + 1 - TAB_0.subHeight;
-            addConfigButton(interfaceId, INTERFACE_ID, 0, 1, TAB, TAB_0.subWidth, TAB_0.subHeight, StringUtils.fixName(button.toString().toLowerCase()),
-                    button.ordinal(),4, CONFIG_ID);
-            RSInterface.interfaceCache[interfaceId].ignoreConfigClicking = true;
+            addConfigButton(interfaceId, INTERFACE_ID, 0, 1, TAB, TAB_0.subWidth, TAB_0.subHeight, fixName(button.toString().toLowerCase()),
+                    button.ordinal(), 4, CONFIG_ID);
+            interfaceCache.get(interfaceId).ignoreConfigClicking = true;
             master.child(childIndex++, interfaceId++, tabX, tabY);
 
             Sprite icon = button.getSprite();
@@ -342,7 +344,7 @@ public class QuestTab extends RSInterface {
         for(int i = 0; i < tabs.length; i++) {
             CoinTab coinTab = tabs[i];
             addHoverButton(childId++, "Interfaces/HelpTab/BUTTON", 1, 151, 28, coinTab.string, -1, childId, 1);
-            interfaceCache[childId - 1].onClick = new Object[] {68, childId - 1, interfaceCache[childId - 1] + "1"};
+            interfaceCache.get(childId - 1).onClick = new Object[]{68, childId - 1, interfaceCache.get(childId - 1) + "1"};
             addHoveredButton(childId++, "Interfaces/HelpTab/BUTTON", 0, 151, 28, childId++);
 
             childId -= 3;

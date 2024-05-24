@@ -16,6 +16,7 @@ import com.client.graphics.interfaces.impl.Slider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import static com.client.Rasterizer3D.setBrightness;
 import static com.client.graphics.interfaces.impl.SettingsTabWidget.*;
 import static com.client.graphics.interfaces.impl.Slider.*;
 
@@ -131,12 +132,12 @@ public class Preferences implements net.runelite.api.Preferences {
 
     public void updateClientConfiguration() {
         // Brightness
-        Rasterizer3D.setBrightness(brightness);
-        SettingsTabWidget.brightnessSlider.setValue(brightness);
-        SettingsTabWidget.musicVolumeSlider.setValue(10 - musicVolume);
-        SettingsTabWidget.soundVolumeSlider.setValue(10 - soundVolume);
-        SettingsTabWidget.areaSoundVolumeSlider.setValue(10 - areaSoundVolume);
-        RSInterface.interfaceCache[SettingsTabWidget.HIDE_LOCAL_PET_OPTIONS].active = hidePetOptions;
+        setBrightness(brightness);
+        brightnessSlider.setValue(brightness);
+        musicVolumeSlider.setValue(10 - musicVolume);
+        soundVolumeSlider.setValue(10 - soundVolume);
+        areaSoundVolumeSlider.setValue(10 - areaSoundVolume);
+        interfaceCache.get(HIDE_LOCAL_PET_OPTIONS).active = hidePetOptions;
 /*
         NotificationTab.instance.scrollable.update(">value", groundItemTextShowMoreThan);
         NotificationTab.instance.scrollable.update("show", groundItemTextShow);

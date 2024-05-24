@@ -18,6 +18,8 @@ import com.client.sign.Signlink;
 
 import java.util.Random;
 
+import static com.client.Client.*;
+import static com.client.graphics.interfaces.Configs.AUTOCAST_DEFENCE_CONFIG;
 import static com.client.graphics.interfaces.impl.DropParty.dropPartyInterface;
 
 public final class Interfaces extends RSInterface {
@@ -280,36 +282,36 @@ public final class Interfaces extends RSInterface {
 		int increaseY = 0;
 
 		for(int videoIndex = 0; videoIndex < totalVideos; videoIndex++) {
-			RSInterface.addSprite(video_interface, 5, dir); //main sprite
-			RSInterface.interfaceCache[video_interface].invisible = true;
-			videoList.child(index++, video_interface++, 10, 8 + increaseY);
+            addSprite(video_interface, 5, dir); //main sprite
+            interfaceCache.get(video_interface).invisible = true;
+            videoList.child(index++, video_interface++, 10, 8 + increaseY);
 
-			RSInterface.addText(video_interface, "ArkCane RSPS | #1 Osrs Semi-Custom | Fuck cash grabs...", tda, 1, 0xffffff, false);
-			RSInterface.interfaceCache[video_interface].invisible = true;
-			videoList.child(index++, video_interface++, 135, 12 + increaseY);
+            addText(video_interface, "ArkCane RSPS | #1 Osrs Semi-Custom | Fuck cash grabs...", tda, 1, 0xffffff, false);
+            interfaceCache.get(video_interface).invisible = true;
+            videoList.child(index++, video_interface++, 135, 12 + increaseY);
 
-			RSInterface.addText(video_interface, "This be a description?...", tda, 0, 0xC0C0C0, false);
-			RSInterface.interfaceCache[video_interface].invisible = true;
-			videoList.child(index++, video_interface++, 135, 30 + increaseY);
+            addText(video_interface, "This be a description?...", tda, 0, 0xC0C0C0, false);
+            interfaceCache.get(video_interface).invisible = true;
+            videoList.child(index++, video_interface++, 135, 30 + increaseY);
 
-			RSInterface.addText(video_interface, "ArkCane", tda, 0, 0xfe3200, false);
-			RSInterface.interfaceCache[video_interface].invisible = true;
-			videoList.child(index++, video_interface++, 135, 60 + increaseY);
+            addText(video_interface, "ArkCane", tda, 0, 0xfe3200, false);
+            interfaceCache.get(video_interface).invisible = true;
+            videoList.child(index++, video_interface++, 135, 60 + increaseY);
 
-			RSInterface.hoverButton(video_interface, "Watch", 1,2, "Watch", tda, 2, 0xFF981F, 0xffffff, true, dir);
-			RSInterface.interfaceCache[video_interface].invisible = true;
-			videoList.child(index++, video_interface++, 250, 55 + increaseY);
+            hoverButton(video_interface, "Watch", 1, 2, "Watch", tda, 2, 0xFF981F, 0xffffff, true, dir);
+            interfaceCache.get(video_interface).invisible = true;
+            videoList.child(index++, video_interface++, 250, 55 + increaseY);
 
-			RSInterface.hoverButton(video_interface, "Collect", 1,2, "Collect", tda, 2, 0xFF981F, 0xffffff, true, dir);
-			RSInterface.interfaceCache[video_interface].invisible = true;
-			videoList.child(index++, video_interface++, 350, 55 + increaseY);
+            hoverButton(video_interface, "Collect", 1, 2, "Collect", tda, 2, 0xFF981F, 0xffffff, true, dir);
+            interfaceCache.get(video_interface).invisible = true;
+            videoList.child(index++, video_interface++, 350, 55 + increaseY);
 
-			RSInterface.addRectangle(video_interface, 425, 1, 0x301F0D, 180, false);
-			RSInterface.interfaceCache[video_interface].invisible = true;
-			videoList.child(index++, video_interface++, 18, 80 + increaseY);
+            addRectangle(video_interface, 425, 1, 0x301F0D, 180, false);
+            interfaceCache.get(video_interface).invisible = true;
+            videoList.child(index++, video_interface++, 18, 80 + increaseY);
 
-			increaseY += 85;
-		}
+            increaseY += 85;
+        }
 	}
 
 	private static void itemsInterface(TextDrawingArea[] tda) {
@@ -1733,14 +1735,14 @@ public final class Interfaces extends RSInterface {
 	}
 
 	public static void fixDefensiveAutocast() {
-		RSInterface rsi = interfaceCache[24111];
+		RSInterface rsi = interfaceCache.get(24111);
 		rsi.anIntArray212 = new int[1];
 		rsi.anIntArray212[0] = 1;
 		rsi.anIntArray245 = new int[1];
 		rsi.anIntArray245[0] = 1;
 		rsi.scripts = new int[1][3];
 		rsi.scripts[0][0] = 5;
-		rsi.scripts[0][1] = Configs.AUTOCAST_DEFENCE_CONFIG;
+		rsi.scripts[0][1] = AUTOCAST_DEFENCE_CONFIG;
 		rsi.scripts[0][2] = 0;
 		rsi.ignoreConfigClicking = true;
 	}
@@ -1812,8 +1814,8 @@ public final class Interfaces extends RSInterface {
 
 	public static void normals(TextDrawingArea[] tda) {
 		RSInterface p = addTabInterface(938);
-		RSInterface rsinterface = interfaceCache[1151];
-		RSInterface rsinterface2 = interfaceCache[12424];
+		RSInterface rsinterface = interfaceCache.get(1151);
+		RSInterface rsinterface2 = interfaceCache.get(12424);
 		rsinterface2.height = 250;
 
 		// earth wave
@@ -2156,121 +2158,121 @@ public final class Interfaces extends RSInterface {
 	 * @author Grant_ | www.rune-server.ee/members/grant_ | 10/7/19
 	 */
 	public static void collectionLog(TextDrawingArea[] tda) {
-		//Config = 519
-		RSInterface widget = addInterface(23110);
-		int childId = 23111;
+        //Config = 519
+        RSInterface widget = addInterface(23110);
+        int childId = 23111;
 
-		addSprite(childId++, 0, "Interfaces/CollectionLog/BACKGROUND");
+        addSprite(childId++, 0, "Interfaces/CollectionLog/BACKGROUND");
 
-		addText(childId++, "Collection Log", tda, 2, 0xFF9300, true, true);
+        addText(childId++, "Collection Log", tda, 2, 0xFF9300, true, true);
 
-		addHoverButton(childId++, "Interfaces/CollectionLog/CLOSE", 0, 16, 16, "Close", -1, childId, 1);
-		addHoveredButton(childId++, "Interfaces/CollectionLog/CLOSE", 1, 16, 16, childId++);
+        addHoverButton(childId++, "Interfaces/CollectionLog/CLOSE", 0, 16, 16, "Close", -1, childId, 1);
+        addHoveredButton(childId++, "Interfaces/CollectionLog/CLOSE", 1, 16, 16, childId++);
 
-		addConfigButton(childId++, 618, 0, 1, "Interfaces/CollectionLog/TAB", 96, 20, "Select Bosses", 1, 1, 519);
-		addText(childId++, "Bosses", tda, 1, 0xFF9300, true, true);
+        addConfigButton(childId++, 618, 0, 1, "Interfaces/CollectionLog/TAB", 96, 20, "Select Bosses", 1, 1, 519);
+        addText(childId++, "Bosses", tda, 1, 0xFF9300, true, true);
 
-		addText(childId++, "Boss Name Here", tda, 2, 0xFF9300, false, true);
-		addText(childId++, "Obtained: @red@10/11", tda, 0, 0xFF9300, false, true);
-		addText(childId++, "Boss Name count: @whi@125", tda, 0, 0xFF9300, true, true);
+        addText(childId++, "Boss Name Here", tda, 2, 0xFF9300, false, true);
+        addText(childId++, "Obtained: @red@10/11", tda, 0, 0xFF9300, false, true);
+        addText(childId++, "Boss Name count: @whi@125", tda, 0, 0xFF9300, true, true);
 
-		RSInterface tableView = addInterface(childId++);
-		int scrollChildId = childId;
-		int scrollFrame = 0;
-		tableView.width = 187;
-		tableView.height = 246;
-		tableView.scrollMax = 750;
-		tableView.totalChildren(50 * 2);
+        RSInterface tableView = addInterface(childId++);
+        int scrollChildId = childId;
+        int scrollFrame = 0;
+        tableView.width = 187;
+        tableView.height = 246;
+        tableView.scrollMax = 750;
+        tableView.totalChildren(50 * 2);
 
-		int scrollX = 0;
-		int scrollY = 0;
-		for (int i = 0; i < 50; i++) {
-			if (i % 2 == 0) {
-				addConfigButton(scrollChildId, 23122, 0, 1, "Interfaces/CollectionLog/CELL", 187, 15, "Select Boss", 1, 1, 520 + i);
-			} else {
-				addConfigButton(scrollChildId, 23122, 2, 1, "Interfaces/CollectionLog/CELL", 187, 15, "Select Boss", 1, 1, 520 + i);
-			}
-			tableView.child(scrollFrame++, scrollChildId++, scrollX, scrollY);
+        int scrollX = 0;
+        int scrollY = 0;
+        for (int i = 0; i < 50; i++) {
+            if (i % 2 == 0) {
+                addConfigButton(scrollChildId, 23122, 0, 1, "Interfaces/CollectionLog/CELL", 187, 15, "Select Boss", 1, 1, 520 + i);
+            } else {
+                addConfigButton(scrollChildId, 23122, 2, 1, "Interfaces/CollectionLog/CELL", 187, 15, "Select Boss", 1, 1, 520 + i);
+            }
+            tableView.child(scrollFrame++, scrollChildId++, scrollX, scrollY);
 
-			addText(scrollChildId, "Boss Name Here", tda, 1, 0xFF9300, false, true);
-			tableView.child(scrollFrame++, scrollChildId++, scrollX + 4, scrollY);
+            addText(scrollChildId, "Boss Name Here", tda, 1, 0xFF9300, false, true);
+            tableView.child(scrollFrame++, scrollChildId++, scrollX + 4, scrollY);
 
-			scrollY += 15;
-		}
+            scrollY += 15;
+        }
 
-		widget.totalChildren(childId - 23111 - 1 + (8) + 1 + 1);
-		childId = 23111;
-		int frame = 0;
+        widget.totalChildren(childId - 23111 - 1 + (8) + 1 + 1);
+        childId = 23111;
+        int frame = 0;
 
-		widget.child(frame++, childId++, 9, 11);//Background
-		widget.child(frame++, childId++, 257, 20);//Title
+        widget.child(frame++, childId++, 9, 11);//Background
+        widget.child(frame++, childId++, 257, 20);//Title
 
-		widget.child(frame++, childId++, 482, 20);
-		widget.child(frame++, childId++, 482, 20);
-		childId++;
+        widget.child(frame++, childId++, 482, 20);
+        widget.child(frame++, childId++, 482, 20);
+        childId++;
 
-		widget.child(frame++, childId++, 19, 47);
-		widget.child(frame++, childId++, 65, 50);
+        widget.child(frame++, childId++, 19, 47);
+        widget.child(frame++, childId++, 65, 50);
 
-		widget.child(frame++, childId++, 230, 70);
-		widget.child(frame++, childId++, 230, 94);
-		widget.child(frame++, childId++, 433, 94);
+        widget.child(frame++, childId++, 230, 70);
+        widget.child(frame++, childId++, 230, 94);
+        widget.child(frame++, childId++, 433, 94);
 
-		widget.child(frame++, childId++, 20, 68);
+        widget.child(frame++, childId++, 20, 68);
 
-		//Had to add these on
-		int nextChildId = scrollChildId;
-		addConfigButton(nextChildId, 23111, 0, 1, "Interfaces/CollectionLog/TAB", 96, 20, "Select Wilderness", 1, 1, 571);
-		widget.child(frame++, nextChildId++, 19 + 96, 47);
-		addText(nextChildId, "Wilderness", tda, 1, 0xFF9300, true, true);
-		widget.child(frame++, nextChildId++, 65 + 96, 50);
+        //Had to add these on
+        int nextChildId = scrollChildId;
+        addConfigButton(nextChildId, 23111, 0, 1, "Interfaces/CollectionLog/TAB", 96, 20, "Select Wilderness", 1, 1, 571);
+        widget.child(frame++, nextChildId++, 19 + 96, 47);
+        addText(nextChildId, "Wilderness", tda, 1, 0xFF9300, true, true);
+        widget.child(frame++, nextChildId++, 65 + 96, 50);
 
-		addConfigButton(nextChildId, 23111, 0, 1, "Interfaces/CollectionLog/TAB", 96, 20, "Select Raids", 1, 1, 572);
-		widget.child(frame++, nextChildId++, 19 + 96 + 96, 47);
-		addText(nextChildId, "Raids", tda, 1, 0xFF9300, true, true);
-		widget.child(frame++, nextChildId++, 65 + 96 + 96, 50);
+        addConfigButton(nextChildId, 23111, 0, 1, "Interfaces/CollectionLog/TAB", 96, 20, "Select Raids", 1, 1, 572);
+        widget.child(frame++, nextChildId++, 19 + 96 + 96, 47);
+        addText(nextChildId, "Raids", tda, 1, 0xFF9300, true, true);
+        widget.child(frame++, nextChildId++, 65 + 96 + 96, 50);
 
-		addConfigButton(nextChildId, 23111, 0, 1, "Interfaces/CollectionLog/TAB", 96, 20, "Select Minigames", 1, 1, 573);
-		widget.child(frame++, nextChildId++, 19 + 96 + 96 + 96, 47);
-		addText(nextChildId, "Minigames", tda, 1, 0xFF9300, true, true);
-		widget.child(frame++, nextChildId++, 65 + 96 + 96 + 96, 50);
+        addConfigButton(nextChildId, 23111, 0, 1, "Interfaces/CollectionLog/TAB", 96, 20, "Select Minigames", 1, 1, 573);
+        widget.child(frame++, nextChildId++, 19 + 96 + 96 + 96, 47);
+        addText(nextChildId, "Minigames", tda, 1, 0xFF9300, true, true);
+        widget.child(frame++, nextChildId++, 65 + 96 + 96 + 96, 50);
 
-		addConfigButton(nextChildId, 23111, 0, 1, "Interfaces/CollectionLog/TAB", 96, 20, "Select Clue Scroll", 1, 1, 574);
-		widget.child(frame++, nextChildId++, 19 + 96 + 96 + 96 + 96, 47);
-		addText(nextChildId, "Other", tda, 1, 0xFF9300, true, true);
-		widget.child(frame++, nextChildId++, 65 + 96 + 96 + 96 + 96, 50);
+        addConfigButton(nextChildId, 23111, 0, 1, "Interfaces/CollectionLog/TAB", 96, 20, "Select Clue Scroll", 1, 1, 574);
+        widget.child(frame++, nextChildId++, 19 + 96 + 96 + 96 + 96, 47);
+        addText(nextChildId, "Other", tda, 1, 0xFF9300, true, true);
+        widget.child(frame++, nextChildId++, 65 + 96 + 96 + 96 + 96, 50);
 
-		int itemScrollId = nextChildId;
-		RSInterface scroll = addInterface(itemScrollId);
-		widget.child(frame++, itemScrollId++, 232, 114);
-		int itemScrollFrame = 0;
-		scroll.width = 250;
-		scroll.height = 150;
-		scroll.scrollMax = 750;
-		scroll.totalChildren(1);
+        int itemScrollId = nextChildId;
+        RSInterface scroll = addInterface(itemScrollId);
+        widget.child(frame++, itemScrollId++, 232, 114);
+        int itemScrollFrame = 0;
+        scroll.width = 250;
+        scroll.height = 150;
+        scroll.scrollMax = 750;
+        scroll.totalChildren(1);
 
-		addToItemGroup(itemScrollId, 6, 33, 9, 6, false, null, null, null);
-		scroll.child(itemScrollFrame++, itemScrollId++, 0, 0);
+        addToItemGroup(itemScrollId, 6, 33, 9, 6, false, null, null, null);
+        scroll.child(itemScrollFrame++, itemScrollId++, 0, 0);
 
-		int claimID = itemScrollId;
-		RSInterface claim = addInterface(claimID);
+        int claimID = itemScrollId;
+        RSInterface claim = addInterface(claimID);
 //		System.out.println(claimID);
-		widget.child(frame++, claimID++, 223, 255);
-		int itemClaimFrame = 0;
-		claim.totalChildren(5);
-		addSprite(claimID + 1, 0, "Interfaces/CollectionLog/box");
-		addToItemGroup(claimID + 2, 6, 20, 5, 6, false, "", "", "");
-		configHoverButton(claimID + 3, "Claim", "Interfaces/CollectionLog/claim", 0, 1, 0, 1, false);
-		interfaceCache[claimID + 3].onClick = new Object[] {68, claimID + 3, interfaceCache[claimID + 3] + "1"};
-		addText(claimID + 4, "@cr49@ Rewards for completing log:", tda, 0, 16750623, false, true);
-		addText(claimID + 5, "Claim", tda, 2, 16750623, true, true);
+        widget.child(frame++, claimID++, 223, 255);
+        int itemClaimFrame = 0;
+        claim.totalChildren(5);
+        addSprite(claimID + 1, 0, "Interfaces/CollectionLog/box");
+        addToItemGroup(claimID + 2, 6, 20, 5, 6, false, "", "", "");
+        configHoverButton(claimID + 3, "Claim", "Interfaces/CollectionLog/claim", 0, 1, 0, 1, false);
+        interfaceCache.get(claimID + 3).onClick = new Object[]{68, claimID + 3, interfaceCache.get(claimID + 3) + "1"};
+        addText(claimID + 4, "@cr49@ Rewards for completing log:", tda, 0, 16750623, false, true);
+        addText(claimID + 5, "Claim", tda, 2, 16750623, true, true);
 
-		claim.child(itemClaimFrame++, claimID + 1, 2, 12);
-		claim.child(itemClaimFrame++, claimID + 2, 7, 21);
-		claim.child(itemClaimFrame++, claimID + 3, 200, 16);
-		claim.child(itemClaimFrame++, claimID + 4, 6, 1);
-		claim.child(itemClaimFrame++, claimID + 5, 236, 36);
-	}
+        claim.child(itemClaimFrame++, claimID + 1, 2, 12);
+        claim.child(itemClaimFrame++, claimID + 2, 7, 21);
+        claim.child(itemClaimFrame++, claimID + 3, 200, 16);
+        claim.child(itemClaimFrame++, claimID + 4, 6, 1);
+        claim.child(itemClaimFrame++, claimID + 5, 236, 36);
+    }
 
 	public static void teleportInterface1(TextDrawingArea[] tda) {
 		final int STARTING_POINT = 60000;
@@ -2608,7 +2610,7 @@ public final class Interfaces extends RSInterface {
 	}
 
 	public static void equipmentScreen(TextDrawingArea[] wid) {
-		RSInterface Interface = RSInterface.interfaceCache[1644];
+		RSInterface Interface = interfaceCache.get(1644);
 		addButton(19144, 140, "Show Equipment Stats");
 		removeSomething(19145);
 		removeSomething(19146);
@@ -2696,12 +2698,12 @@ public final class Interfaces extends RSInterface {
 		tab.child2(44, 16117, 87, 283);
 
 		for (int i = 1675; i <= 1684; i++) {
-			RSInterface rsi = interfaceCache[i];
+			RSInterface rsi = interfaceCache.get(i);
 			rsi.textColor = 0xFF9300;
 			rsi.centerText = false;
 		}
 		for (int i = 1686; i <= 1687; i++) {
-			RSInterface rsi = interfaceCache[i];
+			RSInterface rsi = interfaceCache.get(i);
 			rsi.textColor = 0xFF9300;
 			rsi.centerText = false;
 		}
@@ -2832,7 +2834,7 @@ public final class Interfaces extends RSInterface {
 			addText(37628 + i, Client.capitalize(skillNames[i]) + ":", tda, 0, 16748608, false, true);
 			addText(37636 + i, "@gre@Unlocked", tda, 0, 16777215, false, true);
 			addText(37644 + i, "@gre@99", tda, 0, 16777215, false, true);
-			int[] g = centerSkillSprite(interfaceCache[37619 + i].sprite1);
+			int[] g = centerSkillSprite(interfaceCache.get(37619 + i).sprite1);
 			over.child(i, 37611 + i, xx, yy);
 			over.child(i + 7, 37619 + i, xx + g[0], yy + g[1]);
 			over.child(i + 14, 37627, xx + 32, yy + 7);
@@ -2896,7 +2898,7 @@ public final class Interfaces extends RSInterface {
 			addSprite(37335 + i, i, dir2);
 			addText(37360 + i, Client.capitalize(skillNames[i]), tda, 0, 16748608, false, true);
 			addText(37400 + i, "0", tda, 0, 16777215, false, true);
-			int[] g = centerSkillSprite(interfaceCache[37335 + i].sprite1);
+			int[] g = centerSkillSprite(interfaceCache.get(37335 + i).sprite1);
 			int bonusY = 0;
 			if (xx == 0 || xx == 117)
 				bonusY = 5 * line;
@@ -3505,7 +3507,8 @@ public final class Interfaces extends RSInterface {
 	}
 
 	public static void addOffer(int index) {
-		RSInterface rsi = interfaceCache[index] = new RSInterface();
+		interfaceCache.put(index, new RSInterface());
+		RSInterface rsi = interfaceCache.get(index);
 		rsi.actions = new String[10];
 		rsi.spritesX = new int[20];
 		rsi.inventoryAmounts = new int[30];
@@ -3683,7 +3686,8 @@ public final class Interfaces extends RSInterface {
 	}
 
 	public static void addItemOnInterface(int i) {
-		RSInterface rsinterface = interfaceCache[i] = new RSInterface();
+		interfaceCache.put(i, new RSInterface());
+		RSInterface rsinterface = interfaceCache.get(i);
 		rsinterface.actions = new String[5];
 		rsinterface.spritesX = new int[20];
 		rsinterface.inventoryAmounts = new int[30];
@@ -3815,7 +3819,8 @@ public final class Interfaces extends RSInterface {
 	}
 
 	public static void addListing(int index, boolean search) {
-		RSInterface rsi = interfaceCache[index] = new RSInterface();
+		interfaceCache.put(index, new RSInterface());
+		RSInterface rsi = interfaceCache.get(index);
 		rsi.actions = new String[10];
 		rsi.spritesX = new int[20];
 		rsi.inventoryAmounts = new int[30];
@@ -4249,115 +4254,115 @@ public final class Interfaces extends RSInterface {
 	}
 
 	public static void clanChatSetup(TextDrawingArea[] tda) {
-		RSInterface rsi = addInterface(18300);
-		rsi.totalChildren(12 + 15);
-		int count = 0;
-		/* Background */
-		addSprite(18301, 1, "/Interfaces/Clan Chat/sprite");
-		rsi.child(count++, 18301, 14, 18);
-		/* Close button */
-		addButton(18302, 0, "/Interfaces/Clan Chat/close", "Close");
-		interfaceCache[18302].atActionType = 3;
-		rsi.child(count++, 18302, 475, 26);
-		/* Clan Setup title */
-		addText(18303, "Clan Setup", tda, 2, 0xFF981F, true, true);
-		rsi.child(count++, 18303, 256, 26);
-		/* Setup buttons */
-		String[] titles = {"Clan name:", "Who can enter chat?", "Who can talk on chat?", "Who can kick on chat?",
-				"Who can ban on chat?"};
-		String[] defaults = {"Chat Disabled", "Anyone", "Anyone", "Anyone", "Anyone"};
-		String[] whoCan = {"Anyone", "Recruit", "Corporal", "Sergeant", "Lieutenant", "Captain", "General",
-				"Only Me"};
-		for (int index = 0, id = 18304, y = 50; index < titles.length; index++, id += 3, y += 40) {
-			addButton(id, 2, "/Interfaces/Clan Chat/sprite", "");
-			interfaceCache[id].atActionType = 0;
-			if (index > 0) {
-				interfaceCache[id].actions = whoCan;
-			} else {
-				interfaceCache[id].actions = new String[]{"Change title", "Delete clan"};
-				;
-			}
-			addText(id + 1, titles[index], tda, 0, 0xFF981F, true, true);
-			addText(id + 2, defaults[index], tda, 1, 0xFFFFFF, true, true);
-			rsi.child(count++, id, 25, y);
-			rsi.child(count++, id + 1, 100, y + 4);
-			rsi.child(count++, id + 2, 100, y + 17);
-		}
-		/* Table */
-		addSprite(18319, 5, "/Interfaces/Clan Chat/sprite");
-		rsi.child(count++, 18319, 197, 70);
-		/* Labels */
-		int id = 18320;
-		int y = 74;
-		addText(id, "Ranked Members", tda, 2, 0xFF981F, false, true);
-		rsi.child(count++, id++, 202, y);
-		addText(id, "Banned Members", tda, 2, 0xFF981F, false, true);
-		rsi.child(count++, id++, 339, y);
-		/* Ranked members list */
-		RSInterface list = addInterface(id++);
-		int lines = 100;
-		list.totalChildren(lines);
-		String[] ranks = {"Demote", "Recruit", "Corporal", "Sergeant", "Lieutenant", "Captain", "General", "Owner"};
-		list.childY[0] = 2;
-		// System.out.println(id);
-		for (int index = id; index < id + lines; index++) {
-			addText(index, "", tda, 1, 0xffffff, false, true);
-			interfaceCache[index].actions = ranks;
-			list.children[index - id] = index;
-			list.childX[index - id] = 2;
-			list.childY[index - id] = (index - id > 0 ? list.childY[index - id - 1] + 14 : 0);
-		}
-		id += lines;
-		list.width = 119;
-		list.height = 210;
-		list.scrollMax = 2000;
-		rsi.child(count++, list.id, 199, 92);
-		/* Banned members list */
-		list = addInterface(id++);
-		list.totalChildren(lines);
-		list.childY[0] = 2;
-		// System.out.println(id);
-		for (int index = id; index < id + lines; index++) {
-			if (index == 18470) {
-				index++;
-				id++;
-			}
-			addText(index, "", tda, 1, 0xffffff, false, true);
-			interfaceCache[index].actions = new String[]{"Unban"};
-			list.children[index - id] = index;
-			list.childX[index - id] = 0;
-			list.childY[index - id] = (index - id > 0 ? list.childY[index - id - 1] + 14 : 0);
-		}
-		id += lines;
-		list.width = 119;
-		list.height = 210;
-		list.scrollMax = 2000;
-		rsi.child(count++, list.id, 339, 92);
-		/* Table info text */
-		y = 47;
-		addText(id, "You can manage both ranked and banned members here.", tda, 0, 0xFF981F, true, true);
-		rsi.child(count++, id++, 337, y);
-		addText(id, "Right click on a name to edit the member.", tda, 0, 0xFF981F, true, true);
-		rsi.child(count++, id++, 337, y + 11);
-		/* Add ranked member button */
-		y = 75;
-		addButton(id, 0, "/Interfaces/Clan Chat/plus", "Add ranked member");
-		interfaceCache[id].atActionType = 5;
-		rsi.child(count++, id++, 319, y);
-		/* Add banned member button */
-		addButton(id, 0, "/Interfaces/Clan Chat/plus", "Add banned member");
-		interfaceCache[id].atActionType = 5;
-		rsi.child(count++, id++, 459, y);
+        RSInterface rsi = addInterface(18300);
+        rsi.totalChildren(12 + 15);
+        int count = 0;
+        /* Background */
+        addSprite(18301, 1, "/Interfaces/Clan Chat/sprite");
+        rsi.child(count++, 18301, 14, 18);
+        /* Close button */
+        addButton(18302, 0, "/Interfaces/Clan Chat/close", "Close");
+        interfaceCache.get(18302).atActionType = 3;
+        rsi.child(count++, 18302, 475, 26);
+        /* Clan Setup title */
+        addText(18303, "Clan Setup", tda, 2, 0xFF981F, true, true);
+        rsi.child(count++, 18303, 256, 26);
+        /* Setup buttons */
+        String[] titles = {"Clan name:", "Who can enter chat?", "Who can talk on chat?", "Who can kick on chat?",
+                "Who can ban on chat?"};
+        String[] defaults = {"Chat Disabled", "Anyone", "Anyone", "Anyone", "Anyone"};
+        String[] whoCan = {"Anyone", "Recruit", "Corporal", "Sergeant", "Lieutenant", "Captain", "General",
+                "Only Me"};
+        for (int index = 0, id = 18304, y = 50; index < titles.length; index++, id += 3, y += 40) {
+            addButton(id, 2, "/Interfaces/Clan Chat/sprite", "");
+            interfaceCache.get(id).atActionType = 0;
+            if (index > 0) {
+                interfaceCache.get(id).actions = whoCan;
+            } else {
+                interfaceCache.get(id).actions = new String[]{"Change title", "Delete clan"};
+                ;
+            }
+            addText(id + 1, titles[index], tda, 0, 0xFF981F, true, true);
+            addText(id + 2, defaults[index], tda, 1, 0xFFFFFF, true, true);
+            rsi.child(count++, id, 25, y);
+            rsi.child(count++, id + 1, 100, y + 4);
+            rsi.child(count++, id + 2, 100, y + 17);
+        }
+        /* Table */
+        addSprite(18319, 5, "/Interfaces/Clan Chat/sprite");
+        rsi.child(count++, 18319, 197, 70);
+        /* Labels */
+        int id = 18320;
+        int y = 74;
+        addText(id, "Ranked Members", tda, 2, 0xFF981F, false, true);
+        rsi.child(count++, id++, 202, y);
+        addText(id, "Banned Members", tda, 2, 0xFF981F, false, true);
+        rsi.child(count++, id++, 339, y);
+        /* Ranked members list */
+        RSInterface list = addInterface(id++);
+        int lines = 100;
+        list.totalChildren(lines);
+        String[] ranks = {"Demote", "Recruit", "Corporal", "Sergeant", "Lieutenant", "Captain", "General", "Owner"};
+        list.childY[0] = 2;
+        // System.out.println(id);
+        for (int index = id; index < id + lines; index++) {
+            addText(index, "", tda, 1, 0xffffff, false, true);
+            interfaceCache.get(index).actions = ranks;
+            list.children[index - id] = index;
+            list.childX[index - id] = 2;
+            list.childY[index - id] = (index - id > 0 ? list.childY[index - id - 1] + 14 : 0);
+        }
+        id += lines;
+        list.width = 119;
+        list.height = 210;
+        list.scrollMax = 2000;
+        rsi.child(count++, list.id, 199, 92);
+        /* Banned members list */
+        list = addInterface(id++);
+        list.totalChildren(lines);
+        list.childY[0] = 2;
+        // System.out.println(id);
+        for (int index = id; index < id + lines; index++) {
+            if (index == 18470) {
+                index++;
+                id++;
+            }
+            addText(index, "", tda, 1, 0xffffff, false, true);
+            interfaceCache.get(index).actions = new String[]{"Unban"};
+            list.children[index - id] = index;
+            list.childX[index - id] = 0;
+            list.childY[index - id] = (index - id > 0 ? list.childY[index - id - 1] + 14 : 0);
+        }
+        id += lines;
+        list.width = 119;
+        list.height = 210;
+        list.scrollMax = 2000;
+        rsi.child(count++, list.id, 339, 92);
+        /* Table info text */
+        y = 47;
+        addText(id, "You can manage both ranked and banned members here.", tda, 0, 0xFF981F, true, true);
+        rsi.child(count++, id++, 337, y);
+        addText(id, "Right click on a name to edit the member.", tda, 0, 0xFF981F, true, true);
+        rsi.child(count++, id++, 337, y + 11);
+        /* Add ranked member button */
+        y = 75;
+        addButton(id, 0, "/Interfaces/Clan Chat/plus", "Add ranked member");
+        interfaceCache.get(id).atActionType = 5;
+        rsi.child(count++, id++, 319, y);
+        /* Add banned member button */
+        addButton(id, 0, "/Interfaces/Clan Chat/plus", "Add banned member");
+        interfaceCache.get(id).atActionType = 5;
+        rsi.child(count++, id++, 459, y);
 
-		/* Hovers */
-		int[] clanSetup = {18302, 18304, 18307, 18310, 18313, 18316, 18526, 18527};
-		String[] names = {"close", "sprite", "sprite", "sprite", "sprite", "sprite", "plus", "plus"};
-		int[] ids = {1, 3, 3, 3, 3, 3, 1, 1};
-		for (int index = 0; index < clanSetup.length; index++) {
-			rsi = interfaceCache[clanSetup[index]];
-			rsi.disabledHover = imageLoader(ids[index], "/Interfaces/Clan Chat/" + names[index]);
-		}
-	}
+        /* Hovers */
+        int[] clanSetup = {18302, 18304, 18307, 18310, 18313, 18316, 18526, 18527};
+        String[] names = {"close", "sprite", "sprite", "sprite", "sprite", "sprite", "plus", "plus"};
+        int[] ids = {1, 3, 3, 3, 3, 3, 1, 1};
+        for (int index = 0; index < clanSetup.length; index++) {
+			rsi = interfaceCache.get(clanSetup[index]);
+            rsi.disabledHover = imageLoader(ids[index], "/Interfaces/Clan Chat/" + names[index]);
+        }
+    }
 
 	public static void Pestpanel(TextDrawingArea[] tda) {
 		RSInterface RSinterface = addTab(21119);
@@ -4376,7 +4381,8 @@ public final class Interfaces extends RSInterface {
 		setBounds(21122, 5, 35, 2, RSinterface);
 		setBounds(21123, 5, 50, 3, RSinterface);
 
-		RSInterface rsi = interfaceCache[6114] = new RSInterface();
+		interfaceCache.put(6114, new RSInterface());
+		RSInterface rsi = interfaceCache.get(6114);
 		rsi.type = 4;
 		rsi.width = 390;
 		rsi.centerText = true;
@@ -4503,7 +4509,7 @@ public final class Interfaces extends RSInterface {
 	public static void prayerBook(TextDrawingArea[] tda) {
 		RSInterface tab = addTabInterface(15608);
 		tab.totalChildren(10);
-		RSInterface prayerBook = interfaceCache[5608];
+		RSInterface prayerBook = interfaceCache.get(5608);
 
 		// Switches the Chivalry & Piety positions.
 		/** Chivalry **/
@@ -4526,8 +4532,8 @@ public final class Interfaces extends RSInterface {
 
 		prayerBook.childX[32] = 80;
 		prayerBook.childY[32] = 124;
-		interfaceCache[prayerBook.children[32]].width = 30;
-		interfaceCache[prayerBook.children[32]].height = 30;
+		interfaceCache.get(prayerBook.children[32]).width = 30;
+		interfaceCache.get(prayerBook.children[32]).height = 30;
 
 		addPrayer(39401, 0, 708, 55, 26, "Preserve");
 		addPrayer(39404, 0, 710, 74, 27, "Rigour");
@@ -4552,7 +4558,7 @@ public final class Interfaces extends RSInterface {
 
 	public static void ancients(TextDrawingArea[] tda) {
 		RSInterface p = addTabInterface(838);
-		RSInterface rsinterface = interfaceCache[12855];
+		RSInterface rsinterface = interfaceCache.get(12855);
 		// rsinterface.childX[6] = 10;
 		rsinterface.childY[22] = 153;
 		rsinterface.childX[22] = 18;
@@ -4893,7 +4899,8 @@ public final class Interfaces extends RSInterface {
 	}
 
 	public static void createInterface(int id) {
-		RSInterface rsi = interfaceCache[id] = new RSInterface();
+		interfaceCache.put(id, new RSInterface());
+		RSInterface rsi = interfaceCache.get(id);
 	}
 
 	public static void addHoverButton_sprite_loader(int i, int spriteId, int width, int height, String text,
@@ -4933,20 +4940,22 @@ public final class Interfaces extends RSInterface {
 	}
 
 	public static void addSprite3(int childId, int spriteId) {
-		RSInterface rsi = interfaceCache[childId] = new RSInterface();
+		interfaceCache.put(childId, new RSInterface());
+		RSInterface rsi = interfaceCache.get(childId);
 		rsi.id = childId;
 		rsi.parentID = childId;
 		rsi.type = 5;
 		rsi.atActionType = 0;
 		rsi.contentType = 0;
-		rsi.sprite1 = Client.cacheSprite3[spriteId];
-		rsi.sprite2 = Client.cacheSprite3[spriteId];
+		rsi.sprite1 = cacheSprite3[spriteId];
+		rsi.sprite2 = cacheSprite3[spriteId];
 		rsi.width = rsi.sprite1.subWidth;
 		rsi.height = rsi.sprite2.subHeight - 2;
 	}
 
 	public static void addButton(int id, int sid, String tooltip) {
-		RSInterface tab = interfaceCache[id] = new RSInterface();
+		interfaceCache.put(id, new RSInterface());
+		RSInterface tab = interfaceCache.get(id);
 		tab.id = id;
 		tab.parentID = id;
 		tab.type = 5;
@@ -4954,8 +4963,8 @@ public final class Interfaces extends RSInterface {
 		tab.contentType = 0;
 		tab.opacity = (byte) 0;
 		tab.hoverType = 52;
-		tab.sprite1 = Client.cacheSprite1[sid];// imageLoader(sid, spriteName);
-		tab.sprite2 = Client.cacheSprite1[sid];// imageLoader(sid, spriteName);
+		tab.sprite1 = cacheSprite1[sid];// imageLoader(sid, spriteName);
+		tab.sprite2 = cacheSprite1[sid];// imageLoader(sid, spriteName);
 		tab.width = tab.sprite1.subWidth;
 		tab.height = tab.sprite1.subHeight;
 		tab.tooltip = tooltip;
@@ -5028,7 +5037,7 @@ public final class Interfaces extends RSInterface {
 	}
 
 	public static void equipmentTab(TextDrawingArea[] wid) {
-		RSInterface Interface = interfaceCache[1644];
+		RSInterface Interface = interfaceCache.get(1644);
 		addSprite(15101, 0, "Interfaces/Equipment/bl");// cheap hax
 		addSprite(15102, 1, "Interfaces/Equipment/bl");// cheap hax
 		addSprite(15109, 2, "Interfaces/Equipment/bl");// cheap hax
@@ -5075,64 +5084,64 @@ public final class Interfaces extends RSInterface {
 	}
 
 	public static void itemsOnDeath(TextDrawingArea[] wid) {
-		RSInterface rsinterface = addInterface(17100);
-		addSprite(17101, new Sprite("Equipment/SPRITE 2"));
+        RSInterface rsinterface = addInterface(17100);
+        addSprite(17101, new Sprite("Equipment/SPRITE 2"));
 
-		addHover(17102, 3, 0, 10601, 1, "Interfaces/Equipment/SPRITE", 17, 17, "Close Window");
-		addHovered(10601, 3, "Interfaces/Equipment/SPRITE", 17, 17, 10602);
-		addText(17103, "Items Kept On Death", wid, 2, 0xff981f);
-		addText(17104, "Items you will keep:", wid, 1, 0xff981f);
-		addText(17105, "Items you will lose:", wid, 1, 0xff981f);
-		addText(17106, "On unsafe death:", wid, 1, 0xff981f);
-		addText(17107, "Max items kept on death:", wid, 1, 0xffcc33);
-		addText(17108, "", wid, 1, 0xffcc33);
-		rsinterface.scrollMax = 0;
-		rsinterface.isMouseoverTriggered = false;
-		rsinterface.children = new int[12];
-		rsinterface.childX = new int[12];
-		rsinterface.childY = new int[12];
+        addHover(17102, 3, 0, 10601, 1, "Interfaces/Equipment/SPRITE", 17, 17, "Close Window");
+        addHovered(10601, 3, "Interfaces/Equipment/SPRITE", 17, 17, 10602);
+        addText(17103, "Items Kept On Death", wid, 2, 0xff981f);
+        addText(17104, "Items you will keep:", wid, 1, 0xff981f);
+        addText(17105, "Items you will lose:", wid, 1, 0xff981f);
+        addText(17106, "On unsafe death:", wid, 1, 0xff981f);
+        addText(17107, "Max items kept on death:", wid, 1, 0xffcc33);
+        addText(17108, "", wid, 1, 0xffcc33);
+        rsinterface.scrollMax = 0;
+        rsinterface.isMouseoverTriggered = false;
+        rsinterface.children = new int[12];
+        rsinterface.childX = new int[12];
+        rsinterface.childY = new int[12];
 
-		rsinterface.children[0] = 17101;
-		rsinterface.childX[0] = 7;
-		rsinterface.childY[0] = 8;
-		rsinterface.children[1] = 17102;
-		rsinterface.childX[1] = 480;
-		rsinterface.childY[1] = 17;
-		rsinterface.children[2] = 17103;
-		rsinterface.childX[2] = 185;
-		rsinterface.childY[2] = 18;
-		rsinterface.children[3] = 17104;
-		rsinterface.childX[3] = 22;
-		rsinterface.childY[3] = 50;
-		rsinterface.children[4] = 17105;
-		rsinterface.childX[4] = 22;
-		rsinterface.childY[4] = 110;
-		rsinterface.children[5] = 17106;
-		rsinterface.childX[5] = 347;
-		rsinterface.childY[5] = 47;
-		rsinterface.children[6] = 17107;
-		rsinterface.childX[6] = 349;
-		rsinterface.childY[6] = 270;
-		rsinterface.children[7] = 17108;
-		rsinterface.childX[7] = 398;
-		rsinterface.childY[7] = 298;
-		rsinterface.children[8] = 17115;
-		rsinterface.childX[8] = 348;
-		rsinterface.childY[8] = 64;
-		rsinterface.children[9] = 10494;
-		rsinterface.childX[9] = 26;
-		rsinterface.childY[9] = 74;
-		rsinterface.children[10] = 10600;
-		rsinterface.childX[10] = 26;
-		rsinterface.childY[10] = 133;
-		rsinterface.children[11] = 10601;
-		rsinterface.childX[11] = 480;
-		rsinterface.childY[11] = 17;
-		interfaceCache[10494].invSpritePadX = 8;
-		interfaceCache[10600].invSpritePadX = 6;
-		interfaceCache[10600].invSpritePadY = 6;
-		itemsOnDeathDATA(wid);
-	}
+        rsinterface.children[0] = 17101;
+        rsinterface.childX[0] = 7;
+        rsinterface.childY[0] = 8;
+        rsinterface.children[1] = 17102;
+        rsinterface.childX[1] = 480;
+        rsinterface.childY[1] = 17;
+        rsinterface.children[2] = 17103;
+        rsinterface.childX[2] = 185;
+        rsinterface.childY[2] = 18;
+        rsinterface.children[3] = 17104;
+        rsinterface.childX[3] = 22;
+        rsinterface.childY[3] = 50;
+        rsinterface.children[4] = 17105;
+        rsinterface.childX[4] = 22;
+        rsinterface.childY[4] = 110;
+        rsinterface.children[5] = 17106;
+        rsinterface.childX[5] = 347;
+        rsinterface.childY[5] = 47;
+        rsinterface.children[6] = 17107;
+        rsinterface.childX[6] = 349;
+        rsinterface.childY[6] = 270;
+        rsinterface.children[7] = 17108;
+        rsinterface.childX[7] = 398;
+        rsinterface.childY[7] = 298;
+        rsinterface.children[8] = 17115;
+        rsinterface.childX[8] = 348;
+        rsinterface.childY[8] = 64;
+        rsinterface.children[9] = 10494;
+        rsinterface.childX[9] = 26;
+        rsinterface.childY[9] = 74;
+        rsinterface.children[10] = 10600;
+        rsinterface.childX[10] = 26;
+        rsinterface.childY[10] = 133;
+        rsinterface.children[11] = 10601;
+        rsinterface.childX[11] = 480;
+        rsinterface.childY[11] = 17;
+        interfaceCache.get(10494).invSpritePadX = 8;
+        interfaceCache.get(10600).invSpritePadX = 6;
+        interfaceCache.get(10600).invSpritePadY = 6;
+        itemsOnDeathDATA(wid);
+    }
 
 	public static void itemsOnDeathDATA(TextDrawingArea[] wid) {
 		RSInterface rsinterface = addInterface(17115);
@@ -5188,14 +5197,14 @@ public final class Interfaces extends RSInterface {
 			addText(i, "", tda, 0, 0xffffff, false, true);
 		}
 		for (int id = 18144, i = 0; id <= 18243 && i <= 99; id++, i++) {
-			interfaceCache[id].actions = new String[]{"Edit Rank", "Kick", "Ban"};
-			list.children[i] = id;
-			list.childX[i] = 5;
-			for (int id2 = 18144, i2 = 1; id2 <= 18243 && i2 <= 99; id2++, i2++) {
-				list.childY[0] = 2;
-				list.childY[i2] = list.childY[i2 - 1] + 14;
-			}
-		}
+            interfaceCache.get(id).actions = new String[]{"Edit Rank", "Kick", "Ban"};
+            list.children[i] = id;
+            list.childX[i] = 5;
+            for (int id2 = 18144, i2 = 1; id2 <= 18243 && i2 <= 99; id2++, i2++) {
+                list.childY[0] = 2;
+                list.childY[i2] = list.childY[i2 - 1] + 14;
+            }
+        }
 		list.height = 158;
 		list.width = 174;
 		list.scrollMax = 1405;
@@ -5582,9 +5591,9 @@ public final class Interfaces extends RSInterface {
 	}
 
 	public static final void initializeCommandHelp() {
-		for (int childId : interfaceCache[8143].children) {
-			interfaceCache[childId].message = "";
-		}
+		for (int childId : interfaceCache.get(8143).children) {
+            interfaceCache.get(childId).message = "";
+        }
 	}
 
 	public static void rangeTargetBoard(TextDrawingArea[] tda) {
@@ -5632,7 +5641,7 @@ public final class Interfaces extends RSInterface {
 	}
 
 	public static void updateShopWidget(TextDrawingArea[] tda) {
-		RSInterface widget = interfaceCache[3824];
+		RSInterface widget = interfaceCache.get(3824);
 		int[] childrenId = new int[widget.children.length + 1];
 		int[] childrenX = new int[widget.children.length + 1];
 		int[] childrenY = new int[widget.children.length + 1];
@@ -6022,38 +6031,38 @@ public final class Interfaces extends RSInterface {
 	}
 
 	public static void shopWidget(TextDrawingArea[] tda) {
-		// Interface background
-		RSInterface widget = addInterface(64000);
-		setChildren(5, widget);
-		addSprite(64001, 1, "Interfaces/Shop/IMAGE");
-		addHoverButton(64002, "Interfaces/Shop/IMAGE", 2, 21, 21, "Close Window", 201, 64002, 5);
-		addText(64003, "Tony's store", tda, 2, 0xFFA500, false, true);
-		setBounds(64001, 10, 10, 0, widget);
-		setBounds(64015, 20, 55, 1, widget);
-		setBounds(64002, 485, 20, 2, widget);
-		setBounds(64003, 200, 20, 3, widget);
-		setBounds(64017, 0, 0, 4, widget);
+        // Interface background
+        RSInterface widget = addInterface(64000);
+        setChildren(5, widget);
+        addSprite(64001, 1, "Interfaces/Shop/IMAGE");
+        addHoverButton(64002, "Interfaces/Shop/IMAGE", 2, 21, 21, "Close Window", 201, 64002, 5);
+        addText(64003, "Tony's store", tda, 2, 0xFFA500, false, true);
+        setBounds(64001, 10, 10, 0, widget);
+        setBounds(64015, 20, 55, 1, widget);
+        setBounds(64002, 485, 20, 2, widget);
+        setBounds(64003, 200, 20, 3, widget);
+        setBounds(64017, 0, 0, 4, widget);
 
-		// Scroll
-		RSInterface scroll = addInterface(64015);
-		setChildren(1, scroll);
-		scroll.height = 252;
-		scroll.width = 465;
-		scroll.scrollMax = 800;
+        // Scroll
+        RSInterface scroll = addInterface(64015);
+        setChildren(1, scroll);
+        scroll.height = 252;
+        scroll.width = 465;
+        scroll.scrollMax = 800;
 
-		// Item container
-		addToItemGroup(SHOP_CONTAINER, 10, 80, 14, 14, true, "Value", "Buy 1", "Buy 5", "Buy 10", "Buy X", null);
-		setBounds(SHOP_CONTAINER, 8, 8, 0, scroll);
-		interfaceCache[SHOP_CONTAINER].invAlwaysInfinity = false;
+        // Item container
+        addToItemGroup(SHOP_CONTAINER, 10, 80, 14, 14, true, "Value", "Buy 1", "Buy 5", "Buy 10", "Buy X", null);
+        setBounds(SHOP_CONTAINER, 8, 8, 0, scroll);
+        interfaceCache.get(SHOP_CONTAINER).invAlwaysInfinity = false;
 
-		// Bounty hunter widget
-		RSInterface subWidget = addInterface(64017);
-		setChildren(2, subWidget);
-		addSprite(64018, 2, "Interfaces/BountyHunter/IMAGE");
-		addText(64019, "PKP", tda, 1, 0xFFFF00, false, true);
-		setBounds(64018, 20, 20, 0, subWidget);
-		setBounds(64019, 48, 20, 1, subWidget);
-	}
+        // Bounty hunter widget
+        RSInterface subWidget = addInterface(64017);
+        setChildren(2, subWidget);
+        addSprite(64018, 2, "Interfaces/BountyHunter/IMAGE");
+        addText(64019, "PKP", tda, 1, 0xFFFF00, false, true);
+        setBounds(64018, 20, 20, 0, subWidget);
+        setBounds(64019, 48, 20, 1, subWidget);
+    }
 
 	static void OfflineRewards(TextDrawingArea[] tda) {
 		int interID = 24472;
@@ -6190,11 +6199,11 @@ public final class Interfaces extends RSInterface {
 		setBounds(28006, 359, 47, 4, widget);
 
 		/** TODO WIldy Skull **/
-		setBounds(196, Client.instance.isResized() ? 420 : 420,
-				Client.instance.isResized() ? 286 : 286, 5, widget);
+		setBounds(196, instance.isResized() ? 420 : 420,
+				instance.isResized() ? 286 : 286, 5, widget);
 
 		addText(250, "", tda, 1, 0xFFFF00, true, true);
-		RSInterface skullWidget = RSInterface.interfaceCache[196];
+		RSInterface skullWidget = interfaceCache.get(196);
 		int[] backupX = skullWidget.childX;
 		int[] backupY = skullWidget.childY;
 
