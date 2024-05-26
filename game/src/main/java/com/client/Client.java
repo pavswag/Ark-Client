@@ -17322,15 +17322,20 @@ public class Client extends GameEngine implements RSClient {
 			newSmallFont.drawString(text, x, y, 0xFFFFFF, 0x000000, 256);
 
 			for (int skill : drop.getSkills()) {
-/*				if(skill==22){
-					continue;
-				}*/
 
-				Sprite sprite = smallXpSprites[skill];
-				x -= sprite.subWidth + 3;
-				y -= sprite.subHeight - 4;
-				sprite.drawAdvancedSprite(x, y, transparency);
-				y += sprite.subHeight - 4;
+				if(skill == 30) {
+					AnimatedSprite animatedSprite = SpriteLoader.fetchAnimatedSprite(Signlink.getCacheDirectory() + "gifs/" + 9999 + ".gif").getInstance(13, 13);
+					x -= animatedSprite.subWidth + 3;
+					y -= animatedSprite.subHeight - 4;
+					animatedSprite.drawAdvancedSprite(x, y, transparency);
+					y += animatedSprite.subHeight - 4;
+				} else {
+					Sprite sprite =  smallXpSprites[skill];
+					x -= sprite.subWidth + 3;
+					y -= sprite.subHeight - 4;
+					sprite.drawAdvancedSprite(x, y, transparency);
+					y += sprite.subHeight - 4;
+				}
 			}
 		}
 
@@ -19055,6 +19060,7 @@ public class Client extends GameEngine implements RSClient {
 
 					for (int j = 0; j < length; j++) {
 						skills[j] = inStream.readSignedByte();
+						System.out.println("Got skill [" + skills[j] + "]");
 					}
 
 
