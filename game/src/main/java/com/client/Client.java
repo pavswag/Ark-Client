@@ -13021,7 +13021,7 @@ public class Client extends GameEngine implements RSClient {
 		Rasterizer2D.drawRectangle(200, 200 + moveY, 100, 100, 0x27A2B0);
 
 		/* Messages */
-		newBoldFont.drawCenteredString("ArkCane",  centerX + 5, centerY - 105, 0x27A2B0, 1);
+		newBoldFont.drawCenteredString("Kyros",  centerX + 5, centerY - 105, 0x27A2B0, 1);
 		newRegularFont.drawCenteredString("Account Manager", centerX + 5,  centerY - 85, 0xD4A190, 1);
 		newBoldFont.drawCenteredString(account.username == null ? "" : Utility.formatName(account.username), 385, 210 + moveY, 0x27A2B0, 0);
 		newBoldFont.drawBasicString("Created:", 320, 235 + moveY, 0xD4A190, 0);
@@ -13059,7 +13059,7 @@ public class Client extends GameEngine implements RSClient {
 		Rasterizer2D.drawRectangle(175, 175 + moveY, 425, 150, 0x27A2B0);
 
 		/* Messages */
-		newBoldFont.drawCenteredString("ArkCane",  centerX + 5, centerY - 115, 0x27A2B0, 1);
+		newBoldFont.drawCenteredString("Kyros",  centerX + 5, centerY - 115, 0x27A2B0, 1);
 		newRegularFont.drawCenteredString("Error Message", centerX + 5,  centerY - 95, 0xD4A190, 1);
 		newBoldFont.drawCenteredString(firstLoginMessage, centerX + 5,  centerY + 25, 0xD4A190, 1);
 		newBoldFont.drawCenteredString("[ Click anywhere to return to the main screen ]", centerX + 5, centerY + 150, 0xFFFFFF, 1);
@@ -17814,7 +17814,7 @@ public class Client extends GameEngine implements RSClient {
 			rememberPasswordHover = mouseInRegion(394, 291, 411, 306);*/
 
 			if (firstLoginMessage.equalsIgnoreCase("")) {
-				firstLoginMessage = "Welcome to ArkCane, Prepare for war!";
+				firstLoginMessage = "Welcome to Kyros, Prepare for war!";
 			}
 
 			if (rememberMeHover) {
@@ -18462,7 +18462,7 @@ public class Client extends GameEngine implements RSClient {
 		if (clickMode3 == 1 && saveClickY >= 387 && saveClickY <= 409 && saveClickX >= 589
 				&& saveClickX <= 613) {
 			try {
-				launchURL("https://discord.gg/arkcane");
+				launchURL("https://discord.gg/kyros");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -26486,19 +26486,19 @@ public class Client extends GameEngine implements RSClient {
 
 	public void onBroadcast(String message) {
 		if (message.contains("groot") && feedItems.stream().noneMatch(feedItem -> feedItem.getType() == FeedItemType.GROOT)) {
-			feedItems.add(new FeedItem(FeedItemType.GROOT, null, "Groot Spawned", ";;groot to kill them", "https://arkcane.net/forums/knowledge-base.5/", System.currentTimeMillis()));
+			feedItems.add(new FeedItem(FeedItemType.GROOT, null, "Groot Spawned", ";;groot to kill them", "https://kyros.net/forums/knowledge-base.5/", System.currentTimeMillis()));
 		}
 
 		if (message.contains("dono") && feedItems.stream().noneMatch(feedItem -> feedItem.getType() == FeedItemType.DONOR_BOSS)) {
-			feedItems.add(new FeedItem(FeedItemType.DONOR_BOSS, null, "Donor Boss spawned", ";;db to kill them", "https://arkcane.net/forums/knowledge-base.5/", System.currentTimeMillis()));
+			feedItems.add(new FeedItem(FeedItemType.DONOR_BOSS, null, "Donor Boss spawned", ";;db to kill them", "https://kyros.net/forums/knowledge-base.5/", System.currentTimeMillis()));
 		}
 
 		if (message.contains("shooting star") && !message.contains("dwarfs decided to mine") && feedItems.stream().noneMatch(feedItem -> feedItem.getType() == FeedItemType.SHOOTING_STAR)) {
-			feedItems.add(new FeedItem(FeedItemType.SHOOTING_STAR, null, "Shooting Star spawned", ";;star to get to the star", "https://arkcane.net/threads/shooting-star-guide.140/", System.currentTimeMillis()));
+			feedItems.add(new FeedItem(FeedItemType.SHOOTING_STAR, null, "Shooting Star spawned", ";;star to get to the star", "https://kyros.net/threads/shooting-star-guide.140/", System.currentTimeMillis()));
 		}
 
 		if (message.contains("vote") && feedItems.stream().noneMatch(feedItem -> feedItem.getType() == FeedItemType.VOTE_BOSS)) {
-			feedItems.add(new FeedItem(FeedItemType.VOTE_BOSS, null, "Vote Boss spawned", ";;vb to kill them", "https://arkcane.net/forums/knowledge-base.5/", System.currentTimeMillis()));
+			feedItems.add(new FeedItem(FeedItemType.VOTE_BOSS, null, "Vote Boss spawned", ";;vb to kill them", "https://kyros.net/forums/knowledge-base.5/", System.currentTimeMillis()));
 		}
 
 		if (message.contains("seasonal") && feedItems.stream().noneMatch(feedItem -> feedItem.getType() == FeedItemType.SEASONAL)) {
@@ -26509,7 +26509,7 @@ public class Client extends GameEngine implements RSClient {
 			feedItems.add(new FeedItem(FeedItemType.WILDY_BOSS, null, "Wildy event is active", ";;wildyevent to get there", "", System.currentTimeMillis()));
 		}
 		if (message.contains("hespori") && feedItems.stream().noneMatch(feedItem -> feedItem.getType() == FeedItemType.HESPORI_BOSS)) {
-			feedItems.add(new FeedItem(FeedItemType.HESPORI_BOSS, null, "Hespori is active", ";;worldevent to get there.", "https://arkcane.net/ewr-carta/hespori/", System.currentTimeMillis()));
+			feedItems.add(new FeedItem(FeedItemType.HESPORI_BOSS, null, "Hespori is active", ";;worldevent to get there.", "https://kyros.net/ewr-carta/hespori/", System.currentTimeMillis()));
 		}
 
 		feedItems.removeIf(feedItem -> feedItem.getTimestamp() < System.currentTimeMillis());

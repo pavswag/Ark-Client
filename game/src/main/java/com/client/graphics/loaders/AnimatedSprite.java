@@ -13,9 +13,9 @@ import java.net.URL;
 import java.util.Hashtable;
 
 /**
- * @author ArkCane
- * @social Discord: ArkCane
- * Website: www.arkcane.net
+ * @author Kyros
+ * @social Discord: Kyros
+ * Website: www.kyros.net
  * @since 05/03/2024
  */
 public final class AnimatedSprite extends Sprite {

@@ -146,7 +146,7 @@ public class PetPerk extends RSInterface {
         petDescriptionText.scrollMax = 350;
         petDescriptionText.totalChildren(1);
         petDescriptionText.child(0, 48854, 5, 5);
-        addText(48854, "The Vote Genie Pet is a beloved pet on ArkCane, obtaining with a rare chance upon claiming a vote or purchased from the vote store.", tda, 2, 0xff9933, true);
+        addText(48854, "The Vote Genie Pet is a beloved pet on Kyros, obtaining with a rare chance upon claiming a vote or purchased from the vote store.", tda, 2, 0xff9933, true);
         get(48854).wrapText = true;
         get(48854).width = 315;
 

@@ -149,7 +149,7 @@ public class DiscordService implements AutoCloseable
 			? discordPresence.getEndTimestamp().getEpochSecond()
 			: 0;
 		discordRichPresence.largeImageKey = Strings.isNullOrEmpty(discordPresence.getLargeImageKey())
-			? "arkcane"
+			? "kyros"
 			: discordPresence.getLargeImageKey();
 		discordRichPresence.largeImageText = discordPresence.getLargeImageText();
 

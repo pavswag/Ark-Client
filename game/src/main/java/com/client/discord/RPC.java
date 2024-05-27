@@ -9,11 +9,11 @@ import net.arikia.dev.drpc.DiscordRichPresence;
 public class RPC {
     public static String AppId = "1003641398689533982";
 
-    public static String line1 = "ArkCane";
+    public static String line1 = "Kyros";
 
-    public static String line2 = "www.arkcane.net";
+    public static String line2 = "www.kyros.net";
 
-    public static String image = "arkcane";
+    public static String image = "kyros";
 
     private static String OS = System.getProperty("os.name").toLowerCase();
 
@@ -36,9 +36,9 @@ public class RPC {
 
     public static void createNewPresence() {
         DiscordRichPresence rich = new DiscordRichPresence
-                .Builder("Playing ArkCane")
+                .Builder("Playing Kyros")
                 .setDetails("In Menu")
-                .setBigImage("arkcane", "ArkCane.net")
+                .setBigImage("kyros", "Kyros.net")
                 .setStartTimestamps(System.currentTimeMillis())
                 .build();
         DiscordRPC.discordUpdatePresence(rich);
@@ -46,9 +46,9 @@ public class RPC {
 
     public static void updatePresence(String details) {
         DiscordRichPresence rich = new DiscordRichPresence
-                .Builder("Playing ArkCane")
+                .Builder("Playing Kyros")
                 .setDetails(details)
-                .setBigImage("arkcane", "ArkCane.net")
+                .setBigImage("kyros", "Kyros.net")
                 .setStartTimestamps(System.currentTimeMillis())
                 .build();
         DiscordRPC.discordUpdatePresence(rich);
