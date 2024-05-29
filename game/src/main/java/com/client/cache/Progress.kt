@@ -1,8 +1,8 @@
 package com.client.cache
 
-/** * @author ArkCane
- * @social Discord: ArkCane
- * Website: www.arkcane.net
+/** * @author Kyros
+ * @social Discord: Kyros
+ * Website: www.kyros.net
  * @since 11/03/2024 */
 abstract class Progress {
 

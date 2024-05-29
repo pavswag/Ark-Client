@@ -1,9 +1,9 @@
 package com.client.sound;
 
 /**
- * @author ArkCane
- * @social Discord: ArkCane
- * Website: www.arkcane.net
+ * @author Kyros
+ * @social Discord: Kyros
+ * Website: www.kyros.net
  * @since 15/03/2024
  */
 public class AreaSounds {

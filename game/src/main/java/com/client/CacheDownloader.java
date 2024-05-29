@@ -113,7 +113,8 @@ public class CacheDownloader {
 	}
 
 	private void update() throws IOException {
-		downloadFile(Configuration.CACHE_LINK, getArchivedName());
+		downloadFile(Configuration.
+				CACHE_LINK, getArchivedName());
 	}
 
 	private void downloadFile(String adress, String localFileName) throws IOException {

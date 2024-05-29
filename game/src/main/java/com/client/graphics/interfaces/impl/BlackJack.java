@@ -11,9 +11,9 @@ import java.util.HashMap;
 import static com.client.graphics.interfaces.InterfaceAnimations.moveInterface;
 
 /**
- * @author ArkCane
- * @social Discord: ArkCane
- * Website: www.arkcane.net
+ * @author Kyros
+ * @social Discord: Kyros
+ * Website: www.kyros.net
  * @since 22/03/2024
  */
 public class BlackJack extends RSInterface {

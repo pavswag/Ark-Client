@@ -9,9 +9,9 @@ import static com.client.Client.instance;
 import static com.client.graphics.interfaces.RSInterface.interfaceCache;
 
 /**
- * @author ArkCane
- * @social Discord: ArkCane
- * Website: www.arkcane.net
+ * @author Kyros
+ * @social Discord: Kyros
+ * Website: www.kyros.net
  * @since 19/03/2024
  */
 public class YoutubeManager {

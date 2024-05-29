@@ -9,9 +9,9 @@ import java.io.FileReader;
 import java.io.IOException;
 
 /**
- * @author ArkCane
- * @social Discord: ArkCane
- * Website: www.arkcane.net
+ * @author Kyros
+ * @social Discord: Kyros
+ * Website: www.kyros.net
  * @since 29/03/2024
  */
 public class ItemStats {
