@@ -14,12 +14,7 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         maven("https://jitpack.io")
-    }
-    resolutionStrategy {
-        eachPlugin {
-            if(requested.id.toString() == "com.mark.bootstrap.bootstrap")
-                useModule("com.github.Mark7625:bootstrap-release:7d9c7df954")
-        }
+        maven("https://raw.githubusercontent.com/OpenRune/hosting/master")
     }
 }
 

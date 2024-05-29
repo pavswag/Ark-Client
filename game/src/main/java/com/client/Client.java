@@ -8201,11 +8201,6 @@ public class Client extends GameEngine implements RSClient {
 
 	@Override
 	public void cleanUpForQuit() {
-//		try {
-//			DiscordRPC.discordShutdown();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
 		Signlink.reporterror = false;
 		try {
 			if (socketStream != null)

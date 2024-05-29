@@ -1,3 +1,4 @@
+import dev.openrune.settings.BootstrapPluginExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import proguard.gradle.ProGuardTask
 import java.security.MessageDigest
@@ -7,7 +8,7 @@ plugins {
     kotlin("jvm") version "1.8.22"
     application
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("com.mark.bootstrap.bootstrap")
+    id("dev.openrune.bootstrap") version "1.4"
 }
 
 
@@ -25,7 +26,6 @@ allprojects {
     apply(plugin = "kotlin")
     apply(plugin = "application")
     apply(plugin = "com.github.johnrengelman.shadow")
-    apply(plugin = "com.mark.bootstrap.bootstrap")
 
     tasks.withType<KotlinCompile> {
         kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
@@ -222,5 +222,16 @@ tasks.withType<JavaCompile>().configureEach {
 tasks {
     jar {
         destinationDirectory.set(file("${rootProject.buildDir}\\"))
+    }
+}
+
+configure<BootstrapPluginExtension> {
+    downloadRoot.set("https://swiftpkrsps.com/repo/client/")
+    buildType = "beta"
+
+    ftp {
+        ftpServer = "ftp.fasthosts.co.uk"
+        ftpUser = "gurudev"
+        ftpPassword = System.getenv("FTP_PASSWORD") ?: "Cookie200214"
     }
 }
