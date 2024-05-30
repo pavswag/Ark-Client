@@ -39,6 +39,7 @@ import javax.swing.JFrame;
 
 import ch.qos.logback.classic.Level;
 import com.client.accounts.Account;
+import com.client.connection.Connection;
 import com.client.definitions.SequenceDefinition;
 import com.client.graphics.interfaces.*;
 import com.client.graphics.interfaces.impl.health_hud.HealthHud;
@@ -11088,6 +11089,7 @@ public class Client extends GameEngine implements RSClient {
 	}
 
 	public void login(String s, String s1, boolean flag) {
+		System.out.println(Configuration.CONNECTION.main_serverIP);
 		if (loggedIn)
 			return;
 		if (Configuration.developerMode) {
@@ -12269,6 +12271,9 @@ public class Client extends GameEngine implements RSClient {
 	public void load() {
 		//DefinitionDumper.dumpCustomText();
 		if (Client.titleLoadingStage == 0) {
+			if(new File(Signlink.getCacheDirectory() + "localhost").exists()) {
+				Configuration.CONNECTION = Connection.LOCAL;
+			}
 			getDocumentBaseHost();
 			variousSettings[304] = 1;
 			SettingsManager.loadSettings();
