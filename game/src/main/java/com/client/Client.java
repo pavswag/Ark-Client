@@ -8768,8 +8768,14 @@ public class Client extends GameEngine implements RSClient {
 						if(inputString.equalsIgnoreCase("::dumpme")) {
 							DefinitionDumper.dumpLocalPlayerImage();
 						}
-						if (inputString.startsWith("::pet")) {
-							openInterfaceID = PetPerk.widgetId;
+						if (inputString.startsWith("::findanim")) {
+							int itemId = Integer.parseInt(inputString.split(" ")[1]);
+							for(int i = 0; i < 11127; i++) {
+								SequenceDefinition sequenceDefinition = OSRSCacheLoader.getSeqDef(i);
+								if(sequenceDefinition.leftHandItem == itemId || sequenceDefinition.rightHandItem == itemId) {
+									pushMessage("Anim match [" + i + "]");
+								}
+							}
 						}
 						if (inputString.startsWith("::testhud")) {
 							try {
