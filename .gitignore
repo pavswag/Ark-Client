@@ -3,8 +3,7 @@
 .gradle/
 .idea/
 
-# Logback
-logback.xml
+
 
 # JRebel
 rebel.xml
