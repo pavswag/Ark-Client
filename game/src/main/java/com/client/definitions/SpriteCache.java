@@ -92,7 +92,6 @@ public final class SpriteCache extends DualNode {
             image.id = id;
             if (data != null) {
                 image.decode(new Buffer(data),true);
-                System.out.println("Found sprite [" + img +"] with id [" + id + "]");
             } else {
                 System.out.println("Missing Sprite: " + id);
                 return null;

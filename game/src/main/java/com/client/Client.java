@@ -12801,20 +12801,7 @@ public class Client extends GameEngine implements RSClient {
 					isLoading = false;
 					long clientLoadStart = System.currentTimeMillis();
 					DefinitionDumper.dumpDefs();
-					int totalHitSplatDefs = Js5List.configs.getGroupFileCount(Js5ConfigType.HITSPLAT);
-					int totalHealthBarDefs = Js5List.configs.getGroupFileCount(Js5ConfigType.HEALTHBAR);
-					System.out.println("Found [" + totalHitSplatDefs + "] Hit splats");
-					System.out.println("Found [" + totalHealthBarDefs + "] Health Bars");
-					for(int i = 0; i < totalHealthBarDefs; i++) {
-						System.out.println(HealthBarDefinition.lookup(i));
-					}
-
 					clientLoaded = true;
-
-					System.out.println(NpcDefinition.lookup(13_011));
-					System.out.println(NpcDefinition.lookup(13_016));
-					System.out.println(NpcDefinition.lookup(13485));
-
 					long clientLoadEnd = System.currentTimeMillis();
 					long clientLoadDifference = clientLoadEnd - clientLoadStart;
 					Client.titleLoadingStage = 210;
