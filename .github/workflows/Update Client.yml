@@ -1,4 +1,4 @@
-name: Check and Publish
+name: Publish Client Update
 
 on:
   push:
@@ -36,3 +36,10 @@ jobs:
       - name: Perform Gradle Task publishClientLive if not LOCAL
         if: env.is_local == 'false'
         run: ./gradlew publishClientLive
+
+      - name: Upload Ark-Client files
+        if: always() # Ensure this step runs even if previous steps fail
+        uses: actions/upload-artifact@v3
+        with:
+          name: ark-client-files
+          path: /home/runner/.local/share/Ark-Client/
