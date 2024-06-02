@@ -45,9 +45,9 @@ while [ -h "$PRG" ] ; do
         PRG=$(dirname "$PRG")/"$link"
     fi
 done
-SAVED="pwd"
-cd "$(dirname "$PRG")" || exit 1
-APP_HOME=$(pwd -P)
+SAVED="`pwd`"
+cd "`dirname \"$PRG\"`/" || exit 1
+APP_HOME="`pwd -P`"
 cd "$SAVED" || exit 1
 
 CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
