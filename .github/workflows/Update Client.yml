@@ -1,0 +1,35 @@
+name: Check and Publish
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  check_and_publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+
+      - name: Check if Configuration is LOCAL
+        id: check_configuration
+        run: |
+          if grep -q "public static Connection CONNECTION = Connection.LOCAL;" src/main/java/com/client/Configuration.java; then
+            echo "Configuration is LOCAL"
+            echo "is_local=true" >> $GITHUB_ENV
+          else
+            echo "Configuration is not LOCAL"
+            echo "is_local=false" >> $GITHUB_ENV
+          fi
+
+      - name: Perform Gradle Task publishClientLive if not LOCAL
+        if: env.is_local == 'false'
+        run: ./gradlew publishClientLive
