@@ -30,6 +30,9 @@ jobs:
             echo "is_local=false" >> $GITHUB_ENV
           fi
 
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
       - name: Perform Gradle Task publishClientLive if not LOCAL
         if: env.is_local == 'false'
         run: ./gradlew publishClientLive
