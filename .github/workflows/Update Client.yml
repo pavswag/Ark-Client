@@ -12,12 +12,25 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 2 # Fetch two commits to compare changes
 
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           java-version: '11'
           distribution: 'adopt'
+
+      - name: Check if version in gradle.properties has changed
+        id: check_version_change
+        run: |
+          if git diff HEAD~1 HEAD -- gradle.properties | grep -q '^+version='; then
+            echo "Version has changed"
+            echo "version_changed=true" >> $GITHUB_ENV
+          else
+            echo "Version has not changed"
+            echo "version_changed=false" >> $GITHUB_ENV
+          fi
 
       - name: Check if Configuration is LOCAL
         id: check_configuration
@@ -29,12 +42,14 @@ jobs:
             echo "Configuration is not LOCAL"
             echo "is_local=false" >> $GITHUB_ENV
           fi
+        if: env.version_changed == 'true'
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
+        if: env.version_changed == 'true'
 
       - name: Perform Gradle Task publishClientLive if not LOCAL
-        if: env.is_local == 'false'
+        if: env.is_local == 'false' && env.version_changed == 'true'
         run: ./gradlew publishClientLive
 
       - name: Upload Ark-Client files
