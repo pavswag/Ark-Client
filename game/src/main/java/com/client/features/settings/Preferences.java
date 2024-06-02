@@ -62,8 +62,8 @@ public class Preferences implements net.runelite.api.Preferences {
                     preferences.screenHeight = node.get("screenHeight").intValue();
                 if (node.has("dragTime"))
                     preferences.dragTime = node.get("dragTime").intValue();
-                if (node.has("hidePetOptions"))
-                    preferences.hidePetOptions = node.get("hidePetOptions").booleanValue();
+           /*     if (node.has("hidePetOptions"))
+                    preferences.hidePetOptions = node.get("hidePetOptions").booleanValue();*/
                 if (node.has("pmNotifications"))
                     preferences.pmNotifications = node.get("pmNotifications").booleanValue();
                 if (node.has("mode1"))

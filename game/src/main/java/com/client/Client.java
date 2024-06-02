@@ -17872,7 +17872,7 @@ public class Client extends GameEngine implements RSClient {
 
 	}
 	private void drawAccount() {
-		Rasterizer2D.fillRectangle(155, 100, 164, 313, 0x382b2b, 150);
+//		Rasterizer2D.fillRectangle(155, 100, 164, 313, 0x382b2b, 150);
 
 		int centerX = canvasWidth / 2, centerY = canvasHeight / 2;
 		int yPos = centerY - 70;
