@@ -126,7 +126,9 @@ public class PetPerk extends RSInterface {
 
         RSInterface petDescription = addInterface(48848);
         get(48848).interfaceHidden = true;
+
         addBox(48849, 514, 337, 1, 0, 0, 210);
+        get(48849).coverWholeScreen = true;
         addBox(48850, 370, 285, 1, 0, 0x221e1a, 255);
 
         hoverButton(48851, dir, "Return", 25, 26);

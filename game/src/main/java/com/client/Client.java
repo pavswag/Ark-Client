@@ -15059,15 +15059,28 @@ public class Client extends GameEngine implements RSClient {
 						} else if (class9_1.type == 16) {
 							drawInputField(class9_1, _x, _y, class9_1.width, class9_1.height);
 						}else if (class9_1.type == RSInterface.TYPE_BOX) {
-							// Draw outline
-							Rasterizer2D.drawBox(_x - 2, _y - 2, class9_1.width + 4, class9_1.height + 4, 0x0e0e0c);
-							Rasterizer2D.drawBox(_x - 1, _y - 1, class9_1.width + 2, class9_1.height + 2, 0x474745);
-							// Draw base box
-							if (class9_1.toggled) {
-								Rasterizer2D.drawBox(_x, _y, class9_1.width, class9_1.height, class9_1.anInt239);
-								class9_1.toggled = false;
+							if(class9_1.coverWholeScreen) {
+								// Draw outline
+								Rasterizer2D.drawBox(0, 0, getViewportWidth(), getViewportHeight(), 0x0e0e0c);
+								Rasterizer2D.drawBox(1, 1, getViewportWidth() - 1, getViewportHeight() - 1, 0x474745);
+								// Draw base box
+								if (class9_1.toggled) {
+									Rasterizer2D.drawBox(2, 2, getViewportWidth() - 2, getViewportHeight() - 2, class9_1.anInt239);
+									class9_1.toggled = false;
+								} else {
+									Rasterizer2D.drawBox(2, 2, getViewportWidth() - 2, getViewportHeight() - 2, class9_1.hoverTextColor);
+								}
 							} else {
-								Rasterizer2D.drawBox(_x, _y, class9_1.width, class9_1.height, class9_1.hoverTextColor);
+								// Draw outline
+								Rasterizer2D.drawBox(_x - 2, _y - 2, class9_1.width + 4, class9_1.height + 4, 0x0e0e0c);
+								Rasterizer2D.drawBox(_x - 1, _y - 1, class9_1.width + 2, class9_1.height + 2, 0x474745);
+								// Draw base box
+								if (class9_1.toggled) {
+									Rasterizer2D.drawBox(_x, _y, class9_1.width, class9_1.height, class9_1.anInt239);
+									class9_1.toggled = false;
+								} else {
+									Rasterizer2D.drawBox(_x, _y, class9_1.width, class9_1.height, class9_1.hoverTextColor);
+								}
 							}
 						} else if (class9_1.type == 19) {
 							if (class9_1.backgroundSprites.length > 1) {
@@ -15164,10 +15177,16 @@ public class Client extends GameEngine implements RSClient {
 							Rasterizer2D.drawPixels(class9_1.height, _y, _x, color, progressBarWidth);
 							Rasterizer2D.drawBorder(_x, _y, class9_1.width, class9_1.height, class9_1.fillColor);
 						} else if (class9_1.type == RSInterface.TYPE_DRAW_BOX) {
-							//DrawingArea.drawRoundedRectangle(_x, _y, class9_1.width, class9_1.height, class9_1.fillColor, class9_1.transparency, true, true);
-
-							Rasterizer2D.drawTransparentBox(_x, _y, class9_1.width, class9_1.height, class9_1.fillColor, class9_1.transparency);
-							Rasterizer2D.drawBorder(_x, _y, class9_1.width, class9_1.height, class9_1.borderColor);
+							if(class9_1.coverWholeScreen) {
+								System.out.println("Drawing box @ " + getViewportWidth() + "/" + getViewportHeight());
+								Rasterizer2D.setDrawingArea(getViewportHeight(), 0, getViewportWidth(), 0);
+								Rasterizer2D.drawTransparentBox(0, 0, getViewportWidth(), getViewportHeight(), class9_1.fillColor, class9_1.transparency);
+								Rasterizer2D.drawBorder(0, 0, getViewportWidth(), getViewportHeight(), class9_1.borderColor);
+								Rasterizer2D.setDrawingArea(yPosition + rsInterface.height, xPosition, xPosition + rsInterface.width, yPosition);
+							} else {
+								Rasterizer2D.drawTransparentBox(_x, _y, class9_1.width, class9_1.height, class9_1.fillColor, class9_1.transparency);
+								Rasterizer2D.drawBorder(_x, _y, class9_1.width, class9_1.height, class9_1.borderColor);
+							}
 						} else if (class9_1.type == 91) {
 
 							AnimatedSprite gif = SpriteLoader.fetchAnimatedSprite(class9_1.gifLocation);

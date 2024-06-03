@@ -5548,6 +5548,8 @@ public class RSInterface implements RSWidget {
 	public boolean invAlwaysInfinity;
 	public byte aByte254;
 
+	public boolean coverWholeScreen;
+
 	private int anInt255;
 	private int anInt256;
 	public int disabledAnimationId;
