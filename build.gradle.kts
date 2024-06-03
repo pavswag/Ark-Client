@@ -230,8 +230,8 @@ configure<BootstrapPluginExtension> {
     buildType = "beta"
 
     ftp {
-        ftpServer = "ftp.fasthosts.co.uk"
-        ftpUser = "gurudev"
-        ftpPassword = System.getenv("FTP_PASSWORD") ?: "Cookie200214"
+        ftpServer = System.getenv("FTP_SERVER") ?: ""
+        ftpUser = System.getenv("FTP_USER") ?: ""
+        ftpPassword = System.getenv("FTP_PASSWORD") ?: ""
     }
 }
