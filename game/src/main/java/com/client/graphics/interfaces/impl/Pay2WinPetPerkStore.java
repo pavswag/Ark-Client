@@ -33,15 +33,15 @@ public class Pay2WinPetPerkStore extends RSInterface {
             scroll.child(scrollChildIndex++, widgetId++, 0, childRecY);
             childRecY += 77;
 
-            addText(widgetId, "<icon=9999> Rogue Beast <icon=9999>", tda, 2, 0xff9933, true);
+            addText(widgetId, "", tda, 2, 0xff9933, true);
             scroll.child(scrollChildIndex++, widgetId++, 238, perkNameY);
             perkNameY += 77;
 
-            addText(widgetId, "<icon=9999> Your pet will attack your target, dealing ${value}% of your max hit. <icon=9999>", tda, 1, 0xff9933, true);
+            addText(widgetId, "<", tda, 1, 0xff9933, true);
             scroll.child(scrollChildIndex++, widgetId++, 238, perkDescriptionY);
             perkDescriptionY += 77;
 
-            addText(widgetId, "<icon=292> <b>$50k</b> <icon=292>", tda, 2, 0xff9933, true);
+            addText(widgetId, "", tda, 2, 0xff9933, true);
             scroll.child(scrollChildIndex++, widgetId++, 420, perkPriceY);
             perkPriceY += 77;
         }
