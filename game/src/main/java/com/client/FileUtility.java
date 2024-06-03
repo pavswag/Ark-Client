@@ -65,7 +65,6 @@ public final class FileUtility {
 
     public static final void writeFile(String name, byte data[]) {
         try {
-            (new File((new File(name)).getParent())).mkdirs();
             FileOutputStream fileoutputstream = new FileOutputStream(name);
             fileoutputstream.write(data, 0, data.length);
             fileoutputstream.close();
@@ -73,6 +72,7 @@ public final class FileUtility {
             completeWrite++;
         } catch (Throwable throwable) {
             System.out.println((new StringBuilder()).append("Write Error: ").append(name).toString());
+            throwable.printStackTrace();
         }
     }
 
