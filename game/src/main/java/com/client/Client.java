@@ -15178,7 +15178,6 @@ public class Client extends GameEngine implements RSClient {
 							Rasterizer2D.drawBorder(_x, _y, class9_1.width, class9_1.height, class9_1.fillColor);
 						} else if (class9_1.type == RSInterface.TYPE_DRAW_BOX) {
 							if(class9_1.coverWholeScreen) {
-								System.out.println("Drawing box @ " + getViewportWidth() + "/" + getViewportHeight());
 								Rasterizer2D.setDrawingArea(getViewportHeight(), 0, getViewportWidth(), 0);
 								Rasterizer2D.drawTransparentBox(0, 0, getViewportWidth(), getViewportHeight(), class9_1.fillColor, class9_1.transparency);
 								Rasterizer2D.drawBorder(0, 0, getViewportWidth(), getViewportHeight(), class9_1.borderColor);
