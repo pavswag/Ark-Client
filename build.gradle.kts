@@ -231,7 +231,7 @@ configure<BootstrapPluginExtension> {
 
     ftp {
         ftpServer = System.getenv("FTP_SERVER") ?: ""
-        ftpUser = System.getenv("FTP_USER") ?: ""
+        ftpUser = System.getenv("FTP_USERNAME") ?: ""
         ftpPassword = System.getenv("FTP_PASSWORD") ?: ""
     }
 }
