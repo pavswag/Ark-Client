@@ -1723,15 +1723,10 @@ public class Client extends GameEngine implements RSClient {
 					}
 				}
 				if (regionMapArchives[var2] == null && regionLocIds[var2] != -1) {
-					try {
 						regionMapArchives[var2] = Js5List.maps.getFile(regionLocIds[var2], 0);
 						if (regionMapArchives[var2] == null) {
 							var1 = false;
 						}
-					} catch (Throwable e) {
-						e.printStackTrace();
-						log.info("Missing xteas for region: {}", regions[var2]);
-					}
 				}
 			}
 
@@ -13262,6 +13257,17 @@ public class Client extends GameEngine implements RSClient {
 		}
 		timer = System.currentTimeMillis();
 		String text = "::bank";
+		stream.createFrame(103);
+		stream.writeUnsignedByte(text.length() - 1);
+		stream.writeString(text.substring(2));
+	}
+
+	public static void petInterface() {
+		if (System.currentTimeMillis() - timer < 400) {
+			return;
+		}
+		timer = System.currentTimeMillis();
+		String text = "::pet";
 		stream.createFrame(103);
 		stream.writeUnsignedByte(text.length() - 1);
 		stream.writeString(text.substring(2));
