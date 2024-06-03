@@ -134,6 +134,8 @@ public final class Interfaces extends RSInterface {
 
 		PetPerk.mainInterface(defaultTextDrawingAreas);
 
+		Pay2WinPetPerkStore.shopWidget(defaultTextDrawingAreas);
+
 		quest2(defaultTextDrawingAreas);
 		upgradeInterface(defaultTextDrawingAreas);
 		Wintertodt(defaultTextDrawingAreas);
