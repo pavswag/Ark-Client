@@ -230,8 +230,8 @@ configure<BootstrapPluginExtension> {
     buildType = "beta"
 
     ftp {
-        ftpServer = System.getenv("FTP_HOST") ?: ""
-        ftpUser = System.getenv("FTP_USERNAME") ?: ""
+        ftpServer = System.getenv("FTP_SERVER") ?: ""
+        ftpUser = System.getenv("FTP_USER") ?: ""
         ftpPassword = System.getenv("FTP_PASSWORD") ?: ""
     }
 }
