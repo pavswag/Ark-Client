@@ -18,6 +18,7 @@ jobs:
           echo "FTP_HOST: $FTP_HOST"
           echo "FTP_USERNAME: $FTP_USERNAME"
           echo "FTP_PASSWORD: $FTP_PASSWORD"
+          echo "test"
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
           FTP_USER: ${{ secrets.FTP_USER }}
