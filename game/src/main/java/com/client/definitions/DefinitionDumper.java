@@ -43,6 +43,7 @@ public class DefinitionDumper {
             dumpSprite(base);
             toJson(SpriteCache.spriteMap, "./temp/widget-sprites.json");
         }
+        //dumpItems();
         if (Configuration.dumpDataLists) {
             dumpCustomItems();
             moveCustomModels();
@@ -326,10 +327,12 @@ public class DefinitionDumper {
         ItemDefinition[] itemDefinitions = new ItemDefinition[ItemDefinition.totalItems];
         for(int i = 0; i < ItemDefinition.totalItems; i++) {
             ItemDefinition definition = ItemDefinition.lookup(i);
+            if(definition == null || definition.getName() == null)
+                continue;
             itemDefinitions[i] = definition;
-            toJson(definition, "./dump/items/" + i + "_" + definition.getName() + ".json");
+            toJson(definition, "./temp/items/" + i + "-" + definition.getName().replace("/", "_") + ".json");
         }
-        toJson(itemDefinitions, "./dump/item_definitions.json");
+        toJson(itemDefinitions, "./temp/item_definitions.json");
     }
 
     @SneakyThrows
