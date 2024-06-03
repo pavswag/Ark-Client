@@ -16337,7 +16337,7 @@ public class Client extends GameEngine implements RSClient {
 
 	private int method120() {
 		int j = 3;
-		if (yCameraCurve < 310 || removeRoofs) {
+		if (yCameraCurve < 310 || isRemoveRoofs(localPlayer)) {
 			int k = getXCameraPosShift();
 			int l = getYCameraPosShift();
 			int i1 = localPlayer.x >> 7;
@@ -16362,7 +16362,7 @@ public class Client extends GameEngine implements RSClient {
 						k++;
 					else if (k > i1)
 						k--;
-					if (removeRoofs || (tileFlags[plane][k][l] & 4) != 0)
+					if (isRemoveRoofs(localPlayer) || (tileFlags[plane][k][l] & 4) != 0)
 						j = plane;
 					k2 += i2;
 					if (k2 >= 0x10000) {
@@ -16371,7 +16371,7 @@ public class Client extends GameEngine implements RSClient {
 							l++;
 						else if (l > j1)
 							l--;
-						if (removeRoofs || (tileFlags[plane][k][l] & 4) != 0)
+						if (isRemoveRoofs(localPlayer) || (tileFlags[plane][k][l] & 4) != 0)
 							j = plane;
 					}
 				}
@@ -16385,7 +16385,7 @@ public class Client extends GameEngine implements RSClient {
 						l++;
 					else if (l > j1)
 						l--;
-					if (removeRoofs || (tileFlags[plane][k][l] & 4) != 0)
+					if (isRemoveRoofs(localPlayer) || (tileFlags[plane][k][l] & 4) != 0)
 						j = plane;
 					l2 += j2;
 					if (l2 >= 0x10000) {
@@ -16394,7 +16394,7 @@ public class Client extends GameEngine implements RSClient {
 							k++;
 						else if (k > i1)
 							k--;
-						if (removeRoofs || (tileFlags[plane][k][l] & 4) != 0)
+						if (isRemoveRoofs(localPlayer) || (tileFlags[plane][k][l] & 4) != 0)
 							j = plane;
 					}
 				}
@@ -16413,6 +16413,17 @@ public class Client extends GameEngine implements RSClient {
 			return plane;
 		else
 			return 3;
+	}
+
+	private boolean isRemoveRoofs(Player localPlayer) {
+		int x = localPlayer.getAbsoluteX();
+		int y = localPlayer.getAbsoluteY();
+		
+		if (x >= 3008 && x <= 3071 && y >= 4480 && y <= 4543) {
+			return false;//Roof override for skilling boss area
+		}
+
+		return removeRoofs;
 	}
 
 	private void delIgnore(long l) {
