@@ -1609,7 +1609,10 @@ public class Client extends GameEngine implements RSClient {
 				: mouseX >= canvasWidth - 95 && mouseX <= canvasWidth - 65 && mouseY >= 168 && mouseY <= 197;
 
 
-		questHover = fixed ? mouseX >= 734 && mouseX <= 754 && mouseY >= 38 && mouseY <= 68
+		questHover = fixed ? mouseX >= 734 && mouseX <= 754 && mouseY >= 43 && mouseY <= 68
+				: mouseX >= canvasWidth - 125 && mouseX <= canvasWidth - 100 && mouseY >= 166 && mouseY <= 191;
+
+		petHover = fixed ? mouseX >= 721 && mouseX <= 746 && mouseY >= 14 && mouseY <= 48
 				: mouseX >= canvasWidth - 125 && mouseX <= canvasWidth - 100 && mouseY >= 166 && mouseY <= 191;
 	}
 
@@ -1624,6 +1627,7 @@ public class Client extends GameEngine implements RSClient {
 	private boolean donatorHover;
 	private boolean taskHover;
 	private boolean questHover;
+	private boolean petHover;
 
 	private boolean showClanOptions;
 
@@ -6208,6 +6212,9 @@ public class Client extends GameEngine implements RSClient {
 		}
 		if (l==4255) {
 			Client.questList();
+		}
+		if (l==4256) {
+			Client.petInterface();
 		}
 		if(l==852 || l==4250){//goon
 			Client.teleportInterface();
@@ -11012,6 +11019,16 @@ public class Client extends GameEngine implements RSClient {
 			callbacks.post(new MenuEntryAdded(menuEntry));
 			menuActionRow = 2;
 		}
+		if (petHover) {
+			MenuEntry menuEntry = (MenuEntry) new MenuEntry(1)
+					.setOption("Pet")
+					.onClick((entry) -> {
+						petInterface();
+					});
+			menuManager.addEntry(menuEntry);
+			callbacks.post(new MenuEntryAdded(menuEntry));
+			menuActionRow = 2;
+		}
 		int mouseX1 = !isResized() ? 572 : canvasWidth - 175;
 		int mouseX2 = !isResized() ? 600 : canvasWidth - 150;
 		if (runHover) {
@@ -12486,6 +12503,9 @@ public class Client extends GameEngine implements RSClient {
 					loginScreenBackgroundCaptcha = new Sprite("loginscreen/captcha_background");
 					donatorOrb = new Sprite("orbs/promo_orb");
 					donatorOrbHover = new Sprite("orbs/promo_orb_hover");
+
+					petOrb = new Sprite("minimap_pet/pet_icon");
+					petOrbHover = new Sprite("minimap_pet/pet_icon_hover");
 
 					utilityOrb = new Sprite("orbs/utility_orb");
 					utilityOrbHover = new Sprite("orbs/utility_orb_hover");
@@ -16817,6 +16837,8 @@ public class Client extends GameEngine implements RSClient {
 
 	Sprite donatorOrb = null;
 	Sprite donatorOrbHover = null;
+	Sprite petOrb = null;
+	Sprite petOrbHover = null;
 
 	Sprite utilityOrb = null;
 	Sprite utilityOrbHover = null;
@@ -17029,6 +17051,7 @@ public class Client extends GameEngine implements RSClient {
 			(taskHover ? utilityOrbHover :  utilityOrb).drawSprite(222 - 2 + xOffset, 10 + 60);
 			(worldHover ? knowOrbHover :  knowOrb).drawSprite(202 - 2 + xOffset, 20 + 108);
 			(questHover ? questOrbHover :  questOrb).drawSprite(217 - 2 + xOffset, 10 + 30);
+			(petHover ? petOrbHover :  petOrb).drawAdvancedSprite(206 - 2 + xOffset, 10 + 2);
 		}
 		if (menuOpen) {
 			drawMenu(menuOffsetX, menuOffsetY);
