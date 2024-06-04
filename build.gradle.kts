@@ -167,7 +167,7 @@ tasks.register<ProGuardTask>("buildGame") {
     group = "build"
     dependsOn("createJar", "generateObfuscationDictionaries")
 
-    val inJar = layout.buildDirectory.file("tmp/client-raw.jar")
+    val inJar = layout.buildDirectory.file("tmp/client-raw-1.0.6.jar")
     val outJar = layout.buildDirectory.file("client-all.jar")
 
     val proguardConf = file("proguard/proguard.conf")
