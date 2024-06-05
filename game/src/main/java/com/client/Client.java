@@ -18514,7 +18514,7 @@ public class Client extends GameEngine implements RSClient {
 		if (clickMode3 == 1 && saveClickY >= 387 && saveClickY <= 409 && saveClickX >= 589
 				&& saveClickX <= 613) {
 			try {
-				launchURL("https://discord.gg/kyros");
+				launchURL("https://discord.gg/kyrosx");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -19291,9 +19291,7 @@ public class Client extends GameEngine implements RSClient {
 					int j10 = inStream.method426();
 					if (l1 == 65535)
 						l1 = -1;
-					tabInterfaceIDs[j10] = l1;
-					needDrawTabArea = true;
-					tabAreaAltered = true;
+					setSidebarInterface(j10, l1);
 					incomingPacket = -1;
 					return true;
 

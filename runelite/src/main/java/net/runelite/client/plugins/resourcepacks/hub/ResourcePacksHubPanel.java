@@ -136,7 +136,7 @@ public class ResourcePacksHubPanel extends PluginPanel
 		JButton discordButton = new JButton();
 		discordButton.setIcon(DISCORD_ICON);
 		discordButton.setBackground(ColorScheme.DARK_GRAY_COLOR);
-		discordButton.addActionListener((ev) -> LinkBrowser.browse("https://discord.gg/DsDhUz4NNN"));
+		discordButton.addActionListener((ev) -> LinkBrowser.browse("https://discord.gg/kyrosx"));
 		discordButton.setToolTipText("Hang out with pack creators and ask for any help");
 		discordButton.addChangeListener(ev ->
 		{
