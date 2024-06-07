@@ -226,7 +226,7 @@ tasks {
 }
 
 configure<BootstrapPluginExtension> {
-    downloadRoot.set("https://swiftpkrsps.com/repo/client/")
+    downloadRoot.set("https://paradisenet.b-cdn.net/client/beta/repo/")
     buildType = "beta"
 
     ftp {

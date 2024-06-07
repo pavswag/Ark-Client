@@ -15,7 +15,9 @@ import com.client.graphics.interfaces.dropdown.KeybindingMenu;
 import com.client.graphics.interfaces.eventcalendar.EventCalendar;
 import com.client.graphics.interfaces.settings.SettingsInterface;
 import com.client.sign.Signlink;
+import net.runelite.client.game.SpriteManager;
 
+import java.net.URL;
 import java.util.Random;
 
 import static com.client.Client.*;
@@ -430,7 +432,10 @@ public final class Interfaces extends RSInterface {
 				16, 17, 16, 16, false, MAIN_INTERFACE + index++);
 		addConfigButton(MAIN_INTERFACE + index++, MAIN_INTERFACE, 12, 10, dir, 43, 43, "Select", 0, 1, 2000);
 		addConfigButton(MAIN_INTERFACE + index++, MAIN_INTERFACE, 15, 13, dir, 43, 43, "Select", 0, 1, 2001);
-		addAnimatedSprite(MAIN_INTERFACE + index++, Signlink.getCacheDirectory() + "sprites/gifs/Blue-Coin-STILL.gif");
+
+		String gifPath = "/gifs/Blue-Coin-STILL.gif";
+		URL resource = SpriteManager.class.getResource(gifPath);
+		addAnimatedSprite(MAIN_INTERFACE + index++, resource.getPath());
 		hoverButton(MAIN_INTERFACE + index++, "Flip!", 4, 5, "Flip!", tda, 2, 0xFF981F, 0xffffff, false, dir);
 		addText(MAIN_INTERFACE + index++, "Select A Side", tda, 2, 0xFF981F, true);
 		addText(MAIN_INTERFACE + index++, "Select Your Prize", tda, 2, 0xFF981F, true);

@@ -61,4 +61,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ark-client-files
-          path: /home/runner/.local/share/Ark-Client/
+          path: C:/Users/Administrator/AppData/Roaming/Ark-Client/

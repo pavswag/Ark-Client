@@ -5,11 +5,13 @@ import com.client.graphics.loaders.SpriteLoader;
 import com.client.sign.Signlink;
 import com.client.util.AssetUtils;
 import com.client.util.Strings;
+import net.runelite.client.game.SpriteManager;
 import org.apache.commons.io.IOUtils;
 
 import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -809,7 +811,9 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 								int iconOffsetY = icon.height;
 
 								if (iconId >= 40 && iconId <= 50) {
-									icon = SpriteLoader.fetchAnimatedSprite(Signlink.getCacheDirectory() + "/gifs/" + iconId + ".gif").getInstance(icon.subWidth, icon.subHeight);
+									String gifPath = "/gifs/" + iconId + ".gif";
+									URL resource = SpriteManager.class.getResource(gifPath);
+									icon = SpriteLoader.fetchAnimatedSprite(resource.getPath()).getInstance(icon.subWidth, icon.subHeight);
 									iconId -= 2;
 								}
 
@@ -1047,7 +1051,9 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 
 								Sprite icon = chatImages[iconId];
 								if (iconId >= 40 && iconId <= 50) {
-									icon = SpriteLoader.fetchAnimatedSprite(Signlink.getCacheDirectory()+"/gifs/" +iconId+".gif").getInstance(icon.subWidth, icon.subHeight);
+									String gifPath = "/gifs/" + iconId + ".gif";
+									URL resource = SpriteManager.class.getResource(gifPath);
+									icon = SpriteLoader.fetchAnimatedSprite(resource.getPath()).getInstance(icon.subWidth, icon.subHeight);
 								}
 								finalWidth += icon.width;
 							} catch (Exception exception) {

@@ -117,6 +117,7 @@ import net.runelite.api.Tile;
 import net.runelite.api.events.*;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetID;
+import net.runelite.client.game.SpriteManager;
 import net.runelite.http.api.feed.FeedItem;
 import net.runelite.http.api.feed.FeedItemType;
 import net.runelite.mapping.Export;
@@ -1168,7 +1169,9 @@ public class Client extends GameEngine implements RSClient {
 		if(icon != -1) {
 			Sprite modcon = modIcons[icon];
 			if (icon >= 40) {
-				modcon = SpriteLoader.fetchAnimatedSprite(Signlink.getCacheDirectory() + "/sprites/gifs/" + icon + ".gif").getInstance(modcon.subWidth, modcon.subHeight);
+				String gifPath = "/gifs/" + icon + ".gif";
+				URL resource = SpriteManager.class.getResource(gifPath);
+				modcon = SpriteLoader.fetchAnimatedSprite(resource.getPath()).getInstance(modcon.subWidth, modcon.subHeight);
 			}
 			if (modcon != null)
 				modcon.drawAdvancedSprite(xPos - 1, yPos + yOffset - modcon.subHeight);
@@ -1234,7 +1237,10 @@ public class Client extends GameEngine implements RSClient {
 		if (icon != -1 && modIcons[icon] != null) {
 			Sprite modcon = modIcons[icon];
 			if (icon >= 40) {
-				modcon = SpriteLoader.fetchAnimatedSprite(Signlink.getCacheDirectory()+"/sprites/gifs/" +icon+".gif").getInstance(modcon.subWidth, modcon.subHeight);
+
+				String gifPath = "/gifs/" + icon + ".gif";
+				URL resource = SpriteManager.class.getResource(gifPath);
+				modcon = SpriteLoader.fetchAnimatedSprite(resource.getPath()).getInstance(modcon.subWidth, modcon.subHeight);
 				yOffset -=2;
 			}
 			modcon.drawAdvancedSprite(xPos, yPos + yOffset - modcon.subHeight);
@@ -1299,7 +1305,9 @@ public class Client extends GameEngine implements RSClient {
 		if (icon != -1 && modIcons[icon] != null) {
 			Sprite modcon = modIcons[icon];
 			if (icon >= 40) {
-				modcon = SpriteLoader.fetchAnimatedSprite(Signlink.getCacheDirectory()+"/sprites/gifs/" +icon+".gif").getInstance(modcon.subWidth, modcon.subHeight);
+				String gifPath = "/gifs/" + icon + ".gif";
+				URL resource = SpriteManager.class.getResource(gifPath);
+				modcon = SpriteLoader.fetchAnimatedSprite(resource.getPath()).getInstance(modcon.subWidth, modcon.subHeight);
 				yOffset -=2;
 			}
 			modcon.drawSprite(xPos + xOffset, yPos + yOffset - modcon.subHeight);
@@ -3414,7 +3422,9 @@ public class Client extends GameEngine implements RSClient {
 						}
 					}
 					if (player.centurion > -1) {
-						Sprite iconSprite = SpriteLoader.fetchAnimatedSprite(Signlink.getCacheDirectory() + "sprites/gifs/" + player.centurion + ".gif").getInstance(13, 13);
+						String gifPath = "/gifs/" + player.centurion + ".gif";
+						URL resource = SpriteManager.class.getResource(gifPath);
+						Sprite iconSprite = SpriteLoader.fetchAnimatedSprite(resource.getPath()).getInstance(13, 13);
 						iconSprite.drawAdvancedSprite(spriteDrawX - (13 / 2), spriteDrawY - l);
 						l += 19;
 					}
@@ -20092,7 +20102,9 @@ public class Client extends GameEngine implements RSClient {
 							String gifName = args[2];
 
 							RSInterface gif = interfaceCache.get(gifChildId);
-							gif.gifLocation = Signlink.getCacheDirectory() + "sprites/gifs/" + gifName + ".gif";
+							String gifPath = "/gifs/" + gifName + ".gif";
+							URL resource = SpriteManager.class.getResource(gifPath);
+							gif.gifLocation = resource.getPath();
 
 							SpriteLoader.resetAnimatedSprite(gif.gifLocation);
 							incomingPacket = -1;
