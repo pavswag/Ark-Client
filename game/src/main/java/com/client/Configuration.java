@@ -30,7 +30,7 @@ public class Configuration {
 	public static boolean SAVE_ACCOUNTS = true;
 	public static final String CLIENT_TITLE = "Kyros";
 	public static final String WEBSITE = "Kyros.net";
-	public static Connection CONNECTION = Connection.WORLD_2;
+	public static Connection CONNECTION = Connection.LOCAL;
 	public static final String DEV_CACHE_NAME = "local_cache";
 
 	public static final String CUSTOM_ITEM_SPRITES_DIRECTORY = "item_sprites/";

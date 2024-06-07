@@ -1,9 +1,7 @@
 package com.client.instruction.impl;
 
 
-import com.client.Client;
 import com.client.graphics.interfaces.RSInterface;
-import com.client.graphics.interfaces.impl.health_hud.HealthHud;
 import com.client.instruction.InstructionArgs;
 import com.client.instruction.ScriptRuntimeException;
 import com.client.instruction.VoidInstruction;

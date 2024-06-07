@@ -8770,6 +8770,9 @@ public class Client extends GameEngine implements RSClient {
 						if(inputString.equalsIgnoreCase("::dumpme")) {
 							DefinitionDumper.dumpLocalPlayerImage();
 						}
+						if(inputString.equalsIgnoreCase("::test")) {
+							openInterfaceID = 23723;
+						}
 						if (inputString.startsWith("::findanim")) {
 							int itemId = Integer.parseInt(inputString.split(" ")[1]);
 							for(int i = 0; i < 11127; i++) {
@@ -11022,15 +11025,11 @@ public class Client extends GameEngine implements RSClient {
 		if (petHover) {
 			MenuEntry menuEntry = (MenuEntry) new MenuEntry(1)
 					.setOption("Pet")
-					.onClick((entry) -> {
-						petInterface();
-					});
+					.onClick((entry) -> petInterface());
 			menuManager.addEntry(menuEntry);
 			callbacks.post(new MenuEntryAdded(menuEntry));
 			menuActionRow = 2;
 		}
-		int mouseX1 = !isResized() ? 572 : canvasWidth - 175;
-		int mouseX2 = !isResized() ? 600 : canvasWidth - 150;
 		if (runHover) {
 			MenuEntry menuEntry = (MenuEntry) new MenuEntry(1)
 					.setOption("Toggle Run")

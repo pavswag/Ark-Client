@@ -132,6 +132,8 @@ public final class Interfaces extends RSInterface {
 		new QuestInterface().build();
 		new BlackJack().mainInterface(defaultTextDrawingAreas);
 
+		RakebackBoxes.mainInterface(defaultTextDrawingAreas);
+
 		PetPerk.mainInterface(defaultTextDrawingAreas);
 
 		Pay2WinPetPerkStore.shopWidget(defaultTextDrawingAreas);

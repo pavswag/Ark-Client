@@ -371,6 +371,9 @@ public class RSInterface implements RSWidget {
 			if (rsInterface.atActionType == 1 || rsInterface.atActionType == 4 || rsInterface.atActionType == 5
 					|| rsInterface.atActionType == 6) {
 				rsInterface.tooltip = stream.readString();
+				if(rsInterface.tooltip.toLowerCase().contains("special attack")) {
+					System.out.println("Found special attack [" + rsInterface.id + "]");
+				}
 				if (rsInterface.tooltip.length() == 0) {
 					if (rsInterface.atActionType == 1)
 						rsInterface.tooltip = "Ok";
