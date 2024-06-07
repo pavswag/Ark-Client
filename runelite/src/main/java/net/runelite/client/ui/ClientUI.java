@@ -567,7 +567,7 @@ public class ClientUI
 			// Create tray icon (needs to be created after frame is packed)
 			if (config.enableTrayIcon())
 			{
-				trayIcon = createTrayIcon(ICON_16, title, frame);
+				trayIcon = createTrayIcon(ICON_128, title, frame);
 			}
 
 			// Move frame around (needs to be done after frame is packed)

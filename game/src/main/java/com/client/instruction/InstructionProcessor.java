@@ -28,11 +28,10 @@ public class InstructionProcessor {
             Instruction<Object> instruction = identifier.getInstruction();
             if (instruction == null) {
                 System.err.println("No valid instruction mapped to id "+ identifier +".");
-
                 return;
             }
 
-            System.out.println("Invoking script " + instruction.getClass().getName() +" with instructions [" + args + "]");
+            System.out.println("Invoking script " + instruction.getClass().getName() +" with instructions [" + args + "], & ID of " + instructionId);
             instruction.invoke(args);
         } catch (Exception e) {
             e.printStackTrace();

@@ -4728,7 +4728,7 @@ public class Client extends GameEngine implements RSClient {
 		throw new RuntimeException();
 	}
 
-	private int getCenterHeight(int i, int j, int k) {
+	public int getCenterHeight(int i, int j, int k) {
 		int l = k >> 7;
 		int i1 = j >> 7;
 		if (l < 0 || i1 < 0 || l > 103 || i1 > 103)
@@ -5805,7 +5805,9 @@ public class Client extends GameEngine implements RSClient {
 			calcCameraPos();
 		for (int i1 = 0; i1 < 5; i1++)
 			anIntArray1030[i1]++;
+
 		method73();
+
 		++idleCycles;
 		++KeyHandler.idleCycles;
 
@@ -11106,7 +11108,6 @@ public class Client extends GameEngine implements RSClient {
 	}
 
 	public void login(String s, String s1, boolean flag) {
-		System.out.println(Configuration.CONNECTION.main_serverIP);
 		if (loggedIn)
 			return;
 		if (Configuration.developerMode) {
@@ -18512,7 +18513,7 @@ public class Client extends GameEngine implements RSClient {
 		if (clickMode3 == 1 && saveClickY >= 387 && saveClickY <= 409 && saveClickX >= 589
 				&& saveClickX <= 613) {
 			try {
-				launchURL("https://discord.gg/kyros");
+				launchURL("https://discord.gg/kyrosx");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -19289,9 +19290,7 @@ public class Client extends GameEngine implements RSClient {
 					int j10 = inStream.method426();
 					if (l1 == 65535)
 						l1 = -1;
-					tabInterfaceIDs[j10] = l1;
-					needDrawTabArea = true;
-					tabAreaAltered = true;
+					setSidebarInterface(j10, l1);
 					incomingPacket = -1;
 					return true;
 
