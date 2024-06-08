@@ -5,7 +5,7 @@ public enum Connection {
     WORLD_1("World 1", "127.0.0.1", "52778", "43596", "213.171.212.95"),
 
     /** The management world - used for private testing by the management team. */
-    WORLD_2("World 2", "127.0.0.1", "52778", "43596", "213.171.212.95"),
+    WORLD_2("World 2", "213.171.212.95", "52778", "43596", "213.171.212.95"),
 
 
     LIVE("LIVE", "arkcane.ipv4.tcpshield.com", "52778", "52777", "arkcane.ipv4.tcpshield.com"),

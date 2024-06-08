@@ -1168,9 +1168,7 @@ public class Client extends GameEngine implements RSClient {
 		if(icon != -1) {
 			Sprite modcon = modIcons[icon];
 			if (icon >= 40) {
-				String gifPath = "/gifs/" + icon + ".gif";
-				URL resource = SpriteManager.class.getResource(gifPath);
-				modcon = SpriteLoader.fetchAnimatedSprite(resource.getPath()).getInstance(modcon.subWidth, modcon.subHeight);
+				modcon = SpriteLoader.fetchAnimatedSprite("/gifs/" + icon + ".gif").getInstance(modcon.subWidth, modcon.subHeight);
 			}
 			if (modcon != null)
 				modcon.drawAdvancedSprite(xPos - 1, yPos + yOffset - modcon.subHeight);
@@ -1236,10 +1234,7 @@ public class Client extends GameEngine implements RSClient {
 		if (icon != -1 && modIcons[icon] != null) {
 			Sprite modcon = modIcons[icon];
 			if (icon >= 40) {
-
-				String gifPath = "/gifs/" + icon + ".gif";
-				URL resource = SpriteManager.class.getResource(gifPath);
-				modcon = SpriteLoader.fetchAnimatedSprite(resource.getPath()).getInstance(modcon.subWidth, modcon.subHeight);
+				modcon = SpriteLoader.fetchAnimatedSprite("/gifs/" + icon + ".gif").getInstance(modcon.subWidth, modcon.subHeight);
 				yOffset -=2;
 			}
 			modcon.drawAdvancedSprite(xPos, yPos + yOffset - modcon.subHeight);
@@ -1304,9 +1299,7 @@ public class Client extends GameEngine implements RSClient {
 		if (icon != -1 && modIcons[icon] != null) {
 			Sprite modcon = modIcons[icon];
 			if (icon >= 40) {
-				String gifPath = "/gifs/" + icon + ".gif";
-				URL resource = SpriteManager.class.getResource(gifPath);
-				modcon = SpriteLoader.fetchAnimatedSprite(resource.getPath()).getInstance(modcon.subWidth, modcon.subHeight);
+				modcon = SpriteLoader.fetchAnimatedSprite("/gifs/" + icon + ".gif").getInstance(modcon.subWidth, modcon.subHeight);
 				yOffset -=2;
 			}
 			modcon.drawSprite(xPos + xOffset, yPos + yOffset - modcon.subHeight);
@@ -3421,9 +3414,7 @@ public class Client extends GameEngine implements RSClient {
 						}
 					}
 					if (player.centurion > -1) {
-						String gifPath = "/gifs/" + player.centurion + ".gif";
-						URL resource = SpriteManager.class.getResource(gifPath);
-						Sprite iconSprite = SpriteLoader.fetchAnimatedSprite(resource.getPath()).getInstance(13, 13);
+						Sprite iconSprite = SpriteLoader.fetchAnimatedSprite("/gifs/" + player.centurion + ".gif").getInstance(13, 13);
 						iconSprite.drawAdvancedSprite(spriteDrawX - (13 / 2), spriteDrawY - l);
 						l += 19;
 					}
@@ -15222,7 +15213,6 @@ public class Client extends GameEngine implements RSClient {
 								Rasterizer2D.drawBorder(_x, _y, class9_1.width, class9_1.height, class9_1.borderColor);
 							}
 						} else if (class9_1.type == 91) {
-
 							AnimatedSprite gif = SpriteLoader.fetchAnimatedSprite(class9_1.gifLocation);
 							if (gif != null) {
 								gif.getInstance(class9_1.width, class9_1.height).drawAdvancedSprite(_x, _y,255);
@@ -20121,10 +20111,7 @@ public class Client extends GameEngine implements RSClient {
 							String gifName = args[2];
 
 							RSInterface gif = interfaceCache.get(gifChildId);
-							String gifPath = "/gifs/" + gifName + ".gif";
-							URL resource = SpriteManager.class.getResource(gifPath);
-							gif.gifLocation = resource.getPath();
-
+							gif.gifLocation = "/gifs/" + gifName + ".gif";
 							SpriteLoader.resetAnimatedSprite(gif.gifLocation);
 							incomingPacket = -1;
 							return true;
