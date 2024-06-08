@@ -78,10 +78,10 @@ public class RakebackBoxes extends RSInterface {
         main.child(21, 47200, 17, 213);
         main.child(22, 47100, 24, 218);
         main.child(23, 47010, 260, 213);
-        main.child(24, 23745, 175, 278);
-        main.child(25, 23746, 300, 278);
-        main.child(26, 23747, 218, 284);
-        main.child(27, 23748, 317, 284);
+        main.child(24, 23745, 80, 278);
+        main.child(25, 23746, 340, 278);
+        main.child(26, 23747, 115, 284);
+        main.child(27, 23748, 357, 284);
 
 
 
