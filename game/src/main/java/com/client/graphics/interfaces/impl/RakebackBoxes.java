@@ -16,7 +16,7 @@ public class RakebackBoxes extends RSInterface {
         addText(23725, "Mystery Box Name", tda, 2, 0xff9933, true);
         addText(23726, "Loot Available", tda, 2, 0xff9933, true);
         addText(23727, "Box Rakeback", tda, 2, 0xff9933, true);
-        addText(23728, "Current progress 5/10", tda, 2, 0xff9933, false);
+        addText(23728, "Current progress 5/12", tda, 2, 0xff9933, false);
         hoverButton(23729, dir, "Claim", 1, 2);
         get(23729).buttonListener = (id) -> {
             if(id == 23729) {

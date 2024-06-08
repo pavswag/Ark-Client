@@ -74,8 +74,7 @@ import static com.client.MapRegion.ExpandedRegionSize;
 import static com.client.SceneGraph.pitchRelaxEnabled;
 import static com.client.StringUtils.longForName;
 import static com.client.engine.impl.MouseHandler.*;
-import static com.client.graphics.interfaces.RSInterface.interfaceCache;
-import static com.client.graphics.interfaces.RSInterface.selectedItemInterfaceId;
+import static com.client.graphics.interfaces.RSInterface.*;
 import static com.client.graphics.interfaces.impl.Bank.ITEM_CONTAINERS;
 import static com.client.graphics.interfaces.impl.health_hud.HealthHud.PROGRESS_WIDGET_ID;
 import static com.client.graphics.interfaces.impl.health_hud.HealthHud.WIDGET_ID;
@@ -19329,7 +19328,20 @@ public class Client extends GameEngine implements RSClient {
 					int componentId = inStream.readDWord();
 					byte spriteIndex = inStream.readSignedByte();
 					RSInterface component = interfaceCache.get(componentId);
+
+
 					if (component != null) {
+						if (componentId >= 23733 && componentId <= 23744) {
+							component.sprite2 = imageLoader(spriteIndex, "rake-box/sprite");
+							component.sprite1 = imageLoader(spriteIndex, "rake-box/sprite");
+							if (spriteIndex == 4) {
+								component.tooltip = "Closed";
+							} else if (spriteIndex == 8) {
+								component.tooltip = "Opened";
+							}
+
+						}
+
 						if (component.backgroundSprites != null && spriteIndex <= component.backgroundSprites.length - 1) {
 							Sprite sprite = component.backgroundSprites[spriteIndex];
 							if (sprite != null) {
@@ -19707,13 +19719,20 @@ public class Client extends GameEngine implements RSClient {
 						spin();
 						incomingPacket = -1;
 						return true;
+					} else if (s.equals(":clearItems")) {
+						RSInterface mboxItems = interfaceCache.get(23732);
+						for (int i2 = 0; i2 < mboxItems.inventoryItemId.length; i2++) {
+							mboxItems.inventoryItemId[i2] = 0;
+							mboxItems.inventoryAmounts[i2] = 1;
+						}
+						incomingPacket = -1;
+						return true;
 					} else if (s.equals(":resetpost:")) {
 						RSInterface listingWidget = interfaceCache.get(48020);
 						if (listingWidget != null) {
 							listingWidget.scrollPosition = 0;
 						}
-					}
-					else if (s.equals(":resetBox")) {
+					} else if (s.equals(":resetBox")) {
 						reset();
 						incomingPacket = -1;
 						return true;
@@ -20612,7 +20631,7 @@ public class Client extends GameEngine implements RSClient {
 	public void setSpinClick(boolean spinClick) { this.spinClick = spinClick; }
 
 	public void spin() {
-		if (openInterfaceID != INTERFACE_ID || !spinClick) {
+		if ((openInterfaceID != INTERFACE_ID && openInterfaceID != 23723) || !spinClick) {
 			return;
 		}
 

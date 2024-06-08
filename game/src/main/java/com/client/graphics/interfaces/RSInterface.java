@@ -459,6 +459,7 @@ public class RSInterface implements RSWidget {
 		tab.height = tab.disabledAltSprite.subHeight;
 		tab.spriteOpacity = opacity;
 	}
+
 	public static void hoverButton(int id, String dir, String tooltip, int offSprite, int hoverSprite) {
 		RSInterface tab = addInterface(id);
 		tab.tooltip = tooltip;
@@ -472,6 +473,7 @@ public class RSInterface implements RSWidget {
 		tab.toggled = false;
 		tab.spriteOpacity = 255;
 	}
+
 	public static void hoverButton(int id, String tooltip, int opacity) {
 		RSInterface tab = addInterface(id);
 		tab.tooltip = tooltip;
