@@ -264,7 +264,7 @@ public class LightManager {
 				}
 			} else if (light.actor != null && !light.markedForRemoval) {
 				if (light.actor instanceof NPC && light.actor != cachedNpcs[((NPC) light.actor).getIndex()] ||
-					light.actor instanceof Player && light.actor != cachedPlayers[((Player) light.actor).getId()] ||
+					light.actor instanceof Player && light.actor != cachedPlayers[light.actor.getId()] ||
 					light.spotAnimId != -1 && !light.actor.hasSpotAnim(light.spotAnimId)
 				) {
 					parentExists = false;

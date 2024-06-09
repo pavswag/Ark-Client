@@ -1613,7 +1613,7 @@ public class Client extends GameEngine implements RSClient {
 				: mouseX >= canvasWidth - 125 && mouseX <= canvasWidth - 100 && mouseY >= 166 && mouseY <= 191;
 
 		petHover = fixed ? mouseX >= 721 && mouseX <= 746 && mouseY >= 14 && mouseY <= 48
-				: mouseX >= canvasWidth - 125 && mouseX <= canvasWidth - 100 && mouseY >= 166 && mouseY <= 191;
+				: mouseX >= canvasWidth - 125 && mouseX <= canvasWidth - 100 && mouseY >= 195 && mouseY <= 225;
 	}
 
 	private boolean prayHover, prayClicked;
@@ -17045,6 +17045,7 @@ public class Client extends GameEngine implements RSClient {
 			(worldHover ? knowOrbHover :  knowOrb).drawSprite(canvasWidth - 62 + xOffset, 160);
 			(taskHover ? utilityOrbHover :  utilityOrb).drawSprite(canvasWidth - 93, 170);
 			(questHover ? questOrbHover :  questOrb).drawSprite(canvasWidth - 124, 165);
+			(petHover ? petOrbHover :  petOrb).drawAdvancedSprite(canvasWidth - 124, 195);
 		} else {
 			(donatorHover ? donatorOrbHover :  donatorOrb).drawSprite(215 - 2 + xOffset, 10 + 90);
 			(taskHover ? utilityOrbHover :  utilityOrb).drawSprite(222 - 2 + xOffset, 10 + 60);
