@@ -11,12 +11,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 2 # Fetch two commits to compare changes
 
       - name: Set up JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '11'
           distribution: 'adopt'
@@ -58,7 +58,7 @@ jobs:
 
       - name: Upload Ark-Client files
         if: always() # Ensure this step runs even if previous steps fail
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ark-client-files
-          path: C:/Users/Administrator/AppData/Roaming/Ark-Client/
+          path: /home/runner/.local/share/Ark-Client/
