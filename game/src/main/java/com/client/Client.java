@@ -17375,7 +17375,7 @@ public class Client extends GameEngine implements RSClient {
 			for (int skill : drop.getSkills()) {
 
 				if(skill == 30) {
-					AnimatedSprite animatedSprite = SpriteLoader.fetchAnimatedSprite(Signlink.getCacheDirectory() + "gifs/" + 9999 + ".gif").getInstance(13, 13);
+					AnimatedSprite animatedSprite = SpriteLoader.fetchAnimatedSprite("/gifs/" + 9999 + ".gif").getInstance(13, 13);
 					x -= animatedSprite.subWidth + 3;
 					y -= animatedSprite.subHeight - 4;
 					animatedSprite.drawAdvancedSprite(x, y, transparency);
@@ -26554,19 +26554,19 @@ public class Client extends GameEngine implements RSClient {
 
 	public void onBroadcast(String message) {
 		if (message.contains("groot") && feedItems.stream().noneMatch(feedItem -> feedItem.getType() == FeedItemType.GROOT)) {
-			feedItems.add(new FeedItem(FeedItemType.GROOT, null, "Groot Spawned", ";;groot to kill them", "https://kyros.net/forums/knowledge-base.5/", System.currentTimeMillis()));
+			feedItems.add(new FeedItem(FeedItemType.GROOT, null, "Groot Spawned", ";;groot to kill them", "https://kyros.fandom.com/wiki/Kyros_Wiki", System.currentTimeMillis()));
 		}
 
 		if (message.contains("dono") && feedItems.stream().noneMatch(feedItem -> feedItem.getType() == FeedItemType.DONOR_BOSS)) {
-			feedItems.add(new FeedItem(FeedItemType.DONOR_BOSS, null, "Donor Boss spawned", ";;db to kill them", "https://kyros.net/forums/knowledge-base.5/", System.currentTimeMillis()));
+			feedItems.add(new FeedItem(FeedItemType.DONOR_BOSS, null, "Donor Boss spawned", ";;db to kill them", "https://kyros.fandom.com/wiki/Kyros_Wiki", System.currentTimeMillis()));
 		}
 
 		if (message.contains("shooting star") && !message.contains("dwarfs decided to mine") && feedItems.stream().noneMatch(feedItem -> feedItem.getType() == FeedItemType.SHOOTING_STAR)) {
-			feedItems.add(new FeedItem(FeedItemType.SHOOTING_STAR, null, "Shooting Star spawned", ";;star to get to the star", "https://kyros.net/threads/shooting-star-guide.140/", System.currentTimeMillis()));
+			feedItems.add(new FeedItem(FeedItemType.SHOOTING_STAR, null, "Shooting Star spawned", ";;star to get to the star", "https://kyros.fandom.com/wiki/Kyros_Wiki", System.currentTimeMillis()));
 		}
 
 		if (message.contains("vote") && feedItems.stream().noneMatch(feedItem -> feedItem.getType() == FeedItemType.VOTE_BOSS)) {
-			feedItems.add(new FeedItem(FeedItemType.VOTE_BOSS, null, "Vote Boss spawned", ";;vb to kill them", "https://kyros.net/forums/knowledge-base.5/", System.currentTimeMillis()));
+			feedItems.add(new FeedItem(FeedItemType.VOTE_BOSS, null, "Vote Boss spawned", ";;vb to kill them", "https://kyros.fandom.com/wiki/Kyros_Wiki", System.currentTimeMillis()));
 		}
 
 		if (message.contains("seasonal") && feedItems.stream().noneMatch(feedItem -> feedItem.getType() == FeedItemType.SEASONAL)) {
@@ -26577,7 +26577,7 @@ public class Client extends GameEngine implements RSClient {
 			feedItems.add(new FeedItem(FeedItemType.WILDY_BOSS, null, "Wildy event is active", ";;wildyevent to get there", "", System.currentTimeMillis()));
 		}
 		if (message.contains("hespori") && feedItems.stream().noneMatch(feedItem -> feedItem.getType() == FeedItemType.HESPORI_BOSS)) {
-			feedItems.add(new FeedItem(FeedItemType.HESPORI_BOSS, null, "Hespori is active", ";;worldevent to get there.", "https://kyros.net/ewr-carta/hespori/", System.currentTimeMillis()));
+			feedItems.add(new FeedItem(FeedItemType.HESPORI_BOSS, null, "Hespori is active", ";;worldevent to get there.", "https://kyros.fandom.com/wiki/Kyros_Wiki", System.currentTimeMillis()));
 		}
 
 		feedItems.removeIf(feedItem -> feedItem.getTimestamp() < System.currentTimeMillis());
