@@ -214,7 +214,7 @@ tasks {
 }
 
 configure<BootstrapPluginExtension> {
-    downloadRoot.set("https://paradisenet.b-cdn.net/client/beta/repo/")
+    downloadRoot.set("https://paradisenet.b-cdn.net/client/")
     buildType = "beta"
     ftp {
         ftpServer = System.getenv("FTP_SERVER") ?: ""
