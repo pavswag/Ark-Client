@@ -620,7 +620,7 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 
 											int iconModY = icon.subHeight;
 											if (imageId >= 40 && imageId <= 50) {
-												icon = SpriteLoader.fetchAnimatedSprite(Signlink.getCacheDirectory()+"gifs/" +imageId+".gif").getInstance(icon.subWidth, icon.subHeight);
+												icon = SpriteLoader.fetchAnimatedSprite("/gifs/" +imageId+".gif").getInstance(icon.subWidth, icon.subHeight);
 												iconModY -=2;
 											}
 											if (transparency == 256) {

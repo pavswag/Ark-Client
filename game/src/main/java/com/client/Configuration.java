@@ -29,7 +29,7 @@ public class Configuration {
 
 	public static boolean SAVE_ACCOUNTS = true;
 	public static final String CLIENT_TITLE = "Kyros";
-	public static final String WEBSITE = "Kyros.net";
+	public static final String WEBSITE = "https://paradise-network.net";
 	public static Connection CONNECTION = Connection.WORLD_2;
 	public static final String DEV_CACHE_NAME = "local_cache";
 
