@@ -55,10 +55,3 @@ jobs:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-
-      - name: Upload Ark-Client files
-        if: always() # Ensure this step runs even if previous steps fail
-        uses: actions/upload-artifact@v4
-        with:
-          name: ark-client-files
-          path: /home/runner/.local/share/Ark-Client/
