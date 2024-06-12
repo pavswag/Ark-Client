@@ -211,7 +211,7 @@ tasks {
     jar {
         destinationDirectory.set(file("${rootProject.buildDir}\\"))
     }
-}\
+}
 
 configure<BootstrapPluginExtension> {
     downloadRoot.set("https://paradisenet.b-cdn.net/client/beta/repo/")
