@@ -8,7 +8,7 @@ plugins {
     kotlin("jvm") version "1.8.22"
     application
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("dev.openrune.bootstrap") version "1.4"
+    id("dev.openrune.bootstrap") version "1.5"
 }
 
 buildscript {
