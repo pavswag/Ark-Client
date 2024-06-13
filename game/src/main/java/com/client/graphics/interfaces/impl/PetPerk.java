@@ -32,6 +32,8 @@ public class PetPerk extends RSInterface {
             }
         };
 
+
+
         addText(22735, "Click Here for \\nperk descriptions", tda, 2, 0xff9933, true);
 
         hoverButton(22736, dir, "Upgrade Perk", 1, 2);
@@ -84,10 +86,12 @@ public class PetPerk extends RSInterface {
         addText(22755, "Current XP", tda, 2, 0xff9933, true);
         addText(22756, "XP Until Level", tda, 2, 0xff9933, true);
 
+        RSInterface.addRectangle(22757, 177, 265, 0x221e1a, 1, true);
+        get(22757).atActionType = 1;
+        get(22757).tooltip = "<col=ff9933>Hide your pet";
 
 
-
-        main.totalChildren(33);
+        main.totalChildren(34);
 
         main.child(0, 22732, 5, 5);
         main.child(1, 22733, 256, 14);
@@ -112,18 +116,19 @@ public class PetPerk extends RSInterface {
         main.child(19, 22746, 352, 47 + (34 * 4));
 
         main.child(20, 22747, 255, 47 + (34 * 0));
-        main.child(21, 22748, 190, 105);
-        main.child(22, 22749, 17, 117);
-        main.child(23, 22750, 88, 135);
-        main.child(24, 22751, 88, 191);
-        main.child(25, 22752, 88, 47);
-        main.child(26, 22753, 480, 15);
-        main.child(27, 22754, 45, 73);
-        main.child(28, 22755, 118, 73);
-        main.child(29, 22756, 86, 98);
-        main.child(30, 33934, 17, 211);
-        main.child(31, 48848, 0, 0);
-        main.child(32, 39350, 0, 0);
+        main.child(21, 22757, 166, 43);
+        main.child(22, 22748, 190, 105);
+        main.child(23, 22749, 17, 117);
+        main.child(24, 22750, 88, 135);
+        main.child(25, 22751, 88, 191);
+        main.child(26, 22752, 88, 47);
+        main.child(27, 22753, 480, 15);
+        main.child(28, 22754, 45, 73);
+        main.child(29, 22755, 118, 73);
+        main.child(30, 22756, 86, 98);
+        main.child(31, 33934, 17, 211);
+        main.child(32, 48848, 0, 0);
+        main.child(33, 39350, 0, 0);
 
 
         RSInterface petDescription = addInterface(48848);
