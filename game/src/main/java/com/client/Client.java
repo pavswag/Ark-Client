@@ -11764,6 +11764,7 @@ public class Client extends GameEngine implements RSClient {
 				npc.addHealthBar(stream);
 			}
 			if ((l & 2) != 0) {
+				npc.hidden = stream.readUnsignedByte() == 1;
 				npc.desc = NpcDefinition.lookup(stream.method436());
 				npc.anInt1540 = npc.desc.size;
 				npc.anInt1504 = npc.desc.rotation;
