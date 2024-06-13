@@ -921,7 +921,7 @@ public class Client extends GameEngine implements RSClient {
 									int xPos = 11;
 									if (!crowns.isEmpty()) {
 										for (int crown : crowns) {
-											Sprite modcon = handleIcon(crown, xPos, yPos, 1, yOffset+2);
+											Sprite modcon = handleIcon(PlayerRights.forRightsValue(crown), xPos, yPos, 1, yOffset+2);
 											if (modcon != null) {
 												xPos += modcon.subWidth;
 											}
@@ -949,7 +949,7 @@ public class Client extends GameEngine implements RSClient {
 									k1 += textDrawingArea.getTextWidth("From ");
 									if (!crowns.isEmpty()) {
 										for (int crown : crowns) {
-											Sprite modcon = handleIcon(crown, k1, yPos, 1, yOffset+2);
+											Sprite modcon = handleIcon(PlayerRights.forRightsValue(crown), k1, yPos, 1, yOffset+2);
 											if (modcon != null) {
 												k1 += modcon.subWidth;
 											}
@@ -1111,141 +1111,27 @@ public class Client extends GameEngine implements RSClient {
 	public String clanTitle;
 	private EnumSet channelRights;
 	/**Handle Chatbox Icon's**/
-	public Sprite handleIcon(int crown, int xPos, int yPos, int xOffset, int yOffset) {
-		int icon = -1; // Default icon
-		switch (crown) {
-			case 11: // HELPER
-				icon = 38;
-				break;
-			case 1: // MOD
-				icon = 39;
-				break;
-			case 2: // OWNER/ADMIN
-				icon = 37;
-				break;
-			case 16: // OWNER/ADMIN
-				icon = 15;
-				break;
-			case 3: // OWNER/ADMIN
-			case 4: // OWNER/ADMIN
-				icon = 36;
-				break;
-			case 5: // $20
-				icon = 48;
-				break;
-			case 7: // $50
-				icon = 47;
-				break;
-			case 8: // $1000
-				icon = 42;
-				break;
-			case 9: // $100
-				icon = 46;
-				break;
-			case 17: // $250
-				icon = 45;
-				break;
-			case 18: // $500
-				icon = 44;
-				break;
-			case 30: // Event Manager
-				icon = 28;
-				break;
-			case 32: // $750
-				icon = 43;
-				break;
-			case 33: // $1500
-				icon = 41;
-				break;
-			case 34: // $2000
-				icon = 40;
-				break;
-			case 35:
-				icon = 49;
-				break;
+	public Sprite handleIcon(PlayerRights rights, int xPos, int yPos, int xOffset, int yOffset) {
+		Sprite sprite = rights.getSprite();
+		if(sprite != null) {
+			sprite.drawAdvancedSprite(xPos - 1, yPos + yOffset - sprite.subHeight);
 		}
-		if(icon != -1) {
-			Sprite modcon = modIcons[icon];
-			if (icon >= 40) {
-				modcon = SpriteLoader.fetchAnimatedSprite("/gifs/" + icon + ".gif").getInstance(modcon.subWidth, modcon.subHeight);
-			}
-			if (modcon != null)
-				modcon.drawAdvancedSprite(xPos - 1, yPos + yOffset - modcon.subHeight);
-			return modcon;
-		}
-		return null;
+		return sprite;
 	}
 
 	/**Handle Chatbox Icon's for friends list**/
-	public Sprite handleIcon2(int crown, int xPos, int yPos, int xOffset, int yOffset) {
-		int icon = -1; // Default icon
-		switch (crown) {
-			case 11: // HELPER
-				icon = 38;
-				break;
-			case 1: // MOD
-				icon = 39;
-				break;
-			case 2: // OWNER/ADMIN
-				icon = 37;
-				break;
-			case 16:
-				icon = 15;
-				break;
-			case 3: // OWNER/ADMIN
-			case 4: // OWNER/ADMIN
-				icon = 36;
-				break;
-			case 5: // $20
-				icon = 48;
-				break;
-			case 7: // $50
-				icon = 47;
-				break;
-			case 8: // $1000
-				icon = 42;
-				break;
-			case 9: // $100
-				icon = 46;
-				break;
-			case 17: // $250
-				icon = 45;
-				break;
-			case 18: // $500
-				icon = 44;
-				break;
-			case 30: // Event Manager
-				icon = 28;
-				break;
-			case 32: // $750
-				icon = 43;
-				break;
-			case 33: // $1500
-				icon = 41;
-				break;
-			case 34: // $2000
-				icon = 40;
-				break;
-			case 35:
-				icon = 49;
-				break;
+	public Sprite handleIcon2(PlayerRights rights, int xPos, int yPos, int xOffset, int yOffset) {
+		Sprite sprite = rights.getSprite();
+		if(sprite != null) {
+			sprite.drawAdvancedSprite(xPos + xOffset, yPos + yOffset - sprite.subHeight);
 		}
-		if (icon != -1 && modIcons[icon] != null) {
-			Sprite modcon = modIcons[icon];
-			if (icon >= 40) {
-				modcon = SpriteLoader.fetchAnimatedSprite("/gifs/" + icon + ".gif").getInstance(modcon.subWidth, modcon.subHeight);
-				yOffset -=2;
-			}
-			modcon.drawAdvancedSprite(xPos, yPos + yOffset - modcon.subHeight);
-			return modcon;
-		}
-		return null;
+		return sprite;
 	}
 	/**Handle Chatbox Icon Next to name where text is typed**/
 	public Sprite hanelcChatAreaIcons(PlayerRights rights, int xPos, int yPos, int xOffset, int yOffset) {
 		Sprite sprite = rights.getSprite();
 		if(sprite != null) {
-			sprite.drawSprite(xPos + xOffset, yPos + yOffset - sprite.subHeight);
+			sprite.drawAdvancedSprite(xPos + xOffset, yPos + yOffset - sprite.subHeight);
 		}
 		return sprite;
 	}
@@ -10126,10 +10012,10 @@ public class Client extends GameEngine implements RSClient {
 					xPosition += font.getTextWidth("From ");
 					if (!crowns.isEmpty()) {
 						for (int crown : crowns) {
-							for (int right = 0; right < modIcons.length; right++) {
-								if (right == (crown - 1) && modIcons[right] != null) {
+							for (int right = 0; right < PlayerRights.values().length; right++) {
+								if (right == (crown - 1)) {
 									System.out.println("Split PM crown = " + crown);
-									Sprite modcon = handleIcon2(crown, xPosition, yPosition, 0, +2);
+									Sprite modcon = handleIcon2(PlayerRights.forRightsValue(crown - 1), xPosition, yPosition, 0, +2);
 									if (modcon != null) {
 										xPosition += modcon.subWidth;
 									}

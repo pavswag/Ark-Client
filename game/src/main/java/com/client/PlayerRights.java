@@ -118,17 +118,20 @@ public enum PlayerRights {
     public Sprite getSprite() {
         Sprite sprite = (Sprite) sprites.get(StringUtils.longForName(name()));
         if(sprite == null) {
-            String spritePath = findImagePath(name().toLowerCase(Locale.ROOT));
+            System.out.println("Trying to get sprite for [" + name() + "]");
+            String spritePath = findImagePath(name());
             if(spritePath != null) {
                 if(spritePath.endsWith("gif")) {
-                    sprite = SpriteLoader.fetchAnimatedSprite(spritePath).getInstance(13, 13);
+                    sprite = SpriteLoader.fetchAnimatedSprite("/ranks/" + name() + ".gif").getInstance(13, 13);
                 } else if (spritePath.endsWith("png")) {
-                    try (InputStream inputStream = getClass().getResourceAsStream(spritePath)) {
+                    try (InputStream inputStream = getClass().getResourceAsStream("/ranks/" + name() + ".png")) {
                         if (inputStream == null) {
                             throw new IOException("Resource not found: " + spritePath);
                         }
                         BufferedImage bufferedImage = ImageIO.read(inputStream);
                         sprite = new Sprite(bufferedImage);
+                        if(sprite != null)
+                            sprites.put(sprite, StringUtils.longForName(name()));
                     } catch (IOException e) {
                         e.printStackTrace();
                         return null;
@@ -138,23 +141,20 @@ public enum PlayerRights {
                 }
             }
         }
-        if(sprite != null)
-            sprites.put(sprite, StringUtils.longForName(name()));
         return sprite;
     }
-    public static String getResourcePath(String resource) {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        if (classLoader.getResource(resource) != null) {
-            return classLoader.getResource(resource).toString();
+    public String getResourcePath(String resource) {
+        if (getClass().getResource(resource) != null) {
+            return getClass().getResource(resource).toString();
         }
         return null;
     }
-    public static String findImagePath(String imageName) {
-        String pngPath = getResourcePath("ranks/" + imageName + ".png");
+    public String findImagePath(String imageName) {
+        String pngPath = getResourcePath("/ranks/" + imageName + ".png");
         if (pngPath != null) {
             return pngPath;
         }
-        String gifPath = getResourcePath("ranks/" + imageName + ".gif");
+        String gifPath = getResourcePath("/ranks/" + imageName + ".gif");
         if (gifPath != null) {
             return gifPath;
         }
