@@ -9301,19 +9301,18 @@ public class Client extends GameEngine implements RSClient {
 
 	}
 
+	private List<Integer> requestedStats = new ArrayList<>();
+
 	public void drawStatMenu(String itemName,int itemId, int color) {
 		if (menuActionRow < 2 && itemSelected == 0 && spellSelected == 0) {
 			return;
 		}
 		MenuEntry menuEntry = menuManager.getMenuEntry(menuActionRow - 1);
 		if(menuEntry != null && menuEntry.getOption() != null) {
-			if ( menuEntry.getOption().contains("Walk")) {
+			if (menuEntry.getOption().contains("Walk")) {
 				return;
 			}
 		}
-		//if(toolTip.contains("Walk")||toolTip.contains("Talk-to")||toolTip.contains("Bank")|| toolTip.contains("Steal")|| toolTip.contains("Attack")){
-		//	return;
-		//}/
 		if(toolTip.contains("Walk")||toolTip.contains("World")||!toolTip.contains("W")){
 			return;
 		}
@@ -9331,6 +9330,24 @@ public class Client extends GameEngine implements RSClient {
 
 
 		if (ItemStats.itemstats[itemId] == null) {
+			Rasterizer2D.drawBoxOutline(mouseX, mouseY + 5, 150, 36, 0x696969);
+			Rasterizer2D.drawTransparentBox(mouseX + 1, mouseY + 6, 150, 37, 0x000000,90);
+
+			Client.instance.newSmallFont.drawBasicString(itemName, mouseX + 150 / (12 +  Client.instance.newSmallFont.getTextWidth(itemName))+30 , mouseY + 17, color, 1);
+			Client.instance.newSmallFont.drawBasicString("Loading stats", mouseX + 4, mouseY + 35, color, 1);
+			if(!requestedStats.contains(itemId)) {
+				requestedStats.add(itemId);
+				stream.createFrame(85);
+				stream.writeInt(itemId);
+			}
+			return;
+		}
+		if (ItemStats.itemstats[itemId].invalid) {
+			Rasterizer2D.drawBoxOutline(mouseX, mouseY + 5, 150, 36, 0x696969);
+			Rasterizer2D.drawTransparentBox(mouseX + 1, mouseY + 6, 150, 37, 0x000000,90);
+
+			Client.instance.newSmallFont.drawBasicString(itemName, mouseX + 150 / (12 +  Client.instance.newSmallFont.getTextWidth(itemName))+30 , mouseY + 17, color, 1);
+			Client.instance.newSmallFont.drawBasicString("No stats were found.", mouseX + 4, mouseY + 35, color, 1);
 			return;
 		}
 		short stabAtk = (short) ItemStats.itemstats[itemId].attackBonus[0];
@@ -9347,6 +9364,7 @@ public class Client extends GameEngine implements RSClient {
 
 		int mageBonus = ItemStats.itemstats[itemId].magicBonus;
 		int rangeBonus = ItemStats.itemstats[itemId].rangeBonus;
+
 		int prayerBonus = ItemStats.itemstats[itemId].prayerBonus;
 		int strengthBonus = ItemStats.itemstats[itemId].strengthBonus;
 
@@ -19824,6 +19842,27 @@ public class Client extends GameEngine implements RSClient {
 							exception1.printStackTrace();
 							Signlink.reporterror("cde1");
 						}
+					incomingPacket = -1;
+					return true;
+
+				case 83:
+					boolean hasStats = inStream.readByte() == 1;
+					int statItemId = inStream.readInt();
+					ItemStats stats = new ItemStats(statItemId, -1);
+					if(!hasStats) {
+						stats.invalid = true;
+					}
+
+					stats.attackBonus = new int[] {
+							inStream.readInt(), inStream.readInt(), inStream.readInt(), inStream.readInt(), inStream.readInt()
+					};
+					stats.defenceBonus = new int[] {
+							inStream.readInt(), inStream.readInt(), inStream.readInt(), inStream.readInt(), inStream.readInt()
+					};
+					stats.prayerBonus = inStream.readInt();
+					stats.strengthBonus = inStream.readInt();
+					if(statItemId < ItemStats.itemstats.length)
+						ItemStats.itemstats[statItemId] = stats;
 					incomingPacket = -1;
 					return true;
 
