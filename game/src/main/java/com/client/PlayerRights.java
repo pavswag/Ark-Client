@@ -1,12 +1,14 @@
 package com.client;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Optional;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
+import com.client.graphics.loaders.SpriteLoader;
 import org.apache.commons.lang3.tuple.Pair;
+
+import javax.imageio.ImageIO;
 
 public enum PlayerRights {
 
@@ -113,6 +115,53 @@ public enum PlayerRights {
         }
     }
 
+    public Sprite getSprite() {
+        Sprite sprite = (Sprite) sprites.get(StringUtils.longForName(name()));
+        if(sprite == null) {
+            String spritePath = findImagePath(name().toLowerCase(Locale.ROOT));
+            if(spritePath != null) {
+                if(spritePath.endsWith("gif")) {
+                    sprite = SpriteLoader.fetchAnimatedSprite(spritePath).getInstance(13, 13);
+                } else if (spritePath.endsWith("png")) {
+                    try (InputStream inputStream = getClass().getResourceAsStream(spritePath)) {
+                        if (inputStream == null) {
+                            throw new IOException("Resource not found: " + spritePath);
+                        }
+                        BufferedImage bufferedImage = ImageIO.read(inputStream);
+                        sprite = new Sprite(bufferedImage);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                } else {
+                    throw new RuntimeException("Could not find player right sprite, found resource [" + spritePath + "]");
+                }
+            }
+        }
+        if(sprite != null)
+            sprites.put(sprite, StringUtils.longForName(name()));
+        return sprite;
+    }
+    public static String getResourcePath(String resource) {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader.getResource(resource) != null) {
+            return classLoader.getResource(resource).toString();
+        }
+        return null;
+    }
+    public static String findImagePath(String imageName) {
+        String pngPath = getResourcePath("ranks/" + imageName + ".png");
+        if (pngPath != null) {
+            return pngPath;
+        }
+        String gifPath = getResourcePath("ranks/" + imageName + ".gif");
+        if (gifPath != null) {
+            return gifPath;
+        }
+        return null;
+    }
+
+
     public static List<PlayerRights> getDisplayedRights(PlayerRights[] set) {
         List<PlayerRights> rights = new ArrayList<>();
 
@@ -190,5 +239,8 @@ public enum PlayerRights {
         }
         return builder.toString();
     }
+
+
+    public static EvictingDualNodeHashTable sprites = new EvictingDualNodeHashTable(100);
 
 }

@@ -116,7 +116,6 @@ import net.runelite.api.Tile;
 import net.runelite.api.events.*;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetID;
-import net.runelite.client.game.SpriteManager;
 import net.runelite.http.api.feed.FeedItem;
 import net.runelite.http.api.feed.FeedItemType;
 import net.runelite.mapping.Export;
@@ -1073,7 +1072,7 @@ public class Client extends GameEngine implements RSClient {
 				if (localPlayer.hasRightsOtherThan(PlayerRights.PLAYER)) {
 					for (PlayerRights right : localPlayer.getDisplayedRights()) {
 						if (right.hasCrown()) {
-							Sprite modcon = handleIcon3(right.crownId(), 9, 137, xOffset, yOffset);
+							Sprite modcon = hanelcChatAreaIcons(right, 9, 137, xOffset, yOffset);
 							if (modcon != null) {
 								xOffset += modcon.subWidth;
 							}
@@ -1243,71 +1242,13 @@ public class Client extends GameEngine implements RSClient {
 		return null;
 	}
 	/**Handle Chatbox Icon Next to name where text is typed**/
-	public Sprite handleIcon3(int crown, int xPos, int yPos, int xOffset, int yOffset) {
-		int icon = -1; // Default icon
-		switch (crown) {
-			case 11: // HELPER
-				icon = 38;
-				break;
-			case 1: // MOD
-				icon = 39;
-				break;
-			case 2: // OWNER/ADMIN
-				icon = 37;
-				break;
-			case 16:
-				icon = 15;
-				break;
-			case 3: // OWNER/ADMIN
-			case 4: // OWNER/ADMIN
-				icon = 36;
-				break;
-			case 5: // $20
-				icon = 48;
-				break;
-			case 7: // $50
-				icon = 47;
-				break;
-			case 8: // $1000
-				icon = 42;
-				break;
-			case 9: // $100
-				icon = 46;
-				break;
-			case 17: // $250
-				icon = 45;
-				break;
-			case 18: // $500
-				icon = 44;
-				break;
-			case 30: // Event Manager
-				icon = 28;
-				break;
-			case 32: // $750
-				icon = 43;
-				break;
-			case 33: // $1500
-				icon = 41;
-				break;
-			case 34: // $2000
-				icon = 40;
-				break;
-			case 35:
-				icon = 49;
-				break;
+	public Sprite hanelcChatAreaIcons(PlayerRights rights, int xPos, int yPos, int xOffset, int yOffset) {
+		Sprite sprite = rights.getSprite();
+		if(sprite != null) {
+			sprite.drawSprite(xPos + xOffset, yPos + yOffset - sprite.subHeight);
 		}
-		if (icon != -1 && modIcons[icon] != null) {
-			Sprite modcon = modIcons[icon];
-			if (icon >= 40) {
-				modcon = SpriteLoader.fetchAnimatedSprite("/gifs/" + icon + ".gif").getInstance(modcon.subWidth, modcon.subHeight);
-				yOffset -=2;
-			}
-			modcon.drawSprite(xPos + xOffset, yPos + yOffset - modcon.subHeight);
-			return modcon;
-		}
-		return null;
+		return sprite;
 	}
-
 
 
 	public Socket openSocket(int port) throws IOException {
