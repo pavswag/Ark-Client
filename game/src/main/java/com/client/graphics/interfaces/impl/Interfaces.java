@@ -171,6 +171,8 @@ public final class Interfaces extends RSInterface {
 		youtubeInterface(defaultTextDrawingAreas);
 		smsManager(defaultTextDrawingAreas);
 		referralSystem(defaultTextDrawingAreas);
+
+		VoteManagementInterface.voteManagement(defaultTextDrawingAreas);
 	}
 
 	private static void referralSystem(TextDrawingArea[] tda) {

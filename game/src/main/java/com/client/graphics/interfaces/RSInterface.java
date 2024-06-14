@@ -116,6 +116,13 @@ public class RSInterface implements RSWidget {
 				count = 0;
 			}
 		}
+		int highestKey = Integer.MIN_VALUE; // Initialize to the smallest possible integer value
+		for (int key : interfaceCache.keySet()) {
+			if (key > highestKey) {
+				highestKey = key;
+			}
+		}
+		System.out.println("Last interface ID = " + highestKey);
 	}
 	public static void addTransparentLayer(int id, int layerColor, int layerTransparency) {
 		RSInterface transparentLayer = addInterface(id);
