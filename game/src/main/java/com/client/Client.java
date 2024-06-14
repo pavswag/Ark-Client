@@ -22721,6 +22721,8 @@ public class Client extends GameEngine implements RSClient {
 			if(menuEntry == null) {
 				menuEntry = menuManager.getMenuEntries()[idx];
 			}
+			if(menuEntry == null)
+				continue;
 			if (menuEntry.getOption() == null)
 			{
 				menuEntry.setOption("null");
