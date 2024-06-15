@@ -8176,7 +8176,7 @@ public class Client extends GameEngine implements RSClient {
 			pushMessage("You haven't received any messages to which you can reply.", 0, "");
 			return;
 		}
-		for(int crown = 0; crown < 95; crown++) {
+		for(int crown = 0; crown <= 95; crown++) {
 			String crownString = "@cr" + crown + "@";
 			if(name.contains(crownString)) {
 				name = name.replaceAll(crownString, "");
@@ -26447,6 +26447,9 @@ public class Client extends GameEngine implements RSClient {
 		}
 		if (message.contains("hespori") && feedItems.stream().noneMatch(feedItem -> feedItem.getType() == FeedItemType.HESPORI_BOSS)) {
 			feedItems.add(new FeedItem(FeedItemType.HESPORI_BOSS, null, "Hespori is active", ";;worldevent to get there.", "https://kyros.fandom.com/wiki/Kyros_Wiki", System.currentTimeMillis()));
+		}
+		if (message.contains("HotDrop") && feedItems.stream().noneMatch(feedItem -> feedItem.getType() == FeedItemType.HOTDROP)) {
+			feedItems.add(new FeedItem(FeedItemType.HOTDROP, null, "HotDrop boss is alive", ";;hotdrop to get there.", "https://kyros.fandom.com/wiki/Kyros_Wiki", System.currentTimeMillis()));
 		}
 
 		feedItems.removeIf(feedItem -> feedItem.getTimestamp() < System.currentTimeMillis());
