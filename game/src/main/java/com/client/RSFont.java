@@ -1231,7 +1231,7 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 				text = replace(text, "@cr12@", "<img=12>");//im
 				text = replace(text, "@cr13@", "<img=13>");//uim
 				text = replace(text, "@cr14@", "<img=14>");//yt
-				text = replace(text, "@cr15@", "<img=15>");//Owner
+				text = replace(text, "@cr15@", "<rank=" + PlayerRights.GAME_DEVELOPER.getRightsId() + ">");//owner
 				text = replace(text, "@cr16@", "<img=45>");//$250
 				text = replace(text, "@cr17@", "<img=44>");//$500
 				text = replace(text, "@cr18@", "<img=18>");//
