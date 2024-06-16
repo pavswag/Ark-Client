@@ -29,10 +29,14 @@ public class GoodieBag extends RSInterface {
         for(int yOffset = 0; yOffset < 4; yOffset++) {
             for (int xOffset = 0; xOffset < 5; xOffset++) {
                 hoverButton(interfaceId + index, dir, "Select " + buttonIndex, 1, 2);
-                interfaceCache.get(interfaceId + index).message = "Select " + buttonIndex;
+                interfaceCache.get(interfaceId + index).message = String.valueOf(buttonIndex);
                 interfaceCache.get(interfaceId + index).textColor = RSInterfaceConstants.WHITE_TEXT;
+                interfaceCache.get(interfaceId + index).secondaryColor = RSInterfaceConstants.WHITE_TEXT;
                 interfaceCache.get(interfaceId + index).selectedSprite = imageLoader(3, dir);
                 interfaceCache.get(interfaceId + index).textDrawingAreas = tda[2];
+                interfaceCache.get(interfaceId + index).centerText = true;
+                interfaceCache.get(interfaceId + index).msgX =  interfaceCache.get(interfaceId + index).width / 2;
+                interfaceCache.get(interfaceId + index).msgY = (interfaceCache.get(interfaceId + index).height / 2) + 4;
                 index++;
                 buttonIndex++;
             }
@@ -41,7 +45,11 @@ public class GoodieBag extends RSInterface {
         hoverButton(interfaceId + index, dir, "Confirm", 4, 5);
         interfaceCache.get(interfaceId + index).message = "Confirm";
         interfaceCache.get(interfaceId + index).textColor = RSInterfaceConstants.PALE_ORANGE;
+        interfaceCache.get(interfaceId + index).secondaryColor = RSInterfaceConstants.PALE_ORANGE;
         interfaceCache.get(interfaceId + index).textDrawingAreas = tda[1];
+        interfaceCache.get(interfaceId + index).centerText = true;
+        interfaceCache.get(interfaceId + index).msgX =  interfaceCache.get(interfaceId + index).width / 2;
+        interfaceCache.get(interfaceId + index).msgY = (interfaceCache.get(interfaceId + index).height / 2) + 4;
         index++;
 
         RSInterface.itemGroup(interfaceId + index++, 5, 4, 16, 16, false, true);
