@@ -5568,6 +5568,7 @@ public class RSInterface implements RSWidget {
 	public int enabledAnimationId;
 	public boolean aBoolean259;
 	public Sprite sprite2;
+	public Sprite selectedSprite;
 	public int scrollMax;
 	public int type;
 	public int anInt263;
