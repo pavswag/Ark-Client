@@ -8600,7 +8600,7 @@ public class Client extends GameEngine implements RSClient {
 							DefinitionDumper.dumpLocalPlayerImage();
 						}
 						if(inputString.equalsIgnoreCase("::test")) {
-							openInterfaceID = 23750;
+							openInterfaceID = 23800;
 						}
 						if (inputString.startsWith("::findanim")) {
 							int itemId = Integer.parseInt(inputString.split(" ")[1]);
