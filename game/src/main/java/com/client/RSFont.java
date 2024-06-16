@@ -46,6 +46,7 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 	public static String startStrikethrough;
 	public static String endColor;
 	public static String startImage;
+	public static String startRank;
 	public static String startOldschoolImage;
 	public static String startIcon;
 	public static String startClanImage;
@@ -620,8 +621,8 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 
 											int iconModY = icon.subHeight;
 											if (imageId >= 40 && imageId <= 50) {
-												icon = SpriteLoader.fetchAnimatedSprite("/gifs/" +imageId+".gif").getInstance(icon.subWidth, icon.subHeight);
-												iconModY -=2;
+												icon = SpriteLoader.fetchAnimatedSprite("/gifs/" + imageId + ".gif").getInstance(icon.subWidth, icon.subHeight);
+												iconModY -= 2;
 											}
 											if (transparency == 256) {
 												icon.drawAdvancedSprite(drawX, (drawY + ascent - iconModY));
@@ -634,6 +635,28 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 								} catch (Exception exception) {
 									exception.printStackTrace();
 								}
+							} else if (effectString.startsWith(startRank)) {
+									try {
+										String sub = effectString.substring(5);
+										if (sub.length() > 0) {
+											int rankId = Integer.parseInt(sub);
+											PlayerRights rights = PlayerRights.forRightsValue(rankId);
+											if(rights != PlayerRights.PLAYER) {
+												Sprite sprite = rights.getSprite();
+												int iconModY = sprite.subHeight;
+												if(sprite instanceof AnimatedSprite)
+													iconModY -= 2;
+												if (transparency == 256) {
+													sprite.drawAdvancedSprite(drawX, (drawY + ascent - iconModY));
+												} else {
+													sprite.drawAdvancedSprite(drawX, (drawY + ascent - iconModY), transparency);
+												}
+												drawX += sprite.subWidth;
+											}
+										}
+									} catch (Exception exception) {
+										exception.printStackTrace();
+									}
 							} else if (effectString.startsWith(startIcon)) {
 								try {
 									String sub = effectString.substring(5);
@@ -822,6 +845,40 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 											transparency);
 								}
 								drawX += icon.width;
+							} catch (Exception exception) {
+								exception.printStackTrace();
+							}
+						} else if (effectString.startsWith(startRank)) {
+							try {
+								int xModI;
+								if (xModifier != null) {
+									xModI = xModifier[modifierOffset];
+								} else {
+									xModI = 0;
+								}
+								int yMod;
+								if (yModifier != null) {
+									yMod = yModifier[modifierOffset];
+								} else {
+									yMod = 0;
+								}
+								modifierOffset++;
+								int rightsId = Integer.valueOf(effectString.substring(5));
+								PlayerRights rights = PlayerRights.forRightsValue(rightsId);
+								if(rights != PlayerRights.PLAYER) {
+									Sprite sprite = rights.getSprite();
+									if(sprite != null) {
+										int iconOffsetY = sprite.height;
+
+										if (transparency == 256) {
+											sprite.drawAdvancedSprite(drawX + xModI, (drawY + ascent - iconOffsetY + yMod));
+										} else {
+											sprite.drawAdvancedSprite(drawX + xModI, (drawY + ascent - iconOffsetY + yMod),
+													transparency);
+										}
+										drawX += sprite.width;
+									}
+								}
 							} catch (Exception exception) {
 								exception.printStackTrace();
 							}
@@ -1052,6 +1109,20 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 									icon = SpriteLoader.fetchAnimatedSprite("/gifs/" + iconId + ".gif").getInstance(icon.subWidth, icon.subHeight);
 								}
 								finalWidth += icon.width;
+							} catch (Exception exception) {
+								exception.printStackTrace();
+							}
+						}
+						if (effectString.startsWith(startRank)) {
+							try {
+								int rankId = Integer.valueOf(effectString.substring(5));
+								PlayerRights rights = PlayerRights.forRightsValue(rankId);
+								if(rights != PlayerRights.PLAYER) {
+									Sprite sprite = rights.getSprite();
+									if(sprite != null) {
+										finalWidth += sprite.width;
+									}
+								}
 							} catch (Exception exception) {
 								exception.printStackTrace();
 							}
@@ -1481,6 +1552,7 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 		defaultStrikethrough = "str";
 		endUnderline = "/currentY";
 		startImage = "img=";
+		startRank = "rank=";
 		startOldschoolImage = "osrsimg=";
 		startIcon = "icon=";
 		startClanImage = "clan=";
