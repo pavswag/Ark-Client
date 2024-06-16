@@ -173,6 +173,7 @@ public final class Interfaces extends RSInterface {
 		referralSystem(defaultTextDrawingAreas);
 
 		VoteManagementInterface.voteManagement(defaultTextDrawingAreas);
+		GoodieBag.goodiebagWidget(defaultTextDrawingAreas);
 	}
 
 	private static void referralSystem(TextDrawingArea[] tda) {
