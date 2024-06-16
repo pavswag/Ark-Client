@@ -69,6 +69,7 @@ class FeedPanel extends PluginPanel {
         currentFeedItems.add(new FeedItem(FeedItemType.SEASONAL, null, "Seasonal event has spawned", ";;seasonal to get there", "", System.currentTimeMillis()+TimeUnit.SECONDS.toMillis(30)));
         currentFeedItems.add(new FeedItem(FeedItemType.WILDY_BOSS, null, "Wildy event is active", ";;wildyevent to get there", "", System.currentTimeMillis()+TimeUnit.SECONDS.toMillis(30)));
         currentFeedItems.add(new FeedItem(FeedItemType.HESPORI_BOSS, null, "Hespori is active", ";;worldevent to get there.", "https://kyros.fandom.com/wiki/Kyros_Wiki", System.currentTimeMillis()+TimeUnit.SECONDS.toMillis(30)));
+        currentFeedItems.add(new FeedItem(FeedItemType.HOTDROP, null, "HotDrop Boss is Alive!", ";;hotdrop to get there.", "https://kyros.fandom.com/wiki/Kyros_Wiki", System.currentTimeMillis()+TimeUnit.SECONDS.toMillis(30)));
     }
 
     private final FeedConfig config;
@@ -104,6 +105,7 @@ class FeedPanel extends PluginPanel {
                             .filter(f -> f.getType() != FeedItemType.HESPORI_BOSS || config.includeHesporiSpawns())
                             .filter(f -> f.getType() != FeedItemType.SHOOTING_STAR || config.includeStarSpawns())
                             .filter(f -> f.getType() != FeedItemType.SEASONAL || config.includeSeasonalSpawns())
+                            .filter(f -> f.getType() != FeedItemType.HOTDROP || config.includeHotDropSpawns())
                             .sorted(FEED_ITEM_COMPARATOR)
                             .forEach(this::addItemToPanel);
                 });
@@ -138,6 +140,9 @@ class FeedPanel extends PluginPanel {
                 break;
             case SEASONAL:
                 avatar.setIcon(new ImageIcon(itemManager.getImage(23108, 1, false).getScaledInstance(32, 32, java.awt.Image.SCALE_SMOOTH)));
+                break;
+            case HOTDROP:
+                avatar.setIcon(new ImageIcon(itemManager.getImage(19529, 1, false).getScaledInstance(32, 32, java.awt.Image.SCALE_SMOOTH)));
                 break;
         }
 
@@ -328,6 +333,14 @@ class FeedPanel extends PluginPanel {
                 }
             }
             if (feedItem.getType() == FeedItemType.SEASONAL && config.includeSeasonalSpawns()) {
+                if (config.notificationSounds()) {
+                    Toolkit.getDefaultToolkit().beep();
+                }
+                if (config.trayNotification()) {
+                    notifier.notify(feedItem.content, TrayIcon.MessageType.INFO);
+                }
+            }
+            if (feedItem.getType() == FeedItemType.HOTDROP && config.includeHotDropSpawns()) {
                 if (config.notificationSounds()) {
                     Toolkit.getDefaultToolkit().beep();
                 }
