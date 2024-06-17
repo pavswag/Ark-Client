@@ -34,6 +34,12 @@ public class DonationCampaign extends RSInterface {
         addText(interfaceId + index++, "Prize #3", 2, 0xFF981F, true, true);
         addText(interfaceId + index++, "Prize #4", 2, 0xFF981F, true, true);
 
+
+        addSprite(interfaceId + index++, 35, dir);//main background
+        addSprite(interfaceId + index++, 35, dir);//main background
+        addSprite(interfaceId + index++, 35, dir);//main background
+        addSprite(interfaceId + index++, 35, dir);//main background
+
         addProgressBarReal(interfaceId + index++, 188, 24, 0x4dff00);
         addProgressBarReal(interfaceId + index++, 188, 24, 0x4dff00);
         addProgressBarReal(interfaceId + index++, 188, 24, 0x4dff00);
@@ -49,6 +55,7 @@ public class DonationCampaign extends RSInterface {
         addText(interfaceId + index++, "$450/$500", 2, 0xFF981F, true, true);
         addText(interfaceId + index++, "$450/$500", 2, 0xFF981F, true, true);
         addText(interfaceId + index++, "$450/$500", 2, 0xFF981F, true, true);
+
 
         index = 0;
 
@@ -66,6 +73,10 @@ public class DonationCampaign extends RSInterface {
         main.child(index++, interfaceId + index, baseX + 220 + 99, 87 + baseY); //Prize #2
         main.child(index++, interfaceId + index, baseX + 17 + 99, 202 + baseY); //Prize #3
         main.child(index++, interfaceId + index, baseX + 220 + 99, 202 + baseY); //Prize #4
+        main.child(index++, interfaceId + index, baseX + 23, 162 + baseY); //Progress bar bg #1
+        main.child(index++, interfaceId + index, baseX + 226 , 162 + baseY); //Progress bar bg #2
+        main.child(index++, interfaceId + index, baseX + 23, 277 + baseY); //Progress bar bg  #3
+        main.child(index++, interfaceId + index, baseX + 226, 277 + baseY); //Progress bar bg #4
         main.child(index++, interfaceId + index, baseX + 23, 162 + baseY); //Progress bar #1
         main.child(index++, interfaceId + index, baseX + 226 , 162 + baseY); //Progress bar #2
         main.child(index++, interfaceId + index, baseX + 23, 277 + baseY); //Progress bar #3
