@@ -797,6 +797,11 @@ public class RSInterface implements RSWidget {
 		}
 	}
 
+	private static void itemContainer(int i, int j, int k, int l, int m, boolean b, String string) {
+		// TODO Auto-generated method stub
+
+	}
+
 
 	public static void itemGroup(int id, int w, int h, int x, int y, boolean drag, boolean examine) {
 		itemGroup(id, w, h, x, y, drag ,examine, false);
