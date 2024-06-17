@@ -805,6 +805,9 @@ public class RSInterface implements RSWidget {
 
 
 	public static void itemGroup(int id, int w, int h, int x, int y, boolean drag, boolean examine) {
+		itemGroup(id, w, h, x, y, drag ,examine, false);
+	}
+	public static void itemGroup(int id, int w, int h, int x, int y, boolean drag, boolean examine, boolean addPlaceHolders) {
 		RSInterface rsi = addInterface(id);
 		rsi.width = w;
 		rsi.height = h;
@@ -818,6 +821,12 @@ public class RSInterface implements RSWidget {
 		rsi.spritesY = new int[20];
 		rsi.sprites = new Sprite[20];
 		rsi.type = 2;
+		if(addPlaceHolders) {
+			for (int index = 0; index < rsi.inventoryItemId.length; index++) {
+				rsi.inventoryItemId[index] = 4152 + (index * 2);
+				rsi.inventoryAmounts[index] = index + 1;
+			}
+		}
 	}
 
 	public static TextDrawingArea[] defaultTextDrawingAreas;
@@ -3980,6 +3989,14 @@ public class RSInterface implements RSWidget {
 	}
 
 	public void child(int id, int interID, int x, int y) {
+		if (children == null || childX == null || childY == null) {
+			children = new int[1];
+			childX = new int[1];
+			childY = new int[1];
+		}
+		if (id >= children.length) {
+			resizeArrays(id + 1);
+		}
 		children[id] = interID;
 		childX[id] = x;
 		childY[id] = y;
@@ -3994,6 +4011,20 @@ public class RSInterface implements RSWidget {
 		} catch (Exception e) {
 
 		}
+	}
+
+	private void resizeArrays(int newSize) {
+		int[] newChildren = new int[newSize];
+		int[] newChildX = new int[newSize];
+		int[] newChildY = new int[newSize];
+
+		System.arraycopy(children, 0, newChildren, 0, children.length);
+		System.arraycopy(childX, 0, newChildX, 0, childX.length);
+		System.arraycopy(childY, 0, newChildY, 0, childY.length);
+
+		children = newChildren;
+		childX = newChildX;
+		childY = newChildY;
 	}
 
 	public void totalChildren(int t) {

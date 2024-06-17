@@ -2,7 +2,6 @@ package com.client.graphics.interfaces.impl;
 
 import com.client.*;
 import com.client.connection.Connection;
-import com.client.graphics.interfaces.Configs;
 import com.client.graphics.interfaces.MenuItem;
 import com.client.graphics.interfaces.RSInterface;
 import com.client.graphics.interfaces.builder.impl.*;
@@ -14,10 +13,7 @@ import com.client.graphics.interfaces.daily.DailyRewards;
 import com.client.graphics.interfaces.dropdown.KeybindingMenu;
 import com.client.graphics.interfaces.eventcalendar.EventCalendar;
 import com.client.graphics.interfaces.settings.SettingsInterface;
-import com.client.sign.Signlink;
-import net.runelite.client.game.SpriteManager;
 
-import java.net.URL;
 import java.util.Random;
 
 import static com.client.Client.*;
@@ -174,6 +170,7 @@ public final class Interfaces extends RSInterface {
 
 		VoteManagementInterface.voteManagement(defaultTextDrawingAreas);
 		GoodieBag.goodiebagWidget(defaultTextDrawingAreas);
+		DonationCampaign.donationCampaignWidget(defaultTextDrawingAreas);
 	}
 
 	private static void referralSystem(TextDrawingArea[] tda) {
