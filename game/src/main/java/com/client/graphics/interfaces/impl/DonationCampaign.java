@@ -6,58 +6,54 @@ import com.client.graphics.interfaces.RSInterface;
 public class DonationCampaign extends RSInterface {
 
     public static void donationCampaignWidget(TextDrawingArea[] tda) {
-        int interfaceId = 24230;
-        RSInterface main = addInterface(interfaceId);
         String dir = "Interfaces/deals/SPRITE";
 
+        int interfaceId = 24230;
+        RSInterface main = addInterface(interfaceId);
         int index = 1;
-        int baseX = 45, baseY = 8;
 
+        addSprite(24231, 34, dir); //background
+        addText(24232, "Kyros Donation Campaign", 2, 0xFF981F, true, true); //title
+        configHoverButton(24233, "Close interface", dir, 21, 22, 21, 21, false, 24234); //close button
 
-        addSprite(interfaceId + index++, 34, dir);//background
-        addText(interfaceId + index++, "Kyros Donation Campaign", 2, 0xFF981F, true, true); //title
-        configHoverButton(interfaceId + index, "Close interface", dir, 21, 22, 21, 21, false, interfaceId + index++);//close button
+        configHoverButton(24235, "Deals", dir, 7, 8, 7, 7, false, 24236);
+        configHoverButton(24237, "Store", dir, 5, 6, 5, 5, false, 24238);
 
-        configHoverButton(interfaceId + index, "Deals", dir, 7, 8, 7, 7, false, interfaceId + index++);
-        configHoverButton(interfaceId + index, "Store", dir, 5, 6, 5, 5, false, interfaceId + index++);
+        hoverButton(24239, dir, "Campaign", 32, 33);
 
-        hoverButton(interfaceId + index++, dir, "Campaign", 32, 33);
+        addSprite(24240, 30, dir); //main background
+        addSprite(24241, 30, dir); //main background
+        addSprite(24242, 30, dir); //main background
+        addSprite(24243, 30, dir); //main background
 
+        addText(24244, "Prize #1", 2, 0xFF981F, true, true);
+        addText(24245, "Prize #2", 2, 0xFF981F, true, true);
+        addText(24246, "Prize #3", 2, 0xFF981F, true, true);
+        addText(24247, "Prize #4", 2, 0xFF981F, true, true);
 
-        addSprite(interfaceId + index++, 30, dir);//main background
-        addSprite(interfaceId + index++, 30, dir);//main background
-        addSprite(interfaceId + index++, 30, dir);//main background
-        addSprite(interfaceId + index++, 30, dir);//main background
+        addSprite(24248, 35, dir); //progress background
+        addSprite(24249, 35, dir); //progress background
+        addSprite(24250, 35, dir); //progress background
+        addSprite(24251, 35, dir); //progress background
 
-        addText(interfaceId + index++, "Prize #1", 2, 0xFF981F, true, true);
-        addText(interfaceId + index++, "Prize #2", 2, 0xFF981F, true, true);
-        addText(interfaceId + index++, "Prize #3", 2, 0xFF981F, true, true);
-        addText(interfaceId + index++, "Prize #4", 2, 0xFF981F, true, true);
+        addProgressBarReal(24252, 188, 24, 0x4dff00);
+        addProgressBarReal(24253, 188, 24, 0x4dff00);
+        addProgressBarReal(24254, 188, 24, 0x4dff00);
+        addProgressBarReal(24255, 188, 24, 0x4dff00);
 
+        itemGroup(24256, 5, 1, 6, 4, false, true, true);
+        itemGroup(24257, 5, 1, 6, 4, false, true, true);
+        itemGroup(24258, 5, 1, 6, 4, false, true, true);
+        itemGroup(24259, 5, 1, 6, 4, false, true, true);
 
-        addSprite(interfaceId + index++, 35, dir);//main background
-        addSprite(interfaceId + index++, 35, dir);//main background
-        addSprite(interfaceId + index++, 35, dir);//main background
-        addSprite(interfaceId + index++, 35, dir);//main background
-
-        addProgressBarReal(interfaceId + index++, 188, 24, 0x4dff00);
-        addProgressBarReal(interfaceId + index++, 188, 24, 0x4dff00);
-        addProgressBarReal(interfaceId + index++, 188, 24, 0x4dff00);
-        addProgressBarReal(interfaceId + index++, 188, 24, 0x4dff00);
-
-        itemGroup(interfaceId + index++, 5, 1, 6, 4, false, true, true);
-        itemGroup(interfaceId + index++, 5, 1, 6, 4, false, true, true);
-        itemGroup(interfaceId + index++, 5, 1, 6, 4, false, true, true);
-        itemGroup(interfaceId + index++, 5, 1, 6, 4, false, true, true);
-
-
-        addText(interfaceId + index++, "$450/$500", 2, 0xFF981F, true, true);
-        addText(interfaceId + index++, "$450/$500", 2, 0xFF981F, true, true);
-        addText(interfaceId + index++, "$450/$500", 2, 0xFF981F, true, true);
-        addText(interfaceId + index++, "$450/$500", 2, 0xFF981F, true, true);
-
+        addText(24260, "$450/$500", 2, 0xFF981F, true, true);
+        addText(24261, "$450/$500", 2, 0xFF981F, true, true);
+        addText(24262, "$450/$500", 2, 0xFF981F, true, true);
+        addText(24263, "$450/$500", 2, 0xFF981F, true, true);
 
         index = 0;
+
+        int baseX = 45, baseY = 8;
 
         main.child(index++, interfaceId + index, baseX, baseY); //background
         main.child(index++, interfaceId + index, baseX + 220, baseY + 10); //title
