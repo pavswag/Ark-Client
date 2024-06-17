@@ -118,7 +118,7 @@ public enum PlayerRights {
     public Sprite getSprite() {
         Sprite sprite = (Sprite) sprites.get(StringUtils.longForName(name()));
         if(sprite == null) {
-            System.out.println("Trying to get sprite for [" + name() + "]");
+//            System.out.println("Trying to get sprite for [" + name() + "]");
             String spritePath = findImagePath(name());
             if(spritePath != null) {
                 if(spritePath.endsWith("gif")) {

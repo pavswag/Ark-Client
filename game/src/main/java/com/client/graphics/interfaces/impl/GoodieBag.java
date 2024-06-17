@@ -52,8 +52,7 @@ public class GoodieBag extends RSInterface {
         interfaceCache.get(interfaceId + index).msgY = (interfaceCache.get(interfaceId + index).height / 2) + 4;
         index++;
 
-        RSInterface.itemGroup(interfaceId + index++, 5, 4, 16, 16, false, true);
-
+        RSInterface.itemGroup(interfaceId + index++, 5, 4, 16, 16, false, true, false);
 
         mainInterface.totalChildren(index);
 
