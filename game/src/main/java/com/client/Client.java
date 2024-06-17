@@ -19878,40 +19878,40 @@ public class Client extends GameEngine implements RSClient {
 					return true;
 
 				case 246:
-					int i6 = inStream.method434();
-					int i13 = inStream.readUShort();
+					int progressBarId = inStream.method434();
+					int progressBarProgress = inStream.readUShort();
 					int k18 = inStream.readUShort();
-					if (i6 >= 59951 && i6 <= 59960 || i6 == 59973) {
-						updateProgressBar(i6, k18, i13, 0);
+					if (progressBarId >= 59951 && progressBarId <= 59960 || progressBarId == 59973) {
+						updateProgressBar(progressBarId, k18, progressBarProgress, 0);
 						incomingPacket = -1;
 						return true;
 					}
-					if (i6 >= 24520 && i6 <= 24524) {
-						updateProgressBar(i6, k18, i13, 0);
+					if (progressBarId >= 24520 && progressBarId <= 24524) {
+						updateProgressBar(progressBarId, k18, progressBarProgress, 0);
 						incomingPacket = -1;
 						return true;
 					}
-					if (i6 >= 43000) {
+					if (progressBarId >= 43000) {
 //						System.out.println("Interface ID: " + i6 + ", Npc ID: " + k18 + ", Zoom: " +i13);
-						RSInterface npcOnInsterface1 = interfaceCache.get(i6);
+						RSInterface npcOnInsterface1 = interfaceCache.get(progressBarId);
 						npcOnInsterface1.type = 6;
 						npcOnInsterface1.contentType = 32921;
 						PetSystem.petSelected = k18;
-						npcOnInsterface1.modelZoom = i13;
+						npcOnInsterface1.modelZoom = progressBarProgress;
 						incomingPacket = -1;
 						return true;
 					}
 					if (k18 == 65535) {
-						interfaceCache.get(i6).anInt233 = 0;
+						interfaceCache.get(progressBarId).anInt233 = 0;
 						incomingPacket = -1;
 						return true;
 					} else {
 						ItemDefinition itemDef = ItemDefinition.lookup(k18);
-						interfaceCache.get(i6).anInt233 = 4;
-						interfaceCache.get(i6).mediaID = k18;
-						interfaceCache.get(i6).modelRotation1 = itemDef.xan2d;
-						interfaceCache.get(i6).modelRotation2 = itemDef.yan2d;
-						interfaceCache.get(i6).modelZoom = (itemDef.zoom2d * 100) / i13;
+						interfaceCache.get(progressBarId).anInt233 = 4;
+						interfaceCache.get(progressBarId).mediaID = k18;
+						interfaceCache.get(progressBarId).modelRotation1 = itemDef.xan2d;
+						interfaceCache.get(progressBarId).modelRotation2 = itemDef.yan2d;
+						interfaceCache.get(progressBarId).modelZoom = (itemDef.zoom2d * 100) / progressBarProgress;
 						incomingPacket = -1;
 						return true;
 					}
