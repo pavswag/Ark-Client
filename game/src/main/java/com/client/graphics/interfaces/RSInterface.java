@@ -804,6 +804,28 @@ public class RSInterface implements RSWidget {
 
 
 
+	public static void itemGroup(int id, int w, int h, int x, int y, boolean drag, boolean examine, boolean addPlaceholderItems) {
+		RSInterface rsi = addInterface(id);
+		rsi.width = w;
+		rsi.height = h;
+		rsi.inventoryItemId = new int[w * h];
+		rsi.inventoryAmounts = new int[w * h];
+		rsi.usableItemInterface = false;
+		rsi.isInventoryInterface = false;
+		rsi.invSpritePadX = x;
+		rsi.invSpritePadY = y;
+		rsi.spritesX = new int[20];
+		rsi.spritesY = new int[20];
+		rsi.sprites = new Sprite[20];
+		rsi.type = 2;
+		if (addPlaceholderItems) {
+			for (int index = 0; index < rsi.inventoryItemId.length; index++) {
+				rsi.inventoryItemId[index] = 4152 + (index * 2);
+				rsi.inventoryAmounts[index] = index + 1;
+			}
+		}
+	}
+
 	public static void itemGroup(int id, int w, int h, int x, int y, boolean drag, boolean examine) {
 		itemGroup(id, w, h, x, y, drag ,examine, false);
 	}
