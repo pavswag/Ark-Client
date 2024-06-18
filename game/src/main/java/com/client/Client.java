@@ -20349,7 +20349,7 @@ public class Client extends GameEngine implements RSClient {
 
 			method3708(var2, var3, true);
 		} else {
-			System.out.println("READ DYNAMIC");
+//			System.out.println("READ DYNAMIC");
 			var2 = var1.readUnsignedShort();
 			var3 = var1.readUShortA();
 			currentRegionX = var2;
