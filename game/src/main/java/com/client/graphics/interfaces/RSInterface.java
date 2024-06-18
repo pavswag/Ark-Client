@@ -731,7 +731,7 @@ public class RSInterface implements RSWidget {
 		for (int btn : widget.buttonsToDisable) {
 			RSInterface btnWidget = interfaceCache.get(btn);
 
-			if (btnWidget.active) {
+			if (btnWidget != null && btnWidget.active) {
 				btnWidget.active = false;
 				configHoverButtonSwitch(btnWidget);
 			}

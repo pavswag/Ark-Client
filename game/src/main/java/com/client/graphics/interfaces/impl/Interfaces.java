@@ -367,8 +367,10 @@ public final class Interfaces extends RSInterface {
 		main.child(index++, MAIN_INTERFACE + index, 14 + baseX, 136 + baseY); //bonus button
 		main.child(index++, MAIN_INTERFACE + index, 14 + baseX, 197 + baseY); //cosmetic button
 		main.child(index++, MAIN_INTERFACE + index, 14 + baseX, 257 + baseY); //timed button
-		main.child(index++, MAIN_INTERFACE + index, 120 + baseX, 45 + baseY); //deals button
-		main.child(index++, MAIN_INTERFACE + index, 259 + baseX, 45 + baseY); //store button
+
+		main.child(index++, MAIN_INTERFACE + index, 75 + baseX, 45 + baseY); //deals button
+		main.child(index++, MAIN_INTERFACE + index, 75 + baseX + 98, 45 + baseY); //store button
+		
 		main.child(index++, MAIN_INTERFACE + index, baseX + 48, baseY + 107); //Boosts
 		main.child(index++, MAIN_INTERFACE + index, baseX + 48, baseY + 167); //Items
 		main.child(index++, MAIN_INTERFACE + index, baseX + 48, baseY + 228); //Cosmetics
@@ -389,6 +391,7 @@ public final class Interfaces extends RSInterface {
 		main.child(index++, MAIN_INTERFACE + index, 335 + baseX, 137 + baseY);  //text
 		main.child(index++, MAIN_INTERFACE + index, 175 + baseX, 248 + baseY);  //text
 		main.child(index++, MAIN_INTERFACE + index, 335 + baseX, 248 + baseY);  //text
+		main.child(index++, 24239, 75 + baseX + 98 + 98, 45 + baseY); //campaign button
 	}
 
 	private static void coinFlipItemsInterface(TextDrawingArea[] tda) {
@@ -510,8 +513,8 @@ public final class Interfaces extends RSInterface {
 		main.child(index++, MAIN_INTERFACE + index, 14 + baseX, 136 + baseY); //bonus button
 		main.child(index++, MAIN_INTERFACE + index, 14 + baseX, 197 + baseY); //cosmetic button
 		main.child(index++, MAIN_INTERFACE + index, 14 + baseX, 257 + baseY); //timed button
-		main.child(index++, MAIN_INTERFACE + index, 120 + baseX, 45 + baseY); //deals button
-		main.child(index++, MAIN_INTERFACE + index, 259 + baseX, 45 + baseY); //store button
+		main.child(index++, MAIN_INTERFACE + index, 75 + baseX, 45 + baseY); //deals button
+		main.child(index++, MAIN_INTERFACE + index, 75 + baseX + 98, 45 + baseY); //store button
 		main.child(index++, MAIN_INTERFACE + index, baseX + 48, baseY + 107); //Boosts
 		main.child(index++, MAIN_INTERFACE + index, baseX + 48, baseY + 167); //Items
 		main.child(index++, MAIN_INTERFACE + index, baseX + 48, baseY + 228); //Cosmetics
@@ -530,6 +533,7 @@ public final class Interfaces extends RSInterface {
 		main.child(index++, MAIN_INTERFACE + index, baseX + 250, baseY + 110); //Text container
 		main.child(index++, MAIN_INTERFACE + index, baseX + 250, baseY + 180); //Text container
 		main.child(index++, MAIN_INTERFACE + index, baseX + 250, baseY + 250); //Text container
+		main.child(index++, 24239, 75 + baseX + 98 + 98, 45 + baseY); //campaign button
 	}
 
 	private static void cosmeticDealsInterface(TextDrawingArea[] tda) {
@@ -589,8 +593,8 @@ public final class Interfaces extends RSInterface {
 		main.child(index++, MAIN_INTERFACE + index, 14 + baseX, 136 + baseY); //bonus button
 		main.child(index++, MAIN_INTERFACE + index, 14 + baseX, 197 + baseY); //cosmetic button
 		main.child(index++, MAIN_INTERFACE + index, 14 + baseX, 257 + baseY); //timed button
-		main.child(index++, MAIN_INTERFACE + index, 120 + baseX, 45 + baseY); //deals button
-		main.child(index++, MAIN_INTERFACE + index, 259 + baseX, 45 + baseY); //store button
+		main.child(index++, MAIN_INTERFACE + index, 75 + baseX, 45 + baseY); //deals button
+		main.child(index++, MAIN_INTERFACE + index, 75 + baseX + 98, 45 + baseY); //store button
 		main.child(index++, MAIN_INTERFACE + index, baseX + 48, baseY + 107); //Boosts
 		main.child(index++, MAIN_INTERFACE + index, baseX + 48, baseY + 167); //Items
 		main.child(index++, MAIN_INTERFACE + index, baseX + 48, baseY + 228); //Cosmetics
@@ -617,6 +621,7 @@ public final class Interfaces extends RSInterface {
 		main.child(index++, MAIN_INTERFACE + index, baseX + 105, baseY + 271); //buy button
 		main.child(index++, MAIN_INTERFACE + index, baseX + 219, baseY + 271); //buy button
 		main.child(index++, MAIN_INTERFACE + index, baseX + 332, baseY + 271); //buy button
+		main.child(index++, 24239, 75 + baseX + 98 + 98, 45 + baseY); //campaign button
 
 
 	}
@@ -671,8 +676,8 @@ public final class Interfaces extends RSInterface {
 		main.child(index++, MAIN_INTERFACE + index, 14 + baseX, 136 + baseY); //bonus button
 		main.child(index++, MAIN_INTERFACE + index, 14 + baseX, 197 + baseY); //cosmetic button
 		main.child(index++, MAIN_INTERFACE + index, 14 + baseX, 257 + baseY); //timed button
-		main.child(index++, MAIN_INTERFACE + index, 120 + baseX, 45 + baseY); //deals button
-		main.child(index++, MAIN_INTERFACE + index, 259 + baseX, 45 + baseY); //store button
+		main.child(index++, MAIN_INTERFACE + index, 75 + baseX, 45 + baseY); //deals button
+		main.child(index++, MAIN_INTERFACE + index, 75 + baseX + 98, 45 + baseY); //store button
 		main.child(index++, MAIN_INTERFACE + index, baseX + 48, baseY + 107); //Boosts
 		main.child(index++, MAIN_INTERFACE + index, baseX + 48, baseY + 167); //Items
 		main.child(index++, MAIN_INTERFACE + index, baseX + 48, baseY + 228); //Cosmetics
@@ -691,6 +696,7 @@ public final class Interfaces extends RSInterface {
 		main.child(index++, MAIN_INTERFACE + index, baseX + 249, baseY + 244); //price / price
 		main.child(index++, MAIN_INTERFACE + index, baseX + 249, baseY + 285); //price / price
 		main.child(index++, MAIN_INTERFACE + index, baseX + 287, baseY + 80); //timer
+		main.child(index++, 24239, 75 + baseX + 98 + 98, 45 + baseY); //campaign button
 		/** Boost's text Information (Autoclaimed when spending X Amount) **/
 
 	}
