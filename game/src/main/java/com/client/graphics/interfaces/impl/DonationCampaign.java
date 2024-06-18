@@ -36,10 +36,10 @@ public class DonationCampaign extends RSInterface {
         addSprite(24250, 35, dir); //progress background
         addSprite(24251, 35, dir); //progress background
 
-        addProgressBarReal(24252, 188, 24, 0x4dff00);
-        addProgressBarReal(24253, 188, 24, 0x4dff00);
-        addProgressBarReal(24254, 188, 24, 0x4dff00);
-        addProgressBarReal(24255, 188, 24, 0x4dff00);
+        addProgressBarReal(24252, 188, 24, 0x277d02);
+        addProgressBarReal(24253, 188, 24, 0x277d02);
+        addProgressBarReal(24254, 188, 24, 0x277d02);
+        addProgressBarReal(24255, 188, 24, 0x277d02);
 
         itemGroup(24256, 5, 1, 6, 4, false, true, true);
         itemGroup(24257, 5, 1, 6, 4, false, true, true);
