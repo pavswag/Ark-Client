@@ -188,7 +188,7 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
         }
         if (i == 7599) {
             npcDefinition.custom = true;
-            npcDefinition.name = "ArkCane Guide";
+            npcDefinition.name = "Kyros Guide";
         }
         if (i == 4305) {
             npcDefinition.custom = true;

@@ -5,11 +5,13 @@ import com.client.graphics.loaders.SpriteLoader;
 import com.client.sign.Signlink;
 import com.client.util.AssetUtils;
 import com.client.util.Strings;
+import net.runelite.client.game.SpriteManager;
 import org.apache.commons.io.IOUtils;
 
 import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +46,7 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 	public static String startStrikethrough;
 	public static String endColor;
 	public static String startImage;
+	public static String startRank;
 	public static String startOldschoolImage;
 	public static String startIcon;
 	public static String startClanImage;
@@ -618,8 +621,8 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 
 											int iconModY = icon.subHeight;
 											if (imageId >= 40 && imageId <= 50) {
-												icon = SpriteLoader.fetchAnimatedSprite(Signlink.getCacheDirectory()+"gifs/" +imageId+".gif").getInstance(icon.subWidth, icon.subHeight);
-												iconModY -=2;
+												icon = SpriteLoader.fetchAnimatedSprite("/gifs/" + imageId + ".gif").getInstance(icon.subWidth, icon.subHeight);
+												iconModY -= 2;
 											}
 											if (transparency == 256) {
 												icon.drawAdvancedSprite(drawX, (drawY + ascent - iconModY));
@@ -632,6 +635,26 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 								} catch (Exception exception) {
 									exception.printStackTrace();
 								}
+							} else if (effectString.startsWith(startRank)) {
+									try {
+										String sub = effectString.substring(5);
+										if (sub.length() > 0) {
+											int rankId = Integer.parseInt(sub);
+											PlayerRights rights = PlayerRights.forRightsValue(rankId);
+											if(rights != PlayerRights.PLAYER) {
+												Sprite sprite = rights.getSprite();
+												int iconModY = sprite.subHeight;
+												if (transparency == 256) {
+													sprite.drawAdvancedSprite(drawX, (drawY + ascent - iconModY));
+												} else {
+													sprite.drawAdvancedSprite(drawX, (drawY + ascent - iconModY), transparency);
+												}
+												drawX += sprite.subWidth;
+											}
+										}
+									} catch (Exception exception) {
+										exception.printStackTrace();
+									}
 							} else if (effectString.startsWith(startIcon)) {
 								try {
 									String sub = effectString.substring(5);
@@ -639,12 +662,12 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 										int imageId = Integer.parseInt(sub);
 										if (imageId > -1) {
 											if(imageId >= 9997 && imageId <= 9999) {
-												AnimatedSprite animatedIcon = SpriteLoader.fetchAnimatedSprite(Signlink.getCacheDirectory() + "gifs/" + imageId + ".gif").getInstance(13, 13);
+												AnimatedSprite animatedIcon = SpriteLoader.fetchAnimatedSprite("/gifs/" + imageId + ".gif").getInstance(13, 13);
 												int iconModY = animatedIcon.subHeight;
 												if (transparency == 256) {
-													animatedIcon.drawSprite(drawX, (drawY + ascent - iconModY));
+													animatedIcon.drawAdvancedSprite(drawX, (drawY + ascent - iconModY));
 												} else {
-													animatedIcon.drawSprite(drawX, (drawY + ascent - iconModY), transparency);
+													animatedIcon.drawAdvancedSprite(drawX, (drawY + ascent - iconModY), transparency);
 												}
 												drawX += animatedIcon.subWidth;
 												continue;
@@ -809,7 +832,7 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 								int iconOffsetY = icon.height;
 
 								if (iconId >= 40 && iconId <= 50) {
-									icon = SpriteLoader.fetchAnimatedSprite(Signlink.getCacheDirectory() + "/gifs/" + iconId + ".gif").getInstance(icon.subWidth, icon.subHeight);
+									icon = SpriteLoader.fetchAnimatedSprite("/gifs/" + iconId + ".gif").getInstance(icon.subWidth, icon.subHeight);
 									iconId -= 2;
 								}
 
@@ -820,6 +843,40 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 											transparency);
 								}
 								drawX += icon.width;
+							} catch (Exception exception) {
+								exception.printStackTrace();
+							}
+						} else if (effectString.startsWith(startRank)) {
+							try {
+								int xModI;
+								if (xModifier != null) {
+									xModI = xModifier[modifierOffset];
+								} else {
+									xModI = 0;
+								}
+								int yMod;
+								if (yModifier != null) {
+									yMod = yModifier[modifierOffset];
+								} else {
+									yMod = 0;
+								}
+								modifierOffset++;
+								int rightsId = Integer.valueOf(effectString.substring(5));
+								PlayerRights rights = PlayerRights.forRightsValue(rightsId);
+								if(rights != PlayerRights.PLAYER) {
+									Sprite sprite = rights.getSprite();
+									if(sprite != null) {
+										int iconOffsetY = sprite.height;
+
+										if (transparency == 256) {
+											sprite.drawAdvancedSprite(drawX + xModI, (drawY + ascent - iconOffsetY + yMod));
+										} else {
+											sprite.drawAdvancedSprite(drawX + xModI, (drawY + ascent - iconOffsetY + yMod),
+													transparency);
+										}
+										drawX += sprite.width;
+									}
+								}
 							} catch (Exception exception) {
 								exception.printStackTrace();
 							}
@@ -1047,9 +1104,23 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 
 								Sprite icon = chatImages[iconId];
 								if (iconId >= 40 && iconId <= 50) {
-									icon = SpriteLoader.fetchAnimatedSprite(Signlink.getCacheDirectory()+"/gifs/" +iconId+".gif").getInstance(icon.subWidth, icon.subHeight);
+									icon = SpriteLoader.fetchAnimatedSprite("/gifs/" + iconId + ".gif").getInstance(icon.subWidth, icon.subHeight);
 								}
 								finalWidth += icon.width;
+							} catch (Exception exception) {
+								exception.printStackTrace();
+							}
+						}
+						if (effectString.startsWith(startRank)) {
+							try {
+								int rankId = Integer.valueOf(effectString.substring(5));
+								PlayerRights rights = PlayerRights.forRightsValue(rankId);
+								if(rights != PlayerRights.PLAYER) {
+									Sprite sprite = rights.getSprite();
+									if(sprite != null) {
+										finalWidth += sprite.width;
+									}
+								}
 							} catch (Exception exception) {
 								exception.printStackTrace();
 							}
@@ -1214,40 +1285,40 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 			text = replace(text, "@GR2@", "<col=80ff00>");
 			text = replace(text, "@GR3@", "<col=40ff00>");
 			if (text.contains("@cr")) {
-				text = replace(text, "@cr0@", "<img=39>");//mod
-				text = replace(text, "@cr1@", "<img=37>");//admin
-				text = replace(text, "@cr2@", "<img=36>");//owner
-				text = replace(text, "@cr3@", "<img=37>");//
-				text = replace(text, "@cr4@", "<img=48>");//$20
+				text = replace(text, "@cr0@", "<rank=" + PlayerRights.MODERATOR.getRightsId() + ">");//mod
+				text = replace(text, "@cr1@", "<rank=" + PlayerRights.ADMINISTRATOR.getRightsId() + ">");//admin
+				text = replace(text, "@cr2@", "<rank=" + PlayerRights.STAFF_MANAGER.getRightsId() + ">");//owner
+				text = replace(text, "@cr3@", "<rank=" + PlayerRights.STAFF_MANAGER.getRightsId() + ">");//
+				text = replace(text, "@cr4@", "<rank=" + PlayerRights.KRILLIN.getRightsId() + ">");//$20
 				text = replace(text, "@cr5@", "<img=5>");//
-				text = replace(text, "@cr6@", "<img=47>");//$50
-				text = replace(text, "@cr7@", "<img=42>");//$1000
-				text = replace(text, "@cr8@", "<img=46>");//$1000
-				text = replace(text, "@cr9@", "<img=9>");//HC Iron
-				text = replace(text, "@cr10@", "<img=38>");//Support
-				text = replace(text, "@cr11@", "<img=11>");//hitbox
-				text = replace(text, "@cr12@", "<img=12>");//im
-				text = replace(text, "@cr13@", "<img=13>");//uim
-				text = replace(text, "@cr14@", "<img=14>");//yt
-				text = replace(text, "@cr15@", "<img=15>");//Owner
-				text = replace(text, "@cr16@", "<img=45>");//$250
-				text = replace(text, "@cr17@", "<img=44>");//$500
+				text = replace(text, "@cr6@", "<rank=" + PlayerRights.GOTEN.getRightsId() + ">");//$50
+				text = replace(text, "@cr7@", "<rank=" + PlayerRights.GOGETTA.getRightsId() + ">");//$1000
+				text = replace(text, "@cr8@", "<rank=" + PlayerRights.GOHAN.getRightsId() + ">");//$100
+				text = replace(text, "@cr9@", "<rank=" + PlayerRights.HC_IRONMAN.getRightsId() + ">");//HC Iron
+				text = replace(text, "@cr10@", "<rank=" + PlayerRights.HELPER.getRightsId() + ">");//Support
+				text = replace(text, "@cr11@", "<rank=" + PlayerRights.HITBOX.getRightsId() + ">");//hitbox
+				text = replace(text, "@cr12@", "<rank=" + PlayerRights.IRONMAN.getRightsId() + ">");//im
+				text = replace(text, "@cr13@", "<rank=" + PlayerRights.ULTIMATE_IRONMAN.getRightsId() + ">");//uim
+				text = replace(text, "@cr14@", "<rank=" + PlayerRights.YOUTUBER.getRightsId() + ">");//yt
+				text = replace(text, "@cr15@", "<rank=" + PlayerRights.GAME_DEVELOPER.getRightsId() + ">");//owner
+				text = replace(text, "@cr16@", "<rank=" + PlayerRights.CELL.getRightsId() + ">");//$250
+				text = replace(text, "@cr17@", "<rank=" + PlayerRights.VEGETA.getRightsId() + ">");//$500
 				text = replace(text, "@cr18@", "<img=18>");//
 				text = replace(text, "@cr19@", "<img=19>");
 				text = replace(text, "@cr20@", "<img=20>");//Notification
 				text = replace(text, "@cr21@", "<img=21>");
-				text = replace(text, "@cr22@", "<img=22>");//OSRS
+				text = replace(text, "@cr22@", "<rank=" + PlayerRights.OSRS.getRightsId() + ">");//OSRS
 				text = replace(text, "@cr23@", "<img=23>");
-				text = replace(text, "@cr24@", "<img=24>");//Rogue
-				text = replace(text, "@cr25@", "<img=25>");//Rogue ironman
-				text = replace(text, "@cr26@", "<img=26>");//Rogue HC Ironman
-				text = replace(text, "@cr27@", "<img=27>");//GIM
-				text = replace(text, "@cr28@", "<img=28>");//event
+				text = replace(text, "@cr24@", "<rank=" + PlayerRights.ROGUE.getRightsId() + ">");//Rogue
+				text = replace(text, "@cr25@", "<rank=" + PlayerRights.ROGUE_IRONMAN.getRightsId() + ">");//Rogue ironman
+				text = replace(text, "@cr26@", "<rank=" + PlayerRights.ROGUE_HARDCORE_IRONMAN.getRightsId() + ">");//Rogue HC Ironman
+				text = replace(text, "@cr27@", "<rank=" + PlayerRights.GROUP_IRONMAN.getRightsId() + ">");//GIM
+				text = replace(text, "@cr28@", "<rank=" + PlayerRights.EVENT_MAN.getRightsId() + ">");//event
 				text = replace(text, "@cr29@", "<img=28>");
-				text = replace(text, "@cr30@", "<img=30>");//osrs iron
+				text = replace(text, "@cr30@", "<rank=" + PlayerRights.OSRS_IRONMAN.getRightsId() + ">");//osrs iron
 				text = replace(text, "@cr31@", "<img=43>");
-				text = replace(text, "@cr32@", "<img=41>");//$1500
-				text = replace(text, "@cr33@", "<img=40>");//$2000
+				text = replace(text, "@cr32@", "<rank=" + PlayerRights.GOGETTA_SS.getRightsId() + ">");//$1500
+				text = replace(text, "@cr33@", "<rank=" + PlayerRights.GOGETTA_SS2.getRightsId() + ">");//$2000
 				text = replace(text, "@cr34@", "<img=49>");
 				text = replace(text, "@cr35@", "<img=35>");
 				text = replace(text, "@cr36@", "<img=36>");
@@ -1306,8 +1377,8 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 				text = replace(text, "@cr89@", "<img=92>");
 				text = replace(text, "@cr90@", "<img=92>");
 				text = replace(text, "@cr91@", "<img=92>");
-				text = replace(text, "@cr92@", "<img=92>");
-				text = replace(text, "@cr93@", "<img=93>");
+				text = replace(text, "@cr92@", "<rank=" + PlayerRights.HARDCORE_WILDYMAN.getRightsId() + ">");
+				text = replace(text, "@cr93@", "<rank=" + PlayerRights.WILDYMAN.getRightsId() + ">");
 			}
 		}
 		return text;
@@ -1479,6 +1550,7 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 		defaultStrikethrough = "str";
 		endUnderline = "/currentY";
 		startImage = "img=";
+		startRank = "rank=";
 		startOldschoolImage = "osrsimg=";
 		startIcon = "icon=";
 		startClanImage = "clan=";

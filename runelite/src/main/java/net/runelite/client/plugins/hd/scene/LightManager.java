@@ -264,7 +264,7 @@ public class LightManager {
 				}
 			} else if (light.actor != null && !light.markedForRemoval) {
 				if (light.actor instanceof NPC && light.actor != cachedNpcs[((NPC) light.actor).getIndex()] ||
-					light.actor instanceof Player && light.actor != cachedPlayers[((Player) light.actor).getId()] ||
+					light.actor instanceof Player && light.actor != cachedPlayers[light.actor.getId()] ||
 					light.spotAnimId != -1 && !light.actor.hasSpotAnim(light.spotAnimId)
 				) {
 					parentExists = false;
@@ -728,8 +728,8 @@ public class LightManager {
 	}
 
 	private void handleObjectSpawn(
-		@Nonnull SceneContext sceneContext,
-		@Nonnull TileObject tileObject
+			@Nonnull SceneContext sceneContext,
+			@Nonnull TileObject tileObject
 	) {
 		if (sceneContext.trackedTileObjects.containsKey(tileObject))
 			return;
@@ -738,8 +738,10 @@ public class LightManager {
 		sceneContext.trackedTileObjects.put(tileObject, tracker);
 
 		// prevent objects at plane -1 and below from having lights
-		if (tileObject.getPlane() < 0)
+/*		if (tileObject.getPlane() < 0) {
+			System.out.println("tileObject height is wrong ? " + tileObject.getId() + ", " + tileObject.getPlane());
 			return;
+		}*/
 
 		ObjectComposition def = client.getObjectDefinition(tileObject.getId());
 		tracker.impostorIds = def.getImpostorIds();
@@ -789,8 +791,9 @@ public class LightManager {
 		}
 
 		// Don't do anything if the impostor is the same, unless the object just spawned
-		if (impostorId == tracker.impostorId && !tracker.justSpawned)
+		if (impostorId == tracker.impostorId && !tracker.justSpawned) {
 			return;
+		}
 
 		int sizeX = 1;
 		int sizeY = 1;

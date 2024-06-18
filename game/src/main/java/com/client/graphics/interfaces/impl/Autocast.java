@@ -23,8 +23,7 @@ public class Autocast extends RSInterface {
     private static final Sprite SPRITE_DEFENSIVE = new Sprite("autocast_defensive");
 
     static {
-        autocastable = Collections.unmodifiableSet(Arrays.stream(Spell.values()).filter(Spell::isAutocastable)
-                .collect(Collectors.toSet()));
+        autocastable = Arrays.stream(Spell.values()).filter(Spell::isAutocastable).collect(Collectors.toUnmodifiableSet());
     }
 
     public static Autocast getSingleton() {

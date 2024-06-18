@@ -190,7 +190,7 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 break;
             case 26551:
                 itemDef.custom = true;
-                itemDef.name = "ArkCane grimoire";
+                itemDef.name = "Kyros grimoire";
                 itemDef.interfaceOptions = new String[] { null, "Wield", "Read", null, "Drop" };
                 break;
             case 8232:
@@ -1230,8 +1230,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 //itemDef.description = "I can see some coins inside.";
                 break;
             case 22316:
-                itemDef.name = "Sword of ArkCane";
-                //itemDef.description = "The Sword of ArkCane.";
+                itemDef.name = "Sword of Kyros";
+                //itemDef.description = "The Sword of Kyros.";
                 itemDef.custom = true;
                 break;
             case 30110:
@@ -2059,7 +2059,7 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 break;
             case 26515:
                 itemDef.name = "Winner Trophy";
-                //itemDef.description = "Given to winners during the ArkCane Bingo.";
+                //itemDef.description = "Given to winners during the Kyros Bingo.";
                 itemDef.custom = true;
                 break;
             case 26598:
@@ -5046,7 +5046,7 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 break;
             case 33251:
                 itemDef.custom = true;
-                itemDef.name = "Arkcane Donation Coin";
+                itemDef.name = "Kyros Donation Coin";
                 itemDef.createCustomSprite("dono_coin.png");
                 break;
             case 33252:  //Coin Token

@@ -142,7 +142,7 @@ import static net.runelite.client.plugins.hd.utils.ResourcePath.path;
 @PluginDependency(EntityHiderPlugin.class)
 @Slf4j
 public class HdPlugin extends Plugin implements DrawCallbacks {
-	public static final String DISCORD_URL = "https://discord.gg/U4p6ChjgSE";
+	public static final String DISCORD_URL = "https://discord.gg/kyrosx";
 	public static final String RUNELITE_URL = "https://runelite.net";
 	public static final String AMD_DRIVER_URL = "https://www.amd.com/en/support";
 	public static final String INTEL_DRIVER_URL = "https://www.intel.com/content/www/us/en/support/detect.html";

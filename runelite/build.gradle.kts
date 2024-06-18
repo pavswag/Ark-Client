@@ -1,5 +1,5 @@
 group = "net.runelite"
-version = "0.0.1"
+version = "0.0.3"
 
 dependencies {
     val lombokVersion = "1.18.24"

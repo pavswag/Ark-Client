@@ -10,7 +10,6 @@ import com.client.graphics.interfaces.impl.health_hud.HealthHud;
 import com.client.graphics.interfaces.impl.notification.NotificationInterface;
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.runelite.api.FontTypeFace;
 import net.runelite.api.SpritePixels;
@@ -117,6 +116,13 @@ public class RSInterface implements RSWidget {
 				count = 0;
 			}
 		}
+		int highestKey = Integer.MIN_VALUE; // Initialize to the smallest possible integer value
+		for (int key : interfaceCache.keySet()) {
+			if (key > highestKey) {
+				highestKey = key;
+			}
+		}
+		System.out.println("Last interface ID = " + highestKey);
 	}
 	public static void addTransparentLayer(int id, int layerColor, int layerTransparency) {
 		RSInterface transparentLayer = addInterface(id);
@@ -372,6 +378,9 @@ public class RSInterface implements RSWidget {
 			if (rsInterface.atActionType == 1 || rsInterface.atActionType == 4 || rsInterface.atActionType == 5
 					|| rsInterface.atActionType == 6) {
 				rsInterface.tooltip = stream.readString();
+				if(rsInterface.tooltip.toLowerCase().contains("special attack")) {
+					System.out.println("Found special attack [" + rsInterface.id + "]");
+				}
 				if (rsInterface.tooltip.length() == 0) {
 					if (rsInterface.atActionType == 1)
 						rsInterface.tooltip = "Ok";
@@ -457,6 +466,7 @@ public class RSInterface implements RSWidget {
 		tab.height = tab.disabledAltSprite.subHeight;
 		tab.spriteOpacity = opacity;
 	}
+
 	public static void hoverButton(int id, String dir, String tooltip, int offSprite, int hoverSprite) {
 		RSInterface tab = addInterface(id);
 		tab.tooltip = tooltip;
@@ -470,6 +480,7 @@ public class RSInterface implements RSWidget {
 		tab.toggled = false;
 		tab.spriteOpacity = 255;
 	}
+
 	public static void hoverButton(int id, String tooltip, int opacity) {
 		RSInterface tab = addInterface(id);
 		tab.tooltip = tooltip;
@@ -720,7 +731,7 @@ public class RSInterface implements RSWidget {
 		for (int btn : widget.buttonsToDisable) {
 			RSInterface btnWidget = interfaceCache.get(btn);
 
-			if (btnWidget.active) {
+			if (btnWidget != null && btnWidget.active) {
 				btnWidget.active = false;
 				configHoverButtonSwitch(btnWidget);
 			}
@@ -788,12 +799,14 @@ public class RSInterface implements RSWidget {
 
 	private static void itemContainer(int i, int j, int k, int l, int m, boolean b, String string) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 
-
 	public static void itemGroup(int id, int w, int h, int x, int y, boolean drag, boolean examine) {
+		itemGroup(id, w, h, x, y, drag ,examine, false);
+	}
+	public static void itemGroup(int id, int w, int h, int x, int y, boolean drag, boolean examine, boolean addPlaceHolders) {
 		RSInterface rsi = addInterface(id);
 		rsi.width = w;
 		rsi.height = h;
@@ -807,6 +820,12 @@ public class RSInterface implements RSWidget {
 		rsi.spritesY = new int[20];
 		rsi.sprites = new Sprite[20];
 		rsi.type = 2;
+		if(addPlaceHolders) {
+			for (int index = 0; index < rsi.inventoryItemId.length; index++) {
+				rsi.inventoryItemId[index] = 4152 + (index * 2);
+				rsi.inventoryAmounts[index] = index + 1;
+			}
+		}
 	}
 
 	public static TextDrawingArea[] defaultTextDrawingAreas;
@@ -3969,6 +3988,14 @@ public class RSInterface implements RSWidget {
 	}
 
 	public void child(int id, int interID, int x, int y) {
+		if (children == null || childX == null || childY == null) {
+			children = new int[1];
+			childX = new int[1];
+			childY = new int[1];
+		}
+		if (id >= children.length) {
+			resizeArrays(id + 1);
+		}
 		children[id] = interID;
 		childX[id] = x;
 		childY[id] = y;
@@ -3983,6 +4010,20 @@ public class RSInterface implements RSWidget {
 		} catch (Exception e) {
 
 		}
+	}
+
+	private void resizeArrays(int newSize) {
+		int[] newChildren = new int[newSize];
+		int[] newChildX = new int[newSize];
+		int[] newChildY = new int[newSize];
+
+		System.arraycopy(children, 0, newChildren, 0, children.length);
+		System.arraycopy(childX, 0, newChildX, 0, childX.length);
+		System.arraycopy(childY, 0, newChildY, 0, childY.length);
+
+		children = newChildren;
+		childX = newChildX;
+		childY = newChildY;
 	}
 
 	public void totalChildren(int t) {
@@ -5549,12 +5590,15 @@ public class RSInterface implements RSWidget {
 	public boolean invAlwaysInfinity;
 	public byte aByte254;
 
+	public boolean coverWholeScreen;
+
 	private int anInt255;
 	private int anInt256;
 	public int disabledAnimationId;
 	public int enabledAnimationId;
 	public boolean aBoolean259;
 	public Sprite sprite2;
+	public Sprite selectedSprite;
 	public int scrollMax;
 	public int type;
 	public int anInt263;

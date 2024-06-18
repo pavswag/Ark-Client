@@ -191,7 +191,7 @@ public class WoodcuttingPlugin extends Plugin {
                 WorldPoint base = WorldPoint.fromScene(client, min.getX(), min.getY(), client.getPlane());
                 TreeRespawn treeRespawn = new TreeRespawn(tree, object.sizeX() - 1, object.sizeY() - 1,
                         base, Instant.now(), (int) tree.getRespawnTime(base.getRegionID()).toMillis());
-                if (!respawns.contains(treeRespawn)) {//TODO Irrelevant on ArkCane tree's don't depsawn!
+                if (!respawns.contains(treeRespawn)) {//TODO Irrelevant on Kyros tree's don't depsawn!
                     log.debug("Adding respawn timer for {} tree at {}", tree, object.getLocalLocation());
                     respawns.add(treeRespawn);
                 }

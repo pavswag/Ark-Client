@@ -2,7 +2,6 @@ package com.client.graphics.interfaces.impl;
 
 import com.client.*;
 import com.client.connection.Connection;
-import com.client.graphics.interfaces.Configs;
 import com.client.graphics.interfaces.MenuItem;
 import com.client.graphics.interfaces.RSInterface;
 import com.client.graphics.interfaces.builder.impl.*;
@@ -14,7 +13,6 @@ import com.client.graphics.interfaces.daily.DailyRewards;
 import com.client.graphics.interfaces.dropdown.KeybindingMenu;
 import com.client.graphics.interfaces.eventcalendar.EventCalendar;
 import com.client.graphics.interfaces.settings.SettingsInterface;
-import com.client.sign.Signlink;
 
 import java.util.Random;
 
@@ -132,7 +130,11 @@ public final class Interfaces extends RSInterface {
 		new QuestInterface().build();
 		new BlackJack().mainInterface(defaultTextDrawingAreas);
 
+		RakebackBoxes.mainInterface(defaultTextDrawingAreas);
+
 		PetPerk.mainInterface(defaultTextDrawingAreas);
+
+		Pay2WinPetPerkStore.shopWidget(defaultTextDrawingAreas);
 
 		quest2(defaultTextDrawingAreas);
 		upgradeInterface(defaultTextDrawingAreas);
@@ -165,6 +167,10 @@ public final class Interfaces extends RSInterface {
 		youtubeInterface(defaultTextDrawingAreas);
 		smsManager(defaultTextDrawingAreas);
 		referralSystem(defaultTextDrawingAreas);
+
+		VoteManagementInterface.voteManagement(defaultTextDrawingAreas);
+		GoodieBag.goodiebagWidget(defaultTextDrawingAreas);
+		DonationCampaign.donationCampaignWidget(defaultTextDrawingAreas);
 	}
 
 	private static void referralSystem(TextDrawingArea[] tda) {
@@ -286,7 +292,7 @@ public final class Interfaces extends RSInterface {
             interfaceCache.get(video_interface).invisible = true;
             videoList.child(index++, video_interface++, 10, 8 + increaseY);
 
-            addText(video_interface, "ArkCane RSPS | #1 Osrs Semi-Custom | Fuck cash grabs...", tda, 1, 0xffffff, false);
+            addText(video_interface, "Kyros RSPS | #1 Osrs Semi-Custom | Fuck cash grabs...", tda, 1, 0xffffff, false);
             interfaceCache.get(video_interface).invisible = true;
             videoList.child(index++, video_interface++, 135, 12 + increaseY);
 
@@ -294,7 +300,7 @@ public final class Interfaces extends RSInterface {
             interfaceCache.get(video_interface).invisible = true;
             videoList.child(index++, video_interface++, 135, 30 + increaseY);
 
-            addText(video_interface, "ArkCane", tda, 0, 0xfe3200, false);
+            addText(video_interface, "Kyros", tda, 0, 0xfe3200, false);
             interfaceCache.get(video_interface).invisible = true;
             videoList.child(index++, video_interface++, 135, 60 + increaseY);
 
@@ -325,7 +331,7 @@ public final class Interfaces extends RSInterface {
 		main.totalChildren(26);
 
 		addSprite(MAIN_INTERFACE + index++, 0, dir);//background
-		addText(MAIN_INTERFACE + index++, "ArkCane Deals Hub", 2, 0xFF981F, true, true); //title
+		addText(MAIN_INTERFACE + index++, "Kyros Deals Hub", 2, 0xFF981F, true, true); //title
 		configHoverButton(MAIN_INTERFACE + index, "Close interface", dir, 21, 22, 21, 21, false, MAIN_INTERFACE + index++);//close button
 		configHoverButton(MAIN_INTERFACE + index, "Account Boosts", dir, 9, 10, 9, 9, false, MAIN_INTERFACE + index++);
 		configHoverButton(MAIN_INTERFACE + index, "Bonus Items", dir, 16, 16, 16, 16, false, MAIN_INTERFACE + index++);
@@ -361,8 +367,10 @@ public final class Interfaces extends RSInterface {
 		main.child(index++, MAIN_INTERFACE + index, 14 + baseX, 136 + baseY); //bonus button
 		main.child(index++, MAIN_INTERFACE + index, 14 + baseX, 197 + baseY); //cosmetic button
 		main.child(index++, MAIN_INTERFACE + index, 14 + baseX, 257 + baseY); //timed button
-		main.child(index++, MAIN_INTERFACE + index, 120 + baseX, 45 + baseY); //deals button
-		main.child(index++, MAIN_INTERFACE + index, 259 + baseX, 45 + baseY); //store button
+
+		main.child(index++, MAIN_INTERFACE + index, 75 + baseX, 45 + baseY); //deals button
+		main.child(index++, MAIN_INTERFACE + index, 75 + baseX + 98, 45 + baseY); //store button
+		
 		main.child(index++, MAIN_INTERFACE + index, baseX + 48, baseY + 107); //Boosts
 		main.child(index++, MAIN_INTERFACE + index, baseX + 48, baseY + 167); //Items
 		main.child(index++, MAIN_INTERFACE + index, baseX + 48, baseY + 228); //Cosmetics
@@ -383,6 +391,7 @@ public final class Interfaces extends RSInterface {
 		main.child(index++, MAIN_INTERFACE + index, 335 + baseX, 137 + baseY);  //text
 		main.child(index++, MAIN_INTERFACE + index, 175 + baseX, 248 + baseY);  //text
 		main.child(index++, MAIN_INTERFACE + index, 335 + baseX, 248 + baseY);  //text
+		main.child(index++, 24239, 75 + baseX + 98 + 98, 45 + baseY); //campaign button
 	}
 
 	private static void coinFlipItemsInterface(TextDrawingArea[] tda) {
@@ -426,7 +435,7 @@ public final class Interfaces extends RSInterface {
 				16, 17, 16, 16, false, MAIN_INTERFACE + index++);
 		addConfigButton(MAIN_INTERFACE + index++, MAIN_INTERFACE, 12, 10, dir, 43, 43, "Select", 0, 1, 2000);
 		addConfigButton(MAIN_INTERFACE + index++, MAIN_INTERFACE, 15, 13, dir, 43, 43, "Select", 0, 1, 2001);
-		addAnimatedSprite(MAIN_INTERFACE + index++, Signlink.getCacheDirectory() + "sprites/gifs/Blue-Coin-STILL.gif");
+		addAnimatedSprite(MAIN_INTERFACE + index++, "/gifs/blue-coin-still.gif");
 		hoverButton(MAIN_INTERFACE + index++, "Flip!", 4, 5, "Flip!", tda, 2, 0xFF981F, 0xffffff, false, dir);
 		addText(MAIN_INTERFACE + index++, "Select A Side", tda, 2, 0xFF981F, true);
 		addText(MAIN_INTERFACE + index++, "Select Your Prize", tda, 2, 0xFF981F, true);
@@ -467,7 +476,7 @@ public final class Interfaces extends RSInterface {
 
 
 		addSprite(MAIN_INTERFACE + index++, 0, dir);//background
-		addText(MAIN_INTERFACE + index++, "ArkCane Deals Hub", 2, 0xFF981F, true, true); //title
+		addText(MAIN_INTERFACE + index++, "Kyros Deals Hub", 2, 0xFF981F, true, true); //title
 		configHoverButton(MAIN_INTERFACE + index, "Close interface", dir, 21, 22, 21, 21, false, MAIN_INTERFACE + index++);//close button
 		configHoverButton(MAIN_INTERFACE + index, "Account Boosts", dir, 9, 10, 9, 9, false, MAIN_INTERFACE + index++);
 		configHoverButton(MAIN_INTERFACE + index, "Bonus Items", dir, 15, 16, 15, 15, false, MAIN_INTERFACE + index++);
@@ -504,8 +513,8 @@ public final class Interfaces extends RSInterface {
 		main.child(index++, MAIN_INTERFACE + index, 14 + baseX, 136 + baseY); //bonus button
 		main.child(index++, MAIN_INTERFACE + index, 14 + baseX, 197 + baseY); //cosmetic button
 		main.child(index++, MAIN_INTERFACE + index, 14 + baseX, 257 + baseY); //timed button
-		main.child(index++, MAIN_INTERFACE + index, 120 + baseX, 45 + baseY); //deals button
-		main.child(index++, MAIN_INTERFACE + index, 259 + baseX, 45 + baseY); //store button
+		main.child(index++, MAIN_INTERFACE + index, 75 + baseX, 45 + baseY); //deals button
+		main.child(index++, MAIN_INTERFACE + index, 75 + baseX + 98, 45 + baseY); //store button
 		main.child(index++, MAIN_INTERFACE + index, baseX + 48, baseY + 107); //Boosts
 		main.child(index++, MAIN_INTERFACE + index, baseX + 48, baseY + 167); //Items
 		main.child(index++, MAIN_INTERFACE + index, baseX + 48, baseY + 228); //Cosmetics
@@ -524,6 +533,7 @@ public final class Interfaces extends RSInterface {
 		main.child(index++, MAIN_INTERFACE + index, baseX + 250, baseY + 110); //Text container
 		main.child(index++, MAIN_INTERFACE + index, baseX + 250, baseY + 180); //Text container
 		main.child(index++, MAIN_INTERFACE + index, baseX + 250, baseY + 250); //Text container
+		main.child(index++, 24239, 75 + baseX + 98 + 98, 45 + baseY); //campaign button
 	}
 
 	private static void cosmeticDealsInterface(TextDrawingArea[] tda) {
@@ -537,7 +547,7 @@ public final class Interfaces extends RSInterface {
 		main.totalChildren(34);
 
 		addSprite(MAIN_INTERFACE + index++, 0, dir);//background
-		addText(MAIN_INTERFACE + index++, "ArkCane Deals Hub", 2, 0xFF981F, true, true); //title
+		addText(MAIN_INTERFACE + index++, "Kyros Deals Hub", 2, 0xFF981F, true, true); //title
 		configHoverButton(MAIN_INTERFACE + index, "Close interface", dir, 21, 22, 21, 21, false, MAIN_INTERFACE + index++);//close button
 		configHoverButton(MAIN_INTERFACE + index, "Account Boosts", dir, 9, 10, 9, 9, false, MAIN_INTERFACE + index++);
 		configHoverButton(MAIN_INTERFACE + index, "Bonus Items", dir, 15, 16, 15, 15, false, MAIN_INTERFACE + index++);
@@ -583,8 +593,8 @@ public final class Interfaces extends RSInterface {
 		main.child(index++, MAIN_INTERFACE + index, 14 + baseX, 136 + baseY); //bonus button
 		main.child(index++, MAIN_INTERFACE + index, 14 + baseX, 197 + baseY); //cosmetic button
 		main.child(index++, MAIN_INTERFACE + index, 14 + baseX, 257 + baseY); //timed button
-		main.child(index++, MAIN_INTERFACE + index, 120 + baseX, 45 + baseY); //deals button
-		main.child(index++, MAIN_INTERFACE + index, 259 + baseX, 45 + baseY); //store button
+		main.child(index++, MAIN_INTERFACE + index, 75 + baseX, 45 + baseY); //deals button
+		main.child(index++, MAIN_INTERFACE + index, 75 + baseX + 98, 45 + baseY); //store button
 		main.child(index++, MAIN_INTERFACE + index, baseX + 48, baseY + 107); //Boosts
 		main.child(index++, MAIN_INTERFACE + index, baseX + 48, baseY + 167); //Items
 		main.child(index++, MAIN_INTERFACE + index, baseX + 48, baseY + 228); //Cosmetics
@@ -611,6 +621,7 @@ public final class Interfaces extends RSInterface {
 		main.child(index++, MAIN_INTERFACE + index, baseX + 105, baseY + 271); //buy button
 		main.child(index++, MAIN_INTERFACE + index, baseX + 219, baseY + 271); //buy button
 		main.child(index++, MAIN_INTERFACE + index, baseX + 332, baseY + 271); //buy button
+		main.child(index++, 24239, 75 + baseX + 98 + 98, 45 + baseY); //campaign button
 
 
 	}
@@ -626,7 +637,7 @@ public final class Interfaces extends RSInterface {
 		main.totalChildren(25);
 
 		addSprite(MAIN_INTERFACE + index++, 0, dir);//background
-		addText(MAIN_INTERFACE + index++, "ArkCane Deals Hub", 2, 0xFF981F, true, true); //title
+		addText(MAIN_INTERFACE + index++, "Kyros Deals Hub", 2, 0xFF981F, true, true); //title
 		configHoverButton(MAIN_INTERFACE + index, "Close interface", dir, 21, 22, 21, 21, false, MAIN_INTERFACE + index++);//close button
 		configHoverButton(MAIN_INTERFACE + index, "Account Boosts", dir, 10, 10, 10, 10, false, MAIN_INTERFACE + index++);
 		configHoverButton(MAIN_INTERFACE + index, "Bonus Items", dir, 15, 16, 15, 15, false, MAIN_INTERFACE + index++);
@@ -665,8 +676,8 @@ public final class Interfaces extends RSInterface {
 		main.child(index++, MAIN_INTERFACE + index, 14 + baseX, 136 + baseY); //bonus button
 		main.child(index++, MAIN_INTERFACE + index, 14 + baseX, 197 + baseY); //cosmetic button
 		main.child(index++, MAIN_INTERFACE + index, 14 + baseX, 257 + baseY); //timed button
-		main.child(index++, MAIN_INTERFACE + index, 120 + baseX, 45 + baseY); //deals button
-		main.child(index++, MAIN_INTERFACE + index, 259 + baseX, 45 + baseY); //store button
+		main.child(index++, MAIN_INTERFACE + index, 75 + baseX, 45 + baseY); //deals button
+		main.child(index++, MAIN_INTERFACE + index, 75 + baseX + 98, 45 + baseY); //store button
 		main.child(index++, MAIN_INTERFACE + index, baseX + 48, baseY + 107); //Boosts
 		main.child(index++, MAIN_INTERFACE + index, baseX + 48, baseY + 167); //Items
 		main.child(index++, MAIN_INTERFACE + index, baseX + 48, baseY + 228); //Cosmetics
@@ -685,6 +696,7 @@ public final class Interfaces extends RSInterface {
 		main.child(index++, MAIN_INTERFACE + index, baseX + 249, baseY + 244); //price / price
 		main.child(index++, MAIN_INTERFACE + index, baseX + 249, baseY + 285); //price / price
 		main.child(index++, MAIN_INTERFACE + index, baseX + 287, baseY + 80); //timer
+		main.child(index++, 24239, 75 + baseX + 98 + 98, 45 + baseY); //campaign button
 		/** Boost's text Information (Autoclaimed when spending X Amount) **/
 
 	}
@@ -785,7 +797,7 @@ public final class Interfaces extends RSInterface {
 		addHoveredButton(MAIN_INTERFACE + index, dir, 9, 16, 16, 1);
 		main.child(c++, MAIN_INTERFACE + index++, basex + 390, basey + 10);
 
-		addText(MAIN_INTERFACE + index, "ArkCane's InGame Store", tda, 2, 0xff9933);
+		addText(MAIN_INTERFACE + index, "Kyros's InGame Store", tda, 2, 0xff9933);
 		main.child(c++, MAIN_INTERFACE + index++, basex + 100, basey + 10);
 
 		addText(MAIN_INTERFACE + index, "Subtotal:", tda, 0, 0xff9933);
@@ -905,7 +917,7 @@ public final class Interfaces extends RSInterface {
 		addText(MAIN_INTERFACE + index, "", tda, 1, 0xff9933, true, true);
 		main.child(c++, MAIN_INTERFACE + index++, basex + 335, basey + 281);
 
-		addText(MAIN_INTERFACE + index, "ArkCane's Quest List", tda, 2, 0xff9933);
+		addText(MAIN_INTERFACE + index, "Kyros's Quest List", tda, 2, 0xff9933);
 		main.child(c++, MAIN_INTERFACE + index++, basex + 200, basey + 10);
 
 		main.child(c++, SUB_INTERFACE, basex + 6, basey + 41);//TOP BAR
@@ -1136,7 +1148,7 @@ public final class Interfaces extends RSInterface {
 	private static void StarterNew(TextDrawingArea[] tda) {
 		RSInterface Interface = addInterface(24303);
 		addSprite(24304, 0, "Interfaces/starterInt/SPRITE");
-		addText(24305, "ArkCane Account Setup", 0xff9933, true, true, 52, tda, 2);
+		addText(24305, "Kyros Account Setup", 0xff9933, true, true, 52, tda, 2);
 		addText(24306, "Mode Description:", 0xff9933, true, true, 52, tda, 2);
 		addText(24307, "Description line here (24307)", 0xff9933, true, true, 52, tda, 0);
 		addText(24308, "Description line here (24308)", 0xff9933, true, true, 52, tda, 0);
@@ -5885,7 +5897,7 @@ public final class Interfaces extends RSInterface {
 
 		addSprite(interfaceId + index++, 0, dir);
 		configHoverButton1(interfaceId + index, "Close", dir, 40, 41, 41, 41, false, new int[]{interfaceId + index++});
-		addText(interfaceId + index++, "ArkCane Teleports", ryan, 2, 0xff9933, true, true);
+		addText(interfaceId + index++, "Kyros Teleports", ryan, 2, 0xff9933, true, true);
 
 		addText(interfaceId + index++, "Favourites", ryan, 2, 0xd9bc50, false, true);
 //		addButton(interfaceId + index++, 36, dir,"Previous Teleport");

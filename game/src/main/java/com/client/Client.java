@@ -39,6 +39,7 @@ import javax.swing.JFrame;
 
 import ch.qos.logback.classic.Level;
 import com.client.accounts.Account;
+import com.client.connection.Connection;
 import com.client.definitions.SequenceDefinition;
 import com.client.graphics.interfaces.*;
 import com.client.graphics.interfaces.impl.health_hud.HealthHud;
@@ -73,8 +74,7 @@ import static com.client.MapRegion.ExpandedRegionSize;
 import static com.client.SceneGraph.pitchRelaxEnabled;
 import static com.client.StringUtils.longForName;
 import static com.client.engine.impl.MouseHandler.*;
-import static com.client.graphics.interfaces.RSInterface.interfaceCache;
-import static com.client.graphics.interfaces.RSInterface.selectedItemInterfaceId;
+import static com.client.graphics.interfaces.RSInterface.*;
 import static com.client.graphics.interfaces.impl.Bank.ITEM_CONTAINERS;
 import static com.client.graphics.interfaces.impl.health_hud.HealthHud.PROGRESS_WIDGET_ID;
 import static com.client.graphics.interfaces.impl.health_hud.HealthHud.WIDGET_ID;
@@ -920,7 +920,7 @@ public class Client extends GameEngine implements RSClient {
 									int xPos = 11;
 									if (!crowns.isEmpty()) {
 										for (int crown : crowns) {
-											Sprite modcon = handleIcon(crown, xPos, yPos, 1, yOffset+2);
+											Sprite modcon = handleIcon(PlayerRights.forRightsValue(crown), xPos, yPos, 1, yOffset+2);
 											if (modcon != null) {
 												xPos += modcon.subWidth;
 											}
@@ -948,7 +948,7 @@ public class Client extends GameEngine implements RSClient {
 									k1 += textDrawingArea.getTextWidth("From ");
 									if (!crowns.isEmpty()) {
 										for (int crown : crowns) {
-											Sprite modcon = handleIcon(crown, k1, yPos, 1, yOffset+2);
+											Sprite modcon = handleIcon(PlayerRights.forRightsValue(crown), k1, yPos, 1, yOffset+2);
 											if (modcon != null) {
 												k1 += modcon.subWidth;
 											}
@@ -1071,7 +1071,7 @@ public class Client extends GameEngine implements RSClient {
 				if (localPlayer.hasRightsOtherThan(PlayerRights.PLAYER)) {
 					for (PlayerRights right : localPlayer.getDisplayedRights()) {
 						if (right.hasCrown()) {
-							Sprite modcon = handleIcon3(right.crownId(), 9, 137, xOffset, yOffset);
+							Sprite modcon = hanelcChatAreaIcons(right, 9, 137, xOffset, yOffset);
 							if (modcon != null) {
 								xOffset += modcon.subWidth;
 							}
@@ -1110,202 +1110,30 @@ public class Client extends GameEngine implements RSClient {
 	public String clanTitle;
 	private EnumSet channelRights;
 	/**Handle Chatbox Icon's**/
-	public Sprite handleIcon(int crown, int xPos, int yPos, int xOffset, int yOffset) {
-		int icon = -1; // Default icon
-		switch (crown) {
-			case 11: // HELPER
-				icon = 38;
-				break;
-			case 1: // MOD
-				icon = 39;
-				break;
-			case 2: // OWNER/ADMIN
-				icon = 37;
-				break;
-			case 16: // OWNER/ADMIN
-				icon = 15;
-				break;
-			case 3: // OWNER/ADMIN
-			case 4: // OWNER/ADMIN
-				icon = 36;
-				break;
-			case 5: // $20
-				icon = 48;
-				break;
-			case 7: // $50
-				icon = 47;
-				break;
-			case 8: // $1000
-				icon = 42;
-				break;
-			case 9: // $100
-				icon = 46;
-				break;
-			case 17: // $250
-				icon = 45;
-				break;
-			case 18: // $500
-				icon = 44;
-				break;
-			case 30: // Event Manager
-				icon = 28;
-				break;
-			case 32: // $750
-				icon = 43;
-				break;
-			case 33: // $1500
-				icon = 41;
-				break;
-			case 34: // $2000
-				icon = 40;
-				break;
-			case 35:
-				icon = 49;
-				break;
+	public Sprite handleIcon(PlayerRights rights, int xPos, int yPos, int xOffset, int yOffset) {
+		Sprite sprite = rights.getSprite();
+		if(sprite != null) {
+			sprite.drawAdvancedSprite(xPos - 1, yPos + yOffset - sprite.subHeight);
 		}
-		if(icon != -1) {
-			Sprite modcon = modIcons[icon];
-			if (icon >= 40) {
-				modcon = SpriteLoader.fetchAnimatedSprite(Signlink.getCacheDirectory() + "/sprites/gifs/" + icon + ".gif").getInstance(modcon.subWidth, modcon.subHeight);
-			}
-			if (modcon != null)
-				modcon.drawAdvancedSprite(xPos - 1, yPos + yOffset - modcon.subHeight);
-			return modcon;
-		}
-		return null;
+		return sprite;
 	}
 
 	/**Handle Chatbox Icon's for friends list**/
-	public Sprite handleIcon2(int crown, int xPos, int yPos, int xOffset, int yOffset) {
-		int icon = -1; // Default icon
-		switch (crown) {
-			case 11: // HELPER
-				icon = 38;
-				break;
-			case 1: // MOD
-				icon = 39;
-				break;
-			case 2: // OWNER/ADMIN
-				icon = 37;
-				break;
-			case 16:
-				icon = 15;
-				break;
-			case 3: // OWNER/ADMIN
-			case 4: // OWNER/ADMIN
-				icon = 36;
-				break;
-			case 5: // $20
-				icon = 48;
-				break;
-			case 7: // $50
-				icon = 47;
-				break;
-			case 8: // $1000
-				icon = 42;
-				break;
-			case 9: // $100
-				icon = 46;
-				break;
-			case 17: // $250
-				icon = 45;
-				break;
-			case 18: // $500
-				icon = 44;
-				break;
-			case 30: // Event Manager
-				icon = 28;
-				break;
-			case 32: // $750
-				icon = 43;
-				break;
-			case 33: // $1500
-				icon = 41;
-				break;
-			case 34: // $2000
-				icon = 40;
-				break;
-			case 35:
-				icon = 49;
-				break;
+	public Sprite handleIcon2(PlayerRights rights, int xPos, int yPos, int xOffset, int yOffset) {
+		Sprite sprite = rights.getSprite();
+		if(sprite != null) {
+			sprite.drawAdvancedSprite(xPos + xOffset, yPos + yOffset - sprite.subHeight);
 		}
-		if (icon != -1 && modIcons[icon] != null) {
-			Sprite modcon = modIcons[icon];
-			if (icon >= 40) {
-				modcon = SpriteLoader.fetchAnimatedSprite(Signlink.getCacheDirectory()+"/sprites/gifs/" +icon+".gif").getInstance(modcon.subWidth, modcon.subHeight);
-				yOffset -=2;
-			}
-			modcon.drawAdvancedSprite(xPos, yPos + yOffset - modcon.subHeight);
-			return modcon;
-		}
-		return null;
+		return sprite;
 	}
 	/**Handle Chatbox Icon Next to name where text is typed**/
-	public Sprite handleIcon3(int crown, int xPos, int yPos, int xOffset, int yOffset) {
-		int icon = -1; // Default icon
-		switch (crown) {
-			case 11: // HELPER
-				icon = 38;
-				break;
-			case 1: // MOD
-				icon = 39;
-				break;
-			case 2: // OWNER/ADMIN
-				icon = 37;
-				break;
-			case 16:
-				icon = 15;
-				break;
-			case 3: // OWNER/ADMIN
-			case 4: // OWNER/ADMIN
-				icon = 36;
-				break;
-			case 5: // $20
-				icon = 48;
-				break;
-			case 7: // $50
-				icon = 47;
-				break;
-			case 8: // $1000
-				icon = 42;
-				break;
-			case 9: // $100
-				icon = 46;
-				break;
-			case 17: // $250
-				icon = 45;
-				break;
-			case 18: // $500
-				icon = 44;
-				break;
-			case 30: // Event Manager
-				icon = 28;
-				break;
-			case 32: // $750
-				icon = 43;
-				break;
-			case 33: // $1500
-				icon = 41;
-				break;
-			case 34: // $2000
-				icon = 40;
-				break;
-			case 35:
-				icon = 49;
-				break;
+	public Sprite hanelcChatAreaIcons(PlayerRights rights, int xPos, int yPos, int xOffset, int yOffset) {
+		Sprite sprite = rights.getSprite();
+		if(sprite != null) {
+			sprite.drawAdvancedSprite(xPos + xOffset, yPos + yOffset - sprite.subHeight);
 		}
-		if (icon != -1 && modIcons[icon] != null) {
-			Sprite modcon = modIcons[icon];
-			if (icon >= 40) {
-				modcon = SpriteLoader.fetchAnimatedSprite(Signlink.getCacheDirectory()+"/sprites/gifs/" +icon+".gif").getInstance(modcon.subWidth, modcon.subHeight);
-				yOffset -=2;
-			}
-			modcon.drawSprite(xPos + xOffset, yPos + yOffset - modcon.subHeight);
-			return modcon;
-		}
-		return null;
+		return sprite;
 	}
-
 
 
 	public Socket openSocket(int port) throws IOException {
@@ -1607,8 +1435,11 @@ public class Client extends GameEngine implements RSClient {
 				: mouseX >= canvasWidth - 95 && mouseX <= canvasWidth - 65 && mouseY >= 168 && mouseY <= 197;
 
 
-		questHover = fixed ? mouseX >= 734 && mouseX <= 754 && mouseY >= 38 && mouseY <= 68
+		questHover = fixed ? mouseX >= 734 && mouseX <= 754 && mouseY >= 43 && mouseY <= 68
 				: mouseX >= canvasWidth - 125 && mouseX <= canvasWidth - 100 && mouseY >= 166 && mouseY <= 191;
+
+		petHover = fixed ? mouseX >= 721 && mouseX <= 746 && mouseY >= 14 && mouseY <= 48
+				: mouseX >= canvasWidth - 125 && mouseX <= canvasWidth - 100 && mouseY >= 195 && mouseY <= 225;
 	}
 
 	private boolean prayHover, prayClicked;
@@ -1622,6 +1453,7 @@ public class Client extends GameEngine implements RSClient {
 	private boolean donatorHover;
 	private boolean taskHover;
 	private boolean questHover;
+	private boolean petHover;
 
 	private boolean showClanOptions;
 
@@ -1769,6 +1601,11 @@ public class Client extends GameEngine implements RSClient {
 						yChunk = 10;
 					}
 					var1 &= MapRegion.method787(var3, xChunk, yChunk);
+				if (regionMapArchives[var2] == null && regionLocIds[var2] != -1) {
+						regionMapArchives[var2] = Js5List.maps.getFile(regionLocIds[var2], 0);
+						if (regionMapArchives[var2] == null) {
+							var1 = false;
+						}
 				}
 			}
 
@@ -3467,7 +3304,7 @@ public class Client extends GameEngine implements RSClient {
 						}
 					}
 					if (player.centurion > -1) {
-						Sprite iconSprite = SpriteLoader.fetchAnimatedSprite(Signlink.getCacheDirectory() + "sprites/gifs/" + player.centurion + ".gif").getInstance(13, 13);
+						Sprite iconSprite = SpriteLoader.fetchAnimatedSprite("/gifs/" + player.centurion + ".gif").getInstance(13, 13);
 						iconSprite.drawAdvancedSprite(spriteDrawX - (13 / 2), spriteDrawY - l);
 						l += 19;
 					}
@@ -4781,7 +4618,7 @@ public class Client extends GameEngine implements RSClient {
 		throw new RuntimeException();
 	}
 
-	private int getCenterHeight(int i, int j, int k) {
+	public int getCenterHeight(int i, int j, int k) {
 		int l = k >> 7;
 		int i1 = j >> 7;
 		if (l < 0 || i1 < 0 || l > 103 || i1 > 103)
@@ -5797,7 +5634,9 @@ public class Client extends GameEngine implements RSClient {
 			calcCameraPos();
 		for (int i1 = 0; i1 < 5; i1++)
 			anIntArray1030[i1]++;
+
 		method73();
+
 		++idleCycles;
 		++KeyHandler.idleCycles;
 
@@ -6204,6 +6043,9 @@ public class Client extends GameEngine implements RSClient {
 		}
 		if (l==4255) {
 			Client.questList();
+		}
+		if (l==4256) {
+			Client.petInterface();
 		}
 		if(l==852 || l==4250){//goon
 			Client.teleportInterface();
@@ -8193,11 +8035,6 @@ public class Client extends GameEngine implements RSClient {
 
 	@Override
 	public void cleanUpForQuit() {
-//		try {
-//			DiscordRPC.discordShutdown();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
 		Signlink.reporterror = false;
 		try {
 			if (socketStream != null)
@@ -8341,7 +8178,7 @@ public class Client extends GameEngine implements RSClient {
 			pushMessage("You haven't received any messages to which you can reply.", 0, "");
 			return;
 		}
-		for(int crown = 0; crown < 95; crown++) {
+		for(int crown = 0; crown <= 95; crown++) {
 			String crownString = "@cr" + crown + "@";
 			if(name.contains(crownString)) {
 				name = name.replaceAll(crownString, "");
@@ -8764,8 +8601,17 @@ public class Client extends GameEngine implements RSClient {
 						if(inputString.equalsIgnoreCase("::dumpme")) {
 							DefinitionDumper.dumpLocalPlayerImage();
 						}
-						if (inputString.startsWith("::pet")) {
-							openInterfaceID = PetPerk.widgetId;
+						if(inputString.equalsIgnoreCase("::test")) {
+							openInterfaceID = 24230;
+						}
+						if (inputString.startsWith("::findanim")) {
+							int itemId = Integer.parseInt(inputString.split(" ")[1]);
+							for(int i = 0; i < 11127; i++) {
+								SequenceDefinition sequenceDefinition = OSRSCacheLoader.getSeqDef(i);
+								if(sequenceDefinition.leftHandItem == itemId || sequenceDefinition.rightHandItem == itemId) {
+									pushMessage("Anim match [" + i + "]");
+								}
+							}
 						}
 						if (inputString.startsWith("::testhud")) {
 							try {
@@ -9457,19 +9303,18 @@ public class Client extends GameEngine implements RSClient {
 
 	}
 
+	private List<Integer> requestedStats = new ArrayList<>();
+
 	public void drawStatMenu(String itemName,int itemId, int color) {
 		if (menuActionRow < 2 && itemSelected == 0 && spellSelected == 0) {
 			return;
 		}
 		MenuEntry menuEntry = menuManager.getMenuEntry(menuActionRow - 1);
 		if(menuEntry != null && menuEntry.getOption() != null) {
-			if ( menuEntry.getOption().contains("Walk")) {
+			if (menuEntry.getOption().contains("Walk")) {
 				return;
 			}
 		}
-		//if(toolTip.contains("Walk")||toolTip.contains("Talk-to")||toolTip.contains("Bank")|| toolTip.contains("Steal")|| toolTip.contains("Attack")){
-		//	return;
-		//}/
 		if(toolTip.contains("Walk")||toolTip.contains("World")||!toolTip.contains("W")){
 			return;
 		}
@@ -9487,6 +9332,24 @@ public class Client extends GameEngine implements RSClient {
 
 
 		if (ItemStats.itemstats[itemId] == null) {
+			Rasterizer2D.drawBoxOutline(mouseX, mouseY + 5, 150, 36, 0x696969);
+			Rasterizer2D.drawTransparentBox(mouseX + 1, mouseY + 6, 150, 37, 0x000000,90);
+
+			Client.instance.newSmallFont.drawBasicString(itemName, mouseX + 150 / (12 +  Client.instance.newSmallFont.getTextWidth(itemName))+30 , mouseY + 17, color, 1);
+			Client.instance.newSmallFont.drawBasicString("Loading stats", mouseX + 4, mouseY + 35, color, 1);
+			if(!requestedStats.contains(itemId)) {
+				requestedStats.add(itemId);
+				stream.createFrame(85);
+				stream.writeInt(itemId);
+			}
+			return;
+		}
+		if (ItemStats.itemstats[itemId].invalid) {
+			Rasterizer2D.drawBoxOutline(mouseX, mouseY + 5, 150, 36, 0x696969);
+			Rasterizer2D.drawTransparentBox(mouseX + 1, mouseY + 6, 150, 37, 0x000000,90);
+
+			Client.instance.newSmallFont.drawBasicString(itemName, mouseX + 150 / (12 +  Client.instance.newSmallFont.getTextWidth(itemName))+30 , mouseY + 17, color, 1);
+			Client.instance.newSmallFont.drawBasicString("No stats were found.", mouseX + 4, mouseY + 35, color, 1);
 			return;
 		}
 		short stabAtk = (short) ItemStats.itemstats[itemId].attackBonus[0];
@@ -9503,6 +9366,7 @@ public class Client extends GameEngine implements RSClient {
 
 		int mageBonus = ItemStats.itemstats[itemId].magicBonus;
 		int rangeBonus = ItemStats.itemstats[itemId].rangeBonus;
+
 		int prayerBonus = ItemStats.itemstats[itemId].prayerBonus;
 		int strengthBonus = ItemStats.itemstats[itemId].strengthBonus;
 
@@ -10168,10 +10032,10 @@ public class Client extends GameEngine implements RSClient {
 					xPosition += font.getTextWidth("From ");
 					if (!crowns.isEmpty()) {
 						for (int crown : crowns) {
-							for (int right = 0; right < modIcons.length; right++) {
-								if (right == (crown - 1) && modIcons[right] != null) {
+							for (int right = 0; right < PlayerRights.values().length; right++) {
+								if (right == (crown - 1)) {
 									System.out.println("Split PM crown = " + crown);
-									Sprite modcon = handleIcon2(crown, xPosition, yPosition, 0, +2);
+									Sprite modcon = handleIcon2(PlayerRights.forRightsValue(crown - 1), xPosition, yPosition, 0, +2);
 									if (modcon != null) {
 										xPosition += modcon.subWidth;
 									}
@@ -11007,8 +10871,14 @@ public class Client extends GameEngine implements RSClient {
 			callbacks.post(new MenuEntryAdded(menuEntry));
 			menuActionRow = 2;
 		}
-		int mouseX1 = !isResized() ? 572 : canvasWidth - 175;
-		int mouseX2 = !isResized() ? 600 : canvasWidth - 150;
+		if (petHover) {
+			MenuEntry menuEntry = (MenuEntry) new MenuEntry(1)
+					.setOption("Pet")
+					.onClick((entry) -> petInterface());
+			menuManager.addEntry(menuEntry);
+			callbacks.post(new MenuEntryAdded(menuEntry));
+			menuActionRow = 2;
+		}
 		if (runHover) {
 			MenuEntry menuEntry = (MenuEntry) new MenuEntry(1)
 					.setOption("Toggle Run")
@@ -11912,6 +11782,7 @@ public class Client extends GameEngine implements RSClient {
 				npc.addHealthBar(stream);
 			}
 			if ((l & 2) != 0) {
+				npc.hidden = stream.readUnsignedByte() == 1;
 				npc.desc = NpcDefinition.lookup(stream.method436());
 				npc.anInt1540 = npc.desc.size;
 				npc.anInt1504 = npc.desc.rotation;
@@ -12264,6 +12135,9 @@ public class Client extends GameEngine implements RSClient {
 	public void load() {
 		//DefinitionDumper.dumpCustomText();
 		if (Client.titleLoadingStage == 0) {
+			if(new File(Signlink.getCacheDirectory() + "localhost").exists()) {
+				Configuration.CONNECTION = Connection.LOCAL;
+			}
 			getDocumentBaseHost();
 			variousSettings[304] = 1;
 			SettingsManager.loadSettings();
@@ -12475,6 +12349,9 @@ public class Client extends GameEngine implements RSClient {
 					loginScreenBackgroundCaptcha = new Sprite("loginscreen/captcha_background");
 					donatorOrb = new Sprite("orbs/promo_orb");
 					donatorOrbHover = new Sprite("orbs/promo_orb_hover");
+
+					petOrb = new Sprite("minimap_pet/pet_icon");
+					petOrbHover = new Sprite("minimap_pet/pet_icon_hover");
 
 					utilityOrb = new Sprite("orbs/utility_orb");
 					utilityOrbHover = new Sprite("orbs/utility_orb_hover");
@@ -12785,20 +12662,7 @@ public class Client extends GameEngine implements RSClient {
 					isLoading = false;
 					long clientLoadStart = System.currentTimeMillis();
 					DefinitionDumper.dumpDefs();
-					int totalHitSplatDefs = Js5List.configs.getGroupFileCount(Js5ConfigType.HITSPLAT);
-					int totalHealthBarDefs = Js5List.configs.getGroupFileCount(Js5ConfigType.HEALTHBAR);
-					System.out.println("Found [" + totalHitSplatDefs + "] Hit splats");
-					System.out.println("Found [" + totalHealthBarDefs + "] Health Bars");
-					for(int i = 0; i < totalHealthBarDefs; i++) {
-						System.out.println(HealthBarDefinition.lookup(i));
-					}
-
 					clientLoaded = true;
-
-					System.out.println(NpcDefinition.lookup(13_011));
-					System.out.println(NpcDefinition.lookup(13_016));
-					System.out.println(NpcDefinition.lookup(13485));
-
 					long clientLoadEnd = System.currentTimeMillis();
 					long clientLoadDifference = clientLoadEnd - clientLoadStart;
 					Client.titleLoadingStage = 210;
@@ -13011,7 +12875,7 @@ public class Client extends GameEngine implements RSClient {
 		Rasterizer2D.drawRectangle(200, 200 + moveY, 100, 100, 0x27A2B0);
 
 		/* Messages */
-		newBoldFont.drawCenteredString("ArkCane",  centerX + 5, centerY - 105, 0x27A2B0, 1);
+		newBoldFont.drawCenteredString("Kyros",  centerX + 5, centerY - 105, 0x27A2B0, 1);
 		newRegularFont.drawCenteredString("Account Manager", centerX + 5,  centerY - 85, 0xD4A190, 1);
 		newBoldFont.drawCenteredString(account.username == null ? "" : Utility.formatName(account.username), 385, 210 + moveY, 0x27A2B0, 0);
 		newBoldFont.drawBasicString("Created:", 320, 235 + moveY, 0xD4A190, 0);
@@ -13049,7 +12913,7 @@ public class Client extends GameEngine implements RSClient {
 		Rasterizer2D.drawRectangle(175, 175 + moveY, 425, 150, 0x27A2B0);
 
 		/* Messages */
-		newBoldFont.drawCenteredString("ArkCane",  centerX + 5, centerY - 115, 0x27A2B0, 1);
+		newBoldFont.drawCenteredString("Kyros",  centerX + 5, centerY - 115, 0x27A2B0, 1);
 		newRegularFont.drawCenteredString("Error Message", centerX + 5,  centerY - 95, 0xD4A190, 1);
 		newBoldFont.drawCenteredString(firstLoginMessage, centerX + 5,  centerY + 25, 0xD4A190, 1);
 		newBoldFont.drawCenteredString("[ Click anywhere to return to the main screen ]", centerX + 5, centerY + 150, 0xFFFFFF, 1);
@@ -13259,6 +13123,17 @@ public class Client extends GameEngine implements RSClient {
 		}
 		timer = System.currentTimeMillis();
 		String text = "::bank";
+		stream.createFrame(103);
+		stream.writeUnsignedByte(text.length() - 1);
+		stream.writeString(text.substring(2));
+	}
+
+	public static void petInterface() {
+		if (System.currentTimeMillis() - timer < 400) {
+			return;
+		}
+		timer = System.currentTimeMillis();
+		String text = "::pet";
 		stream.createFrame(103);
 		stream.writeUnsignedByte(text.length() - 1);
 		stream.writeString(text.substring(2));
@@ -15056,15 +14931,28 @@ public class Client extends GameEngine implements RSClient {
 						} else if (class9_1.type == 16) {
 							drawInputField(class9_1, _x, _y, class9_1.width, class9_1.height);
 						}else if (class9_1.type == RSInterface.TYPE_BOX) {
-							// Draw outline
-							Rasterizer2D.drawBox(_x - 2, _y - 2, class9_1.width + 4, class9_1.height + 4, 0x0e0e0c);
-							Rasterizer2D.drawBox(_x - 1, _y - 1, class9_1.width + 2, class9_1.height + 2, 0x474745);
-							// Draw base box
-							if (class9_1.toggled) {
-								Rasterizer2D.drawBox(_x, _y, class9_1.width, class9_1.height, class9_1.anInt239);
-								class9_1.toggled = false;
+							if(class9_1.coverWholeScreen) {
+								// Draw outline
+								Rasterizer2D.drawBox(0, 0, getViewportWidth(), getViewportHeight(), 0x0e0e0c);
+								Rasterizer2D.drawBox(1, 1, getViewportWidth() - 1, getViewportHeight() - 1, 0x474745);
+								// Draw base box
+								if (class9_1.toggled) {
+									Rasterizer2D.drawBox(2, 2, getViewportWidth() - 2, getViewportHeight() - 2, class9_1.anInt239);
+									class9_1.toggled = false;
+								} else {
+									Rasterizer2D.drawBox(2, 2, getViewportWidth() - 2, getViewportHeight() - 2, class9_1.hoverTextColor);
+								}
 							} else {
-								Rasterizer2D.drawBox(_x, _y, class9_1.width, class9_1.height, class9_1.hoverTextColor);
+								// Draw outline
+								Rasterizer2D.drawBox(_x - 2, _y - 2, class9_1.width + 4, class9_1.height + 4, 0x0e0e0c);
+								Rasterizer2D.drawBox(_x - 1, _y - 1, class9_1.width + 2, class9_1.height + 2, 0x474745);
+								// Draw base box
+								if (class9_1.toggled) {
+									Rasterizer2D.drawBox(_x, _y, class9_1.width, class9_1.height, class9_1.anInt239);
+									class9_1.toggled = false;
+								} else {
+									Rasterizer2D.drawBox(_x, _y, class9_1.width, class9_1.height, class9_1.hoverTextColor);
+								}
 							}
 						} else if (class9_1.type == 19) {
 							if (class9_1.backgroundSprites.length > 1) {
@@ -15161,12 +15049,16 @@ public class Client extends GameEngine implements RSClient {
 							Rasterizer2D.drawPixels(class9_1.height, _y, _x, color, progressBarWidth);
 							Rasterizer2D.drawBorder(_x, _y, class9_1.width, class9_1.height, class9_1.fillColor);
 						} else if (class9_1.type == RSInterface.TYPE_DRAW_BOX) {
-							//DrawingArea.drawRoundedRectangle(_x, _y, class9_1.width, class9_1.height, class9_1.fillColor, class9_1.transparency, true, true);
-
-							Rasterizer2D.drawTransparentBox(_x, _y, class9_1.width, class9_1.height, class9_1.fillColor, class9_1.transparency);
-							Rasterizer2D.drawBorder(_x, _y, class9_1.width, class9_1.height, class9_1.borderColor);
+							if(class9_1.coverWholeScreen) {
+								Rasterizer2D.setDrawingArea(getViewportHeight(), 0, getViewportWidth(), 0);
+								Rasterizer2D.drawTransparentBox(0, 0, getViewportWidth(), getViewportHeight(), class9_1.fillColor, class9_1.transparency);
+								Rasterizer2D.drawBorder(0, 0, getViewportWidth(), getViewportHeight(), class9_1.borderColor);
+								Rasterizer2D.setDrawingArea(yPosition + rsInterface.height, xPosition, xPosition + rsInterface.width, yPosition);
+							} else {
+								Rasterizer2D.drawTransparentBox(_x, _y, class9_1.width, class9_1.height, class9_1.fillColor, class9_1.transparency);
+								Rasterizer2D.drawBorder(_x, _y, class9_1.width, class9_1.height, class9_1.borderColor);
+							}
 						} else if (class9_1.type == 91) {
-
 							AnimatedSprite gif = SpriteLoader.fetchAnimatedSprite(class9_1.gifLocation);
 							if (gif != null) {
 								gif.getInstance(class9_1.width, class9_1.height).drawAdvancedSprite(_x, _y,255);
@@ -16327,7 +16219,7 @@ public class Client extends GameEngine implements RSClient {
 
 	private int method120() {
 		int j = 3;
-		if (yCameraCurve < 310 || removeRoofs) {
+		if (yCameraCurve < 310 || isRemoveRoofs(localPlayer)) {
 			int k = getXCameraPosShift();
 			int l = getYCameraPosShift();
 			int i1 = localPlayer.x >> 7;
@@ -16352,7 +16244,7 @@ public class Client extends GameEngine implements RSClient {
 						k++;
 					else if (k > i1)
 						k--;
-					if (removeRoofs || (tileFlags[plane][k][l] & 4) != 0)
+					if (isRemoveRoofs(localPlayer) || (tileFlags[plane][k][l] & 4) != 0)
 						j = plane;
 					k2 += i2;
 					if (k2 >= 0x10000) {
@@ -16361,7 +16253,7 @@ public class Client extends GameEngine implements RSClient {
 							l++;
 						else if (l > j1)
 							l--;
-						if (removeRoofs || (tileFlags[plane][k][l] & 4) != 0)
+						if (isRemoveRoofs(localPlayer) || (tileFlags[plane][k][l] & 4) != 0)
 							j = plane;
 					}
 				}
@@ -16375,7 +16267,7 @@ public class Client extends GameEngine implements RSClient {
 						l++;
 					else if (l > j1)
 						l--;
-					if (removeRoofs || (tileFlags[plane][k][l] & 4) != 0)
+					if (isRemoveRoofs(localPlayer) || (tileFlags[plane][k][l] & 4) != 0)
 						j = plane;
 					l2 += j2;
 					if (l2 >= 0x10000) {
@@ -16384,7 +16276,7 @@ public class Client extends GameEngine implements RSClient {
 							k++;
 						else if (k > i1)
 							k--;
-						if (removeRoofs || (tileFlags[plane][k][l] & 4) != 0)
+						if (isRemoveRoofs(localPlayer) || (tileFlags[plane][k][l] & 4) != 0)
 							j = plane;
 					}
 				}
@@ -16402,6 +16294,17 @@ public class Client extends GameEngine implements RSClient {
 			return plane;
 		else
 			return 3;
+	}
+
+	private boolean isRemoveRoofs(Player localPlayer) {
+		int x = localPlayer.getAbsoluteX();
+		int y = localPlayer.getAbsoluteY();
+		
+		if (x >= 3008 && x <= 3071 && y >= 4480 && y <= 4543) {
+			return false;//Roof override for skilling boss area
+		}
+
+		return removeRoofs;
 	}
 
 	private void delIgnore(long l) {
@@ -16795,6 +16698,8 @@ public class Client extends GameEngine implements RSClient {
 
 	Sprite donatorOrb = null;
 	Sprite donatorOrbHover = null;
+	Sprite petOrb = null;
+	Sprite petOrbHover = null;
 
 	Sprite utilityOrb = null;
 	Sprite utilityOrbHover = null;
@@ -17002,11 +16907,13 @@ public class Client extends GameEngine implements RSClient {
 			(worldHover ? knowOrbHover :  knowOrb).drawSprite(canvasWidth - 62 + xOffset, 160);
 			(taskHover ? utilityOrbHover :  utilityOrb).drawSprite(canvasWidth - 93, 170);
 			(questHover ? questOrbHover :  questOrb).drawSprite(canvasWidth - 124, 165);
+			(petHover ? petOrbHover :  petOrb).drawAdvancedSprite(canvasWidth - 124, 195);
 		} else {
 			(donatorHover ? donatorOrbHover :  donatorOrb).drawSprite(215 - 2 + xOffset, 10 + 90);
 			(taskHover ? utilityOrbHover :  utilityOrb).drawSprite(222 - 2 + xOffset, 10 + 60);
 			(worldHover ? knowOrbHover :  knowOrb).drawSprite(202 - 2 + xOffset, 20 + 108);
 			(questHover ? questOrbHover :  questOrb).drawSprite(217 - 2 + xOffset, 10 + 30);
+			(petHover ? petOrbHover :  petOrb).drawAdvancedSprite(206 - 2 + xOffset, 10 + 2);
 		}
 		if (menuOpen) {
 			drawMenu(menuOffsetX, menuOffsetY);
@@ -17328,15 +17235,20 @@ public class Client extends GameEngine implements RSClient {
 			newSmallFont.drawString(text, x, y, 0xFFFFFF, 0x000000, 256);
 
 			for (int skill : drop.getSkills()) {
-/*				if(skill==22){
-					continue;
-				}*/
 
-				Sprite sprite = smallXpSprites[skill];
-				x -= sprite.subWidth + 3;
-				y -= sprite.subHeight - 4;
-				sprite.drawAdvancedSprite(x, y, transparency);
-				y += sprite.subHeight - 4;
+				if(skill == 30) {
+					AnimatedSprite animatedSprite = SpriteLoader.fetchAnimatedSprite("/gifs/" + 9999 + ".gif").getInstance(13, 13);
+					x -= animatedSprite.subWidth + 3;
+					y -= animatedSprite.subHeight - 4;
+					animatedSprite.drawAdvancedSprite(x, y, transparency);
+					y += animatedSprite.subHeight - 4;
+				} else {
+					Sprite sprite =  smallXpSprites[skill];
+					x -= sprite.subWidth + 3;
+					y -= sprite.subHeight - 4;
+					sprite.drawAdvancedSprite(x, y, transparency);
+					y += sprite.subHeight - 4;
+				}
 			}
 		}
 
@@ -17815,7 +17727,7 @@ public class Client extends GameEngine implements RSClient {
 			rememberPasswordHover = mouseInRegion(394, 291, 411, 306);*/
 
 			if (firstLoginMessage.equalsIgnoreCase("")) {
-				firstLoginMessage = "Welcome to ArkCane, Prepare for war!";
+				firstLoginMessage = "Welcome to Kyros, Prepare for war!";
 			}
 
 			if (rememberMeHover) {
@@ -17880,7 +17792,7 @@ public class Client extends GameEngine implements RSClient {
 
 	}
 	private void drawAccount() {
-		Rasterizer2D.fillRectangle(155, 100, 164, 313, 0x382b2b, 150);
+//		Rasterizer2D.fillRectangle(155, 100, 164, 313, 0x382b2b, 150);
 
 		int centerX = canvasWidth / 2, centerY = canvasHeight / 2;
 		int yPos = centerY - 70;
@@ -18463,7 +18375,7 @@ public class Client extends GameEngine implements RSClient {
 		if (clickMode3 == 1 && saveClickY >= 387 && saveClickY <= 409 && saveClickX >= 589
 				&& saveClickX <= 613) {
 			try {
-				launchURL("https://discord.gg/arkcane");
+				launchURL("https://discord.gg/kyrosx");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -19061,6 +18973,7 @@ public class Client extends GameEngine implements RSClient {
 
 					for (int j = 0; j < length; j++) {
 						skills[j] = inStream.readSignedByte();
+						System.out.println("Got skill [" + skills[j] + "]");
 					}
 
 
@@ -19239,9 +19152,7 @@ public class Client extends GameEngine implements RSClient {
 					int j10 = inStream.method426();
 					if (l1 == 65535)
 						l1 = -1;
-					tabInterfaceIDs[j10] = l1;
-					needDrawTabArea = true;
-					tabAreaAltered = true;
+					setSidebarInterface(j10, l1);
 					incomingPacket = -1;
 					return true;
 
@@ -19270,7 +19181,20 @@ public class Client extends GameEngine implements RSClient {
 					int componentId = inStream.readDWord();
 					byte spriteIndex = inStream.readSignedByte();
 					RSInterface component = interfaceCache.get(componentId);
+
+
 					if (component != null) {
+						if (componentId >= 23733 && componentId <= 23744) {
+							component.sprite2 = imageLoader(spriteIndex, "rake-box/sprite");
+							component.sprite1 = imageLoader(spriteIndex, "rake-box/sprite");
+							if (spriteIndex == 4) {
+								component.tooltip = "Closed";
+							} else if (spriteIndex == 8) {
+								component.tooltip = "Opened";
+							}
+
+						}
+
 						if (component.backgroundSprites != null && spriteIndex <= component.backgroundSprites.length - 1) {
 							Sprite sprite = component.backgroundSprites[spriteIndex];
 							if (sprite != null) {
@@ -19469,13 +19393,20 @@ public class Client extends GameEngine implements RSClient {
 						spin();
 						incomingPacket = -1;
 						return true;
+					} else if (s.equals(":clearItems")) {
+						RSInterface mboxItems = interfaceCache.get(23732);
+						for (int i2 = 0; i2 < mboxItems.inventoryItemId.length; i2++) {
+							mboxItems.inventoryItemId[i2] = 0;
+							mboxItems.inventoryAmounts[i2] = 1;
+						}
+						incomingPacket = -1;
+						return true;
 					} else if (s.equals(":resetpost:")) {
 						RSInterface listingWidget = interfaceCache.get(48020);
 						if (listingWidget != null) {
 							listingWidget.scrollPosition = 0;
 						}
-					}
-					else if (s.equals(":resetBox")) {
+					} else if (s.equals(":resetBox")) {
 						reset();
 						incomingPacket = -1;
 						return true;
@@ -19751,6 +19682,27 @@ public class Client extends GameEngine implements RSClient {
 					incomingPacket = -1;
 					return true;
 
+				case 83:
+					boolean hasStats = inStream.readByte() == 1;
+					int statItemId = inStream.readInt();
+					ItemStats stats = new ItemStats(statItemId, -1);
+					if(!hasStats) {
+						stats.invalid = true;
+					}
+
+					stats.attackBonus = new int[] {
+							inStream.readInt(), inStream.readInt(), inStream.readInt(), inStream.readInt(), inStream.readInt()
+					};
+					stats.defenceBonus = new int[] {
+							inStream.readInt(), inStream.readInt(), inStream.readInt(), inStream.readInt(), inStream.readInt()
+					};
+					stats.prayerBonus = inStream.readInt();
+					stats.strengthBonus = inStream.readInt();
+					if(statItemId < ItemStats.itemstats.length)
+						ItemStats.itemstats[statItemId] = stats;
+					incomingPacket = -1;
+					return true;
+
 				case 85:
 					anInt1269 = inStream.method427();
 					anInt1268 = inStream.method427();
@@ -19763,40 +19715,40 @@ public class Client extends GameEngine implements RSClient {
 					return true;
 
 				case 246:
-					int i6 = inStream.method434();
-					int i13 = inStream.readUShort();
+					int progressBarId = inStream.method434();
+					int progressBarProgress = inStream.readUShort();
 					int k18 = inStream.readUShort();
-					if (i6 >= 59951 && i6 <= 59960 || i6 == 59973) {
-						updateProgressBar(i6, k18, i13, 0);
+					if (progressBarId >= 59951 && progressBarId <= 59960 || progressBarId == 59973) {
+						updateProgressBar(progressBarId, k18, progressBarProgress, 0);
 						incomingPacket = -1;
 						return true;
 					}
-					if (i6 >= 24520 && i6 <= 24524) {
-						updateProgressBar(i6, k18, i13, 0);
+					if (progressBarId >= 24520 && progressBarId <= 24524) {
+						updateProgressBar(progressBarId, k18, progressBarProgress, 0);
 						incomingPacket = -1;
 						return true;
 					}
-					if (i6 >= 43000) {
+					if (progressBarId >= 43000) {
 //						System.out.println("Interface ID: " + i6 + ", Npc ID: " + k18 + ", Zoom: " +i13);
-						RSInterface npcOnInsterface1 = interfaceCache.get(i6);
+						RSInterface npcOnInsterface1 = interfaceCache.get(progressBarId);
 						npcOnInsterface1.type = 6;
 						npcOnInsterface1.contentType = 32921;
 						PetSystem.petSelected = k18;
-						npcOnInsterface1.modelZoom = i13;
+						npcOnInsterface1.modelZoom = progressBarProgress;
 						incomingPacket = -1;
 						return true;
 					}
 					if (k18 == 65535) {
-						interfaceCache.get(i6).anInt233 = 0;
+						interfaceCache.get(progressBarId).anInt233 = 0;
 						incomingPacket = -1;
 						return true;
 					} else {
 						ItemDefinition itemDef = ItemDefinition.lookup(k18);
-						interfaceCache.get(i6).anInt233 = 4;
-						interfaceCache.get(i6).mediaID = k18;
-						interfaceCache.get(i6).modelRotation1 = itemDef.xan2d;
-						interfaceCache.get(i6).modelRotation2 = itemDef.yan2d;
-						interfaceCache.get(i6).modelZoom = (itemDef.zoom2d * 100) / i13;
+						interfaceCache.get(progressBarId).anInt233 = 4;
+						interfaceCache.get(progressBarId).mediaID = k18;
+						interfaceCache.get(progressBarId).modelRotation1 = itemDef.xan2d;
+						interfaceCache.get(progressBarId).modelRotation2 = itemDef.yan2d;
+						interfaceCache.get(progressBarId).modelZoom = (itemDef.zoom2d * 100) / progressBarProgress;
 						incomingPacket = -1;
 						return true;
 					}
@@ -19864,8 +19816,7 @@ public class Client extends GameEngine implements RSClient {
 							String gifName = args[2];
 
 							RSInterface gif = interfaceCache.get(gifChildId);
-							gif.gifLocation = Signlink.getCacheDirectory() + "sprites/gifs/" + gifName + ".gif";
-
+							gif.gifLocation = "/gifs/" + gifName + ".gif";
 							SpriteLoader.resetAnimatedSprite(gif.gifLocation);
 							incomingPacket = -1;
 							return true;
@@ -20580,7 +20531,7 @@ public class Client extends GameEngine implements RSClient {
 	public void setSpinClick(boolean spinClick) { this.spinClick = spinClick; }
 
 	public void spin() {
-		if (openInterfaceID != INTERFACE_ID || !spinClick) {
+		if ((openInterfaceID != INTERFACE_ID && openInterfaceID != 23723) || !spinClick) {
 			return;
 		}
 
@@ -22827,6 +22778,8 @@ public class Client extends GameEngine implements RSClient {
 			if(menuEntry == null) {
 				menuEntry = menuManager.getMenuEntries()[idx];
 			}
+			if(menuEntry == null)
+				continue;
 			if (menuEntry.getOption() == null)
 			{
 				menuEntry.setOption("null");
@@ -26527,19 +26480,19 @@ public class Client extends GameEngine implements RSClient {
 
 	public void onBroadcast(String message) {
 		if (message.contains("groot") && feedItems.stream().noneMatch(feedItem -> feedItem.getType() == FeedItemType.GROOT)) {
-			feedItems.add(new FeedItem(FeedItemType.GROOT, null, "Groot Spawned", ";;groot to kill them", "https://arkcane.net/forums/knowledge-base.5/", System.currentTimeMillis()));
+			feedItems.add(new FeedItem(FeedItemType.GROOT, null, "Groot Spawned", ";;groot to kill them", "https://kyros.fandom.com/wiki/Kyros_Wiki", System.currentTimeMillis()));
 		}
 
 		if (message.contains("dono") && feedItems.stream().noneMatch(feedItem -> feedItem.getType() == FeedItemType.DONOR_BOSS)) {
-			feedItems.add(new FeedItem(FeedItemType.DONOR_BOSS, null, "Donor Boss spawned", ";;db to kill them", "https://arkcane.net/forums/knowledge-base.5/", System.currentTimeMillis()));
+			feedItems.add(new FeedItem(FeedItemType.DONOR_BOSS, null, "Donor Boss spawned", ";;db to kill them", "https://kyros.fandom.com/wiki/Kyros_Wiki", System.currentTimeMillis()));
 		}
 
 		if (message.contains("shooting star") && !message.contains("dwarfs decided to mine") && feedItems.stream().noneMatch(feedItem -> feedItem.getType() == FeedItemType.SHOOTING_STAR)) {
-			feedItems.add(new FeedItem(FeedItemType.SHOOTING_STAR, null, "Shooting Star spawned", ";;star to get to the star", "https://arkcane.net/threads/shooting-star-guide.140/", System.currentTimeMillis()));
+			feedItems.add(new FeedItem(FeedItemType.SHOOTING_STAR, null, "Shooting Star spawned", ";;star to get to the star", "https://kyros.fandom.com/wiki/Kyros_Wiki", System.currentTimeMillis()));
 		}
 
 		if (message.contains("vote") && feedItems.stream().noneMatch(feedItem -> feedItem.getType() == FeedItemType.VOTE_BOSS)) {
-			feedItems.add(new FeedItem(FeedItemType.VOTE_BOSS, null, "Vote Boss spawned", ";;vb to kill them", "https://arkcane.net/forums/knowledge-base.5/", System.currentTimeMillis()));
+			feedItems.add(new FeedItem(FeedItemType.VOTE_BOSS, null, "Vote Boss spawned", ";;vb to kill them", "https://kyros.fandom.com/wiki/Kyros_Wiki", System.currentTimeMillis()));
 		}
 
 		if (message.contains("seasonal") && feedItems.stream().noneMatch(feedItem -> feedItem.getType() == FeedItemType.SEASONAL)) {
@@ -26550,7 +26503,10 @@ public class Client extends GameEngine implements RSClient {
 			feedItems.add(new FeedItem(FeedItemType.WILDY_BOSS, null, "Wildy event is active", ";;wildyevent to get there", "", System.currentTimeMillis()));
 		}
 		if (message.contains("hespori") && feedItems.stream().noneMatch(feedItem -> feedItem.getType() == FeedItemType.HESPORI_BOSS)) {
-			feedItems.add(new FeedItem(FeedItemType.HESPORI_BOSS, null, "Hespori is active", ";;worldevent to get there.", "https://arkcane.net/ewr-carta/hespori/", System.currentTimeMillis()));
+			feedItems.add(new FeedItem(FeedItemType.HESPORI_BOSS, null, "Hespori is active", ";;worldevent to get there.", "https://kyros.fandom.com/wiki/Kyros_Wiki", System.currentTimeMillis()));
+		}
+		if (message.contains("HotDrop") && feedItems.stream().noneMatch(feedItem -> feedItem.getType() == FeedItemType.HOTDROP)) {
+			feedItems.add(new FeedItem(FeedItemType.HOTDROP, null, "HotDrop boss is alive", ";;hotdrop to get there.", "https://kyros.fandom.com/wiki/Kyros_Wiki", System.currentTimeMillis()));
 		}
 
 		feedItems.removeIf(feedItem -> feedItem.getTimestamp() < System.currentTimeMillis());

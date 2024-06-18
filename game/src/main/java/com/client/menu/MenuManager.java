@@ -38,7 +38,7 @@ public class MenuManager {
     }
 
     public MenuEntry getMenuEntry(int idx) {
-        MenuEntry entry = (MenuEntry) Client.instance.getMenuEntries()[idx];//menuEntries[idx];
+        MenuEntry entry = (MenuEntry) Client.instance.getMenuEntries()[idx];
         return entry;
     }
 

@@ -7,15 +7,14 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.awt.image.DirectColorModel;
 import java.awt.image.Raster;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.*;
 import java.net.URL;
 import java.util.Hashtable;
 
 /**
- * @author ArkCane
- * @social Discord: ArkCane
- * Website: www.arkcane.net
+ * @author Kyros
+ * @social Discord: Kyros
+ * Website: www.kyros.net
  * @since 05/03/2024
  */
 public final class AnimatedSprite extends Sprite {
@@ -25,12 +24,13 @@ public final class AnimatedSprite extends Sprite {
     }
 
     public AnimatedSprite(String file, Component component) {
-        this(file, component, 0, 0);
+        this(loadFile(file), component);
     }
 
     public AnimatedSprite(File file) {
         this(file, DUMMY_COMPONENT);
     }
+
 
     public AnimatedSprite(File file, Component component) {
         this(loadFile(file), component);
@@ -380,6 +380,30 @@ public final class AnimatedSprite extends Sprite {
     public void clearPixels() {
         for (int i = 0; i < spritePixels.length; i++)
             spritePixels[i] = 0;
+    }
+
+    private static byte[] loadFile(String resourcePath) {
+        URL resourceUrl = AnimatedSprite.class.getResource(resourcePath);
+        if (resourceUrl == null) {
+            System.err.println("Resource not found: " + resourcePath);
+            return null;
+        }
+
+        try (InputStream input = resourceUrl.openStream();
+             ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
+
+            byte[] data = new byte[16384];
+            int bytesRead;
+
+            while ((bytesRead = input.read(data, 0, data.length)) != -1) {
+                buffer.write(data, 0, bytesRead);
+            }
+
+            return buffer.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private static byte[] loadFile(File file) {

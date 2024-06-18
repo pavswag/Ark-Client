@@ -123,7 +123,7 @@ public final class Npc extends Entity implements RSNPC {
 	}
 
 	public boolean isShowMenuOnHover() {
-		return npcPetType == 0 || npcPetType == 2 && !Preferences.getPreferences().hidePetOptions;
+		return npcPetType == 0 /*|| npcPetType == 2 && !Preferences.getPreferences().hidePetOptions*/;
 	}
 
 	public int npcPetType;

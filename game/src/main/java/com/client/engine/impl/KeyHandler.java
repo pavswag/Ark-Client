@@ -146,6 +146,10 @@ public final class KeyHandler implements KeyListener, FocusListener, RSKeyHandle
                     Client.dz();
                     break;
 
+                case KeyEvent.VK_P:
+                    Client.petInterface();
+                    break;
+
             }
         }
 

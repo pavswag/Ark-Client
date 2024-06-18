@@ -42,13 +42,14 @@ public final class SpriteCache extends DualNode {
             if (data != null) {
                 image.decode(new Buffer(data),true);
             } else {
-                System.out.println("Missing Sprite: " + id);
+//                System.out.println("Missing Sprite: " + id);
                 return Sprite.EMPTY_SPRITE;
             }
             cached.put(image, id);
         }
         return image.sprite;
     }
+
     @SneakyThrows
     public static void load() {
         ObjectMapper om = new ObjectMapper();
@@ -92,7 +93,6 @@ public final class SpriteCache extends DualNode {
             image.id = id;
             if (data != null) {
                 image.decode(new Buffer(data),true);
-                System.out.println("Found sprite [" + img +"] with id [" + id + "]");
             } else {
                 System.out.println("Missing Sprite: " + id);
                 return null;

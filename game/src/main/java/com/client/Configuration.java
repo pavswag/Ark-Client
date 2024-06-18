@@ -18,7 +18,7 @@ public class Configuration {
 	 * This is read on startup to tell if the cache is out of date or not.
 	 */
 	public static final int CACHE_VERSION = 16; // Set this to the same value, v0.030 = 30, v1.120 = 1120 -- LIVE Server = 13
-	public static final String CACHE_LINK = "https://arkcane.co.uk/play/rl/rlbeta0.024.7z";
+	public static final String CACHE_LINK = "https://kyros.co.uk/play/rl/rlbeta0.024.7z";
 
 	/**
 	 * The server version. The cache path is append with a _v1/2/3 etc for the version number
@@ -28,9 +28,9 @@ public class Configuration {
 
 
 	public static boolean SAVE_ACCOUNTS = true;
-	public static final String CLIENT_TITLE = "ArkCane";
-	public static final String WEBSITE = "ArkCane.net";
-	public static Connection CONNECTION = Connection.WORLD_2;
+	public static final String CLIENT_TITLE = "Kyros";
+	public static final String WEBSITE = "https://paradise-network.net";
+	public static Connection CONNECTION = Connection.LOCAL;
 	public static final String DEV_CACHE_NAME = "local_cache";
 
 	public static final String CUSTOM_ITEM_SPRITES_DIRECTORY = "item_sprites/";

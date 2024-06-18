@@ -1,3 +1,4 @@
+import dev.openrune.settings.BootstrapPluginExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import proguard.gradle.ProGuardTask
 import java.security.MessageDigest
@@ -7,10 +8,8 @@ plugins {
     kotlin("jvm") version "1.8.22"
     application
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("com.mark.bootstrap.bootstrap")
+    id("dev.openrune.bootstrap") version "1.5"
 }
-
-
 
 buildscript {
     repositories {
@@ -25,20 +24,25 @@ allprojects {
     apply(plugin = "kotlin")
     apply(plugin = "application")
     apply(plugin = "com.github.johnrengelman.shadow")
-    apply(plugin = "com.mark.bootstrap.bootstrap")
 
     tasks.withType<KotlinCompile> {
         kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
     }
 
     java {
-        setSourceCompatibility(JavaVersion.VERSION_11.toString())
-        setTargetCompatibility(JavaVersion.VERSION_11.toString())
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 }
 
 dependencies {
-    implementation(project("game"))
+    implementation(project(":game"))
+}
+
+tasks.processResources {
+    from("src/main/resources") {
+        into("") // Place resources at the root of the JAR
+    }
 }
 
 tasks.register<Jar>("createJar") {
@@ -46,13 +50,9 @@ tasks.register<Jar>("createJar") {
 
     dependsOn(project(":game").tasks["jar"], project(":runelite").tasks["jar"])
 
-    doFirst {
-        configurations["runtimeClasspath"].forEach { file ->
-            if (file.name.endsWith(".jar")) {
-                from(zipTree(file.absolutePath))
-            }
-        }
-    }
+    from({
+        configurations["runtimeClasspath"].filter { it.name.endsWith("jar") }.map { zipTree(it) }
+    })
 
     manifest {
         attributes(
@@ -64,13 +64,11 @@ tasks.register<Jar>("createJar") {
     destinationDirectory.set(file("${rootProject.buildDir}/tmp"))
 }
 
-
 tasks.register("generateObfuscationDictionaries") {
     doLast {
         println("Running generate task...")
 
         val similarCharPairs = listOf(
-            // Single Characters
             "l1", "Il", "iI", "1I", "Ii", "lI", "i1", "I1", "11", "ii",
             "li", "il", "Li", "lL", "iL", "1l", "L1", "Il", "i1", "1l",
             "lJ", "Ij", "Ji", "J1", "Jj", "j1", "J1", "JJ", "jj",
@@ -78,8 +76,6 @@ tasks.register("generateObfuscationDictionaries") {
             "Lt", "tL", "Tf", "fr", "Rr", "Lr", "Tr", "rL", "tT", "Tt",
             "Rf", "fT", "ft", "Rt", "Fr", "Tj", "jt", "fR", "rF",
             "A4", "4A", "S5", "5S", "O0", "0O", "B8", "8B",
-
-            // Double Characters
             "ll", "II", "ii", "LL", "ll", "ii", "11", "Ii", "li", "Il",
             "1i", "i1", "lI", "I1", "ij", "ji", "lJ", "Jl", "iJ", "Ji",
             "Jj", "jJ", "JJ", "jj", "Li", "il", "1j", "j1", "Ll", "ll",
@@ -88,8 +84,6 @@ tasks.register("generateObfuscationDictionaries") {
             "Fr", "rF", "ft", "tf", "Rt", "tR", "Fr", "rF", "Tt", "tT",
             "Rj", "jR", "Tj", "jT", "Lf", "fL", "Rt", "tR", "J1", "1J",
             "4A", "A4", "S5", "5S", "O0", "0O", "B8", "8B",
-
-            // Triple Characters
             "lll", "III", "iii", "LLL", "lll", "iii", "111", "iIi", "lil", "iIl",
             "1ii", "ii1", "lII", "II1", "ijj", "jji", "lJJ", "Jjl", "iJJ", "Jii",
             "JJj", "jjJ", "JJJ", "jjj", "Lii", "iil", "1jj", "jj1", "Lll", "lll",
@@ -98,8 +92,6 @@ tasks.register("generateObfuscationDictionaries") {
             "Frr", "rrF", "fft", "ttf", "Rtt", "ttr", "Frr", "rrF", "Ttt", "ttT",
             "Rjj", "jjR", "Tjj", "jjT", "Lff", "ffL", "Rtt", "ttr", "JJ1", "11J",
             "44A", "A44", "55S", "S55", "00O", "O00", "88B", "B88",
-
-            // Mixed Case
             "llI", "IIl", "iiI", "LLi", "lLI", "iiL", "I1i", "I1L", "1iI", "iIl",
             "iI1", "I1l", "IjI", "JiJ", "lJi", "iJl", "JiL", "LiJ", "J1i", "Jil",
             "JjJ", "jiJ", "iJl", "lJi", "lJ1", "J1l", "JIl", "Ili", "iJ1", "1Ji",
@@ -120,9 +112,8 @@ tasks.register("generateObfuscationDictionaries") {
             val uniqueStrings = mutableSetOf<String>()
             val random = Random.Default
 
-            // Generate strings with more randomness
             while (uniqueStrings.size < count) {
-                val length = pairCount + random.nextInt(5) // Adding some variation in length
+                val length = pairCount + random.nextInt(5)
                 val pairs = (1..length)
                     .map { similarCharPairs.random() }
                     .joinToString("")
@@ -156,18 +147,15 @@ tasks.register("generateObfuscationDictionaries") {
                     writer.println(it)
                 }
             }
-
         }
     }
 }
-
-
 
 tasks.register<ProGuardTask>("buildGame") {
     group = "build"
     dependsOn("createJar", "generateObfuscationDictionaries")
 
-    val inJar = layout.buildDirectory.file("tmp/client-raw.jar")
+    val inJar = layout.buildDirectory.file("tmp/client-raw-1.1.3.jar")
     val outJar = layout.buildDirectory.file("client-all.jar")
 
     val proguardConf = file("proguard/proguard.conf")
@@ -222,5 +210,15 @@ tasks.withType<JavaCompile>().configureEach {
 tasks {
     jar {
         destinationDirectory.set(file("${rootProject.buildDir}\\"))
+    }
+}
+
+configure<BootstrapPluginExtension> {
+    downloadRoot.set("https://paradisenet.b-cdn.net/client/")
+    buildType = "beta"
+    ftp {
+        ftpServer = System.getenv("FTP_SERVER") ?: ""
+        ftpUser = System.getenv("FTP_USERNAME") ?: ""
+        ftpPassword = System.getenv("FTP_PASSWORD") ?: ""
     }
 }

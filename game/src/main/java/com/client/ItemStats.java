@@ -9,9 +9,9 @@ import java.io.FileReader;
 import java.io.IOException;
 
 /**
- * @author ArkCane
- * @social Discord: ArkCane
- * Website: www.arkcane.net
+ * @author Kyros
+ * @social Discord: Kyros
+ * Website: www.kyros.net
  * @since 29/03/2024
  */
 public class ItemStats {
@@ -23,7 +23,7 @@ public class ItemStats {
     public static final int RANGED = 4;
 
     public static ItemStats[] itemstats = new ItemStats[ItemDefinition.totalItems > 0 ? ItemDefinition.totalItems : 35000];
-
+    public transient boolean invalid = false;
     public int itemId;
     public int[] attackBonus;
     public int[] defenceBonus;

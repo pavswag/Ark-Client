@@ -85,10 +85,21 @@ public interface FeedConfig extends Config
 	}
 
 	@ConfigItem(
+			keyName = "includeHotDrop",
+			name = "Include HotDrop notifications",
+			description = "Configures whether HotDrop notifications are displayed",
+			position = 7
+	)
+	default boolean includeHotDropSpawns()
+	{
+		return true;
+	}
+
+	@ConfigItem(
 			keyName = "Notification Sound",
 			name = "Notify on event spawn",
 			description = "Configures whether Sound notification is enabled.",
-			position = 7
+			position = 8
 	)
 	default boolean notificationSounds()
 	{
@@ -99,7 +110,7 @@ public interface FeedConfig extends Config
 			keyName = "Tray Notification",
 			name = "Tray Notification event spawn",
 			description = "Configures whether Tray Notification is enabled.",
-			position = 8
+			position = 9
 	)
 	default boolean trayNotification()
 	{

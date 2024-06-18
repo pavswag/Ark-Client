@@ -1,8 +1,5 @@
-import java.security.MessageDigest
-import java.io.File
-
 group = "com.client"
-version = "0.0.1"
+version = "0.0.3"
 
 dependencies {
     implementation(project(":runelite"))
@@ -28,7 +25,6 @@ dependencies {
     implementation("one.util:streamex:0.8.1")
     implementation("org.apache.commons:commons-compress:1.21")
     implementation("org.tukaani:xz:1.9")
-    implementation("com.github.Vatuu:discord-rpc:1.6.2")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
 

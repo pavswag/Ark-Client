@@ -1,10 +1,10 @@
 package com.client;
 
 /**
- * @author ArkCane
- * @project arkcane-server
- * @social Discord: ArkCane
- * Website: www.arkcane.net
+ * @author Kyros
+ * @project kyros-server
+ * @social Discord: Kyros
+ * Website: www.kyros.net
  * @since 05/01/2024
  */
 import io.netty.buffer.ByteBuf;
