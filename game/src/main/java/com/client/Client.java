@@ -1601,11 +1601,6 @@ public class Client extends GameEngine implements RSClient {
 						yChunk = 10;
 					}
 					var1 &= MapRegion.method787(var3, xChunk, yChunk);
-				if (regionMapArchives[var2] == null && regionLocIds[var2] != -1) {
-						regionMapArchives[var2] = Js5List.maps.getFile(regionLocIds[var2], 0);
-						if (regionMapArchives[var2] == null) {
-							var1 = false;
-						}
 				}
 			}
 
@@ -11440,7 +11435,8 @@ public class Client extends GameEngine implements RSClient {
 
 
 	// Original signature int clickType, int j, int k, int i1, int localY, int k1, int l1, int i2, int localX, boolean flag, int k2
-	private boolean doWalkTo(int clickType, int localX, int localY, int j, int k, int i1, int k1, int l1, int i2, boolean flag, int k2) {
+	private boolean doWalkTo(int clickType, int localX, int localY, int j, int k, int i1, int k1, int l1, int sceneY, boolean flag, int sceneX) {
+		pushMessage("Clicked scene x/y[" + sceneX + "/" + sceneY + "] clickedtype=" + clickType);
 		byte byte0 = 104;
 		byte byte1 = 104;
 		for (int l2 = 0; l2 < byte0; l2++) {
@@ -11457,29 +11453,29 @@ public class Client extends GameEngine implements RSClient {
 		int i4 = 0;
 		bigX[l3] = localX;
 		bigY[l3++] = localY;
-		boolean flag1 = false;
+		boolean reached = false;
 		int j4 = bigX.length;
 		int ai[][] = collisionMaps[plane].adjacencies;
 		while (i4 != l3) {
 			j3 = bigX[i4];
 			k3 = bigY[i4];
 			i4 = (i4 + 1) % j4;
-			if (j3 == k2 && k3 == i2) {
-				flag1 = true;
+			if (j3 == sceneX && k3 == sceneY) {
+				reached = true;
 				break;
 			}
 			if (i1 != 0) {
-				if ((i1 < 5 || i1 == 10) && collisionMaps[plane].method219(k2, j3, k3, j, i1 - 1, i2)) {
-					flag1 = true;
+				if ((i1 < 5 || i1 == 10) && collisionMaps[plane].method219(sceneX, j3, k3, j, i1 - 1, sceneY)) {
+					reached = true;
 					break;
 				}
-				if (i1 < 10 && collisionMaps[plane].method220(k2, i2, k3, i1 - 1, j, j3)) {
-					flag1 = true;
+				if (i1 < 10 && collisionMaps[plane].method220(sceneX, sceneY, k3, i1 - 1, j, j3)) {
+					reached = true;
 					break;
 				}
 			}
-			if (k1 != 0 && k != 0 && collisionMaps[plane].atObject(i2, k2, j3, k, l1, k1, k3)) {
-				flag1 = true;
+			if (k1 != 0 && k != 0 && collisionMaps[plane].atObject(sceneY, sceneX, j3, k, l1, k1, k3)) {
+				reached = true;
 				break;
 			}
 			int l4 = anIntArrayArray825[j3][k3] + 1;
@@ -11548,28 +11544,28 @@ public class Client extends GameEngine implements RSClient {
 			}
 		}
 		anInt1264 = 0;
-		if (!flag1) {
+		if (!reached) {
 			if (flag) {
 				int i5 = 100;
 				for (int k5 = 1; k5 < 2; k5++) {
-					for (int i6 = k2 - k5; i6 <= k2 + k5; i6++) {
-						for (int l6 = i2 - k5; l6 <= i2 + k5; l6++)
+					for (int i6 = sceneX - k5; i6 <= sceneX + k5; i6++) {
+						for (int l6 = sceneY - k5; l6 <= sceneY + k5; l6++)
 							if (i6 >= 0 && l6 >= 0 && i6 < 104 && l6 < 104 && anIntArrayArray825[i6][l6] < i5) {
 								i5 = anIntArrayArray825[i6][l6];
 								j3 = i6;
 								k3 = l6;
 								anInt1264 = 1;
-								flag1 = true;
+								reached = true;
 							}
 
 					}
 
-					if (flag1)
+					if (reached)
 						break;
 				}
 
 			}
-			if (!flag1)
+			if (!reached)
 				return false;
 		}
 		i4 = 0;
