@@ -11436,7 +11436,7 @@ public class Client extends GameEngine implements RSClient {
 
 	// Original signature int clickType, int j, int k, int i1, int localY, int k1, int l1, int i2, int localX, boolean flag, int k2
 	private boolean doWalkTo(int clickType, int localX, int localY, int j, int k, int i1, int k1, int l1, int sceneY, boolean flag, int sceneX) {
-		pushMessage("Clicked scene x/y[" + sceneX + "/" + sceneY + "] clickedtype=" + clickType);
+//		pushMessage("Clicked scene x/y[" + sceneX + "/" + sceneY + "] clickedtype=" + clickType);
 		byte byte0 = 104;
 		byte byte1 = 104;
 		for (int l2 = 0; l2 < byte0; l2++) {
