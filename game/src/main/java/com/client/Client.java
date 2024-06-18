@@ -1589,11 +1589,13 @@ public class Client extends GameEngine implements RSClient {
 			Client.objectsLoaded = 0;
 			var1 = true;
 
+			int xChunk;
+			int yChunk;
 			for (var2 = 0; var2 < regionLandArchives.length; ++var2) {
 				byte[] var3 = regionMapArchives[var2];
 				if (var3 != null) {
-					int xChunk = 64 * (regions[var2] >> 8) - baseX;
-					int yChunk = 64 * (regions[var2] & 255) - baseY;
+					xChunk = 64 * (regions[var2] >> 8) - baseX;
+					yChunk = 64 * (regions[var2] & 255) - baseY;
 					if (isDynamicRegion) {
 						xChunk = 10;
 						yChunk = 10;
@@ -1645,19 +1647,15 @@ public class Client extends GameEngine implements RSClient {
 				stream.createFrame(0);
 
 				if (!isDynamicRegion) {
-					for (int zChunk = 0; zChunk < k2; zChunk++) {
-						int xChunk = (regions[zChunk] >> 8) * 64 - baseX;
-						int yChunk = (regions[zChunk] & 0xff) * 64 - baseY;
+					for (int i3 = 0; i3 < k2; i3++) {
+						int i4 = (regions[i3] >> 8) * 64 - baseX;
+						int k5 = (regions[i3] & 0xff) * 64 - baseY;
 
-						byte var6[] = regionLandArchives[zChunk];
+						byte abyte0[] = regionLandArchives[i3];
 
-						if (var6 != null) {
+						if (abyte0 != null) {
 							StaticSound.playPcmPlayers();
-							currentMapRegion.decode_map_terrain(
-									var6, xChunk,
-									yChunk,
-									region_x * 8 - 48, region_y * 8 - 48,
-									collisionMaps);
+							currentMapRegion.method180(abyte0, k5, i4, (currentRegionX - 6) * 8, (currentRegionY - 6) * 8, collisionMaps);
 						}
 					}
 
@@ -1665,7 +1663,7 @@ public class Client extends GameEngine implements RSClient {
 						int l5 = (regions[j4] >> 8) * 64 - baseX;
 						int k7 = (regions[j4] & 0xff) * 64 - baseY;
 						byte abyte2[] = regionLandArchives[j4];
-						if (abyte2 == null && region_y < 800) {
+						if (abyte2 == null && currentRegionY < 800) {
 							StaticSound.playPcmPlayers();
 							currentMapRegion.initiateVertexHeights(k7, 64, 64, l5);
 						}
@@ -1692,36 +1690,26 @@ public class Client extends GameEngine implements RSClient {
 
 				}
 				if (isDynamicRegion) {
-					for (int zChunk = 0; zChunk < 4; zChunk++) {
+					for (int j3 = 0; j3 < 4; j3++) {
 						StaticSound.playPcmPlayers();
-						for (int xChunk = 0; xChunk < 13; xChunk++) {
-							for (int yChunk = 0; yChunk < 13; yChunk++) {
-								boolean var18 = false;
-								int level = instanceChunkTemplates[zChunk][xChunk][yChunk];
-								if (level != -1) {
-									int rotation = level >> 24 & 3;
-									int worldX = level >> 1 & 3;
-									int worldY = level >> 14 & 0x3ff;
-									int region = level >> 3 & 0x7ff;
-									int var12 = (worldY / 8 << 8) + region / 8;
-									for (int var13 = 0; var13 < regions.length; ++var13) {
-										if (regions[var13] == var12 && null != regionLandArchives[var13]) {
-											currentMapRegion.method3968(
-													regionLandArchives[var13],
-													zChunk,
-													8 * xChunk,
-													8 * yChunk,
-													rotation, 8 * (worldY & 7), 8 * (region & 7),
-													worldX,
-													collisionMaps);
-											var18 = true;
-											break;
-										}
+						for (int k4 = 0; k4 < 13; k4++) {
+							for (int j6 = 0; j6 < 13; j6++) {
+								int l7 = instanceChunkTemplates[j3][k4][j6];
+								if (l7 != -1) {
+									int i9 = l7 >> 24 & 3;
+									int l9 = l7 >> 1 & 3;
+									int j10 = l7 >> 14 & 0x3ff;
+									int l10 = l7 >> 3 & 0x7ff;
+									int j11 = (j10 / 8 << 8) + l10 / 8;
+									for (int l11 = 0; l11 < regions.length; l11++) {
+										if (regions[l11] != j11 || regionLandArchives[l11] == null)
+											continue;
+										System.out.println("HERE 1");
+										currentMapRegion.loadMapChunk(i9, l9, collisionMaps, k4 * 8, (j10 & 7) * 8,
+												regionLandArchives[l11], (l10 & 7) * 8, j3, j6 * 8);
+										break;
 									}
 
-								}
-								if (!var18) {
-									TextureProvider.method1307(zChunk, xChunk * 8, 8 * yChunk);
 								}
 							}
 
@@ -1773,7 +1761,7 @@ public class Client extends GameEngine implements RSClient {
 
 				stream.createFrame(0);
 
-				int k3 = MapRegion.min_plane;
+				int k3 = MapRegion.maximumPlane;
 				if (k3 > plane)
 					k3 = plane;
 
@@ -1781,7 +1769,7 @@ public class Client extends GameEngine implements RSClient {
 					k3 = plane - 1;
 				if (lowMem)
 
-					scene.method275(MapRegion.min_plane);
+					scene.method275(MapRegion.maximumPlane);
 				else
 					scene.method275(0);
 				for (int i5 = 0; i5 < 104; i5++) {
@@ -1804,10 +1792,10 @@ public class Client extends GameEngine implements RSClient {
 				System.gc();
 
 				if (!isDynamicRegion) {
-					int xChunk = (region_x - 6) / 8;
-					int yChunk = (region_x + 6) / 8;
-					int tileBits = (region_y - 6) / 8;
-					int level = (region_y + 6) / 8;
+					xChunk = (currentRegionX - 6) / 8;
+					yChunk = (currentRegionX + 6) / 8;
+					int tileBits = (currentRegionY - 6) / 8;
+					int level = (currentRegionY + 6) / 8;
 
 					for (int rotation = xChunk - 1; rotation <= 1 + yChunk; ++rotation) {
 						for (int worldX = tileBits - 1; worldX <= level + 1; ++worldX) {
@@ -5089,7 +5077,7 @@ public class Client extends GameEngine implements RSClient {
 		SceneGraph.lowMem = false;
 		// Rasterizer.lowMem = false;
 		lowMem = false;
-		MapRegion.low_detail = false;
+		MapRegion.lowMem = false;
 		ObjectDefinition.lowMem = false;
 	}
 
@@ -11606,8 +11594,8 @@ public class Client extends GameEngine implements RSClient {
 			if (k4 > 25)
 				k4 = 25;
 			i4--;
-			int walking_x = bigX[i4];
-			int walking_y = bigY[i4];
+			int k6 = bigX[i4];
+			int i7 = bigY[i4];
 			anInt1288 += k4;
 			if (anInt1288 >= 92) {
 				stream.createFrame(36);
@@ -11626,17 +11614,16 @@ public class Client extends GameEngine implements RSClient {
 				stream.createFrame(98);
 				stream.writeUnsignedByte(k4 + k4 + 3);
 			}
-			pushMessage("Clicked scene[packet] x/y[" + sceneX + "/" + sceneY + "] clickedtype=" + clickType);
-			stream.method433(walking_x + baseX);
+			stream.method433(k6 + baseX);
 			destX = bigX[0];
 			destY = bigY[0];
 			for (int j7 = 1; j7 < k4; j7++) {
 				i4--;
-				stream.writeUnsignedByte(bigX[i4] - walking_x);
-				stream.writeUnsignedByte(bigY[i4] - walking_y);
+				stream.writeUnsignedByte(bigX[i4] - k6);
+				stream.writeUnsignedByte(bigY[i4] - i7);
 			}
 
-			stream.method431(walking_y + baseY);
+			stream.method431(i7 + baseY);
 			stream.method424(KeyHandler.keyArray[5] != 1 ? 0 : 1);
 			return true;
 		}
@@ -12097,8 +12084,8 @@ public class Client extends GameEngine implements RSClient {
 	}
 
 	public void addObject(int objectId, int x, int y, int face, int type, int height) {
-		int mX = region_x - 6;
-		int mY = region_y - 6;
+		int mX = currentRegionX - 6;
+		int mY = currentRegionY - 6;
 		int x2 = x - (mX * 8);
 		int y2 = y - (mY * 8);
 		int i15 = 40 >> 2;
@@ -15526,7 +15513,7 @@ public class Client extends GameEngine implements RSClient {
 			}
 		} catch (Exception _ex) {
 			Signlink.reporterror("glfc_ex " + localPlayer.x + "," + localPlayer.y + "," + anInt1014 + "," + anInt1015 + ","
-					+ region_x + "," + region_y + "," + baseX + "," + baseY);
+					+ currentRegionX + "," + currentRegionY + "," + baseX + "," + baseY);
 			throw new RuntimeException("eek");
 		}
 	}
@@ -15865,8 +15852,8 @@ public class Client extends GameEngine implements RSClient {
 
 		int x = baseX + (localPlayer.x - 6 >> 7);
 		int y = baseY + (localPlayer.y - 6 >> 7);
-		int mapx = region_x; // map region x
-		int mapy = region_y; // map region y
+		int mapx = currentRegionX; // map region x
+		int mapy = currentRegionY; // map region y
 		if (clientData) {
 			Runtime runtime = Runtime.getRuntime();
 			int j1 = (int) ((runtime.totalMemory() - runtime.freeMemory()) / 1024L);
@@ -20335,10 +20322,10 @@ public class Client extends GameEngine implements RSClient {
 			var2 = var1.readUShortA();
 			var3 = var1.readUShort();
 			int regionCount = 0;
-			region_x = var2;
-			region_y = var3;
-			for (int x = (region_x - 6) / 8; x <= (region_x + 6) / 8; x++) {
-				for (int y = (region_y - 6) / 8; y <= (region_y + 6) / 8; y++)
+			currentRegionX = var2;
+			currentRegionY = var3;
+			for (int x = (currentRegionX - 6) / 8; x <= (currentRegionX + 6) / 8; x++) {
+				for (int y = (currentRegionY - 6) / 8; y <= (currentRegionY + 6) / 8; y++)
 					regionCount++;
 			}
 
@@ -20365,8 +20352,8 @@ public class Client extends GameEngine implements RSClient {
 			System.out.println("READ DYNAMIC");
 			var2 = var1.readUnsignedShort();
 			var3 = var1.readUShortA();
-			region_x = var2;
-			region_y = var3;
+			currentRegionX = var2;
+			currentRegionY = var3;
 			boolean var15 = true;
 
 			var1.initBitAccess();
@@ -20458,8 +20445,8 @@ public class Client extends GameEngine implements RSClient {
 
 		setGameState(GameState.LOADING);
 		drawLoadingMessage("Loading - please wait.");
-		baseX = (region_x - 6) * 8;
-		baseY = (region_y - 6) * 8;
+		baseX = (currentRegionX - 6) * 8;
+		baseY = (currentRegionY - 6) * 8;
 
 		int dx = baseX - previousAbsoluteX;
 		int dy = baseY - previousAbsoluteY;
@@ -21179,8 +21166,8 @@ public class Client extends GameEngine implements RSClient {
 	private final int[] myAppearance;
 	private int mouseInvInterfaceIndex;
 	private int lastActiveInvInterface;
-	public int region_x;
-	public int region_y;
+	public int currentRegionX;
+	public int currentRegionY;
 	private int mapIconAmount;
 	private int[] anIntArray1072;
 	private int[] anIntArray1073;
@@ -23375,8 +23362,8 @@ public class Client extends GameEngine implements RSClient {
 	}
 
 	public RuneLiteObject createRuneLiteObject() {
-		int x = this.region_x;
-		int y = this.region_y;
+		int x = this.currentRegionX;
+		int y = this.currentRegionY;
 		x = x * 128 + 64;
 		y = y * 128 + 64;
 		RuneLiteObjectImpl runeLiteObject = new RuneLiteObjectImpl(this.plane, cycle, 0, 369, getCenterHeight(this.plane, y, x), y, x);
@@ -24248,7 +24235,7 @@ public class Client extends GameEngine implements RSClient {
 
 	@Override
 	public void setSceneLowMemory(boolean lowMemory) {
-		MapRegion.low_detail = lowMemory;
+		MapRegion.lowMem = lowMemory;
 		SceneGraph.lowMem = lowMemory;
 		Rasterizer3D.lowMem = lowMemory;
 		((TextureProvider)Rasterizer3D.textureLoader).setTextureSize(Rasterizer3D.lowMem ? 64 : 128);

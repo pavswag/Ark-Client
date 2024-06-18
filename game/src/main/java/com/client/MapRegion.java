@@ -6,38 +6,33 @@ import com.client.definitions.FloorUnderlayDefinition;
 import com.client.definitions.ObjectDefinition;
 import com.client.utilities.ChunkUtil;
 import com.client.utilities.ObjectKeyUtil;
+import net.runelite.api.Scene;
 
 public final class MapRegion {
 
-	private final int[] blended_hue;
-	private final int[] blended_saturation;
-	private final int[] blended_lightness;
-	private final int[] blended_hue_factor;
-	private final int[] blend_direction_tracker;
+	private final int[] hues;
+	private final int[] saturations;
+	private final int[] luminances;
+	private final int[] chromas;
+	private final int[] anIntArray128;
 	private final int[][][] tileHeights;
 	public short[][][] overlays;
-	public static int plane;
-	private final byte[][][] tile_shadow_intensity;
-	private final int[][][] tile_culling_bitsets;
+	public static int anInt131;
+	private final byte[][][] shading;
+	private final int[][][] anIntArrayArrayArray135;
 	public byte[][][] overlayTypes;
-	private static final int decor_x_offsets[] = { 1, 0, -1, 0 };
-	private final int[][] tile_light_intensity;
-	private static final int wall_orientations[] = { 16, 32, 64, 128 };
+	private static final int COSINE_VERTICES[] = { 1, 0, -1, 0 };
+	private final int[][] tileLighting;
+	private static final int anIntArray140[] = { 16, 32, 64, 128 };
 	public short[][][] underlays;
-	private static final int decor_y_offsets[] = { 0, -1, 0, 1 };
-	public static final int[] field713 = new int[]{1, 0, -1, 0};
-	public static final int[] field725 = new int[]{0, -1, 0, 1};
-	public static final int[] field715 = new int[]{1, -1, -1, 1};
-	public static final int[] field721 = new int[]{1, 2, 4, 8};
-	public static final int[] field722 = new int[]{16, 32, 64, 128};
-	public static final int[] field726 = new int[]{-1, -1, 1, 1};
-	public static int min_plane = 99;
-	private final int region_size_x;
-	private final int region_size_y;
+	private static final int SINE_VERTICIES[] = { 0, -1, 0, 1 };
+	public static int maximumPlane = 99;
+	private final int regionSizeX;
+	private final int regionSizeY;
 	public static int ExpandedRegionSize = 0;
 	private final byte[][][] overlayOrientations;
-	private final byte[][][] tile_flags;
-	public static boolean low_detail = false;
+	private final byte[][][] tileFlags;
+	public static boolean lowMem = false;
 	private static final int anIntArray152[] = { 1, 2, 4, 8 };
 
 	private static final int BLOCKED_TILE = 1;
@@ -45,23 +40,23 @@ public final class MapRegion {
 	private static final int FORCE_LOWEST_PLANE = 8;
 
 	public MapRegion(byte fileFlags[][][], int tileHeights[][][]) {
-		min_plane = 99;
-		region_size_x = 104;
-		region_size_y = 104;
+		maximumPlane = 99;
+		regionSizeX = 104;
+		regionSizeY = 104;
 		this.tileHeights = tileHeights;
-		this.tile_flags = fileFlags;
-		underlays = new short[4][region_size_x][region_size_y];
-		overlays = new short[4][region_size_x][region_size_y];
-		overlayTypes = new byte[4][region_size_x][region_size_y];
-		overlayOrientations = new byte[4][region_size_x][region_size_y];
-		tile_culling_bitsets = new int[4][region_size_x + 1][region_size_y + 1];
-		tile_shadow_intensity = new byte[4][region_size_x + 1][region_size_y + 1];
-		tile_light_intensity = new int[region_size_x + 1][region_size_y + 1];
-		blended_hue = new int[region_size_y];
-		blended_saturation = new int[region_size_y];
-		blended_lightness = new int[region_size_y];
-		blended_hue_factor = new int[region_size_y];
-		blend_direction_tracker = new int[region_size_y];
+		this.tileFlags = fileFlags;
+		underlays = new short[4][regionSizeX][regionSizeY];
+		overlays = new short[4][regionSizeX][regionSizeY];
+		overlayTypes = new byte[4][regionSizeX][regionSizeY];
+		overlayOrientations = new byte[4][regionSizeX][regionSizeY];
+		anIntArrayArrayArray135 = new int[4][regionSizeX + 1][regionSizeY + 1];
+		shading = new byte[4][regionSizeX + 1][regionSizeY + 1];
+		tileLighting = new int[regionSizeX + 1][regionSizeY + 1];
+		hues = new int[regionSizeY];
+		saturations = new int[regionSizeY];
+		luminances = new int[regionSizeY];
+		chromas = new int[regionSizeY];
+		anIntArray128 = new int[regionSizeY];
 	}
 
 	private static int calculateNoise(int x, int y) {
@@ -80,9 +75,9 @@ public final class MapRegion {
 			for (int z = 0; z < 4; z++) {
 				for (int x = 0; x < 104; x++) {
 					for (int y = 0; y < 104; y++)
-						if ((tile_flags[z][x][y] & BLOCKED_TILE) == 1) {
+						if ((tileFlags[z][x][y] & BLOCKED_TILE) == 1) {
 							int plane = z;
-							if ((tile_flags[1][x][y] & BRIDGE_TILE) == 2)
+							if ((tileFlags[1][x][y] & BRIDGE_TILE) == 2)
 								plane--;
 							if (plane >= 0)
 								maps[plane].block(x, y);
@@ -93,7 +88,7 @@ public final class MapRegion {
 			}
 			int mapLight = Client.instance.isHdMinimapEnabled() ? 52 : 96;
 			for (int z = 0; z < 4; z++) {
-				byte shading[][] = this.tile_shadow_intensity[z];
+				byte shading[][] = this.shading[z];
 
 				char diffusion = '\u0300';
 				byte lightX = -50;
@@ -101,8 +96,8 @@ public final class MapRegion {
 				byte lightZ = -50;
 				int light = (int) Math.sqrt(lightX * lightX + lightY * lightY + lightZ * lightZ);
 				int l3 = diffusion * light >> 8;
-				for (int j4 = 1; j4 < region_size_y - 1; j4++) {
-					for (int j5 = 1; j5 < region_size_x - 1; j5++) {
+				for (int j4 = 1; j4 < regionSizeY - 1; j4++) {
+					for (int j5 = 1; j5 < regionSizeX - 1; j5++) {
 						int k6 = tileHeights[z][j5 + 1][j4] - tileHeights[z][j5 - 1][j4];
 						int l7 = tileHeights[z][j5][j4 + 1] - tileHeights[z][j5][j4 - 1];
 						int j9 = (int) Math.sqrt(k6 * k6 + 0x10000 + l7 * l7);
@@ -111,73 +106,73 @@ public final class MapRegion {
 						int j15 = (l7 << 8) / j9;
 						int j16 = 96 + (lightX * k12 + lightY * l13 + lightZ * j15) / l3;
 						int j17 = (shading[j5 - 1][j4] >> 2) + (shading[j5 + 1][j4] >> 3) + (shading[j5][j4 - 1] >> 2) + (shading[j5][j4 + 1] >> 3) + (shading[j5][j4] >> 1);
-						tile_light_intensity[j5][j4] = j16 - j17;
+						tileLighting[j5][j4] = j16 - j17;
 					}
 
 				}
 
-				for (int k5 = 0; k5 < region_size_y; k5++) {
-					blended_hue[k5] = 0;
-					blended_saturation[k5] = 0;
-					blended_lightness[k5] = 0;
-					blended_hue_factor[k5] = 0;
-					blend_direction_tracker[k5] = 0;
+				for (int k5 = 0; k5 < regionSizeY; k5++) {
+					hues[k5] = 0;
+					saturations[k5] = 0;
+					luminances[k5] = 0;
+					chromas[k5] = 0;
+					anIntArray128[k5] = 0;
 				}
 
-				for (int l6 = -5; l6 < region_size_x + 5; l6++) {
-					for (int i8 = 0; i8 < region_size_y; i8++) {
+				for (int l6 = -5; l6 < regionSizeX + 5; l6++) {
+					for (int i8 = 0; i8 < regionSizeY; i8++) {
 						int k9 = l6 + 5;
-						if (k9 >= 0 && k9 < region_size_x) {
+						if (k9 >= 0 && k9 < regionSizeX) {
 							int l12 = underlays[z][k9][i8] & 0x7FFF;
 							if (l12 > 0) {
 								FloorUnderlayDefinition flo = FloorUnderlayDefinition.lookup(l12 - 1);
-								blended_hue[i8] += flo.getHue();
-								blended_saturation[i8] += flo.getSaturation();
-								blended_lightness[i8] += flo.getLightness();
-								blended_hue_factor[i8] += flo.getHueMultiplier();
-								blend_direction_tracker[i8]++;
+								hues[i8] += flo.getHue();
+								saturations[i8] += flo.getSaturation();
+								luminances[i8] += flo.getLightness();
+								chromas[i8] += flo.getHueMultiplier();
+								anIntArray128[i8]++;
 							}
 						}
 						int i13 = l6 - 5;
-						if (i13 >= 0 && i13 < region_size_x) {
+						if (i13 >= 0 && i13 < regionSizeX) {
 							int i14 = underlays[z][i13][i8] & 0x7FFF;
 							if (i14 > 0) {
 								FloorUnderlayDefinition flo_1 = FloorUnderlayDefinition.lookup(i14 - 1);
-								blended_hue[i8] -= flo_1.getHue();
-								blended_saturation[i8] -= flo_1.getSaturation();
-								blended_lightness[i8] -= flo_1.getLightness();
-								blended_hue_factor[i8] -= flo_1.getHueMultiplier();
-								blend_direction_tracker[i8]--;
+								hues[i8] -= flo_1.getHue();
+								saturations[i8] -= flo_1.getSaturation();
+								luminances[i8] -= flo_1.getLightness();
+								chromas[i8] -= flo_1.getHueMultiplier();
+								anIntArray128[i8]--;
 							}
 						}
 					}
 
-					if (l6 >= 1 && l6 < region_size_x - 1) {
+					if (l6 >= 1 && l6 < regionSizeX - 1) {
 						int l9 = 0;
 						int j13 = 0;
 						int j14 = 0;
 						int k15 = 0;
 						int k16 = 0;
-						for (int k17 = -5; k17 < region_size_y + 5; k17++) {
+						for (int k17 = -5; k17 < regionSizeY + 5; k17++) {
 							int j18 = k17 + 5;
-							if (j18 >= 0 && j18 < region_size_y) {
-								l9 += blended_hue[j18];
-								j13 += blended_saturation[j18];
-								j14 += blended_lightness[j18];
-								k15 += blended_hue_factor[j18];
-								k16 += blend_direction_tracker[j18];
+							if (j18 >= 0 && j18 < regionSizeY) {
+								l9 += hues[j18];
+								j13 += saturations[j18];
+								j14 += luminances[j18];
+								k15 += chromas[j18];
+								k16 += anIntArray128[j18];
 							}
 							int k18 = k17 - 5;
-							if (k18 >= 0 && k18 < region_size_y) {
-								l9 -= blended_hue[k18];
-								j13 -= blended_saturation[k18];
-								j14 -= blended_lightness[k18];
-								k15 -= blended_hue_factor[k18];
-								k16 -= blend_direction_tracker[k18];
+							if (k18 >= 0 && k18 < regionSizeY) {
+								l9 -= hues[k18];
+								j13 -= saturations[k18];
+								j14 -= luminances[k18];
+								k15 -= chromas[k18];
+								k16 -= anIntArray128[k18];
 							}
-							if (k17 >= 1 && k17 < region_size_y - 1 && (!low_detail || (tile_flags[0][l6][k17] & 2) != 0 || (tile_flags[z][l6][k17] & 0x10) == 0 && getCollisionPlane(k17, z, l6) == plane)) {
-								if (z < min_plane)
-									min_plane = z;
+							if (k17 >= 1 && k17 < regionSizeY - 1 && (!lowMem || (tileFlags[0][l6][k17] & 2) != 0 || (tileFlags[z][l6][k17] & 0x10) == 0 && getCollisionPlane(k17, z, l6) == anInt131)) {
+								if (z < maximumPlane)
+									maximumPlane = z;
 								int l18 = underlays[z][l6][k17] & 0x7FFF;
 								int i19 = overlays[z][l6][k17] & 0x7FFF;
 								if (l18 > 0 || i19 > 0) {
@@ -185,10 +180,10 @@ public final class MapRegion {
 									int k19 = tileHeights[z][l6 + 1][k17];
 									int l19 = tileHeights[z][l6 + 1][k17 + 1];
 									int i20 = tileHeights[z][l6][k17 + 1];
-									int j20 = tile_light_intensity[l6][k17];
-									int k20 = tile_light_intensity[l6 + 1][k17];
-									int l20 = tile_light_intensity[l6 + 1][k17 + 1];
-									int i21 = tile_light_intensity[l6][k17 + 1];
+									int j20 = tileLighting[l6][k17];
+									int k20 = tileLighting[l6 + 1][k17];
+									int l20 = tileLighting[l6 + 1][k17 + 1];
+									int i21 = tileLighting[l6][k17 + 1];
 									int j21 = -1;
 									int k21 = -1;
 									if (l18 > 0) {
@@ -211,7 +206,7 @@ public final class MapRegion {
 										if (i19 > 0 && !FloorOverlayDefinition.lookup(i19 - 1).hideUnderlay)
 											flag = false;
 										if (flag && j19 == k19 && j19 == l19 && j19 == i20)
-											tile_culling_bitsets[z][l6][k17] |= 2340;
+											anIntArrayArrayArray135[z][l6][k17] |= 2340;
 									}
 									int i22 = 0;
 
@@ -285,17 +280,17 @@ public final class MapRegion {
 					}
 				}
 
-				for (int j8 = 1; j8 < region_size_y - 1; j8++) {
-					for (int i10 = 1; i10 < region_size_x - 1; i10++)
+				for (int j8 = 1; j8 < regionSizeY - 1; j8++) {
+					for (int i10 = 1; i10 < regionSizeX - 1; i10++)
 						scene.setTileLogicHeight(z, i10, j8, getCollisionPlane(j8, z, i10));
 
 				}
 			}
 
 			scene.shadeModels(-50, -10, -50);
-			for (int j1 = 0; j1 < region_size_x; j1++) {
-				for (int l1 = 0; l1 < region_size_y; l1++)
-					if ((tile_flags[1][j1][l1] & 2) == 2)
+			for (int j1 = 0; j1 < regionSizeX; j1++) {
+				for (int l1 = 0; l1 < regionSizeY; l1++)
+					if ((tileFlags[1][j1][l1] & 2) == 2)
 						scene.applyBridgeMode(l1, j1);
 
 			}
@@ -310,27 +305,27 @@ public final class MapRegion {
 					k2 <<= 3;
 				}
 				for (int i3 = 0; i3 <= l2; i3++) {
-					for (int k3 = 0; k3 <= region_size_y; k3++) {
-						for (int i4 = 0; i4 <= region_size_x; i4++) {
-							if ((tile_culling_bitsets[i3][i4][k3] & i2) != 0) {
+					for (int k3 = 0; k3 <= regionSizeY; k3++) {
+						for (int i4 = 0; i4 <= regionSizeX; i4++) {
+							if ((anIntArrayArrayArray135[i3][i4][k3] & i2) != 0) {
 								int k4 = k3;
 								int l5 = k3;
 								int i7 = i3;
 								int k8 = i3;
-								for (; k4 > 0 && (tile_culling_bitsets[i3][i4][k4 - 1] & i2) != 0; k4--)
+								for (; k4 > 0 && (anIntArrayArrayArray135[i3][i4][k4 - 1] & i2) != 0; k4--)
 									;
-								for (; l5 < region_size_y && (tile_culling_bitsets[i3][i4][l5 + 1] & i2) != 0; l5++)
+								for (; l5 < regionSizeY && (anIntArrayArrayArray135[i3][i4][l5 + 1] & i2) != 0; l5++)
 									;
 								label0: for (; i7 > 0; i7--) {
 									for (int j10 = k4; j10 <= l5; j10++)
-										if ((tile_culling_bitsets[i7 - 1][i4][j10] & i2) == 0)
+										if ((anIntArrayArrayArray135[i7 - 1][i4][j10] & i2) == 0)
 											break label0;
 
 								}
 
 								label1: for (; k8 < l2; k8++) {
 									for (int k10 = k4; k10 <= l5; k10++)
-										if ((tile_culling_bitsets[k8 + 1][i4][k10] & i2) == 0)
+										if ((anIntArrayArrayArray135[k8 + 1][i4][k10] & i2) == 0)
 											break label1;
 
 								}
@@ -343,31 +338,31 @@ public final class MapRegion {
 									SceneGraph.createNewSceneCluster(l2, i4 * 128, l15, i4 * 128, l5 * 128 + 128, k14, k4 * 128, 1);
 									for (int l16 = i7; l16 <= k8; l16++) {
 										for (int l17 = k4; l17 <= l5; l17++)
-											tile_culling_bitsets[l16][i4][l17] &= ~i2;
+											anIntArrayArrayArray135[l16][i4][l17] &= ~i2;
 
 									}
 
 								}
 							}
-							if ((tile_culling_bitsets[i3][i4][k3] & j2) != 0) {
+							if ((anIntArrayArrayArray135[i3][i4][k3] & j2) != 0) {
 								int l4 = i4;
 								int i6 = i4;
 								int j7 = i3;
 								int l8 = i3;
-								for (; l4 > 0 && (tile_culling_bitsets[i3][l4 - 1][k3] & j2) != 0; l4--)
+								for (; l4 > 0 && (anIntArrayArrayArray135[i3][l4 - 1][k3] & j2) != 0; l4--)
 									;
-								for (; i6 < region_size_x && (tile_culling_bitsets[i3][i6 + 1][k3] & j2) != 0; i6++)
+								for (; i6 < regionSizeX && (anIntArrayArrayArray135[i3][i6 + 1][k3] & j2) != 0; i6++)
 									;
 								label2: for (; j7 > 0; j7--) {
 									for (int i11 = l4; i11 <= i6; i11++)
-										if ((tile_culling_bitsets[j7 - 1][i11][k3] & j2) == 0)
+										if ((anIntArrayArrayArray135[j7 - 1][i11][k3] & j2) == 0)
 											break label2;
 
 								}
 
 								label3: for (; l8 < l2; l8++) {
 									for (int j11 = l4; j11 <= i6; j11++)
-										if ((tile_culling_bitsets[l8 + 1][j11][k3] & j2) == 0)
+										if ((anIntArrayArrayArray135[l8 + 1][j11][k3] & j2) == 0)
 											break label3;
 
 								}
@@ -380,31 +375,31 @@ public final class MapRegion {
 									SceneGraph.createNewSceneCluster(l2, l4 * 128, i16, i6 * 128 + 128, k3 * 128, l14, k3 * 128, 2);
 									for (int i17 = j7; i17 <= l8; i17++) {
 										for (int i18 = l4; i18 <= i6; i18++)
-											tile_culling_bitsets[i17][i18][k3] &= ~j2;
+											anIntArrayArrayArray135[i17][i18][k3] &= ~j2;
 
 									}
 
 								}
 							}
-							if ((tile_culling_bitsets[i3][i4][k3] & k2) != 0) {
+							if ((anIntArrayArrayArray135[i3][i4][k3] & k2) != 0) {
 								int i5 = i4;
 								int j6 = i4;
 								int k7 = k3;
 								int i9 = k3;
-								for (; k7 > 0 && (tile_culling_bitsets[i3][i4][k7 - 1] & k2) != 0; k7--)
+								for (; k7 > 0 && (anIntArrayArrayArray135[i3][i4][k7 - 1] & k2) != 0; k7--)
 									;
-								for (; i9 < region_size_y && (tile_culling_bitsets[i3][i4][i9 + 1] & k2) != 0; i9++)
+								for (; i9 < regionSizeY && (anIntArrayArrayArray135[i3][i4][i9 + 1] & k2) != 0; i9++)
 									;
 								label4: for (; i5 > 0; i5--) {
 									for (int l11 = k7; l11 <= i9; l11++)
-										if ((tile_culling_bitsets[i3][i5 - 1][l11] & k2) == 0)
+										if ((anIntArrayArrayArray135[i3][i5 - 1][l11] & k2) == 0)
 											break label4;
 
 								}
 
-								label5: for (; j6 < region_size_x; j6++) {
+								label5: for (; j6 < regionSizeX; j6++) {
 									for (int i12 = k7; i12 <= i9; i12++)
-										if ((tile_culling_bitsets[i3][j6 + 1][i12] & k2) == 0)
+										if ((anIntArrayArrayArray135[i3][j6 + 1][i12] & k2) == 0)
 											break label5;
 
 								}
@@ -414,7 +409,7 @@ public final class MapRegion {
 									SceneGraph.createNewSceneCluster(l2, i5 * 128, j12, j6 * 128 + 128, i9 * 128 + 128, j12, k7 * 128, 4);
 									for (int k13 = i5; k13 <= j6; k13++) {
 										for (int i15 = k7; i15 <= i9; i15++)
-											tile_culling_bitsets[i3][k13][i15] &= ~k2;
+											anIntArrayArrayArray135[i3][k13][i15] &= ~k2;
 
 									}
 
@@ -488,18 +483,18 @@ public final class MapRegion {
 	public final void initiateVertexHeights(int yOffset, int yLength, int xLength, int xOffset) {
 		for (int y = yOffset; y <= yOffset + yLength; y++) {
 			for (int x = xOffset; x <= xOffset + xLength; x++) {
-				if (x >= 0 && x < region_size_x && y >= 0 && y < region_size_y) {
-					tile_shadow_intensity[0][x][y] = 127;
+				if (x >= 0 && x < regionSizeX && y >= 0 && y < regionSizeY) {
+					shading[0][x][y] = 127;
 					if (x == xOffset && x > 0) {
 						tileHeights[0][x][y] = tileHeights[0][x - 1][y];
 					}
-					if (x == xOffset + xLength && x < region_size_x - 1) {
+					if (x == xOffset + xLength && x < regionSizeX - 1) {
 						tileHeights[0][x][y] = tileHeights[0][x + 1][y];
 					}
 					if (y == yOffset && y > 0) {
 						tileHeights[0][x][y] = tileHeights[0][x][y - 1];
 					}
-					if (y == yOffset + yLength && y < region_size_y - 1) {
+					if (y == yOffset + yLength && y < regionSizeY - 1) {
 						tileHeights[0][x][y] = tileHeights[0][x][y + 1];
 					}
 				}
@@ -508,20 +503,20 @@ public final class MapRegion {
 	}
 
 	private void renderObject(int var2, SceneGraph scene, CollisionMap class11, int type, int var0, int var1, int objectId, int face) {
-		if (low_detail && (tile_flags[0][var1][var2] & BRIDGE_TILE) == 0) {
-			if ((tile_flags[var0][var1][var2] & 0x10) != 0) {
+		if (lowMem && (tileFlags[0][var1][var2] & BRIDGE_TILE) == 0) {
+			if ((tileFlags[var0][var1][var2] & 0x10) != 0) {
 				return;
 			}
 
-			if (getCollisionPlane(var2, var0, var1) != plane) {
+			if (getCollisionPlane(var2, var0, var1) != anInt131) {
 				return;
 			}
 		}
-		if (var0 < min_plane) {
-			min_plane = var0;
+		if (var0 < maximumPlane) {
+			maximumPlane = var0;
 		}
-		int mX = Client.instance.region_x - 6;
-		int mY = Client.instance.region_y - 6;
+		int mX = Client.instance.currentRegionX - 6;
+		int mY = Client.instance.currentRegionY - 6;
 
 		ObjectDefinition definition = ObjectDefinition.lookup(objectId);
 		int center;
@@ -576,7 +571,7 @@ public final class MapRegion {
 		key |= (long) objectId << 32;
 		byte config = (byte) ((face << 6) + type);
 		if (type == 22) {
-			if (low_detail && definition.interactive == 0 && !definition.obstructive) {
+			if (lowMem && definition.interactive == 0 && !definition.obstructive) {
 				return;
 			}
 			Object obj;
@@ -624,8 +619,8 @@ public final class MapRegion {
 					}
 					for (int j5 = 0; j5 <= j4; j5++) {
 						for (int k5 = 0; k5 <= l4; k5++) {
-							if (var24 > tile_shadow_intensity[var0][var1 + j5][var2 + k5]) {
-								tile_shadow_intensity[var0][var1 + j5][var2 + k5] = (byte) var24;
+							if (var24 > shading[var0][var1 + j5][var2 + k5]) {
+								shading[var0][var1 + j5][var2 + k5] = (byte) var24;
 							}
 						}
 
@@ -646,7 +641,7 @@ public final class MapRegion {
 			}
 			scene.addTiledObject(key, config, mean, 1, ((Renderable) (obj2)), 1, var0, 0, var2, var1);
 			if (type <= 17 && type != 13 && var0 > 0) {
-				tile_culling_bitsets[var0][var1][var2] |= 0x924;
+				anIntArrayArrayArray135[var0][var1][var2] |= 0x924;
 			}
 			if (definition.solid == 1 && class11 != null) {
 				class11.method212(definition.impenetrable, definition.sizeX, definition.sizeY,
@@ -665,35 +660,35 @@ public final class MapRegion {
 					0, var0);
 			if (face == 0) {
 				if (definition.clipped) {
-					tile_shadow_intensity[var0][var1][var2] = 50;
-					tile_shadow_intensity[var0][var1][var2 + 1] = 50;
+					shading[var0][var1][var2] = 50;
+					shading[var0][var1][var2 + 1] = 50;
 				}
 				if (definition.modelClipped) {
-					tile_culling_bitsets[var0][var1][var2] |= 0x249;
+					anIntArrayArrayArray135[var0][var1][var2] |= 0x249;
 				}
 			} else if (face == 1) {
 				if (definition.clipped) {
-					tile_shadow_intensity[var0][var1][var2 + 1] = 50;
-					tile_shadow_intensity[var0][var1 + 1][var2 + 1] = 50;
+					shading[var0][var1][var2 + 1] = 50;
+					shading[var0][var1 + 1][var2 + 1] = 50;
 				}
 				if (definition.modelClipped) {
-					tile_culling_bitsets[var0][var1][var2 + 1] |= 0x492;
+					anIntArrayArrayArray135[var0][var1][var2 + 1] |= 0x492;
 				}
 			} else if (face == 2) {
 				if (definition.clipped) {
-					tile_shadow_intensity[var0][var1 + 1][var2] = 50;
-					tile_shadow_intensity[var0][var1 + 1][var2 + 1] = 50;
+					shading[var0][var1 + 1][var2] = 50;
+					shading[var0][var1 + 1][var2 + 1] = 50;
 				}
 				if (definition.modelClipped) {
-					tile_culling_bitsets[var0][var1 + 1][var2] |= 0x249;
+					anIntArrayArrayArray135[var0][var1 + 1][var2] |= 0x249;
 				}
 			} else {
 				if (definition.clipped) {
-					tile_shadow_intensity[var0][var1][var2] = 50;
-					tile_shadow_intensity[var0][var1 + 1][var2] = 50;
+					shading[var0][var1][var2] = 50;
+					shading[var0][var1 + 1][var2] = 50;
 				}
 				if (definition.modelClipped) {
-					tile_culling_bitsets[var0][var1][var2] |= 0x492;
+					anIntArrayArrayArray135[var0][var1][var2] |= 0x492;
 				}
 			}
 			if (definition.solid == 1 && class11 != null) {
@@ -711,17 +706,17 @@ public final class MapRegion {
 			} else {
 				obj4 = new SceneObject(objectId, face, 1, var0, var1, var2, definition.animation, definition.randomAnimStart);
 			}
-			scene.addWallObject(wall_orientations[face], ((Renderable) (obj4)), key, var2, config, var1, null, mean,
+			scene.addWallObject(anIntArray140[face], ((Renderable) (obj4)), key, var2, config, var1, null, mean,
 					0, var0);
 			if (definition.clipped) {
 				if (face == 0) {
-					tile_shadow_intensity[var0][var1][var2 + 1] = 50;
+					shading[var0][var1][var2 + 1] = 50;
 				} else if (face == 1) {
-					tile_shadow_intensity[var0][var1 + 1][var2 + 1] = 50;
+					shading[var0][var1 + 1][var2 + 1] = 50;
 				} else if (face == 2) {
-					tile_shadow_intensity[var0][var1 + 1][var2] = 50;
+					shading[var0][var1 + 1][var2] = 50;
 				} else {
-					tile_shadow_intensity[var0][var1][var2] = 50;
+					shading[var0][var1][var2] = 50;
 				}
 			}
 			if (definition.solid == 1 && class11 != null) {
@@ -744,17 +739,17 @@ public final class MapRegion {
 					((Renderable) (obj12)), mean, anIntArray152[i3], var0);
 			if (definition.modelClipped) {
 				if (face == 0) {
-					tile_culling_bitsets[var0][var1][var2] |= 0x249;
-					tile_culling_bitsets[var0][var1][var2 + 1] |= 0x492;
+					anIntArrayArrayArray135[var0][var1][var2] |= 0x249;
+					anIntArrayArrayArray135[var0][var1][var2 + 1] |= 0x492;
 				} else if (face == 1) {
-					tile_culling_bitsets[var0][var1][var2 + 1] |= 0x492;
-					tile_culling_bitsets[var0][var1 + 1][var2] |= 0x249;
+					anIntArrayArrayArray135[var0][var1][var2 + 1] |= 0x492;
+					anIntArrayArrayArray135[var0][var1 + 1][var2] |= 0x249;
 				} else if (face == 2) {
-					tile_culling_bitsets[var0][var1 + 1][var2] |= 0x249;
-					tile_culling_bitsets[var0][var1][var2] |= 0x492;
+					anIntArrayArrayArray135[var0][var1 + 1][var2] |= 0x249;
+					anIntArrayArrayArray135[var0][var1][var2] |= 0x492;
 				} else {
-					tile_culling_bitsets[var0][var1][var2] |= 0x492;
-					tile_culling_bitsets[var0][var1][var2] |= 0x249;
+					anIntArrayArrayArray135[var0][var1][var2] |= 0x492;
+					anIntArrayArrayArray135[var0][var1][var2] |= 0x249;
 				}
 			}
 			if (definition.solid == 1 && class11 != null) {
@@ -772,17 +767,17 @@ public final class MapRegion {
 			} else {
 				obj5 = new SceneObject(objectId, face, 3, var0, var1, var2, definition.animation, definition.randomAnimStart);
 			}
-			scene.addWallObject(wall_orientations[face], ((Renderable) (obj5)), key, var2, config, var1, null, mean,
+			scene.addWallObject(anIntArray140[face], ((Renderable) (obj5)), key, var2, config, var1, null, mean,
 					0, var0);
 			if (definition.clipped) {
 				if (face == 0) {
-					tile_shadow_intensity[var0][var1][var2 + 1] = 50;
+					shading[var0][var1][var2 + 1] = 50;
 				} else if (face == 1) {
-					tile_shadow_intensity[var0][var1 + 1][var2 + 1] = 50;
+					shading[var0][var1 + 1][var2 + 1] = 50;
 				} else if (face == 2) {
-					tile_shadow_intensity[var0][var1 + 1][var2] = 50;
+					shading[var0][var1 + 1][var2] = 50;
 				} else {
-					tile_shadow_intensity[var0][var1][var2] = 50;
+					shading[var0][var1][var2] = 50;
 				}
 			}
 			if (definition.solid == 1 && class11 != null) {
@@ -828,8 +823,8 @@ public final class MapRegion {
 			} else {
 				obj13 = new SceneObject(objectId, 0, 4, var0, var1, var2, definition.animation, definition.randomAnimStart);
 			}
-			scene.addWallDecoration(key, var2, face * 512, var0, decor_x_offsets[face] * i4, mean,
-					((Renderable) (obj13)), var1, config, decor_y_offsets[face] * i4, anIntArray152[face]);
+			scene.addWallDecoration(key, var2, face * 512, var0, COSINE_VERTICES[face] * i4, mean,
+					((Renderable) (obj13)), var1, config, SINE_VERTICIES[face] * i4, anIntArray152[face]);
 			return;
 		}
 		if (type == 6) {
@@ -906,176 +901,101 @@ public final class MapRegion {
 		return class46.modelTypeCached(j);
 	}
 
-	public final void method3968(byte[] arg0, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7, CollisionMap[] arg8) {
-		int var11;
-		for(int var10 = 0; var10 < 8; ++var10) {
-			for(var11 = 0; var11 < 8; ++var11) {
-				if (arg2 + var10 > 0 && var10 + arg2 < 103 && var11 + arg3 > 0 && arg3 + var11 < 103) {
-					arg8[arg1].adjacencies[var10 + arg2][var11 + arg3] &= -16777217;
-				}
-			}
+	public final void loadMapChunk(int i, int j, CollisionMap clips[], int l, int i1, byte abyte0[], int j1, int k1, int l1) {
+		for (int i2 = 0; i2 < 8; i2++) { //Add clipping
+			for (int j2 = 0; j2 < 8; j2++)
+				if (l + i2 > 0 && l + i2 < 103 && l1 + j2 > 0 && l1 + j2 < 103)
+					clips[k1].adjacencies[l + i2][l1 + j2] &= 0xfeffffff;
+
 		}
 
-		Buffer var21 = new Buffer(arg0);
+		Buffer stream = new Buffer(abyte0);
+		for (int l2 = 0; l2 < 4; l2++) {
+			for (int i3 = 0; i3 < 64; i3++) {
+				for (int j3 = 0; j3 < 64; j3++)
+					if (l2 == i && i3 >= i1 && i3 < i1 + 8 && j3 >= j1 && j3 < j1 + 8)
+						loadTile(l1 + ChunkUtil.getRotatedMapChunkY(j3 & 7, j, i3 & 7), 0, stream, l + ChunkUtil.getRotatedMapChunkX(j, j3 & 7, i3 & 7), k1, j, 0);
+					else
+						loadTile(-1, 0, stream, -1, 0, 0, 0);
 
-		for(var11 = 0; var11 < 4; ++var11) {
-			for(int var12 = 0; var12 < 64; ++var12) {
-				for(int var13 = 0; var13 < 64; ++var13) {
-					if (var11 == arg4 && var12 >= arg5 && var12 < 8 + arg5 && var13 >= arg6 && var13 < 8 + arg6) {
-						int var18 = var12 & 7;
-						int var19 = var13 & 7;
-						int var20 = arg7 & 3;
-						int var17;
-						if (0 == var20) {
-							var17 = var18;
-						} else if (1 == var20) {
-							var17 = var19;
-						} else if (2 == var20) {
-							var17 = 7 - var18;
-						} else {
-							var17 = 7 - var19;
-						}
+			}
 
-						loadMapTerrain(var21, arg1, var17 + arg2, arg3 + method3498(var12 & 7, var13 & 7, arg7), 0, 0, arg7);
+		}
+
+	}
+
+	public final void method180(byte abyte0[], int i, int j, int k, int l, CollisionMap aclass11[]) {
+		for (int i1 = 0; i1 < 4; i1++) {
+			for (int j1 = 0; j1 < 64; j1++) {
+				for (int k1 = 0; k1 < 64; k1++)
+					if (j + j1 > 0 && j + j1 < 103 && i + k1 > 0 && i + k1 < 103)
+						aclass11[i1].adjacencies[j + j1][i + k1] &= 0xfeffffff;
+			}
+
+		}
+
+		Buffer stream = new Buffer(abyte0);
+		for (int l1 = 0; l1 < 4; l1++) {
+			for (int i2 = 0; i2 < 64; i2++) {
+				for (int j2 = 0; j2 < 64; j2++)
+					loadTile(j2 + i, l, stream, i2 + j, l1, 0, k);
+
+			}
+
+		}
+	}
+
+	private void loadTile(int x, int y, Buffer buffer, int z, int level, int overlayRotation, int seed) {
+		if (level >= 0 && level < 4 && z >= 0 && z < 104 && x >= 0 && x < 104) {
+			tileFlags[level][z][x] = 0;
+			while(true) {
+				int opcode = buffer.readUShort();
+				if (opcode == 0) {
+					if (level == 0) {
+						tileHeights[0][z][x] = -calculateVertexHeight(0xe3b7b + z + seed, 0x87cce + x + y) * 8;
 					} else {
-						loadMapTerrain(var21, 0, -1, -1, 0, 0, 0);
-					}
-				}
-			}
-		}
-	}
-	public static int method3498(int arg0, int arg1, int arg2) {
-		int var3 = arg2 & 3;
-		if (var3 == 0) {
-			return arg1;
-		} else if (1 == var3) {
-			return 7 - arg0;
-		} else {
-			return 2 == var3 ? 7 - arg1 : arg0;
-		}
-	}
-	public final void decode_map_terrain(byte[] arg0, int arg1, int arg2, int arg3, int arg4, CollisionMap[] arg5) {
-		int var8;
-		int var9;
-		for (int var7 = 0; var7 < 4; ++var7) {
-			for (var8 = 0; var8 < 64; ++var8) {
-				for (var9 = 0; var9 < 64; ++var9) {
-					if (var8 + arg1 > 0 && var8 + arg1 < 103 && arg2 + var9 > 0 && arg2 + var9 < 103) {
-						arg5[var7].adjacencies[var8 + arg1][var9 + arg2] &= -16777217;
-					}
-				}
-			}
-		}
-
-		Buffer var11 = new Buffer(arg0);
-
-		for (var8 = 0; var8 < 4; ++var8) {
-			for (var9 = 0; var9 < 64; ++var9) {
-				for (int var10 = 0; var10 < 64; ++var10) {
-					loadMapTerrain(var11, var8, arg1 + var9, arg2 + var10, arg3, arg4, 0);
-				}
-			}
-		}
-
-	}
-	static final int method431(int arg0, int arg1) {
-		int var3 = method4727(arg0 - 1, arg1 - 1) + method4727(arg0 + 1, arg1 - 1) + method4727(arg0 - 1, arg1 + 1) + method4727(1 + arg0, arg1 + 1);
-		int var4 = method4727(arg0 - 1, arg1) + method4727(1 + arg0, arg1) + method4727(arg0, arg1 - 1) + method4727(arg0, arg1 + 1);
-		int var5 = method4727(arg0, arg1);
-		return var5 / 4 + var4 / 8 + var3 / 16;
-	}
-
-	static final int method4727(int arg0, int arg1) {
-		int var3 = arg0 + arg1 * 57;
-		int var5 = var3 << 13 ^ var3;
-		int var4 = 1376312589 + (var5 * var5 * 15731 + 789221) * var5 & 2147483647;
-		return var4 >> 19 & 255;
-	}
-	public static final int method6259(int arg0, int arg1, int arg2) {
-		int var4 = arg0 / arg2;
-		int var5 = arg0 & arg2 - 1;
-		int var6 = arg1 / arg2;
-		int var7 = arg1 & arg2 - 1;
-		int var8 = method431(var4, var6);
-		int var9 = method431(1 + var4, var6);
-		int var10 = method431(var4, 1 + var6);
-		int var11 = method431(1 + var4, 1 + var6);
-		int var13 = 65536 - Rasterizer3D.COSINE[1024 * var5 / arg2] >> 1;
-		int var12 = (var8 * (65536 - var13) >> 16) + (var9 * var13 >> 16);
-		int var15 = 65536 - Rasterizer3D.COSINE[var5 * 1024 / arg2] >> 1;
-		int var14 = ((65536 - var15) * var10 >> 16) + (var11 * var15 >> 16);
-		int var17 = 65536 - Rasterizer3D.COSINE[var7 * 1024 / arg2] >> 1;
-		return (var14 * var17 >> 16) + (var12 * (65536 - var17) >> 16);
-	}
-	public static final int method53(int arg0, int arg1) {
-		int var3 = method6259(arg0 + 45365, arg1 + 91923, 4) - 128 + (method6259(10294 + arg0, 37821 + arg1, 2) - 128 >> 1) + (method6259(arg0, arg1, 1) - 128 >> 2);
-		var3 = 35 + (int)((double)var3 * 0.3D);
-		if (var3 < 10) {
-			var3 = 10;
-		} else if (var3 > 60) {
-			var3 = 60;
-		}
-
-		return var3;
-	}
-	public final void loadMapTerrain(Buffer arg0, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6) {
-		int var8;
-		if (arg2 >= 0 && arg2 < 104 && arg3 >= 0 && arg3 < 104) {
-			tile_flags[arg1][arg2][arg3] = 0;
-
-			while (true) {
-				var8 = arg0.readUnsignedShort();
-				if (0 == var8) {
-					if (0 == arg1) {
-						tileHeights[0][arg2][arg3] = -method53(932731 + arg2 + arg4, arg5 + 556238 + arg3) * 8;
-					} else {
-						tileHeights[arg1][arg2][arg3] = tileHeights[arg1 - 1][arg2][arg3] - 240;
+						tileHeights[level][z][x] = tileHeights[level - 1][z][x] - 240;
 					}
 					break;
 				}
 
-				if (1 == var8) {
-					int var9 = arg0.readUnsignedByte();
-					if (var9 == 1) {
-						var9 = 0;
+				if (opcode == 1) {
+					int height = buffer.readUnsignedByte();
+					if (height == 1) {
+						height = 0;
 					}
 
-					if (arg1 == 0) {
-						tileHeights[0][arg2][arg3] = -var9 * 8;
+					if (level == 0) {
+						tileHeights[0][z][x] = -height * 8;
 					} else {
-						tileHeights[arg1][arg2][arg3] = tileHeights[arg1 - 1][arg2][arg3] - 8 * var9;
+						tileHeights[level][z][x] = tileHeights[level - 1][z][x] - height * 8;
 					}
 					break;
 				}
 
-				if (var8 <= 49) {
-					overlays[arg1][arg2][arg3] = (short) arg0.readShort();
-					overlayTypes[arg1][arg2][arg3] = (byte) ((var8 - 2) / 4);
-					overlayOrientations[arg1][arg2][arg3] = (byte) (arg6 + (var8 - 2) & 3);
-				} else if (var8 <= 81) {
-					tile_flags[arg1][arg2][arg3] = (byte) (var8 - 49);
+				if (opcode <= 49) {
+					overlays[level][z][x] = (short)buffer.readShort();
+					overlayTypes[level][z][x] = (byte)((opcode - 2) / 4);
+					overlayOrientations[level][z][x] = (byte)(opcode - 2 + overlayRotation & 3);
+				} else if (opcode <= 81) {
+					tileFlags[level][z][x] = (byte)(opcode - 49);
 				} else {
-					underlays[arg1][arg2][arg3] = (short) (var8 - 81);
+					underlays[level][z][x] = (short)(opcode - 81);
 				}
 			}
 		} else {
 			while (true) {
-				var8 = arg0.readUnsignedShort();
-				if (var8 == 0) {
+				int opcode = buffer.readUShort();
+				if (opcode == 0) {
 					break;
-				}
-
-				if (1 == var8) {
-					arg0.readUnsignedByte();
+				} else if (opcode == 1) {
+					buffer.readUnsignedByte();
 					break;
-				}
-
-				if (var8 <= 49) {
-					arg0.readShort();
+				} else if (opcode <= 49) {
+					buffer.readShort();
 				}
 			}
 		}
-
 	}
 	/**
 	 * Returns the plane that actually contains the collision flag, to adjust for objects such as bridges. TODO better
@@ -1087,10 +1007,10 @@ public final class MapRegion {
 	 * @return The correct z coordinate.
 	 */
 	private int getCollisionPlane(int y, int z, int x) {
-		if ((tile_flags[z][x][y] & FORCE_LOWEST_PLANE) != 0) {
+		if ((tileFlags[z][x][y] & FORCE_LOWEST_PLANE) != 0) {
 			return 0;
 		}
-		if (z > 0 && (tile_flags[1][x][y] & BRIDGE_TILE) != 0) {
+		if (z > 0 && (tileFlags[1][x][y] & BRIDGE_TILE) != 0) {
 			return z - 1;
 		} else {
 			return z;
@@ -1124,7 +1044,7 @@ public final class MapRegion {
 						int k4 = k1 + ChunkUtil.method158(l2 & 7, class46.sizeY, j1, class46.sizeX, i3 & 7);
 						if (j4 > 0 && k4 > 0 && j4 < 103 && k4 < 103) {
 							int l4 = j3;
-							if ((tile_flags[1][j4][k4] & 2) == 2)
+							if ((tileFlags[1][j4][k4] & 2) == 2)
 								l4--;
 							CollisionMap class11 = null;
 							if (l4 >= 0)
@@ -1335,7 +1255,7 @@ public final class MapRegion {
 			} else {
 				obj4 = new SceneObject(objectId, face, 1, l, x, y, definition.animation, definition.randomAnimStart);
 			}
-			sceneGraph.addWallObject(wall_orientations[face], ((Renderable) (obj4)), key, y, byte1, x, null,
+			sceneGraph.addWallObject(anIntArray140[face], ((Renderable) (obj4)), key, y, byte1, x, null,
 					mean, 0, z);
 			if (definition.solid == 1) {
 				collisionMap.method211(y, face, x, type, definition.impenetrable);
@@ -1367,7 +1287,7 @@ public final class MapRegion {
 			} else {
 				obj5 =  new SceneObject(objectId, face, 3, l, x, y, definition.animation, definition.randomAnimStart);
 			}
-			sceneGraph.addWallObject(wall_orientations[face], ((Renderable) (obj5)), key, y, byte1, x, null,
+			sceneGraph.addWallObject(anIntArray140[face], ((Renderable) (obj5)), key, y, byte1, x, null,
 					mean, 0, z);
 			if (definition.solid == 1) {
 				collisionMap.method211(y, face, x, type, definition.impenetrable);
@@ -1411,8 +1331,8 @@ public final class MapRegion {
 			} else {
 				obj13 = new SceneObject(objectId, 0, 4, l, x, y, definition.animation, definition.randomAnimStart);
 			}
-			sceneGraph.addWallDecoration(key, y, face * 512, z, decor_x_offsets[face] * j4, mean,
-					((Renderable) (obj13)), x, byte1, decor_y_offsets[face] * j4, anIntArray152[face]);
+			sceneGraph.addWallDecoration(key, y, face * 512, z, COSINE_VERTICES[face] * j4, mean,
+					((Renderable) (obj13)), x, byte1, SINE_VERTICIES[face] * j4, anIntArray152[face]);
 			return;
 		}
 		if (type == 6) {
@@ -1508,7 +1428,7 @@ public final class MapRegion {
 					if (var13 > 0 && var14 > 0 && var13 < 103 && var14 < 103) {
 						ObjectDefinition def = ObjectDefinition.lookup(var5);
 						System.out.println("LOOKUP");
-						if (var12 != 22 || !low_detail || def.interactive != 0 || def.obstructive) {
+						if (var12 != 22 || !lowMem || def.interactive != 0 || def.obstructive) {
 							if (!def.needsModelFiles()) {
 								++Client.objectsLoaded;
 								var3 = false;
@@ -1603,7 +1523,7 @@ public final class MapRegion {
 					int var30 = var3 + method5908(var16 & 7, var15 & 7, var7, var21.sizeX, var21.sizeY, var20);
 					if (var29 > 0 && var30 > 0 && var29 < 103 && var30 < 103) {
 						int var31 = var1;
-						if ((tile_flags[1][var29][var30] & 2) == 2) {
+						if ((tileFlags[1][var29][var30] & 2) == 2) {
 							var31 = var1 - 1;
 						}
 
@@ -1649,7 +1569,7 @@ public final class MapRegion {
 					int y = l1 + j;
 					if (x > 0 && y > 0 && x < 103 && y < 103 && z >= 0 && z < 4) {
 						int l3 = z;
-						if ((tile_flags[1][x][y] & 2) == 2)
+						if ((tileFlags[1][x][y] & 2) == 2)
 							l3--;
 						CollisionMap collisionMap = null;
 						if (l3 >= 0)
