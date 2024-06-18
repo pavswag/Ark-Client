@@ -1482,7 +1482,7 @@ public final class MapRegion {
 
 		label57:
 		while (true) {
-			int var6 = var4.get_unsignedsmart_byteorshort_increments();
+			int var6 = var4.readUnsignedIntSmartShortCompat();
 			if (var6 == 0) {
 				return var3;
 			}
@@ -1519,7 +1519,7 @@ public final class MapRegion {
 					}
 				}
 
-				var9 = var4.get_unsignedsmart_byteorshort();
+				var9 = var4.readUSmart();
 				if (var9 == 0) {
 					break;
 				}
