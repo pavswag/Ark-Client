@@ -1427,7 +1427,7 @@ public final class MapRegion {
 					int var14 = var10 + var2;
 					if (var13 > 0 && var14 > 0 && var13 < 103 && var14 < 103) {
 						ObjectDefinition def = ObjectDefinition.lookup(var5);
-						System.out.println("LOOKUP");
+//						System.out.println("LOOKUP");
 						if (var12 != 22 || !lowMem || def.interactive != 0 || def.obstructive) {
 							if (!def.needsModelFiles()) {
 								++Client.objectsLoaded;

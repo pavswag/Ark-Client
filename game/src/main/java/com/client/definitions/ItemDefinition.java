@@ -5108,8 +5108,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 try {
                     itemDef.decode(new Buffer(data));
                 } catch (Exception e) {
-                    System.out.println("Error coding item " + itemId + "[" + itemDef.name != null ? itemDef.name : "Null" + "]");
-                    e.printStackTrace();
+                    /*System.out.println("Error coding item " + itemId + "[" + itemDef.name != null ? itemDef.name : "Null" + "]");
+                    e.printStackTrace();*/
                 }
                 if (itemDef.noteTemplateId != -1 && itemDef.noteLinkId != -1) {
                     itemDef.toNote();
