@@ -1810,6 +1810,7 @@ public class Client extends GameEngine implements RSClient {
 				if (plane != lastKnownPlane) {
 					lastKnownPlane = plane;
 					renderMapScene(plane);
+					stream.createFrame(121);
 				}
 				setGameState(GameState.LOGGED_IN);
 				StaticSound.playPcmPlayers();
@@ -8172,6 +8173,12 @@ public class Client extends GameEngine implements RSClient {
 		if (name == null) {
 			pushMessage("You haven't received any messages to which you can reply.", 0, "");
 			return;
+		}
+		for(int crown = 0; crown <= 95; crown++) {
+			String crownString = "<rank=" + crown + ">";
+			if(name.contains(crownString)) {
+				name = name.replaceAll(crownString, "");
+			}
 		}
 		for(int crown = 0; crown <= 95; crown++) {
 			String crownString = "@cr" + crown + "@";
@@ -16295,7 +16302,7 @@ public class Client extends GameEngine implements RSClient {
 	private boolean isRemoveRoofs(Player localPlayer) {
 		int x = localPlayer.getAbsoluteX();
 		int y = localPlayer.getAbsoluteY();
-		
+
 		if (x >= 3008 && x <= 3071 && y >= 4480 && y <= 4543) {
 			return false;//Roof override for skilling boss area
 		}
@@ -20516,6 +20523,7 @@ public class Client extends GameEngine implements RSClient {
 			destY -= dy;
 		}
 		inCutScene = false;
+		setGameState(GameState.LOGGED_IN);
 	}
 
 	public static final int INTERFACE_ID = 47000;
@@ -22055,6 +22063,7 @@ public class Client extends GameEngine implements RSClient {
 		if (state != gameState) {
 			if (gameState == 30) {
 				//Updates Widget does not have on 317
+
 			}
 
 			if (gameState == 0) {
