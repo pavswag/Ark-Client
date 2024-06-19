@@ -20523,7 +20523,6 @@ public class Client extends GameEngine implements RSClient {
 			destY -= dy;
 		}
 		inCutScene = false;
-		setGameState(GameState.LOGGED_IN);
 	}
 
 	public static final int INTERFACE_ID = 47000;
