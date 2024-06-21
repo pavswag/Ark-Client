@@ -8604,7 +8604,7 @@ public class Client extends GameEngine implements RSClient {
 							DefinitionDumper.dumpLocalPlayerImage();
 						}
 						if(inputString.equalsIgnoreCase("::test")) {
-							openInterfaceID = 24230;
+							openInterfaceID = 580;
 						}
 						if (inputString.startsWith("::findanim")) {
 							int itemId = Integer.parseInt(inputString.split(" ")[1]);
@@ -16177,10 +16177,18 @@ public class Client extends GameEngine implements RSClient {
 	private boolean processWidgetAnimations(int tick, int interfaceId) {
 		boolean flag1 = false;
 		RSInterface class9 = interfaceCache.get(interfaceId);
+		if(class9 == null) {
+			System.out.println("processWidgetAnimations attempting to get null widget [" + interfaceId + "]");
+			return false;
+		}
 		for (int k = 0; k < class9.children.length; k++) {
 			if (class9.children[k] == -1)
 				break;
 			RSInterface class9_1 = interfaceCache.get(class9.children[k]);
+			if(class9_1 == null) {
+				System.out.println("processWidgetAnimations attempting to get null child [" + interfaceId + "][" + class9.children[k] + "]");
+				continue;
+			}
 			if (class9_1.type == 1)
 				flag1 |= processWidgetAnimations(tick, class9_1.id);
 			if (class9_1.type == 6 && (class9_1.disabledAnimationId != -1 || class9_1.enabledAnimationId != -1)) {

@@ -3010,5 +3010,10 @@
   "3008": "interfaces/deals/sprite 32",
   "3009": "interfaces/deals/sprite 33",
   "3010": "interfaces/deals/sprite 34",
-  "3011": "interfaces/deals/sprite 35"
+  "3011": "interfaces/deals/sprite 35",
+  "3012": "votereminder/sprite 0",
+  "3013": "votereminder/sprite 1",
+  "3014": "votereminder/sprite 2",
+  "3015": "votereminder/sprite 3",
+  "3016": "votereminder/sprite 4"
 }
