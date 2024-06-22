@@ -165,7 +165,7 @@ public final class Interfaces extends RSInterface {
 		offerDealsInterface(defaultTextDrawingAreas);
 		ruinousPowerBook(defaultTextDrawingAreas);
 		youtubeInterface(defaultTextDrawingAreas);
-		smsManager(defaultTextDrawingAreas);
+		SmsManager.smsManager(defaultTextDrawingAreas);
 		referralSystem(defaultTextDrawingAreas);
 
 		VoteManagementInterface.voteManagement(defaultTextDrawingAreas);

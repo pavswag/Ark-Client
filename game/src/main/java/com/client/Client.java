@@ -2274,7 +2274,7 @@ public class Client extends GameEngine implements RSClient {
 					if (class9_1.atActionType == RSInterface.OPTION_OK && mouseX >= drawX && mouseY >= drawY && mouseX < drawX + class9_1.width
 							&& mouseY < drawY + class9_1.height) {
 						boolean flag = false;
-						if (class9_1.contentType != 0)
+						if (class9_1.contentType != 0 || class9_1.disableButtonActions)
 							flag = buildFriendsListMenu(class9_1);
 						if (!flag) {
 							MenuEntry menuEntry = (MenuEntry) new MenuEntry(menuActionRow)
@@ -8608,7 +8608,7 @@ public class Client extends GameEngine implements RSClient {
 							DefinitionDumper.dumpLocalPlayerImage();
 						}
 						if(inputString.equalsIgnoreCase("::test")) {
-							openInterfaceID = 580;
+							openInterfaceID = 24960;
 						}
 						if (inputString.startsWith("::findanim")) {
 							int itemId = Integer.parseInt(inputString.split(" ")[1]);
@@ -13826,6 +13826,8 @@ public class Client extends GameEngine implements RSClient {
 
 	private boolean buildFriendsListMenu(RSInterface class9) {
 		int i = class9.contentType;
+		if(class9.disableButtonActions)
+			return true;
 		if (i >= 1 && i <= 200 || i >= 701 && i <= 900) {
 			if (i >= 801)
 				i -= 701;
@@ -21444,36 +21446,38 @@ public class Client extends GameEngine implements RSClient {
 	}
 	private void drawInputField(RSInterface child, int xPosition, int yPosition, int width, int height) {
 		int clickX = saveClickX, clickY = saveClickY;
-		Sprite[] inputSprites = this.inputSprites;
-		int xModification = 0, yModification = 0;
-		for (int row = 0; row < width; row += 12) {
-			if (row + 12 > width)
-				row -= 12 - (width - row);
-			inputSprites[6].drawSprite(xModification <= 0 ? xPosition + row : xPosition + xModification, yPosition);
-			for (int collumn = 0; collumn < height; collumn += 12) {
-				if (collumn + 12 > height)
-					collumn -= 12 - (height - collumn);
-				inputSprites[6].drawSprite(xPosition + row,
-						yModification <= 0 ? yPosition + collumn : yPosition + yModification);
+		if(!child.disableFieldBackground) {
+			Sprite[] inputSprites = this.inputSprites;
+			int xModification = 0, yModification = 0;
+			for (int row = 0; row < width; row += 12) {
+				if (row + 12 > width)
+					row -= 12 - (width - row);
+				inputSprites[6].drawSprite(xModification <= 0 ? xPosition + row : xPosition + xModification, yPosition);
+				for (int collumn = 0; collumn < height; collumn += 12) {
+					if (collumn + 12 > height)
+						collumn -= 12 - (height - collumn);
+					inputSprites[6].drawSprite(xPosition + row,
+							yModification <= 0 ? yPosition + collumn : yPosition + yModification);
+				}
 			}
-		}
-		inputSprites[1].drawSprite(xPosition, yPosition);
-		inputSprites[0].drawSprite(xPosition, yPosition + height - 8);
-		inputSprites[2].drawSprite(xPosition + width - 4, yPosition);
-		inputSprites[3].drawSprite(xPosition + width - 4, yPosition + height - 8);
-		xModification = 0;
-		yModification = 0;
-		for (int top = 0; top < width; top += 8) {
-			if (top + 8 > width)
-				top -= 8 - (width - top);
-			inputSprites[5].drawSprite(xPosition + top, yPosition);
-			inputSprites[5].drawSprite(xPosition + top, yPosition + height - 1);
-		}
-		for (int bottom = 0; bottom < height; bottom += 8) {
-			if (bottom + 8 > height)
-				bottom -= 8 - (height - bottom);
-			inputSprites[4].drawSprite(xPosition, yPosition + bottom);
-			inputSprites[4].drawSprite(xPosition + width - 1, yPosition + bottom);
+			inputSprites[1].drawSprite(xPosition, yPosition);
+			inputSprites[0].drawSprite(xPosition, yPosition + height - 8);
+			inputSprites[2].drawSprite(xPosition + width - 4, yPosition);
+			inputSprites[3].drawSprite(xPosition + width - 4, yPosition + height - 8);
+			xModification = 0;
+			yModification = 0;
+			for (int top = 0; top < width; top += 8) {
+				if (top + 8 > width)
+					top -= 8 - (width - top);
+				inputSprites[5].drawSprite(xPosition + top, yPosition);
+				inputSprites[5].drawSprite(xPosition + top, yPosition + height - 1);
+			}
+			for (int bottom = 0; bottom < height; bottom += 8) {
+				if (bottom + 8 > height)
+					bottom -= 8 - (height - bottom);
+				inputSprites[4].drawSprite(xPosition, yPosition + bottom);
+				inputSprites[4].drawSprite(xPosition + width - 1, yPosition + bottom);
+			}
 		}
 		String message = child.message;
 		if (aTextDrawingArea_1271.getTextWidth(message) > child.width - 10)

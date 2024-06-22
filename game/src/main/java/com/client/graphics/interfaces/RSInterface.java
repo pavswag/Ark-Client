@@ -57,6 +57,8 @@ public class RSInterface implements RSWidget {
 	public int textYAlignment;
 	public int textLineHeight;
 
+	public boolean disableButtonActions = false;
+
 	public int getChildIndex() {
 		if(id != parentID) {
 			RSInterface parent = interfaceCache.get(parentID);
@@ -1488,7 +1490,9 @@ public class RSInterface implements RSWidget {
 		field.defaultInputFieldText = text;
 		field.updatesEveryInput = updatesEveryInput;
 		field.inputRegex = regex;
+		field.disableFieldBackground = false;
 	}
+	public boolean disableFieldBackground = false;
 
 	public static void addInputField(int identity, int characterLimit, int color, String text, int width, int height,
 			boolean asterisks, boolean updatesEveryInput) {
