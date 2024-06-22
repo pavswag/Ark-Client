@@ -1813,6 +1813,7 @@ public class Client extends GameEngine implements RSClient {
 					stream.createFrame(121);
 				}
 				setGameState(GameState.LOGGED_IN);
+				loadingType = -1;
 				StaticSound.playPcmPlayers();
 			}
 		}
@@ -4757,6 +4758,9 @@ public class Client extends GameEngine implements RSClient {
 				doCycleLoggedOut();
 			} else if (gameState == 25) {
 				loadRegion();
+
+				if(loadingType == -1)
+					setGameState(30);
 			}
 		} else {
 			doCycleLoggedOut();
