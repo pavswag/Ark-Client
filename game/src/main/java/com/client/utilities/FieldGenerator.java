@@ -12,8 +12,6 @@ import org.apache.commons.lang3.math.NumberUtils;
 public class FieldGenerator {
 
     private final Consumer<String> consumer;
-//    private final HashSet<String> standardSet = new HashSet<>();
-//    private final HashSet<String> osrsSet = new HashSet<>();
     private final HashSet<String> fields = new HashSet<>();
 
     public FieldGenerator(Consumer<String> consumer) {
@@ -59,12 +57,6 @@ public class FieldGenerator {
             if (NumberUtils.isNumber(name.substring(0, 1))) {
                 name = "_" + name;
             }
-//            if (osrs && standardSet.contains(name)) {
-//                return;
-//            }
-//
-//            HashSet<String> set = osrs ? osrsSet : standardSet;
-//            set.add(name);
 
             int i = 2;
             String field = name;
@@ -80,6 +72,4 @@ public class FieldGenerator {
             consumer.accept(generated);
         }
     }
-
-
 }
