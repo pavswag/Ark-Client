@@ -115,6 +115,7 @@ import net.runelite.api.Tile;
 import net.runelite.api.events.*;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetID;
+import net.runelite.client.events.ProfileChanged;
 import net.runelite.http.api.feed.FeedItem;
 import net.runelite.http.api.feed.FeedItemType;
 import net.runelite.mapping.Export;
@@ -19169,7 +19170,9 @@ public class Client extends GameEngine implements RSClient {
 					int j10 = inStream.method426();
 					if (l1 == 65535)
 						l1 = -1;
-					setSidebarInterface(j10, l1);
+					tabInterfaceIDs[j10] = l1;
+					needDrawTabArea = true;
+					tabAreaAltered = true;
 					incomingPacket = -1;
 					return true;
 
@@ -22078,7 +22081,7 @@ public class Client extends GameEngine implements RSClient {
 		if (state != gameState) {
 			if (gameState == 30) {
 				//Updates Widget does not have on 317
-
+				callbacks.post(new ProfileChanged());
 			}
 
 			if (gameState == 0) {
