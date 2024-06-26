@@ -643,13 +643,15 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 											PlayerRights rights = PlayerRights.forRightsValue(rankId);
 											if(rights != PlayerRights.PLAYER) {
 												Sprite sprite = rights.getSprite();
-												int iconModY = sprite.subHeight;
-												if (transparency == 256) {
-													sprite.drawAdvancedSprite(drawX, (drawY + ascent - iconModY));
-												} else {
-													sprite.drawAdvancedSprite(drawX, (drawY + ascent - iconModY), transparency);
+												if(sprite != null ) {
+													int iconModY = sprite.subHeight;
+													if (transparency == 256) {
+														sprite.drawAdvancedSprite(drawX, (drawY + ascent - iconModY));
+													} else {
+														sprite.drawAdvancedSprite(drawX, (drawY + ascent - iconModY), transparency);
+													}
+													drawX += sprite.subWidth;
 												}
-												drawX += sprite.subWidth;
 											}
 										}
 									} catch (Exception exception) {
