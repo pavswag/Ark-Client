@@ -638,12 +638,12 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 							} else if (effectString.startsWith(startRank)) {
 									try {
 										String sub = effectString.substring(5);
-										if (sub.length() > 0) {
+										if (!sub.isEmpty()) {
 											int rankId = Integer.parseInt(sub);
 											PlayerRights rights = PlayerRights.forRightsValue(rankId);
 											if(rights != PlayerRights.PLAYER) {
 												Sprite sprite = rights.getSprite();
-												if(sprite != null ) {
+												if (sprite != null) {
 													int iconModY = sprite.subHeight;
 													if (transparency == 256) {
 														sprite.drawAdvancedSprite(drawX, (drawY + ascent - iconModY));
