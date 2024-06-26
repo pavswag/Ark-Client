@@ -4759,9 +4759,6 @@ public class Client extends GameEngine implements RSClient {
 				doCycleLoggedOut();
 			} else if (gameState == 25) {
 				loadRegion();
-
-				if(loadingType == -1)
-					setGameState(30);
 			}
 		} else {
 			doCycleLoggedOut();
@@ -12567,6 +12564,14 @@ public class Client extends GameEngine implements RSClient {
 					drawLoadingText(90, "Loading maps - " + Js5List.maps.loadPercent() + "%");
 				} else {
 					drawLoadingText(90, "Loading maps");
+					Client.titleLoadingStage = 96;
+
+				}
+			} else if (Client.titleLoadingStage == 96) {
+				if (!Js5List.models.isFullyLoaded()) {
+					drawLoadingText(90, "Loading models - " + Js5List.models.loadPercent() + "%");
+				} else {
+					drawLoadingText(90, "Loading models");
 					Client.titleLoadingStage = 97;
 
 				}
