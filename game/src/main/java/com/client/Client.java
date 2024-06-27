@@ -19155,14 +19155,18 @@ public class Client extends GameEngine implements RSClient {
 					maximumLevels[skillId] = 1;
 					xpCounter += currentExp[skillId] - xp;
 					expAdded = currentExp[skillId] - xp;
-					try {
-						callbacks.post(new StatChanged(
-								Skill.valueOf(Skills.SKILL_NAMES_ORDER[skillId].toUpperCase()),
-								experience2,
-								currentLevel,
-								3
-						));
-					} catch (Exception exception) {}
+					if(skillId < 24) {
+						try {
+							callbacks.post(new StatChanged(
+									Skill.valueOf(Skills.SKILL_NAMES_ORDER[skillId].toUpperCase().replaceAll(" ", "_")),
+									experience2,
+									currentLevel,
+									3
+							));
+						} catch (Exception exception) {
+							exception.printStackTrace();
+						}
+					}
 					for (int k20 = 0; k20 < 98; k20++)
 						if (experience2 >= SKILL_EXPERIENCE[k20])
 							maximumLevels[skillId] = k20 + 2;

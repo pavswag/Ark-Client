@@ -554,7 +554,7 @@ public class XpTrackerPlugin extends Plugin
 				return VarPlayer.SLAYER_GOAL_START;
 			case FISHING:
 				return VarPlayer.FISHING_GOAL_START;
-			case RUNECRAFT:
+			case RUNECRAFTING:
 				return VarPlayer.RUNECRAFT_GOAL_START;
 			case HERBLORE:
 				return VarPlayer.HERBLORE_GOAL_START;
@@ -611,7 +611,7 @@ public class XpTrackerPlugin extends Plugin
 				return VarPlayer.SLAYER_GOAL_END;
 			case FISHING:
 				return VarPlayer.FISHING_GOAL_END;
-			case RUNECRAFT:
+			case RUNECRAFTING:
 				return VarPlayer.RUNECRAFT_GOAL_END;
 			case HERBLORE:
 				return VarPlayer.HERBLORE_GOAL_END;

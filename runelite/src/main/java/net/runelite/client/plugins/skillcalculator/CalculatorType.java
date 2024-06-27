@@ -44,7 +44,7 @@ enum CalculatorType {
     MAGIC(Skill.MAGIC, "skill_magic.json"),
     FLETCHING(Skill.FLETCHING, "skill_fletching.json"),
     WOODCUTTING(Skill.WOODCUTTING, "skill_woodcutting.json"),
-    RUNECRAFT(Skill.RUNECRAFT, "skill_runecraft.json"),
+    RUNECRAFT(Skill.RUNECRAFTING, "skill_runecraft.json"),
     FARMING(Skill.FARMING, "skill_farming.json"),
     HUNTER(Skill.HUNTER, "skill_hunter.json"),
     CONSTRUCTION(Skill.DEMON_HUNTER, "skill_demon_hunter.json"),

@@ -25,7 +25,7 @@ public enum Skill
 	THIEVING("Thieving"),
 	SLAYER("Slayer"),
 	FARMING("Farming"),
-	RUNECRAFT("Runecraft"),
+	RUNECRAFTING("Runecraft"),
 	HUNTER("Hunter"),
 	DEMON_HUNTER("Demon hunter"),
 	FORTUNE("Fortune"),

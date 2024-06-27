@@ -17,7 +17,7 @@ public final class Skills {
 	public static final String[] SKILL_NAMES_ORDER = { "Attack", "Defence", "Strength", "Hitpoints", "Ranged",
 			"Prayer", "Magic", "Cooking","Woodcutting","Fletching",
 			"Fishing","Firemaking","Crafting", "Smithing","Mining",
-			"Herblore","Agility","Theving","Slayer","Farming","Runecrafting",
+			"Herblore","Agility","Thieving","Slayer","Farming","Runecrafting",
 			"Hunter","Demon hunter", "Fortune"};
 
 	public static final boolean[] SKILLS_ENABLED = {
