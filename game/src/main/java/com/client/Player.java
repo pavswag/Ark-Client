@@ -132,6 +132,7 @@ public final class Player extends Entity implements RSPlayer {
 			}
 			int i1 = stream.readUnsignedByte();
 			equipment[j] = (k << 8) + i1;
+			System.out.println("[" + j + "] = " + equipment[j]);
 			if (j == 0 && equipment[0] == 65535) {
 				npcDefinition = NpcDefinition.lookup(stream.readUShort());
 				break;
@@ -260,7 +261,8 @@ public final class Player extends Entity implements RSPlayer {
 					k2 = j1;
 				if (k2 >= 256 && k2 < 512 && !IdentityKit.lookup(k2 - 256).method537())
 					flag = true;
-				if (k2 >= 512 && !ItemDefinition.lookup(k2 - 256).isEquippedModelCached(myGender))
+				int itemId = k2 - 256;
+				if (k2 >= 512 && !ItemDefinition.lookup(itemId == 22869 ? 22613 : itemId).isEquippedModelCached(myGender))
 					flag = true;
 			}
 
@@ -286,7 +288,7 @@ public final class Player extends Entity implements RSPlayer {
 						aclass30_sub2_sub4_sub6s[j2++] = model_3;
 				}
 				if (i3 >= 512) {
-					Model model_4 = ItemDefinition.lookup(i3 - 512)
+					Model model_4 = ItemDefinition.lookup(i3 - 512 == 22869 ? 22613 : i3 - 512)
 							.getEquippedModel(myGender);
 					if (model_4 != null) {
 						aclass30_sub2_sub4_sub6s[j2++] = model_4;
@@ -365,7 +367,7 @@ public final class Player extends Entity implements RSPlayer {
 			int j = equipment[i];
 			if (j >= 256 && j < 512 && !IdentityKit.lookup(j - 256).method539())
 				flag = true;
-			if (j >= 512 && !ItemDefinition.lookup(j - 512).isDialogueModelCached(myGender))
+			if (j >= 512 && !ItemDefinition.lookup(j - 512 == 22869 ? 22613 : j - 512).isDialogueModelCached(myGender))
 				flag = true;
 		}
 
@@ -381,7 +383,7 @@ public final class Player extends Entity implements RSPlayer {
 					aclass30_sub2_sub4_sub6s[k++] = model_1;
 			}
 			if (i1 >= 512) {
-				Model model_2 = ItemDefinition.lookup(i1 - 512).getChatEquipModel(myGender);
+				Model model_2 = ItemDefinition.lookup(i1 - 512 == 22869 ? 22613 : i1 - 512).getChatEquipModel(myGender);
 				if (model_2 != null)
 					aclass30_sub2_sub4_sub6s[k++] = model_2;
 			}
