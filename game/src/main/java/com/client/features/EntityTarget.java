@@ -56,8 +56,8 @@ public class EntityTarget {
 
 		if (state == 1) {
 			Npc npc = (Npc) target;
-			if (npc.desc != null) {
-				name = npc.desc.name;
+			if (npc.definition != null) {
+				name = npc.definition.name;
 			}
 		} else if (state == 2) {
 			name = ((Player) target).displayName;

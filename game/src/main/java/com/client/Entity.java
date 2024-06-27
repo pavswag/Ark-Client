@@ -22,7 +22,7 @@ public class Entity extends Renderable {
 	public int getAbsoluteX() {
 		int x = Client.baseX + (this.x - 6 >> 7);
 		if (this instanceof Npc) {
-			return x - ((Npc) this).desc.size / 2;
+			return x - ((Npc) this).definition.size / 2;
 		}
 		return x;
 	}
@@ -30,7 +30,7 @@ public class Entity extends Renderable {
 	public int getAbsoluteY() {
 		int y = Client.baseY + (this.y - 6 >> 7);
 		if (this instanceof Npc) {
-			return y - ((Npc) this).desc.size / 2;
+			return y - ((Npc) this).definition.size / 2;
 		}
 		return y;
 	}

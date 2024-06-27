@@ -1742,7 +1742,7 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             } else if(opcode == 123) {
                 buffer.readByte();
             } else if(opcode == 124) {
-                buffer.readUShort();//npc height
+                defaultHeight = buffer.readUShort();//npc height
             } else if (opcode == 249) {
                 BufferExt.readStringIntParameters(buffer);
             } else if (opcode == 106 || opcode == 118) {
@@ -1977,6 +1977,7 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
         isMinimapVisible = true;
         widthScale = 128;
         hasRenderPriority = false;
+        defaultHeight = -1;
     }
 
 
@@ -2065,6 +2066,7 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
     public boolean isInteractable;
     public int ambient;
     public int heightScale;
+    public int defaultHeight;
     public boolean isMinimapVisible;
     public int transforms[];
     public String description;

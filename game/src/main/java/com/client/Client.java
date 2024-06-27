@@ -2014,7 +2014,7 @@ public class Client extends GameEngine implements RSClient {
 		for (int j = 0; j < npcCount; j++) {
 			Npc npc = npcs[npcIndices[j]];
 			long k = 0x20000000L | (long) npcIndices[j] << 32;
-			if (npc == null || !npc.isVisible() || npc.desc.hasRenderPriority != flag)
+			if (npc == null || !npc.isVisible() || npc.definition.hasRenderPriority != flag)
 				continue;
 			int l = npc.x >> 7;
 			int i1 = npc.y >> 7;
@@ -2025,7 +2025,7 @@ public class Client extends GameEngine implements RSClient {
 					continue;
 				anIntArrayArray929[l][i1] = anInt1265;
 			}
-			if (!npc.desc.isInteractable)
+			if (!npc.definition.isInteractable)
 				k |= ~0x7fffffffffffffffL;
 			scene.addAnimableA(plane, npc.orientation, getCenterHeight(plane, npc.y, npc.x), k, npc.y,
 					(npc.anInt1540 - 1) * 64 + 60, npc.x, npc, npc.dynamic);
@@ -3080,7 +3080,7 @@ public class Client extends GameEngine implements RSClient {
 			if (npcs[l].anInt1537 != cycle) {
 				callbacks.post(new NpcDespawned(npcs[l]));
 				callbacks.post(new NpcChanged(npcs[l], npcs[l].getComposition()));
-				npcs[l].desc = null;
+				npcs[l].definition = null;
 				npcs[l] = null;
 			}
 		}
@@ -3276,7 +3276,7 @@ public class Client extends GameEngine implements RSClient {
 				if (hideothers && entity instanceof Player && entity != localPlayer)
 					continue;
 				if (entity instanceof Npc) {
-					NpcDefinition entityDef = ((Npc) entity).desc;
+					NpcDefinition entityDef = ((Npc) entity).definition;
 					if (entityDef.transforms != null)
 						entityDef = entityDef.method161();
 					if (entityDef == null)
@@ -3321,7 +3321,7 @@ public class Client extends GameEngine implements RSClient {
 					}//
 
 				} else {
-					NpcDefinition npcDefinition = ((Npc) entity).desc;
+					NpcDefinition npcDefinition = ((Npc) entity).definition;
 					if (npcDefinition.headIconSpriteIndex != null && npcDefinition.headIconArchiveIds != null) {
 						Sprite headIcon = null;
 						int[] headIconArchiveIds = npcDefinition.headIconArchiveIds;
@@ -3340,19 +3340,23 @@ public class Client extends GameEngine implements RSClient {
 							}
 						}
 						if(headIcon != null) {
-							npcScreenPos(entity, entity.defaultHeight + 15);
+							npcScreenPos(entity, ((Npc) entity).vmethod2708() + 15);
 							headIcon.drawSprite(spriteDrawX - 12, spriteDrawY - 30);
 						}
 					}
 					if (hintType == 1 && anInt1222 == npcIndices[j - playerCount] && cycle % 20 < 10) {
-						npcScreenPos(entity, entity.defaultHeight + 15);
+						npcScreenPos(entity, ((Npc) entity).vmethod2708() + 15);
 						if (spriteDrawX > -1)
 							headIconsHint[0].drawSprite(spriteDrawX - 12, spriteDrawY - 28);
 					}
 				}
 				if (entity.textSpoken != null && (j >= playerCount || publicChatMode == 0
 						|| publicChatMode == 3 || publicChatMode == 1 && isFriendOrSelf(((Player) entity).displayName))) {
-					npcScreenPos(entity, entity.defaultHeight);
+					if(entity instanceof Npc) {
+						npcScreenPos(entity, ((Npc) entity).vmethod2708() + 15);
+					} else {
+						npcScreenPos(entity, entity.defaultHeight + 15);
+					}
 					if (spriteDrawX > -1 && anInt974 < anInt975) {
 						anIntArray979[anInt974] = chatTextDrawingArea.method384(entity.textSpoken) / 2;
 						anIntArray978[anInt974] = chatTextDrawingArea.anInt1497;
@@ -3395,7 +3399,11 @@ public class Client extends GameEngine implements RSClient {
 					int spriteX;
 					int spriteY;
 					if (!entity.healthBars.method7356()) {
-						npcScreenPos(entity, entity.defaultHeight + 15);
+						if(entity instanceof Npc) {
+							npcScreenPos(entity, ((Npc) entity).vmethod2708() + 15);
+						} else {
+							npcScreenPos(entity, entity.defaultHeight + 15);
+						}
 
 						for (HealthBar var10 = (HealthBar)entity.healthBars.last(); var10 != null; var10 = (HealthBar)entity.healthBars.previous()) {
 							HealthBarUpdate var11 = var10.get(Client.cycle);
@@ -4717,17 +4725,17 @@ public class Client extends GameEngine implements RSClient {
 			int j1 = stream.readBits(1);
 			int npcId = stream.readBits(14);
 			npc.npcPetType = stream.readBits(2);
-			npc.desc = NpcDefinition.lookup(npcId);
+			npc.definition = NpcDefinition.lookup(npcId);
 			int k1 = stream.readBits(1);
 			if (k1 == 1)
 				anIntArray894[anInt893++] = k;
-			npc.anInt1540 = npc.desc.size;
-			npc.anInt1504 = npc.desc.rotation;
-			npc.walkAnimIndex = npc.desc.walkAnim;
-			npc.turn180AnimIndex = npc.desc.rotateBackAnim;
-			npc.turn90CWAnimIndex = npc.desc.walkLeftAnim;
-			npc.turn90CCWAnimIndex = npc.desc.walkRightAnim;
-			npc.seqStandID = npc.desc.standAnim;
+			npc.anInt1540 = npc.definition.size;
+			npc.anInt1504 = npc.definition.rotation;
+			npc.walkAnimIndex = npc.definition.walkAnim;
+			npc.turn180AnimIndex = npc.definition.rotateBackAnim;
+			npc.turn90CWAnimIndex = npc.definition.walkLeftAnim;
+			npc.turn90CCWAnimIndex = npc.definition.walkRightAnim;
+			npc.seqStandID = npc.definition.standAnim;
 			npc.anInt1538 = 0;
 			npc.anInt1539 = 0;
 			npc.setPos(localPlayer.pathX[0] + i1, localPlayer.pathY[0] + l, j1 == 1);
@@ -7214,7 +7222,7 @@ public class Client extends GameEngine implements RSClient {
 		if (l == 1025) {
 			Npc class30_sub2_sub4_sub1_sub1_5 = npcs[i1];
 			if (class30_sub2_sub4_sub1_sub1_5 != null) {
-				NpcDefinition entityDef = class30_sub2_sub4_sub1_sub1_5.desc;
+				NpcDefinition entityDef = class30_sub2_sub4_sub1_sub1_5.definition;
 				if (entityDef != null) {
 					if (entityDef.transforms != null)
 						entityDef = entityDef.method161();
@@ -7906,11 +7914,11 @@ public class Client extends GameEngine implements RSClient {
 			}
 			if (k1 == 1) {
 				Npc npc = npcs[l1];
-				if (npc.desc.size == 1 && (npc.x & 0x7f) == 64 && (npc.y & 0x7f) == 64) {
+				if (npc.definition.size == 1 && (npc.x & 0x7f) == 64 && (npc.y & 0x7f) == 64) {
 					for (int j2 = 0; j2 < npcCount; j2++) {
 						Npc npc2 = npcs[npcIndices[j2]];
-						if (npc2 != null && npc2 != npc && npc2.desc.size == 1 && npc2.x == npc.x && npc2.y == npc.y && npc2.isShowMenuOnHover()) {
-							buildAtNPCMenu(npc2.desc, npcIndices[j2], j1, i1);
+						if (npc2 != null && npc2 != npc && npc2.definition.size == 1 && npc2.x == npc.x && npc2.y == npc.y && npc2.isShowMenuOnHover()) {
+							buildAtNPCMenu(npc2.definition, npcIndices[j2], j1, i1);
 						}
 					}
 
@@ -7923,7 +7931,7 @@ public class Client extends GameEngine implements RSClient {
 
 				}
 				if (npc.isShowMenuOnHover()) {
-					buildAtNPCMenu(npc.desc, l1, j1, i1);
+					buildAtNPCMenu(npc.definition, l1, j1, i1);
 				}
 			}
 			if (k1 == 0) {
@@ -7931,10 +7939,10 @@ public class Client extends GameEngine implements RSClient {
 				if ((player.x & 0x7f) == 64 && (player.y & 0x7f) == 64) {
 					for (int k2 = 0; k2 < npcCount; k2++) {
 						Npc class30_sub2_sub4_sub1_sub1_2 = npcs[npcIndices[k2]];
-						if (class30_sub2_sub4_sub1_sub1_2 != null && class30_sub2_sub4_sub1_sub1_2.desc.size == 1
+						if (class30_sub2_sub4_sub1_sub1_2 != null && class30_sub2_sub4_sub1_sub1_2.definition.size == 1
 								&& class30_sub2_sub4_sub1_sub1_2.x == player.x
 								&& class30_sub2_sub4_sub1_sub1_2.y == player.y && class30_sub2_sub4_sub1_sub1_2.isShowMenuOnHover())
-							buildAtNPCMenu(class30_sub2_sub4_sub1_sub1_2.desc, npcIndices[k2], j1, i1);
+							buildAtNPCMenu(class30_sub2_sub4_sub1_sub1_2.definition, npcIndices[k2], j1, i1);
 					}
 
 					for (int i3 = 0; i3 < playerCount; i3++) {
@@ -11788,14 +11796,14 @@ public class Client extends GameEngine implements RSClient {
 			}
 			if ((l & 2) != 0) {
 				npc.hidden = stream.readUnsignedByte() == 1;
-				npc.desc = NpcDefinition.lookup(stream.method436());
-				npc.anInt1540 = npc.desc.size;
-				npc.anInt1504 = npc.desc.rotation;
-				npc.walkAnimIndex = npc.desc.walkAnim;
-				npc.turn180AnimIndex = npc.desc.rotateBackAnim;
-				npc.turn90CWAnimIndex = npc.desc.walkLeftAnim;
-				npc.turn90CCWAnimIndex = npc.desc.walkRightAnim;
-				npc.seqStandID = npc.desc.standAnim;
+				npc.definition = NpcDefinition.lookup(stream.method436());
+				npc.anInt1540 = npc.definition.size;
+				npc.anInt1504 = npc.definition.rotation;
+				npc.walkAnimIndex = npc.definition.walkAnim;
+				npc.turn180AnimIndex = npc.definition.rotateBackAnim;
+				npc.turn90CWAnimIndex = npc.definition.walkLeftAnim;
+				npc.turn90CCWAnimIndex = npc.definition.walkRightAnim;
+				npc.seqStandID = npc.definition.standAnim;
 			}
 			if ((l & 4) != 0) {
 				npc.anInt1538 = stream.method434();
@@ -16825,7 +16833,7 @@ public class Client extends GameEngine implements RSClient {
 			for (int i6 = 0; i6 < npcCount; i6++) {
 				Npc npc = npcs[npcIndices[i6]];
 				if (npc != null && npc.isVisible()) {
-					NpcDefinition entityDef = npc.desc;
+					NpcDefinition entityDef = npc.definition;
 					if (entityDef.transforms != null)
 						entityDef = entityDef.method161();
 					if (entityDef != null && entityDef.isMinimapVisible && entityDef.isInteractable) {

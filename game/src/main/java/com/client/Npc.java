@@ -7,7 +7,6 @@ import com.client.definitions.NpcDefinition;
 import com.client.definitions.SpotAnimation;
 import com.client.definitions.SequenceDefinition;
 import com.client.definitions.SeqFrame;
-import com.client.features.settings.Preferences;
 import net.runelite.api.*;
 import net.runelite.api.Point;
 import net.runelite.api.coords.LocalPoint;
@@ -37,9 +36,9 @@ public final class Npc extends Entity implements RSNPC {
 			}
 			// double anim
 			if (primarySeq.isSkeletalAnimation() || (secondarySeq != null && secondarySeq.isSkeletalAnimation())) {
-				return desc.getAnimatedModelSkeletal(primarySeq, secondarySeq, primarySeqFrame, secondarySeqFrame);
+				return definition.getAnimatedModelSkeletal(primarySeq, secondarySeq, primarySeqFrame, secondarySeqFrame);
 			}
-			return desc.getAnimatedModel(secondaryTransformID, primaryTransformID, SequenceDefinition.get(super.primarySeqID)
+			return definition.getAnimatedModel(secondaryTransformID, primaryTransformID, SequenceDefinition.get(super.primarySeqID)
 					.getMasks());
 		}
 
@@ -51,15 +50,19 @@ public final class Npc extends Entity implements RSNPC {
 		}
 
 		if (secondarySeq != null && secondarySeq.isSkeletalAnimation()) {
-			return desc.getAnimatedModelSkeletal(primarySeq, secondarySeq, primarySeqFrame, secondarySeqFrame);
+			return definition.getAnimatedModelSkeletal(primarySeq, secondarySeq, primarySeqFrame, secondarySeqFrame);
 		}
 
-		return desc.getAnimatedModel(-1, transformID, null);
+		return definition.getAnimatedModel(-1, transformID, null);
+	}
+
+	int vmethod2708() {
+		return this.definition.defaultHeight == -1 ? super.defaultHeight : this.definition.defaultHeight;
 	}
 
 	@Override
 	public Model getRotatedModel() {
-		if (desc == null)
+		if (definition == null)
 			return null;
 		Model model = getAnimatedModel();
 		if (model == null)
@@ -101,7 +104,7 @@ public final class Npc extends Entity implements RSNPC {
 				model = new Model(aclass30_sub2_sub4_sub6_1s);
 			}
 		}
-		if (desc.size == 1)
+		if (definition.size == 1)
 			model.singleTile = true;
 		return model;
 	}
@@ -109,13 +112,13 @@ public final class Npc extends Entity implements RSNPC {
 	@Override
 	public boolean isVisible() {
 		if (Client.hidepets) {
-			if (desc != null) {
+			if (definition != null) {
 				if (npcPetType == 2 || npcPetType == 1) {
 					return false;
 				}
 			}
 		}
-		return desc != null;
+		return definition != null;
 	}
 
 	Npc() {
@@ -127,12 +130,12 @@ public final class Npc extends Entity implements RSNPC {
 	}
 
 	public int npcPetType;
-	public NpcDefinition desc;
+	public NpcDefinition definition;
 	public boolean deadnpc;
 
 	@Override
 	public int getCombatLevel() {
-		return desc.getCombatLevel();
+		return definition.getCombatLevel();
 	}
 
 	@Nullable
@@ -149,7 +152,7 @@ public final class Npc extends Entity implements RSNPC {
 	public int headIcon = -1;
 
 	public int getHeadIcon() {
-		NpcDefinition definition = desc;
+		NpcDefinition definition = this.definition;
 		if (headIcon == -1) {
 			if (definition != null && definition.getHeadIconSpriteIndex() != null)
 				return definition.getHeadIconSpriteIndex()[0];
@@ -162,13 +165,13 @@ public final class Npc extends Entity implements RSNPC {
 
 	@Override
 	public int getId() {
-		return desc.getId();
+		return definition.getId();
 	}
 
 	@Nullable
 	@Override
 	public String getName() {
-		return desc.getName();
+		return definition.getName();
 	}
 
 	@Override
@@ -249,7 +252,7 @@ public final class Npc extends Entity implements RSNPC {
 	@Override
 	public Polygon getCanvasTilePoly() {
 
-		int size = desc.size;
+		int size = definition.size;
 
 		return Perspective.getCanvasTileAreaPoly(Client.instance, this.getLocalLocation(), size);
 	}
@@ -288,7 +291,7 @@ public final class Npc extends Entity implements RSNPC {
 
 	@Override
 	public WorldArea getWorldArea() {
-		return new WorldArea(x,y, desc.size, this.defaultHeight, Client.instance.getPlane());
+		return new WorldArea(x,y, definition.size, this.defaultHeight, Client.instance.getPlane());
 	}
 
 	@Override
@@ -577,7 +580,7 @@ public final class Npc extends Entity implements RSNPC {
 
 	@Override
 	public RSNPCComposition getComposition() {
-		return desc;
+		return definition;
 	}
 
 	private int index;
@@ -613,7 +616,7 @@ public final class Npc extends Entity implements RSNPC {
 
 	@Override
 	public int getModelHeight() {
-		return 0;
+		return vmethod2708();
 	}
 
 	@Override
