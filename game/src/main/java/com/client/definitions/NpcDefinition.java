@@ -1681,7 +1681,8 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
                 chatheadModels = new int[l];
                 for (int l1 = 0; l1 < l; l1++)
                     chatheadModels[l1] = buffer.readUShort();
-
+            } else if(opcode >= 74 && opcode <= 79) {
+                buffer.readUShort();
             } else if (opcode == 93)
                 isMinimapVisible = false;
             else if (opcode == 95)
@@ -1740,6 +1741,8 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
                 buffer.readByte();
             } else if(opcode == 123) {
                 buffer.readByte();
+            } else if(opcode == 124) {
+                buffer.readUShort();//npc height
             } else if (opcode == 249) {
                 BufferExt.readStringIntParameters(buffer);
             } else if (opcode == 106 || opcode == 118) {
