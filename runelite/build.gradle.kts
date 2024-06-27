@@ -40,7 +40,6 @@ dependencies {
     implementation(group = "com.squareup.okhttp3", name = "okhttp", version = "4.9.1")
     implementation(group = "io.reactivex.rxjava3", name = "rxjava", version = "3.1.2")
     implementation(group = "org.jgroups", name = "jgroups", version = "5.2.2.Final")
-    implementation(group = "net.java.dev.jna", name = "jna", version = "5.9.0")
     implementation(group = "net.java.dev.jna", name = "jna-platform", version = "5.9.0")
     implementation(group = "net.runelite", name = "discord", version = "1.4")
     implementation(group = "net.runelite.pushingpixels", name = "substance", version = "8.0.02")

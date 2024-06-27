@@ -41,6 +41,8 @@ dependencies {
     implementation("me.tongfei:progressbar:0.9.5")
     implementation("org.jetbrains:annotations:24.0.0")
 
+    implementation(group = "net.java.dev.jna", name = "jna", version = "5.9.0")
+
     implementation("org.apache.commons:commons-text:1.8")
 
     // https://mvnrepository.com/artifact/com.thoughtworks.xstream/xstream

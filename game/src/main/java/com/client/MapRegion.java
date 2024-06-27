@@ -1496,6 +1496,7 @@ public final class MapRegion {
 				int var20 = var18 & 3;
 				if (var17 == var4 && var16 >= var5 && var16 < var5 + 8 && var15 >= var6 && var15 < var6 + 8) {
 					ObjectDefinition var21 = ObjectDefinition.lookup(var11);
+					System.out.println("Found chunk object [" + var11 + "] = " + var21.name);
 					int var24 = var16 & 7;
 					int var25 = var15 & 7;
 					int var27 = var21.sizeX;
