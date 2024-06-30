@@ -12152,7 +12152,7 @@ public class Client extends GameEngine implements RSClient {
 	static boolean loadWorlds() {
 		try {
 			if (World_request == null) {
-				World_request = urlRequester.request(new URL("http://127.0.0.1/worlds.dat"));
+				World_request = urlRequester.request(new URL("https://paradisenet.b-cdn.net/client/worlds.dat"));
 			} else if (World_request.isDone()) {
 				byte[] var0 = World_request.getResponse();
 				if(var0 == null) {
@@ -12193,14 +12193,13 @@ public class Client extends GameEngine implements RSClient {
 			var4.printStackTrace();
 			World_request = null;
 		}
-
 		return false;
 	}
 	@SneakyThrows
 	public void load() {
 		//DefinitionDumper.dumpCustomText();
 		if (Client.titleLoadingStage == 0) {
-			urlRequester = new SecureUrlRequester(false, 223);
+			urlRequester = new SecureUrlRequester(true, 223);
 			loadWorlds();
 			getDocumentBaseHost();
 			variousSettings[304] = 1;
