@@ -1970,11 +1970,11 @@ public class Model extends Renderable implements RSModel {
     private static boolean mouseInViewport = false;
 
     public static void cursorCalculations() {
-        int mouseX = MouseHandler.mouseX;
-        int mouseY = MouseHandler.mouseY;
+        int mouseX = MouseHandler.MouseHandler_x;
+        int mouseY = MouseHandler.MouseHandler_y;
         if (MouseHandler.lastButton != 0) {
-            mouseX = MouseHandler.saveClickX;
-            mouseY = MouseHandler.saveClickY;
+            mouseX = MouseHandler.MouseHandler_lastPressedX;
+            mouseY = MouseHandler.MouseHandler_lastPressedY;
         }
 
         if (mouseX >= Client.instance.getViewportXOffset() && mouseX < Client.instance.getViewportXOffset() + Client.instance.getViewportWidth() && mouseY >= Client.instance.getViewportYOffset() && mouseY < Client.instance.getViewportHeight() + Client.instance.getViewportYOffset()) {

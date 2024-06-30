@@ -74,9 +74,6 @@ public class StarterInterface extends RSInterface {
 
     private int loadContainer(int interfaceId) {
         String[] mode = GAME_MODES;
-        if (Configuration.CONNECTION.equals(Connection.WORLD_2)) {
-            mode = W2GAME_MODES;
-        }
 
         RSInterface inter = addInterface(interfaceId++);
         inter.width = 303;

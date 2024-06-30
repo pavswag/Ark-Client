@@ -930,6 +930,91 @@ public class Rasterizer2D extends DualNode implements RSRasterizer2D {
         }
 
     }
+    public static void Rasterizer2D_fillRectangleGradient(int var0, int var1, int var2, int var3, int var4, int var5) {
+        if (var2 > 0 && var3 > 0) {
+            int var6 = 0;
+            int var7 = 65536 / var3;
+            if (var0 < Rasterizer2D_xClipStart) {
+                var2 -= Rasterizer2D_xClipStart - var0;
+                var0 = Rasterizer2D_xClipStart;
+            }
+
+            if (var1 < Rasterizer2D_yClipStart) {
+                var6 += (Rasterizer2D_yClipStart - var1) * var7;
+                var3 -= Rasterizer2D_yClipStart - var1;
+                var1 = Rasterizer2D_yClipStart;
+            }
+
+            if (var0 + var2 > Rasterizer2D_xClipEnd) {
+                var2 = Rasterizer2D_xClipEnd - var0;
+            }
+
+            if (var3 + var1 > Rasterizer2D_yClipEnd) {
+                var3 = Rasterizer2D_yClipEnd - var1;
+            }
+
+            int var8 = Rasterizer2D_width - var2;
+            int var9 = var0 + Rasterizer2D_width * var1;
+
+            for (int var10 = -var3; var10 < 0; ++var10) {
+                int var11 = 65536 - var6 >> 8;
+                int var12 = var6 >> 8;
+                int var13 = (var12 * (var5 & 16711935) + var11 * (var4 & 16711935) & -16711936) + (var12 * (var5 & 65280) + var11 * (var4 & 65280) & 16711680) >>> 8;
+
+                for (int var14 = -var2; var14 < 0; ++var14) {
+                    Rasterizer2D_pixels[var9++] = var13;
+                }
+
+                var9 += var8;
+                var6 += var7;
+            }
+
+        }
+    }
+    public static void Rasterizer2D_drawRectangle(int var0, int var1, int var2, int var3, int var4) {
+        Rasterizer2D_drawHorizontalLine(var0, var1, var2, var4);
+        Rasterizer2D_drawHorizontalLine(var0, var3 + var1 - 1, var2, var4);
+        Rasterizer2D_drawVerticalLine(var0, var1, var3, var4);
+        Rasterizer2D_drawVerticalLine(var0 + var2 - 1, var1, var3, var4);
+    }
+    public static void Rasterizer2D_drawVerticalLine(int var0, int var1, int var2, int var3) {
+        if (var0 >= Rasterizer2D_xClipStart && var0 < Rasterizer2D_xClipEnd) {
+            if (var1 < Rasterizer2D_yClipStart) {
+                var2 -= Rasterizer2D_yClipStart - var1;
+                var1 = Rasterizer2D_yClipStart;
+            }
+
+            if (var2 + var1 > Rasterizer2D_yClipEnd) {
+                var2 = Rasterizer2D_yClipEnd - var1;
+            }
+
+            int var4 = var0 + Rasterizer2D_width * var1;
+
+            for (int var5 = 0; var5 < var2; ++var5) {
+                Rasterizer2D_pixels[var4 + var5 * Rasterizer2D_width] = var3;
+            }
+
+        }
+    }
+    public static void Rasterizer2D_drawHorizontalLine(int var0, int var1, int var2, int var3) {
+        if (var1 >= Rasterizer2D_yClipStart && var1 < Rasterizer2D_yClipEnd) {
+            if (var0 < Rasterizer2D_xClipStart) {
+                var2 -= Rasterizer2D_xClipStart - var0;
+                var0 = Rasterizer2D_xClipStart;
+            }
+
+            if (var0 + var2 > Rasterizer2D_xClipEnd) {
+                var2 = Rasterizer2D_xClipEnd - var0;
+            }
+
+            int var4 = var0 + Rasterizer2D_width * var1;
+
+            for (int var5 = 0; var5 < var2; ++var5) {
+                Rasterizer2D_pixels[var4 + var5] = var3;
+            }
+
+        }
+    }
 
     public void drawAlphaGradientOnSprite(Sprite sprite, int x, int y, int gradientWidth,
                                           int gradientHeight, int startColor, int endColor, int alpha) {

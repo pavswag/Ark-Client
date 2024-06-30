@@ -1,7 +1,6 @@
 package com.client.engine.impl;
 
 import com.client.Client;
-import com.client.engine.GameEngine;
 import com.client.graphics.interfaces.impl.Slider;
 import net.runelite.rs.api.RSMouseHandler;
 
@@ -21,11 +20,11 @@ public class MouseHandler implements MouseListener, MouseMotionListener, FocusLi
     public static volatile int idleCycles;
     public static volatile int currentButton;
     public static volatile long lastMoved;
-    public static int mouseX;
-    public static int mouseY;
-    public static volatile int clickMode3;
-    public static volatile int saveClickX;
-    public static volatile int saveClickY;
+    public static int MouseHandler_x;
+    public static int MouseHandler_y;
+    public static volatile int MouseHandler_lastButton;
+    public static volatile int MouseHandler_lastPressedX;
+    public static volatile int MouseHandler_lastPressedY;
     public static volatile long lastPressed;
     public static int lastButton;
 
@@ -38,14 +37,14 @@ public class MouseHandler implements MouseListener, MouseMotionListener, FocusLi
         instance = new MouseHandler();
         idleCycles = 0;
         currentButton = 0;
-        mouseX = -1;
-        mouseY = -1;
+        MouseHandler_x = -1;
+        MouseHandler_y = -1;
         lastMoved = -1L;
-        clickMode3 = 0;
+        MouseHandler_lastButton = 0;
         lastPressed = 0L;
         lastButton = 0;
-        saveClickX = 0;
-        saveClickY = 0;
+        MouseHandler_lastPressedX = 0;
+        MouseHandler_lastPressedY = 0;
     }
 
     @Override
@@ -82,8 +81,8 @@ public class MouseHandler implements MouseListener, MouseMotionListener, FocusLi
                 isInEvent++;
                 try {
                     idleCycles = 0;
-                    saveClickX = mouseEvent.getX();
-                    saveClickY = mouseEvent.getY();
+                    MouseHandler_lastPressedX = mouseEvent.getX();
+                    MouseHandler_lastPressedY = mouseEvent.getY();
                     lastPressed = System.currentTimeMillis();
                     if (SwingUtilities.isMiddleMouseButton(e)) {
                         MouseWheelHandler.mouseWheelDown = true;
@@ -100,7 +99,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, FocusLi
                         clickMode1 = 1;
                         clickMode2 = 1;
                     }
-                    Slider.handleSlider(mouseX, mouseY);
+                    Slider.handleSlider(MouseHandler_x, MouseHandler_y);
                     if (mouseEvent.isPopupTrigger()) {
                         mouseEvent.consume();
                     }
@@ -167,8 +166,8 @@ public class MouseHandler implements MouseListener, MouseMotionListener, FocusLi
                 isInEvent++;
                 try {
                     idleCycles = 0;
-                    mouseX = -1;
-                    mouseY = -1;
+                    MouseHandler_x = -1;
+                    MouseHandler_y = -1;
                     lastMoved = mouseEvent.getWhen();
                 } finally {
                     isInEvent--;
@@ -194,11 +193,11 @@ public class MouseHandler implements MouseListener, MouseMotionListener, FocusLi
                     MouseWheelHandler.mouseWheelY = mouseEvent.getY();
                     return;
                 }
-                mouseX = mouseEvent.getX();
-                mouseY = mouseEvent.getY();
+                MouseHandler_x = mouseEvent.getX();
+                MouseHandler_y = mouseEvent.getY();
                 clickType = DRAG;
 
-                Slider.handleSlider(mouseX, mouseY);
+                Slider.handleSlider(MouseHandler_x, MouseHandler_y);
             } finally {
                 isInEvent--;
             }
@@ -215,8 +214,8 @@ public class MouseHandler implements MouseListener, MouseMotionListener, FocusLi
         if (!mouseEvent.isConsumed()) {
             isInEvent++;
             try {
-                mouseX = mouseEvent.getX();
-                mouseY = mouseEvent.getY();
+                MouseHandler_x = mouseEvent.getX();
+                MouseHandler_y = mouseEvent.getY();
                 clickType = MOVE;
             } finally {
                 isInEvent--;

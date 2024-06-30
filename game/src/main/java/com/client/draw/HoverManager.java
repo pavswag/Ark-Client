@@ -136,8 +136,8 @@ public class HoverManager {
     }
 
     public static int drawType() {
-        if (MouseHandler.mouseX > 0 && MouseHandler.mouseX < 500 && MouseHandler.mouseY > 0
-                && MouseHandler.mouseY < 300) {
+        if (MouseHandler.MouseHandler_x > 0 && MouseHandler.MouseHandler_x < 500 && MouseHandler.MouseHandler_y > 0
+                && MouseHandler.MouseHandler_y < 300) {
             return 1;
         }
         return 0;
@@ -193,14 +193,14 @@ public class HoverManager {
     }
 
     public static void drawHintMenu() {
-        int mouseX = MouseHandler.mouseX;
-        int mouseY = MouseHandler.mouseY;
+        int mouseX = MouseHandler.MouseHandler_x;
+        int mouseY = MouseHandler.MouseHandler_y;
 
         if (!canDraw()) {
             return;
         }
 
-        if (MouseHandler.mouseY < Client.canvasHeight - 450 && MouseHandler.mouseX < Client.canvasWidth - 200) {
+        if (MouseHandler.MouseHandler_y < Client.canvasHeight - 450 && MouseHandler.MouseHandler_x < Client.canvasWidth - 200) {
             return;
         }
         mouseX -= 100;
@@ -296,8 +296,8 @@ public class HoverManager {
             return;
         }
 
-        int mouseX = MouseHandler.mouseX;
-        int mouseY = MouseHandler.mouseY;
+        int mouseX = MouseHandler.MouseHandler_x;
+        int mouseY = MouseHandler.MouseHandler_y;
 
         mouseX -= 100;
         mouseY -= 50;

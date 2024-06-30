@@ -1895,7 +1895,7 @@ public final class SceneGraph implements RSScene {
                                 if (checkClick && Client.instance.containsBounds(mouseX2, mouseY2, ax, bx, cx, ay, by, cy)) {
                                     setTargetTile(x, y);
                                 }
-                                if (Client.instance.containsBounds(MouseHandler.mouseX, MouseHandler.mouseY, ax, bx, cx, ay, by, cy)) {
+                                if (Client.instance.containsBounds(MouseHandler.MouseHandler_x, MouseHandler.MouseHandler_y, ax, bx, cx, ay, by, cy)) {
                                     hoverTile(x, y, tilePlane);
                                 }
 
@@ -1907,7 +1907,7 @@ public final class SceneGraph implements RSScene {
                                 if (checkClick && inBounds(clickScreenX, clickScreenY, dx, cx, bx, dy, cy, by)) {
                                     setTargetTile(x, y);
                                 }
-                                if (inBounds(MouseHandler.mouseX, MouseHandler.mouseY, dx, cx, bx, dy, cy, by)) {
+                                if (inBounds(MouseHandler.MouseHandler_x, MouseHandler.MouseHandler_y, dx, cx, bx, dy, cy, by)) {
                                     hoverTile(x, y, tilePlane);
                                 }
 
@@ -2002,7 +2002,7 @@ public final class SceneGraph implements RSScene {
                 clickedTileX = x;
                 clickedTileY = y;
             }
-            if (inBounds(MouseHandler.mouseX, MouseHandler.mouseY, j6, l6, l5, i6, k6, k5)) {
+            if (inBounds(MouseHandler.MouseHandler_x, MouseHandler.MouseHandler_y, j6, l6, l5, i6, k6, k5)) {
                 hoverX = x;
                 hoverY = y;
             }
@@ -2025,7 +2025,7 @@ public final class SceneGraph implements RSScene {
                 clickedTileX = x;
                 clickedTileY = y;
             }
-            if (inBounds(MouseHandler.mouseX, MouseHandler.mouseY, j5, l5, l6, i5, k5, k6)) {
+            if (inBounds(MouseHandler.MouseHandler_x, MouseHandler.MouseHandler_y, j5, l5, l6, i5, k5, k6)) {
                 hoverX = x;
                 hoverY = y;
             }
@@ -2141,7 +2141,7 @@ public final class SceneGraph implements RSScene {
                     if (checkClick && Client.instance.containsBounds(mouseX2, mouseY2, y1, y2, y3, x1, x2, x3)) {
                         setTargetTile(tileX, tileY);
                     }
-                    if (Client.instance.containsBounds(MouseHandler.mouseX, MouseHandler.mouseY, y1, y2, y3, x1, x2, x3)) {
+                    if (Client.instance.containsBounds(MouseHandler.MouseHandler_x, MouseHandler.MouseHandler_y, y1, y2, y3, x1, x2, x3)) {
                         hoverTile(tileX, tileY, rsTile.getPhysicalLevel());
                     }
 
@@ -2197,7 +2197,7 @@ public final class SceneGraph implements RSScene {
                     clickedTileX = tileX;
                     clickedTileY = tileY;
                 }
-                if (inBounds(MouseHandler.mouseX, MouseHandler.mouseY, l4, i5, j5, i4, j4, k4)) {
+                if (inBounds(MouseHandler.MouseHandler_x, MouseHandler.MouseHandler_y, l4, i5, j5, i4, j4, k4)) {
                     hoverX = tileX;
                     hoverY = tileY;
                 }

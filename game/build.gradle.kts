@@ -36,6 +36,7 @@ dependencies {
     implementation("com.googlecode.json-simple:json-simple:1.1.1")
     implementation("javax.xml.bind:jaxb-api:2.3.1")
     implementation(group = "com.google.inject", name = "guice", version = "5.0.1")
+    implementation(group = "org.bouncycastle", name = "bcprov-jdk15on", version = "1.52")
 
     // https://mvnrepository.com/artifact/me.tongfei/progressbar
     implementation("me.tongfei:progressbar:0.9.5")

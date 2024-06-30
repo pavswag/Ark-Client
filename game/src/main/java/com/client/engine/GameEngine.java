@@ -390,7 +390,7 @@ public abstract class GameEngine extends Applet implements Runnable, WindowListe
         long var1 = method2692();
         clientTickTimes[field209] = var1;
         field209 = field209 + 1 & 31;
-        MouseHandler.clickMode3 = MouseHandler.instance.clickMode1;
+        MouseHandler.MouseHandler_lastButton = MouseHandler.instance.clickMode1;
         MouseHandler.instance.clickMode1 = 0;
         processGameLoop();
     }

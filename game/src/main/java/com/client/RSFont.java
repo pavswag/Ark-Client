@@ -1064,7 +1064,9 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 		anInt4178 = 0;
 		anInt4175 = 0;
 	}
-
+	public int stringWidth(String var0) {
+		return getTextWidth(var0);
+	}
 	public int getTextWidth(String string) {
 		if (string == null) {
 			return 0;
@@ -1583,4 +1585,8 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 		anInt4178 = 0;
 		transparency = 256;
 	}
+
+    public void drawCentered(String string, int i, int i1, int var21, int i2) {
+		drawCenteredString(string, i, i1, var21, i2);
+    }
 }

@@ -1175,17 +1175,17 @@ public final class Interfaces extends RSInterface {
 		String osrs_ironman = "<img=30> OSRS Ironman";
 		String wildyman = "<img=92> Wildyman";
 		String hc_wildyman = "<img=93> HC Wildyman";
-		addHoverText(24326, (Configuration.CONNECTION.equals(Connection.WORLD_1) ? rogue_ironman : wildyman),
+		addHoverText(24326, (wildyman),
 				"Select Rogue Ironman account settings", tda, 0, 0xF7AA25, false, true, 65);
 
-		addHoverText(24327, (Configuration.CONNECTION.equals(Connection.WORLD_1) ? rogue_hardcore : hc_wildyman),
+		addHoverText(24327, ( hc_wildyman),
 				"Select Hardcore Rogue account settings", tda, 0, 0xF7AA25, false, true, 65);
 
-		addHoverText(24328, (Configuration.CONNECTION.equals(Connection.WORLD_1) ? osrs_ironman : ""), (Configuration.CONNECTION.equals(Connection.WORLD_1) ? "Select OSRS account settings" : ""), tda, 0, 0xF7AA25, false, true, 65);
+		addHoverText(24328, (""), (""), tda, 0, 0xF7AA25, false, true, 65);
 
-		addHoverText(24329, (Configuration.CONNECTION.equals(Connection.WORLD_1) ? wildyman : ""), (Configuration.CONNECTION.equals(Connection.WORLD_1) ? "Select Wildyman settings" : ""), tda, 0, 0xF7AA25, false, true, 65);
+		addHoverText(24329, (""), (""), tda, 0, 0xF7AA25, false, true, 65);
 
-		addHoverText(24330, (Configuration.CONNECTION.equals(Connection.WORLD_1) ? hc_wildyman : ""), (Configuration.CONNECTION.equals(Connection.WORLD_1) ? "Select Hardcore Wildyman account settings" : ""), tda, 0, 0xF7AA25, false, true, 65);
+		addHoverText(24330, (""), (""), tda, 0, 0xF7AA25, false, true, 65);
 
 		configHoverButton(24331, "Confirm", "Interfaces/starterInt/SPRITE", 2, 1, 2, 1, false);
 		addChar(24332, 825);

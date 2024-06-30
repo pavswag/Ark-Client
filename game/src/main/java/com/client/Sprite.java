@@ -11,7 +11,7 @@ import javax.swing.ImageIcon;
 import com.client.definitions.SpriteCache;
 import com.client.engine.impl.MouseHandler;
 import com.client.js5.Js5List;
-import com.client.js5.disk.Js5Archive;
+import com.client.js5.disk.AbstractArchive;
 import com.client.sign.Signlink;
 import com.client.utilities.FileUtils;
 import lombok.SneakyThrows;
@@ -335,8 +335,8 @@ public class Sprite extends Rasterizer2D implements RSSpritePixels {
 
 	public void drawHoverSprite(int x, int y, int offsetX, int offsetY, Sprite hover) {
 		this.drawSprite(x, y);
-		if (MouseHandler.mouseX >= offsetX + x && MouseHandler.mouseX <= offsetX + x + this.subWidth
-				&& MouseHandler.mouseY >= offsetY + y && MouseHandler.mouseY <= offsetY + y + this.subHeight) {
+		if (MouseHandler.MouseHandler_x >= offsetX + x && MouseHandler.MouseHandler_x <= offsetX + x + this.subWidth
+				&& MouseHandler.MouseHandler_y >= offsetY + y && MouseHandler.MouseHandler_y <= offsetY + y + this.subHeight) {
 			hover.drawSprite(x, y);
 		}
 	}
@@ -1610,6 +1610,43 @@ public class Sprite extends Rasterizer2D implements RSSpritePixels {
 		SpriteData.pixels = null;
 		return sprite;
 	}
+	static Sprite getSprite(AbstractArchive var0, String var1, String var2) {
+		int var3 = var0.getGroupId(var1);
+		int var4 = var0.getFileId(var3, var2);
+		return getSprite(var3, var4);
+	}
+	static Sprite[] getSprites(AbstractArchive var0, String var1, String var2) {
+		int var3 = var0.getGroupId(var1);
+		int var4 = var0.getFileId(var3, var2);
+		return generateImages(var3, var4);
+	}
+	static Sprite[] generateImages() {
+		Sprite[] sprites = new Sprite[SpriteData.spriteCount];
+		for (int var1 = 0; var1 < SpriteData.spriteCount; ++var1) {
+			Sprite sprite = sprites[var1] = new Sprite();
+			sprite.width = SpriteData.spriteWidth;
+			sprite.height = SpriteData.spriteHeight;
+			sprite.xOffset = SpriteData.xOffsets[var1];
+			sprite.yOffset = SpriteData.yOffsets[var1];
+			sprite.subWidth = SpriteData.spriteWidths[var1];
+			sprite.subHeight = SpriteData.spriteHeights[var1];
+			int totalPixels = sprite.subWidth * sprite.subHeight;
+			byte[] pixels = SpriteData.pixels[var1];
+			sprite.pixels = new int[totalPixels];
+
+			for(int currentPixel = 0; currentPixel < totalPixels; ++currentPixel) {
+				sprite.pixels[currentPixel] = SpriteData.spritePalette[pixels[currentPixel] & 255];
+			}
+		}
+
+		SpriteData.xOffsets = null;
+		SpriteData.yOffsets = null;
+		SpriteData.spriteWidths = null;
+		SpriteData.spriteHeights = null;
+		SpriteData.spritePalette = null;
+		SpriteData.pixels = null;
+		return sprites;
+	}
 
 	static Sprite[] generateImages(int id, int index) {
 
@@ -1693,5 +1730,76 @@ public class Sprite extends Rasterizer2D implements RSSpritePixels {
 		if (var6 > 0 && var5 > 0) {
 			Sprite_drawTransBg(Rasterizer2D.Rasterizer2D_pixels, this.pixels, 0, var4, var3, var6, var5, var7, var8);
 		}
+	}
+
+	public void drawTransOverlayAt(int var1, int var2, int var3, int var4) {
+		if (var3 == 256) {
+			this.drawTransBgAt(var1, var2);
+		} else {
+			var1 += this.xOffset;
+			var2 += this.yOffset;
+			int var5 = var1 + var2 * Rasterizer2D.Rasterizer2D_width;
+			int var6 = 0;
+			int var7 = this.subHeight;
+			int var8 = this.subWidth;
+			int var9 = Rasterizer2D.Rasterizer2D_width - var8;
+			int var10 = 0;
+			int var11;
+			if (var2 < Rasterizer2D.Rasterizer2D_yClipStart) {
+				var11 = Rasterizer2D.Rasterizer2D_yClipStart - var2;
+				var7 -= var11;
+				var2 = Rasterizer2D.Rasterizer2D_yClipStart;
+				var6 += var11 * var8;
+				var5 += var11 * Rasterizer2D.Rasterizer2D_width;
+			}
+
+			if (var7 + var2 > Rasterizer2D.Rasterizer2D_yClipEnd) {
+				var7 -= var7 + var2 - Rasterizer2D.Rasterizer2D_yClipEnd;
+			}
+
+			if (var1 < Rasterizer2D.Rasterizer2D_xClipStart) {
+				var11 = Rasterizer2D.Rasterizer2D_xClipStart - var1;
+				var8 -= var11;
+				var1 = Rasterizer2D.Rasterizer2D_xClipStart;
+				var6 += var11;
+				var5 += var11;
+				var10 += var11;
+				var9 += var11;
+			}
+
+			if (var8 + var1 > Rasterizer2D.Rasterizer2D_xClipEnd) {
+				var11 = var8 + var1 - Rasterizer2D.Rasterizer2D_xClipEnd;
+				var8 -= var11;
+				var10 += var11;
+				var9 += var11;
+			}
+
+			if (var8 > 0 && var7 > 0) {
+				Sprite_drawTransOverlay(Rasterizer2D.Rasterizer2D_pixels, this.pixels, 0, var6, var5, var8, var7, var9, var10, var3, var4);
+			}
+		}
+	}
+	static void Sprite_drawTransOverlay(int[] var0, int[] var1, int var2, int var3, int var4, int var5, int var6, int var7, int var8, int var9, int var10) {
+		int var11 = 256 - var9;
+		int var12 = (var10 & 16711935) * var11 & -16711936;
+		int var13 = (var10 & 65280) * var11 & 16711680;
+		var10 = (var12 | var13) >>> 8;
+
+		for (int var14 = -var6; var14 < 0; ++var14) {
+			for (int var15 = -var5; var15 < 0; ++var15) {
+				var2 = var1[var3++];
+				if (var2 != 0) {
+					var12 = var9 * (var2 & 16711935) & -16711936;
+					var13 = (var2 & 65280) * var9 & 16711680;
+					var0[var4++] = var10 + ((var12 | var13) >>> 8);
+				} else {
+					++var4;
+				}
+			}
+
+			var4 += var7;
+			var3 += var8;
+		}
+
 	}
 }

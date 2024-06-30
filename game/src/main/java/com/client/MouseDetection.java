@@ -12,8 +12,8 @@ final class MouseDetection implements Runnable {
 		while (running) {
 			synchronized (syncObject) {
 				if (coordsIndex < 500) {
-					coordsX[coordsIndex] = MouseHandler.mouseX;
-					coordsY[coordsIndex] = MouseHandler.mouseY;
+					coordsX[coordsIndex] = MouseHandler.MouseHandler_x;
+					coordsY[coordsIndex] = MouseHandler.MouseHandler_y;
 					coordsIndex++;
 				}
 			}

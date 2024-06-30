@@ -1682,7 +1682,9 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
                 for (int l1 = 0; l1 < l; l1++)
                     chatheadModels[l1] = buffer.readUShort();
             } else if(opcode >= 74 && opcode <= 79) {
-                buffer.readUShort();
+                int index = opcode - 74;
+                int stat = buffer.readUShort();
+                System.out.println("ID [" + id + "]  index [" + index + "] stat = " + stat);
             } else if (opcode == 93)
                 isMinimapVisible = false;
             else if (opcode == 95)

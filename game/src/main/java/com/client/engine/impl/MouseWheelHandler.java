@@ -7,11 +7,10 @@ import java.awt.*;
 import java.awt.event.*;
 
 import com.client.graphics.interfaces.RSInterface;
-import com.client.graphics.interfaces.impl.SettingsTabWidget;
 
 import static com.client.Client.*;
-import static com.client.engine.impl.MouseHandler.mouseX;
-import static com.client.engine.impl.MouseHandler.mouseY;
+import static com.client.engine.impl.MouseHandler.MouseHandler_x;
+import static com.client.engine.impl.MouseHandler.MouseHandler_y;
 import static com.client.graphics.interfaces.RSInterface.interfaceCache;
 import static com.client.graphics.interfaces.impl.SettingsTabWidget.ZOOMTOGGLE;
 import static com.client.graphics.interfaces.impl.SettingsTabWidget.ZOOM_SLIDER;
@@ -58,8 +57,8 @@ public class MouseWheelHandler implements MouseWheelListener, RSMouseWheelHandle
                 return;
         }
         if (!handleInterfaceScrolling(e)) {
-            if (mouseX > 0 && mouseX < 512 && MouseHandler.mouseY > Client.canvasHeight - 165
-                    && MouseHandler.mouseY < Client.canvasHeight - 25) {
+            if (MouseHandler_x > 0 && MouseHandler_x < 512 && MouseHandler.MouseHandler_y > Client.canvasHeight - 165
+                    && MouseHandler.MouseHandler_y < Client.canvasHeight - 25) {
                 int scrollPos = Client.anInt1089;
                 scrollPos -= rotation * 30;
                 if (scrollPos < 0)
@@ -70,7 +69,7 @@ public class MouseWheelHandler implements MouseWheelListener, RSMouseWheelHandle
                 }
             } else if (Client.loggedIn) {
                     /** ZOOMING **/
-                    boolean zoom = !Client.instance.isResized() ? (mouseX < 512) : (mouseX < Client.canvasWidth - 200);
+                    boolean zoom = !Client.instance.isResized() ? (MouseHandler_x < 512) : (MouseHandler_x < Client.canvasWidth - 200);
                     if(zoom && Client.openInterfaceID == -1) {
                         int zoom_in = !Client.instance.isResized() ? 195 : 240;
 
@@ -166,8 +165,8 @@ public class MouseWheelHandler implements MouseWheelListener, RSMouseWheelHandle
                 }
             }
         }
-        if (mouseX > offsetX + positionX && MouseHandler.mouseY > offsetY + positionY && mouseX < offsetX + positionX + width
-                && MouseHandler.mouseY < offsetY + positionY + height) {
+        if (MouseHandler_x > offsetX + positionX && MouseHandler.MouseHandler_y > offsetY + positionY && MouseHandler_x < offsetX + positionX + width
+                && MouseHandler.MouseHandler_y < offsetY + positionY + height) {
             RSInterface rsInterface = interfaceCache.get(tab.children[childID]);
             int newScrollPosition = rsInterface.scrollPosition + (rotation * 30);
             if (newScrollPosition < 0) {
@@ -191,9 +190,9 @@ public class MouseWheelHandler implements MouseWheelListener, RSMouseWheelHandle
                 if (interfaceCache.get(rsi.children[index]).scrollMax <= 0) {
                     continue;
                 }
-                if (mouseX > offsetX + rsi.childX[index] && mouseY > offsetY + rsi.childY[index]
-                        && mouseX < offsetX + rsi.childX[index] + interfaceCache.get(rsi.children[index]).width + 16
-                        && mouseY < offsetY + rsi.childY[index]
+                if (MouseHandler_x > offsetX + rsi.childX[index] && MouseHandler_y > offsetY + rsi.childY[index]
+                        && MouseHandler_x < offsetX + rsi.childX[index] + interfaceCache.get(rsi.children[index]).width + 16
+                        && MouseHandler_y < offsetY + rsi.childY[index]
                         + interfaceCache.get(rsi.children[index]).height) {
 
                     RSInterface rsInterface = interfaceCache.get(rsi.children[index]);

@@ -1,9 +1,6 @@
 package com.client.js5;
 
-import com.client.AbstractSocket;
-import com.client.Buffer;
-import com.client.Client;
-import com.client.Configuration;
+import com.client.*;
 import com.client.engine.GameEngine;
 import com.client.engine.task.MonotonicClock;
 import com.client.engine.task.Task;
@@ -109,7 +106,7 @@ public class Js5System {
 
     private static void connectToJs5() throws IOException {
         if (js5ConnectState == 0) {
-            js5SocketTask = GameEngine.taskHandler.newSocketTask(Configuration.CONNECTION.js5SocketIP, Integer.parseInt(Configuration.CONNECTION.js5Socket));
+            js5SocketTask = GameEngine.taskHandler.newSocketTask(Configuration.CONNECTION.js5Host, Configuration.CONNECTION.js5Port);
             js5ConnectState++;
             System.out.println("js5ConnectState set to 1, creating socket task");
         }
@@ -159,10 +156,16 @@ public class Js5System {
             System.out.println("js5ConnectState set to 4, performing final initialization");
         }
     }
-
+    private static int fallBackWorldIndex = 0;
     private static void connectToFallback() throws IOException {
         if (js5ConnectState == 0) {
-            js5SocketTask = GameEngine.taskHandler.newSocketTask(Configuration.CONNECTION.js5FallbackIP, Integer.parseInt(Configuration.CONNECTION.js5FallbackSocket));
+            if(fallBackWorldIndex < World.World_count) {
+                fallBackWorldIndex++;
+            } else {
+                fallBackWorldIndex = 0;
+            }
+            World world = World.World_worlds[fallBackWorldIndex];
+            js5SocketTask = GameEngine.taskHandler.newSocketTask(world.js5Host, world.js5Port);
             js5ConnectState++;
             System.out.println("js5ConnectState set to 1, creating socket task for fallback");
         }
