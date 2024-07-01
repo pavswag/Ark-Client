@@ -75,7 +75,6 @@ public class LocalPoint
 	{
 		if (!WorldPoint.isInScene(client, x, y))
 		{
-			System.out.println("coordinates don't exist " + x + " / " + y);
 			return null;
 		}
 
