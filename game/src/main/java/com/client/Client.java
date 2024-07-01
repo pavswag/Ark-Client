@@ -19508,8 +19508,6 @@ public class Client extends GameEngine implements RSClient {
 							intInstructions.add((Integer) arguments[index]);
 						}
 					}
-					System.out.println("Script arguments = " + arguments.length);
-
 					int scriptId = inStream.readUShort();
 					if(InstructionId.fromId(scriptId) == InstructionId.NOTHING) {
 						ScriptEvent scriptEvent = new ScriptEvent();
@@ -19649,7 +19647,6 @@ public class Client extends GameEngine implements RSClient {
 
 					for (int j = 0; j < length; j++) {
 						skills[j] = inStream.readSignedByte();
-						System.out.println("Got skill [" + skills[j] + "]");
 					}
 
 

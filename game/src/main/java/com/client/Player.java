@@ -38,8 +38,11 @@ public final class Player extends Entity implements RSPlayer {
 		if (aBoolean1699)
 			return model;
 		Iterator spotAnimIterator = spotAnims.iterator();
-		int processedGraphics = 0;
+		int processedGraphics = 1;
 		while(spotAnimIterator.hasNext()) {
+			processedGraphics++;
+			if(processedGraphics >= 3)
+				break;
 			EntitySpotAnim graphicObject = (EntitySpotAnim) spotAnimIterator.next();
 			if(graphicObject.getId() == -1 ) {
 				graphicObject.remove();
@@ -47,8 +50,6 @@ public final class Player extends Entity implements RSPlayer {
 			}
 			if(graphicObject.getFrame() == -1)
 				continue;
-			if(this.displayName.equalsIgnoreCase(Client.localPlayer.displayName))
-            	log.info("Processing [{}] graphics for player!", processedGraphics++);
 			SpotAnimation spotAnim = SpotAnimation.lookup(graphicObject.getId());
 			Model model_2 = spotAnim.getModel();
 			if (model_2 != null) {
