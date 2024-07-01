@@ -42,6 +42,7 @@ import net.runelite.client.ws.PartyMember;
 
 import javax.inject.Inject;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static net.runelite.api.NpcID.*;
@@ -195,7 +196,7 @@ public class DpsCounterPlugin extends Plugin
 
 		DpsMember dpsMember = members.computeIfAbsent(name, DpsMember::new);
 		dpsMember.addDamage(hit);
-		if(damager.getName() != player.getName())
+		if(!Objects.equals(damager.getName(), player.getName()))
 		if ((dpsConfig.bossDamage() || actor != player.getInteracting()) && !isBoss)
 		{
 			// only track damage to npcs we are attacking, or is a nearby common boss
