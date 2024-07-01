@@ -6,10 +6,12 @@ import java.io.InputStream;
 import java.util.*;
 
 import com.client.graphics.loaders.SpriteLoader;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.imageio.ImageIO;
 
+@Slf4j
 public enum PlayerRights {
 
     PLAYER(0, "000000"),
@@ -125,7 +127,8 @@ public enum PlayerRights {
                 } else if (spritePath.endsWith("png")) {
                     try (InputStream inputStream = getClass().getResourceAsStream("/ranks/" + name() + ".png")) {
                         if (inputStream == null) {
-                            throw new IOException("Resource not found: " + spritePath);
+                            log.warn("Resource not found: " + spritePath);
+                            return null;
                         }
                         BufferedImage bufferedImage = ImageIO.read(inputStream);
                         sprite = new Sprite(bufferedImage);
