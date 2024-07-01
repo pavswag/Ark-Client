@@ -9315,7 +9315,7 @@ public class Client extends GameEngine implements RSClient {
 		}
 		if(entityDescription == null) {
 			Npc npc = (Npc) menuEntry.getNpc();
-			if(npc != null) {
+			if(npc != null && npc.definition != null) {
 				entityId = npc.definition.id;
 				entityName = npc.definition.getName();
 				entityDescription = EntityDescription.getNpcDescription(entityId);
