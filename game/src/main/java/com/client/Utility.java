@@ -2,10 +2,18 @@ package com.client;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import static com.client.particle.ParticleDefinition.RANDOM;
 
 public class Utility {
+    public static <T> void rotateLeftByOne(List<T> list) {
+        if (list == null || list.size() <= 1) {
+            return;
+        }
+        T firstElement = list.remove(0);
+        list.add(firstElement);
+    }
     public static int[] d2Tod1(int[][] array) {
         int[] newArray = new int[array.length*array[0].length];
 
