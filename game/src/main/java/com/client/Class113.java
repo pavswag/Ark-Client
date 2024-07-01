@@ -3,7 +3,7 @@ package com.client;
 // Jad home page: http://www.kpdus.com/jad.html
 // Decompiler options: packimports(3) 
 
-final class Class13 {
+final class Class113 {
 
 	public static int method225(byte abyte0[], int i, byte abyte1[], int j,
 			int k) {

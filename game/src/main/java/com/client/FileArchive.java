@@ -59,7 +59,7 @@ public class FileArchive {
 			aBoolean732 = true;
 		} else if (fileBlock != fileSize) { // Read from something else
 			byte abyte1[] = new byte[fileSize];
-			Class13.method225(abyte1, fileSize, abyte0, fileBlock, 6);
+			Class113.method225(abyte1, fileSize, abyte0, fileBlock, 6);
 			data = abyte1;
 			stream = new Buffer(data);
 			aBoolean732 = true;
@@ -102,7 +102,7 @@ public class FileArchive {
 				if (abyte0 == null)
 					abyte0 = new byte[anIntArray729[k]];
 				if (!aBoolean732) {
-					Class13.method225(abyte0, anIntArray729[k], data,
+					Class113.method225(abyte0, anIntArray729[k], data,
 							anIntArray730[k], anIntArray731[k]);
 				} else {
 					System.arraycopy(data, anIntArray731[k], abyte0,
