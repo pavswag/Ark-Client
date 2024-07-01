@@ -47,7 +47,7 @@ public final class Player extends Entity implements RSPlayer {
 			}
 			if(graphicObject.getFrame() == -1)
 				continue;
-			if(this == Client.localPlayer)
+			if(this.displayName.equalsIgnoreCase(Client.localPlayer.displayName))
             	log.info("Processing [{}] graphics for player!", processedGraphics++);
 			SpotAnimation spotAnim = SpotAnimation.lookup(graphicObject.getId());
 			Model model_2 = spotAnim.getModel();
