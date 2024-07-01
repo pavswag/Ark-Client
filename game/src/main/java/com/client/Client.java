@@ -1556,6 +1556,8 @@ public class Client extends GameEngine implements RSClient {
 	private StringBuilder floorMaps = new StringBuilder();
 
 	public final void loadRegion() {
+		if(regionLandArchives == null)
+			return;
 		if (!floorMaps.equals("") || !objectMaps.equals("")) {
 			floorMaps = new StringBuilder();
 			objectMaps = new StringBuilder();
