@@ -12,6 +12,7 @@ import com.client.definitions.SequenceDefinition;
 import com.client.definitions.ItemDefinition;
 import com.client.definitions.NpcDefinition;
 import com.client.definitions.SpotAnimation;
+import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.Point;
 import net.runelite.api.coords.LocalPoint;
@@ -20,6 +21,7 @@ import net.runelite.api.coords.WorldPoint;
 import net.runelite.rs.api.*;
 import org.jetbrains.annotations.Nullable;
 
+@Slf4j
 public final class Player extends Entity implements RSPlayer {
 
 
@@ -36,6 +38,7 @@ public final class Player extends Entity implements RSPlayer {
 		if (aBoolean1699)
 			return model;
 		Iterator spotAnimIterator = spotAnims.iterator();
+		int processedGraphics = 0;
 		while(spotAnimIterator.hasNext()) {
 			EntitySpotAnim graphicObject = (EntitySpotAnim) spotAnimIterator.next();
 			if(graphicObject.getId() == -1 ) {
@@ -44,6 +47,8 @@ public final class Player extends Entity implements RSPlayer {
 			}
 			if(graphicObject.getFrame() == -1)
 				continue;
+			if(this == Client.localPlayer)
+            	log.info("Processing [{}] graphics for player!", processedGraphics++);
 			SpotAnimation spotAnim = SpotAnimation.lookup(graphicObject.getId());
 			Model model_2 = spotAnim.getModel();
 			if (model_2 != null) {
@@ -62,8 +67,6 @@ public final class Player extends Entity implements RSPlayer {
 				if (spotAnim.resizeXY != 128 || spotAnim.resizeZ != 128)
 					model_3.scale(spotAnim.resizeXY, spotAnim.resizeXY,
 							spotAnim.resizeZ);
-				// model_3.method479(64 + spotAnim.anInt413, 850 +
-				// spotAnim.anInt414, -30, -50, -30, true);
 				model_3.light(64 + spotAnim.modelBrightness,
 						850 + spotAnim.modelShadow, -30, -50, -30, true);
 				Model aclass30_sub2_sub4_sub6_1s[] = { model, model_3 };
