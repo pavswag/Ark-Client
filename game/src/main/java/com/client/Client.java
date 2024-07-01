@@ -2503,6 +2503,7 @@ public class Client extends GameEngine implements RSClient {
 																.setOption(itemDef.interfaceOptions[l3])
 																.setTarget("@lre@" + itemDef.name)
 																.setIdentifier(itemID)
+																.setItemId(itemID)
 																.setParam0(k2)
 																.setWidget(class9_1)
 																.setParam1(class9_1.id);
@@ -2528,6 +2529,7 @@ public class Client extends GameEngine implements RSClient {
 																	.setOption("@lre@" + itemDef.name)
 																	.setIdentifier(10)
 																	.setParam0(k2)
+																	.setItemId(itemID)
 																	.setWidget(class9_1)
 																	.setParam1(class9_1.id)
 																	.setType(847);
@@ -2540,6 +2542,7 @@ public class Client extends GameEngine implements RSClient {
 																	.setTarget("@lre@" + itemDef.name)
 																	.setIdentifier(itemID)
 																	.setType(847)
+																	.setItemId(itemID)
 																	.setWidget(class9_1)
 																	.setParam0(k2)
 																	.setParam1(class9_1.id);
@@ -2652,6 +2655,7 @@ public class Client extends GameEngine implements RSClient {
 														.setTarget("@lre@" + itemDef.name)
 														.setIdentifier(itemDef.id)
 														.setType(447)
+														.setItemId(itemID)
 														.setParam0(k2)
 														.setWidget(class9_1)
 														.setParam1(class9_1.id);
@@ -2664,6 +2668,7 @@ public class Client extends GameEngine implements RSClient {
 															.setOption("Drop @lre@")
 															.setTarget(itemDef.name)
 															.setIdentifier(itemID)
+															.setItemId(itemID)
 															.setParam0(k2)
 															.setParam1(class9_1.id)
 															.setType(847);
@@ -2697,6 +2702,7 @@ public class Client extends GameEngine implements RSClient {
 																.setOption(itemDef.interfaceOptions[i4])
 																.setTarget("@lre@" + itemDef.name)
 																.setIdentifier(itemID)
+																.setItemId(itemID)
 																.setParam0(k2)
 																.setWidget(class9_1)
 																.setParam1(class9_1.id);
@@ -2739,6 +2745,7 @@ public class Client extends GameEngine implements RSClient {
 																	.setOption(options[j4])
 																	.setTarget("@lre@" + itemDef.name)
 																	.setIdentifier(10)
+																	.setItemId(itemID)
 																	.setParam0(k2)
 																	.setWidget(class9_1)
 																	.setParam1(class9_1.id);
@@ -2829,6 +2836,7 @@ public class Client extends GameEngine implements RSClient {
 															MenuEntry menuEntry = (MenuEntry) new MenuEntry(menuActionRow)
 																	.setOption(class9_1.actions[j4])
 																	.setTarget("@lre@" + itemDef.name)
+																	.setItemId(itemID)
 																	.setIdentifier(itemID)
 																	.setParam0(k2)
 																	.setWidget(class9_1)
@@ -2853,6 +2861,7 @@ public class Client extends GameEngine implements RSClient {
 																if (itemDef.equipActions[j4] == null) {
 																	menuEntry = (MenuEntry) new MenuEntry(3)
 																			.setOption("Operate ")
+																			.setItemId(itemID)
 																			.setWidget(class9)
 																			.setTarget("@lre@" + itemDef.name)
 																			.setIdentifier(itemDef.id);
@@ -2860,6 +2869,7 @@ public class Client extends GameEngine implements RSClient {
 																	callbacks.post(new MenuEntryAdded(menuEntry));
 																	menuEntry = (MenuEntry) new MenuEntry(4)
 																			.setOption("Remove ")
+																			.setItemId(itemID)
 																			.setWidget(class9_1)
 																			.setTarget("@lre@" + itemDef.name)
 																			.setIdentifier(10);
@@ -2868,6 +2878,7 @@ public class Client extends GameEngine implements RSClient {
 																	menuEntry = (MenuEntry) new MenuEntry(menuActionRow)
 																			.setOption(itemDef.equipActions[j4])
 																			.setTarget("@lre@" + itemDef.name)
+																			.setItemId(itemID)
 																			.setIdentifier(itemDef.id)
 																			.setType(847)
 																			.setWidget(class9_1)
@@ -2904,6 +2915,7 @@ public class Client extends GameEngine implements RSClient {
 											MenuEntry menuEntry = (MenuEntry) new MenuEntry(menuActionRow)
 													.setOption("Select ")
 													.setTarget("@lre@" + itemDef.name)
+													.setItemId(itemID)
 													.setIdentifier(10)
 													.setType(1130)
 													.setParam0(k2)
@@ -2942,6 +2954,7 @@ public class Client extends GameEngine implements RSClient {
 
 											MenuEntry menuEntry = (MenuEntry) new MenuEntry(menuActionRow)
 													.setOption("Examine")
+													.setItemId(itemID)
 													.setTarget(target)
 													.setIdentifier(itemID)
 													.setType(1126)
@@ -7884,6 +7897,7 @@ public class Client extends GameEngine implements RSClient {
 										.setTarget("@cya@" + class46.name)
 										.setIdentifier(l)
 										.setType(62)
+										.setObjectId(l1)
 										.setParam0(i1)
 										.setParam1(j1);
 								if (i2 == 0)
@@ -7906,6 +7920,7 @@ public class Client extends GameEngine implements RSClient {
 					MenuEntry menuEntry = (MenuEntry) new MenuEntry(menuActionRow)
 							.setOption(option)
 							.setTarget("@lre@" + class46.name)
+							.setObjectId(l1)
 							.setIdentifier(l1)
 							.setType(1226)
 							.setParam0(i1)
@@ -9268,54 +9283,103 @@ public class Client extends GameEngine implements RSClient {
 		}
 	}
 
-	public void drawHintMenu(String itemName,int itemId, int color) {
+	public void drawHintMenu(int color) {
 		int mouseX = MouseHandler.MouseHandler_x;
 		int mouseY = MouseHandler.MouseHandler_y;
 		MenuEntry menuEntry = menuManager.getMenuEntry(menuActionRow - 1);
-		if(menuEntry != null && menuEntry.getOption() != null) {
+		if(menuEntry == null)
+			return;
+		if(menuEntry.getOption() != null) {
 			if (menuEntry.getOption().contains("Walk")) {
 				return;
 			}
 		}
-		if(!toolTip.contains("Wear") && !toolTip.contains("Wield")) {
-			return;
+
+		int entityId = menuEntry.getItemId();
+		String entityName = null;
+		EntityDescription entityDescription = null;
+		boolean isItemDescription = false;
+		if(entityId > 0) {
+			entityName = ItemDefinition.lookup(entityId).name;
+			entityDescription = EntityDescription.getItemDescription(entityId);
+			isItemDescription = true;
 		}
-		//if(toolTip!=null){
-		//	return;
-		//}
-		if(openInterfaceID!=-1){
-			return;
+		if(entityDescription == null) {
+			Npc npc = (Npc) menuEntry.getNpc();
+			if(npc != null) {
+				entityId = npc.definition.id;
+				entityName = npc.definition.getName();
+				entityDescription = EntityDescription.getNpcDescription(entityId);
+			}
+		}
+		if(entityDescription == null && menuEntry.getObjectId() > 0) {
+			ObjectDefinition objectDefinition = ObjectDefinition.lookup(menuEntry.getObjectId());
+			if(objectDefinition != null) {
+				entityId = objectDefinition.id;
+				entityName = objectDefinition.name;
+				entityDescription = EntityDescription.getObjectDescription(entityId);
+			}
 		}
 
-		if(MouseHandler.MouseHandler_y < Client.instance.getViewportHeight() - 450 && MouseHandler.MouseHandler_x < Client.instance.getViewportWidth() - 200){
+
+		if(entityDescription == null)
+			return;
+		if(menuOpen) {
 			return;
 		}
-		mouseX-=100;
-		mouseY-=50;
-
-
-		if(controlIsDown) {
-			drawStatMenu(itemName, itemId,color);
+		if(controlIsDown && isItemDescription) {
+			drawStatMenu(entityName, entityId,color);
 			return;
 		}
 
 		if (menuActionRow < 2 && itemSelected == 0 && spellSelected == 0) {
 			return;
 		}
-		if(menuOpen) {
-			return;
+		color = RSInterfaceConstants.WHITE;
+		int minWidth = instance.newSmallFont.stringWidth("Press <col=ff0000>CTRL</col> to view stats");
+		int maxWidth = 160;
+		int width = instance.newSmallFont.stringWidth(entityDescription.getDescription());
+		width = Math.max(minWidth, width);
+		width = Math.min(maxWidth, width);
+		int lines = instance.newSmallFont.paragraphHeigth(entityDescription.getDescription(), width);
+		int height = lines * 14 + 25 + (entityDescription.getType().equalsIgnoreCase("item") ? 10 : 0);
+		if(!entityDescription.getItems().isEmpty()) {
+			height += 40;
 		}
-		if(tabID!=3) {
-			return;
+
+		if(mouseX + width + 10 > getCanvasWidth())
+			mouseX -= mouseX + width - getCanvasWidth() + 10;
+		if(mouseY + height + 10 > getCanvasHeight())
+			mouseY -= mouseY + height - getCanvasHeight() + 10;
+
+		if(mouseX < 5)
+			mouseX = 5;
+		if(mouseY < 5)
+			mouseY = 5;
+
+		Rasterizer2D.drawBoxOutline(mouseX, mouseY + 5, width + 6, height, 0x696969);
+		Rasterizer2D.drawTransparentBox(mouseX + 1, mouseY + 6, width + 5, height + 1, 0x000000,90);
+		Client.instance.newSmallFont.drawBasicString(entityName, mouseX + 150 / (12 +  Client.instance.newSmallFont.getTextWidth(entityName))+30 , mouseY + 17, color, 1);
+		newSmallFont.drawInterfaceText(entityDescription.getDescription(), mouseX + 4, mouseY - 1 + 17 + 8,
+				width - 10, 0, color, -1, 255, 0, 0, 14);
+		if(entityDescription.getType().equalsIgnoreCase("item"))
+			Client.instance.newSmallFont.drawBasicString("Hold <col=ff0000>CTRL</col> to view stats", mouseX + 4, mouseY + 6 + height - 5 - (!entityDescription.getItems().isEmpty() ? 35 : 0), color, 1);
+		boolean shouldRotate = cycle % 50 == 0;
+		GameItem[] gameItems = entityDescription.getItems().toArray(new GameItem[0]);
+		if(shouldRotate) {
+			Utility.rotateLeftByOne(entityDescription.getItems());
 		}
-
-
-		Rasterizer2D.drawBoxOutline(mouseX, mouseY + 5, 150, 36, 0x696969);
-		Rasterizer2D.drawTransparentBox(mouseX + 1, mouseY + 6, 150, 37, 0x000000,90);
-
-		Client.instance.newSmallFont.drawBasicString(itemName, mouseX + 150 / (12 +  Client.instance.newSmallFont.getTextWidth(itemName))+30 , mouseY + 17, color, 1);
-		Client.instance.newSmallFont.drawBasicString("Press CTRL to view the stats", mouseX + 4, mouseY + 35, color, 1);
-
+		int itemX = mouseX + 8;
+		int itemY = mouseY + height - 26;
+		if(!entityDescription.getItems().isEmpty()) {
+			for(int i = 0; i < Math.min(gameItems.length, 4); i++) {
+				Sprite itemSprite = ItemDefinition.getSprite(gameItems[i].id, gameItems[i].amount, 0);
+				if(itemSprite != null) {
+					itemSprite.drawSprite(itemX, itemY);
+					itemX += 37;
+				}
+			}
+		}
 	}
 
 	private List<Integer> requestedStats = new ArrayList<>();
@@ -12149,6 +12213,51 @@ public class Client extends GameEngine implements RSClient {
 	static int titleLoadingStage;
 	static UrlRequester urlRequester;
 	static UrlRequest World_request;
+	static UrlRequest entityDescription_request;
+	static boolean loadEntityDescriptions() {
+		try {
+			if (entityDescription_request == null) {
+				entityDescription_request = urlRequester.request(new URL("https://paradisenet.b-cdn.net/client/entitydesc.dat"));
+			} else if (entityDescription_request.isDone()) {
+				byte[] var0 = entityDescription_request.getResponse();
+				if(var0 == null) {
+					System.out.println("World request is null");
+					return false;
+				}
+				Buffer var1 = new Buffer(var0);
+				int size = var1.readInt();
+				List<EntityDescription> var10 = new ArrayList<>();
+				if(size != 0) {
+					EntityDescription var3;
+					for (int var2 = 0; var2 < size; var2++) {
+						String type = var1.readStringCp1252NullTerminated();
+						int entityId = var1.readInt();
+						String description = var1.readStringCp1252NullTerminated();
+						int itemSize = var1.readInt();
+						List<GameItem> gameItems = new ArrayList<>();
+						if(itemSize > 0) {
+							for (int i = 0; i < itemSize; i++) {
+								GameItem item = new GameItem();
+								item.id = var1.readInt();
+								item.amount = var1.readInt();
+								gameItems.add(item);
+							}
+						}
+						var3 = new EntityDescription(type,entityId, description, gameItems);
+						var10.add(var3);
+                    }
+				}
+				EntityDescription.entityDescriptions = new ArrayList<>();
+				EntityDescription.entityDescriptions.addAll(var10);
+				log.info("Loaded {} entity descriptions.", EntityDescription.entityDescriptions.size());
+				return true;
+			}
+		} catch (Exception var4) {
+			var4.printStackTrace();
+			entityDescription_request = null;
+		}
+		return false;
+	}
 	static boolean loadWorlds() {
 		try {
 			if (World_request == null) {
@@ -12186,7 +12295,6 @@ public class Client extends GameEngine implements RSClient {
 				}
 
 				World.sortWorlds(World_worlds, 0, World_worlds.length - 1, World.World_sortOption1, World.World_sortOption2);
-				World_request = null;
 				return true;
 			}
 		} catch (Exception var4) {
@@ -12220,6 +12328,13 @@ public class Client extends GameEngine implements RSClient {
 			drawLoadingText(10, "Preparing Worlds");
 			if(Configuration.CONNECTION == null) {
 				loadWorlds();
+				return;
+			}
+			Client.titleLoadingStage = 25;
+		} else if (Client.titleLoadingStage == 25) {
+			drawLoadingText(10, "Preparing Entity Hovers");
+			if(EntityDescription.entityDescriptions == null) {
+				loadEntityDescriptions();
 				return;
 			}
 			Client.titleLoadingStage = 30;
@@ -13882,8 +13997,8 @@ public class Client extends GameEngine implements RSClient {
 			//	drawHoverBox(MouseHandler.mouseX+10, MouseHandler.mouseY-10, s);
 
 
-			if(getUserSettings().isInventoryContextMenu() && hintMenu && showTabComponents) {
-				drawHintMenu(hintName,hintId, getUserSettings().getStartMenuColor());
+			if(getUserSettings().isInventoryContextMenu()) {
+				drawHintMenu(getUserSettings().getStartMenuColor());
 			}
 		}
 
@@ -18000,6 +18115,8 @@ public class Client extends GameEngine implements RSClient {
 			drawWorldchange = true;
 			worldSelectPage = 0;
 			worldSelectPagesCount = 0;
+
+			World_request = null;
 		}
 
 	}
