@@ -34,8 +34,7 @@ public class MenuEntry implements RSRuneLiteMenuEntry {
     private boolean forceLeftClick;
     @Setter
     private int itemOp = -1;
-    @Setter
-    private int itemId = -1;
+
     private Widget widget;
     @Setter
     private Actor actor;
@@ -45,6 +44,7 @@ public class MenuEntry implements RSRuneLiteMenuEntry {
 
     @Setter
     private Consumer<net.runelite.api.MenuEntry> consumer;
+
 
 
     @Override
@@ -185,9 +185,24 @@ public class MenuEntry implements RSRuneLiteMenuEntry {
         return itemOp;
     }
 
+    private int itemId = -1;
     @Override
     public int getItemId() {
         return itemId;
+    }
+
+    public MenuEntry setItemId(int itemId) {
+        this.itemId = itemId;
+        return this;
+    }
+    private int objectId = -1;
+    public int getObjectId() {
+        return objectId;
+    }
+
+    public MenuEntry setObjectId(int objectId) {
+        this.objectId = objectId;
+        return this;
     }
 
     @Nullable

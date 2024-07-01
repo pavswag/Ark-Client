@@ -165,4 +165,8 @@ public interface MenuEntry
 	Consumer getConsumer();
 
 	MenuEntry setWidget(Widget widget);
+
+	MenuEntry setItemId(int itemID);
+
+	MenuEntry setObjectId(int objectId);
 }
