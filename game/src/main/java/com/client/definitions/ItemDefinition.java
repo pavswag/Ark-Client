@@ -149,6 +149,15 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
             case 29489:
                 itemDef.name = "Prophets Pride";
                 break;
+            case 11505:
+                itemDef.name = "Potion of ambition";
+                break;
+            case 9068:
+                itemDef.name = "Helm of amazement";
+                break;
+            case 28796:
+                itemDef.name = "Staff of amazement";
+                break;
         }
         return itemDef;
     }
