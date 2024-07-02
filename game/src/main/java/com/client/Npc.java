@@ -106,6 +106,12 @@ public final class Npc extends Entity implements RSNPC {
 		}
 		if (definition.size == 1)
 			model.singleTile = true;
+
+		for(EntityProperties properties : entityProperties) {
+				properties.apply(model);
+				if(properties == EntityProperties.SHADOW)
+					model.light(64 + definition.ambient, 850 + definition.contrast, -30, -50, -30, true);
+		}
 		return model;
 	}
 

@@ -11872,6 +11872,16 @@ public class Client extends GameEngine implements RSClient {
 			}
 			if ((l & 2) != 0) {
 				npc.hidden = stream.readUnsignedByte() == 1;
+				int entityProperties = stream.readByte();
+				if(entityProperties > 0) {
+					for (int ex = 0; ex < entityProperties; ex++) {
+						int ordinal = stream.readByte();
+						EntityProperties property = EntityProperties.values()[ordinal];
+						if (!npc.entityProperties.contains(property)) {
+							npc.entityProperties.add(property);
+						}
+					}
+				}
 				npc.definition = NpcDefinition.lookup(stream.method436());
 				npc.anInt1540 = npc.definition.size;
 				npc.anInt1504 = npc.definition.rotation;
@@ -13144,6 +13154,7 @@ public class Client extends GameEngine implements RSClient {
 			if (j1 > 15)
 				j1 -= 32;
 			player.setPos(localPlayer.pathX[0] + j1, localPlayer.pathY[0] + i1, l == 1);
+			int entityProperties = stream.readBits(8);
 			callbacks.post(new PlayerSpawned(player));
 		}
 		stream.finishBitAccess();
