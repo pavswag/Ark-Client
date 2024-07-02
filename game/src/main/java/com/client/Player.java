@@ -106,9 +106,6 @@ public final class Player extends Entity implements RSPlayer {
 						super.y - anInt1713);
 			}
 		}
-		for(EntityProperties properties : entityProperties) {
-			properties.apply(model);
-		}
 		model.singleTile = true;
 		return model;
 	}
@@ -129,16 +126,6 @@ public final class Player extends Entity implements RSPlayer {
 		healthState = stream.readUnsignedByte();
 		headIcon = stream.readUnsignedByte();
 		skullIcon = stream.readUnsignedByte();
-		int entityProperty = stream.readByte();
-		if(entityProperty > 0) {
-			for (int ex = 0; ex < entityProperty; ex++) {
-				int ordinal = stream.readByte();
-				EntityProperties property = EntityProperties.values()[ordinal];
-				if (!entityProperties.contains(property)) {
-					entityProperties.add(property);
-				}
-			}
-		}
 		npcDefinition = null;
 		team = 0;
 		for (int j = 0; j < 12; j++) {

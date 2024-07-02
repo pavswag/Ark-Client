@@ -6,9 +6,6 @@ import com.client.definitions.HealthBarDefinition;
 import com.client.definitions.HitSplatDefinition;
 import com.client.definitions.SequenceDefinition;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Entity extends Renderable {
 
 	void playAnimationSound(SequenceDefinition var0, int var1, int var2, int var3) {
@@ -317,7 +314,6 @@ public class Entity extends Renderable {
 	int turn90CWAnimIndex;
 	int turn90CCWAnimIndex;
 
-	public List<EntityProperties> entityProperties = new ArrayList<>();
 
 	public IterableNodeHashTable spotAnims = new IterableNodeHashTable(500);
 

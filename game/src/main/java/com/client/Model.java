@@ -1396,14 +1396,7 @@ public class Model extends Renderable implements RSModel {
         this.resetBounds();
         invalidate();
     }
-    public Model recolor(int replace) {
-        if(colors != null) {
-            for (int face = 0; face < trianglesCount; face++) {
-                    colors[face] = (short) replace;
-            }
-        }
-        return this;
-    }
+
     public Model recolor(int found, int replace) {
         if(colors != null) {
             for (int face = 0; face < trianglesCount; face++) {
