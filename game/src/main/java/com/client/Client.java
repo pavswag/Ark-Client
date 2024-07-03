@@ -1140,7 +1140,6 @@ public class Client extends GameEngine implements RSClient {
 
 
 	public Socket openSocket(int port) throws IOException {
-		System.out.println("Opening socket for " + server + "/" + port);
 		return new Socket(InetAddress.getByName(server), port);
 	}
 
