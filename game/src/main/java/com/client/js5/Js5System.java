@@ -21,9 +21,9 @@ public class Js5System {
 
     private static int js5Errors = 0;
 
-    private static int js5ConnectState = 0;
+    public static int js5ConnectState = 0;
 
-    private static int js5Cycles = 0;
+    public static int js5Cycles = 0;
 
     static Task js5SocketTask;
 
@@ -107,6 +107,7 @@ public class Js5System {
     private static void connectToJs5() throws IOException {
         if (js5ConnectState == 0) {
             js5SocketTask = GameEngine.taskHandler.newSocketTask(Configuration.CONNECTION.js5Host, Configuration.CONNECTION.js5Port);
+            System.out.println("Connecting js5 too " + Configuration.CONNECTION.js5Host + "/" + Configuration.CONNECTION.js5Port);
             js5ConnectState++;
             System.out.println("js5ConnectState set to 1, creating socket task");
         }

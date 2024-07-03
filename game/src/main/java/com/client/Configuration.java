@@ -13,6 +13,8 @@ public class Configuration {
 	 */
 	public static final int CLIENT_VERSION = 126;
 
+	public static boolean LOCALHOST = false;
+
 	/**
 	 * Cache version is written to the cache folder inside a version file.
 	 * This is read on startup to tell if the cache is out of date or not.

@@ -79,6 +79,7 @@ import net.runelite.client.ui.overlay.WidgetOverlay;
 import net.runelite.client.ui.overlay.tooltip.TooltipOverlay;
 import net.runelite.client.util.ReflectUtil;
 import net.runelite.http.api.RuneLiteAPI;
+import net.runelite.http.api.config.Configuration;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -230,22 +231,8 @@ public class RuneLite
 				ClassPreloader.preload();
 			}, "Preloader").start();
 
-			final boolean developerMode = options.has("developer-mode") && RuneLiteProperties.getLauncherVersion() == null;
-
-			if (developerMode)
-			{
-				boolean assertions = false;
-				assert assertions = true;
-				if (!assertions)
-				{
-					SwingUtilities.invokeLater(() ->
-							new FatalErrorDialog("Developers should enable assertions; Add `-ea` to your JVM arguments`")
-									.addHelpButtons()
-									.addBuildingGuide()
-									.open());
-					return;
-				}
-			}
+			final boolean developerMode = options.has("developer-mode");
+			devMode = developerMode;
 
 			log.info("RuneLite {} (launcher version {}) starting up, args: {}",
 					RuneLiteProperties.getVersion(), MoreObjects.firstNonNull(RuneLiteProperties.getLauncherVersion(), "unknown"),

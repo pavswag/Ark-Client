@@ -117,6 +117,7 @@ import net.runelite.api.Tile;
 import net.runelite.api.events.*;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetID;
+import net.runelite.client.RuneLite;
 import net.runelite.client.events.ProfileChanged;
 import net.runelite.http.api.feed.FeedItem;
 import net.runelite.http.api.feed.FeedItemType;
@@ -12296,12 +12297,15 @@ public class Client extends GameEngine implements RSClient {
 					boolean var10 = false;
 					var3 = World_worlds[var2] = new World();
 					var3.id = var1.readUnsignedShort();
-					if(var3.id == 1 && Configuration.CONNECTION == null) {
+					if(!RuneLite.devMode && var3.id == 1 && Configuration.CONNECTION == null) {
 						var10 = true;
 					}
 					var3.name = var1.readStringCp1252NullTerminated();
 					var3.properties = var1.readInt();
 					var3.host = var1.readStringCp1252NullTerminated();
+					if(RuneLite.devMode && var3.host.equalsIgnoreCase("127.0.0.1") && Configuration.CONNECTION == null) {
+						var10 = true;
+					}
 					var3.port = var1.readInt();
 					var3.activity = var1.readStringCp1252NullTerminated();
 					var3.location = var1.readUnsignedByte();
