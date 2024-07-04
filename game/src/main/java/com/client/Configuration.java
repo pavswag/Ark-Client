@@ -37,7 +37,7 @@ public class Configuration {
 
 	public static final String CUSTOM_ITEM_SPRITES_DIRECTORY = "item_sprites/";
 
-	public static boolean developerMode = false;
+	public static boolean developerMode = true;
 	public static boolean dumpDataLists = false;
 	public static boolean newFonts; // TODO text offsets (i.e. spacing between characters) are incorrect, needs automatic fix from kourend
 
@@ -58,7 +58,7 @@ public class Configuration {
 	public static int npcAttackOptionPriority = 2;
 
 	public static final boolean DUMP_SPRITES = false;
-	public static final boolean PRINT_EMPTY_INTERFACE_SECTIONS = true;
+	public static final boolean PRINT_EMPTY_INTERFACE_SECTIONS = false;
 
 	public static boolean playerNames = true;
 	public static boolean npcNames = false;
