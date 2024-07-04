@@ -69,13 +69,19 @@ public final class Npc extends Entity implements RSNPC {
 			return null;
 		super.defaultHeight = model.modelBaseY;
 		Iterator spotAnimIterator = spotAnims.iterator();
+		int processedGraphics = 1;
 		while(spotAnimIterator.hasNext()) {
+			processedGraphics++;
+			if(processedGraphics >= 3)
+				break;
 			EntitySpotAnim graphicObject = (EntitySpotAnim) spotAnimIterator.next();
 
-			if(graphicObject.getId() == -1) {
+			if(graphicObject.getId() == -1 ) {
 				graphicObject.remove();
 				continue;
 			}
+			if(graphicObject.getFrame() == -1)
+				continue;
 			SpotAnimation spotAnim = SpotAnimation.lookup(graphicObject.getId());
 			Model model_2 = spotAnim.getModel();
 			if (model_2 != null) {

@@ -71,6 +71,7 @@ tasks {
         description = "Run Runelite in Normal Mode"
         classpath = project.sourceSets.main.get().runtimeClasspath
         mainClass.set("Application")
+        args = listOf("--developer-mode")
     }
 
     register<JavaExec>("Run-Development") {
