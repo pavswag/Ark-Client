@@ -65,7 +65,6 @@ application {
 }
 
 tasks {
-
     register<JavaExec>("Run-Normal") {
         group = "Runelite"
         description = "Run Runelite in Normal Mode"
@@ -82,5 +81,4 @@ tasks {
         classpath = project.sourceSets.main.get().runtimeClasspath
         mainClass.set("Application")
     }
-
 }

@@ -1682,8 +1682,11 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
                 for (int l1 = 0; l1 < l; l1++)
                     chatheadModels[l1] = buffer.readUShort();
             } else if(opcode >= 74 && opcode <= 79) {
+                if(stats == null)
+                    stats = new int[5];
                 int index = opcode - 74;
                 int stat = buffer.readUShort();
+                stats[index] = stat;
                 System.out.println("ID [" + id + "]  index [" + index + "] stat = " + stat);
             } else if (opcode == 93)
                 isMinimapVisible = false;
@@ -2078,6 +2081,7 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
     public int[] models;
     public static EvictingDualNodeHashTable mruNodes = new EvictingDualNodeHashTable(70);
     public int[] anIntArray76;
+    public int stats[];
 
     @Override
     public HeadIcon getOverheadIcon() {
