@@ -158,6 +158,44 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
             case 28796:
                 itemDef.name = "Staff of amazement";
                 break;
+            case 33392:
+                itemDef.name = "Freedom Ring";
+                itemDef.inventoryModel = 60891;
+                itemDef.maleModel0 = 60891;
+                itemDef.femaleModel0 = 60891;
+                itemDef.zoom2d = ItemDefinition.lookup(28327).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(28327).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(28327).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(28327).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(28327).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
+            case 33393:
+                itemDef.name = "Freedom Boots";
+                itemDef.inventoryModel = 2837;
+                itemDef.maleModel0 = 60893;
+                itemDef.femaleModel0 = 60894;
+                itemDef.zoom2d = ItemDefinition.lookup(2904).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(2904).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(2904).yan2d;
+                itemDef.zoom2d = ItemDefinition.lookup(2904).zoom2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(2904).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(2904).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
+            case 33394:
+                itemDef.name = "Freedom Gloves";
+                itemDef.inventoryModel = 2649;
+                itemDef.maleModel0 = 60896;
+                itemDef.femaleModel0 = 60897;
+                itemDef.zoom2d = ItemDefinition.lookup(2912).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(2912).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(2912).yan2d;
+                itemDef.zoom2d = ItemDefinition.lookup(2912).zoom2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(2912).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(2912).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
         }
         return itemDef;
     }

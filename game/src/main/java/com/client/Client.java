@@ -12240,7 +12240,7 @@ public class Client extends GameEngine implements RSClient {
 			} else if (entityDescription_request.isDone()) {
 				byte[] var0 = entityDescription_request.getResponse();
 				if(var0 == null) {
-					System.out.println("World request is null");
+//					System.out.println("World request is null");
 					return false;
 				}
 				Buffer var1 = new Buffer(var0);
@@ -12280,11 +12280,15 @@ public class Client extends GameEngine implements RSClient {
 	static boolean loadWorlds() {
 		try {
 			if (World_request == null) {
-				World_request = urlRequester.request(new URL("https://paradisenet.b-cdn.net/client/worlds.dat"));
+				if (Configuration.developerMode) {
+					World_request = urlRequester.request(new URL("https://paradisenet.b-cdn.net/client/betaworlds.dat"));
+				} else {
+					World_request = urlRequester.request(new URL("https://paradisenet.b-cdn.net/client/worlds.dat"));
+				}
 			} else if (World_request.isDone()) {
 				byte[] var0 = World_request.getResponse();
 				if(var0 == null) {
-					System.out.println("World request is null");
+//					System.out.println("World request is null");
 					return false;
 				}
 				Buffer var1 = new Buffer(var0);

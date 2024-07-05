@@ -41,6 +41,17 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
                 e.printStackTrace();
             }
         }
+        if (i==13003) {
+            npcDefinition.custom = true;
+            npcDefinition.name = "@red@Bald eagle";
+            npcDefinition.combatLevel = 982;
+            npcDefinition.isMinimapVisible = true;
+            npcDefinition.actions = new String[5];
+            npcDefinition.actions = new String[] { null, "Attack", null, null, null };
+            npcDefinition.size = 4;
+            npcDefinition.heightScale = 200; //WIDTH
+            npcDefinition.widthScale = 200; // HEIGH
+        }
 
        /* if (i == Npcs.BOB_BARTER_HERBS) {
             npcDefinition.custom = true;
