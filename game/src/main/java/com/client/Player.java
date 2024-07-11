@@ -129,7 +129,7 @@ public final class Player extends Entity implements RSPlayer {
 		healthState = stream.readUnsignedByte();
 		headIcon = stream.readUnsignedByte();
 		skullIcon = stream.readUnsignedByte();
-		int entityProperty = stream.readByte();
+/*		int entityProperty = stream.readByte();
 		if(entityProperty > 0) {
 			for (int ex = 0; ex < entityProperty; ex++) {
 				int ordinal = stream.readByte();
@@ -138,7 +138,7 @@ public final class Player extends Entity implements RSPlayer {
 					entityProperties.add(property);
 				}
 			}
-		}
+		}*/
 		npcDefinition = null;
 		team = 0;
 		for (int j = 0; j < 12; j++) {

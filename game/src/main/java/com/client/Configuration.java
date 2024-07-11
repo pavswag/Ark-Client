@@ -37,7 +37,7 @@ public class Configuration {
 
 	public static final String CUSTOM_ITEM_SPRITES_DIRECTORY = "item_sprites/";
 
-	public static boolean developerMode = true;
+	public static boolean developerMode = false;
 	public static boolean dumpDataLists = false;
 	public static boolean newFonts; // TODO text offsets (i.e. spacing between characters) are incorrect, needs automatic fix from kourend
 

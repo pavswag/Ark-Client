@@ -2,10 +2,10 @@ package com.client.connection;
 
 public enum Connection {
     /** The economy (main) world. */
-    WORLD_1("World 1", "127.0.0.1", "52778", "43596", "arkcane.ipv4.tcpshield.com", "52777", "213.171.212.95"),
+    WORLD_1("World 1", "127.0.0.1", "52778", "43596", "arkcane.ipv4.tcpshield.com", "43596", "213.171.212.95"),
 
     /** The management world - used for private testing by the management team. */
-    WORLD_2("LIVE", "arkcane.ipv4.tcpshield.com", "52778", "43596", "213.171.212.95", "52777", "arkcane.ipv4.tcpshield.com"),
+    WORLD_2("LIVE", "arkcane.ovh.tcpshield.com", "52778", "52777", "145.239.204.119", "43596", "213.171.212.95"),
 
 
     LIVE("LIVE", "arkcane.ipv4.tcpshield.com", "52778", "43596", "arkcane.ipv4.tcpshield.com", "52777", "213.171.212.95"),

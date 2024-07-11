@@ -13161,7 +13161,7 @@ public class Client extends GameEngine implements RSClient {
 			if (j1 > 15)
 				j1 -= 32;
 			player.setPos(localPlayer.pathX[0] + j1, localPlayer.pathY[0] + i1, l == 1);
-			int entityProperties = stream.readBits(8);
+//			int entityProperties = stream.readBits(8);
 			callbacks.post(new PlayerSpawned(player));
 		}
 		stream.finishBitAccess();

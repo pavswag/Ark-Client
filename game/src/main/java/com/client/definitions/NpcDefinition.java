@@ -1694,7 +1694,7 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
                     chatheadModels[l1] = buffer.readUShort();
             } else if(opcode >= 74 && opcode <= 79) {
                 if(stats == null)
-                    stats = new int[5];
+                    stats = new int[6];
                 int index = opcode - 74;
                 int stat = buffer.readUShort();
                 stats[index] = stat;
