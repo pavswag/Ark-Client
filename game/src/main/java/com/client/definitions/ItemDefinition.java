@@ -147,20 +147,49 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.name = "Vote Entry Token";
                 itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Drop" };
                 break;
+
+//            Boxes
+            case 33358:
+                itemDef.name = "Dragons Box";
+                itemDef.zoom2d = ItemDefinition.lookup(6677).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(6677).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(6677).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(6677).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(6677).yOffset2d;
+                break;
+
+//                Goodie Bags
+            case 33395:
+                itemDef.name = "Ocean Bag";
+                itemDef.inventoryModel = 60898;
+                itemDef.zoom2d = ItemDefinition.lookup(25537).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(25537).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(25537).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(25537).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(25537).yOffset2d;
+                itemDef.interfaceOptions = new String[] { "Open", null, null, null, "Drop"};
+                break;
+            case 33396:
+                itemDef.name = "Deep Ocean Bag";
+                itemDef.inventoryModel = 60899;
+                itemDef.zoom2d = ItemDefinition.lookup(25537).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(25537).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(25537).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(25537).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(25537).yOffset2d;
+                itemDef.interfaceOptions = new String[] { "Open", null, null, null, "Drop"};
+                break;
+
+//                Misc Items
             case 23309:
                 itemDef.name = "Double Drop Amulet";
                 break;
-            case 29489:
-                itemDef.name = "Prophets Pride";
+            case 4277:
+                itemDef.name = "Treasure Map Scroll";
+                itemDef.interfaceOptions = new String[] { "Tear", null, null, null, "Drop"};
                 break;
             case 11505:
                 itemDef.name = "Potion of ambition";
-                break;
-            case 9068:
-                itemDef.name = "Helm of amazement";
-                break;
-            case 28796:
-                itemDef.name = "Staff of amazement";
                 break;
             case 33392:
                 itemDef.name = "Freedom Ring";
@@ -174,18 +203,13 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.yOffset2d = ItemDefinition.lookup(28327).yOffset2d;
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 break;
-            case 33393:
-                itemDef.name = "Freedom Boots";
-                itemDef.inventoryModel = 2837;
-                itemDef.maleModel0 = 60893;
-                itemDef.femaleModel0 = 60894;
-                itemDef.zoom2d = ItemDefinition.lookup(2904).zoom2d;
-                itemDef.xan2d = ItemDefinition.lookup(2904).xan2d;
-                itemDef.yan2d = ItemDefinition.lookup(2904).yan2d;
-                itemDef.zoom2d = ItemDefinition.lookup(2904).zoom2d;
-                itemDef.xOffset2d = ItemDefinition.lookup(2904).xOffset2d;
-                itemDef.yOffset2d = ItemDefinition.lookup(2904).yOffset2d;
-                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+
+//                Armour
+            case 9068:
+                itemDef.name = "Helm of amazement";
+                break;
+            case 29489:
+                itemDef.name = "Prophets Pride";
                 break;
             case 33394:
                 itemDef.name = "Freedom Gloves";
@@ -195,9 +219,89 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.zoom2d = ItemDefinition.lookup(2912).zoom2d;
                 itemDef.xan2d = ItemDefinition.lookup(2912).xan2d;
                 itemDef.yan2d = ItemDefinition.lookup(2912).yan2d;
-                itemDef.zoom2d = ItemDefinition.lookup(2912).zoom2d;
                 itemDef.xOffset2d = ItemDefinition.lookup(2912).xOffset2d;
                 itemDef.yOffset2d = ItemDefinition.lookup(2912).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
+
+//            Weapons
+            case 28796:
+                itemDef.name = "Staff of amazement";
+                break;
+            case 33393:
+                itemDef.name = "Freedom Boots";
+                itemDef.inventoryModel = 2837;
+                itemDef.maleModel0 = 60893;
+                itemDef.femaleModel0 = 60894;
+                itemDef.zoom2d = ItemDefinition.lookup(2904).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(2904).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(2904).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(2904).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(2904).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
+
+//                Sets
+            case 33397:
+                itemDef.name = "@pur@Pink Ankou Mask";
+                itemDef.inventoryModel = 60905;
+                itemDef.maleModel0 = 60900;
+                itemDef.femaleModel0 = 60900;
+                itemDef.zoom2d = ItemDefinition.lookup(20095).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(20095).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(20095).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(20095).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(20095).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
+            case 33398:
+                itemDef.name = "@pur@Pink Ankou Top";
+                itemDef.inventoryModel = 60906;
+                itemDef.maleModel0 = 60901;
+                itemDef.maleModel1 = 60910;
+                itemDef.femaleModel0 = 60901;
+                itemDef.femaleModel1 = 60910;
+                itemDef.zoom2d = ItemDefinition.lookup(20098).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(20098).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(20098).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(20098).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(20098).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
+            case 33399:
+                itemDef.name = "@pur@Pink Ankou Legs";
+                itemDef.inventoryModel = 60907;
+                itemDef.maleModel0 = 60902;
+                itemDef.femaleModel0 = 60902;
+                itemDef.zoom2d = ItemDefinition.lookup(20104).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(20104).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(20104).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(20104).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(20104).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
+            case 33400:
+                itemDef.name = "@pur@Pink Ankou Socks";
+                itemDef.inventoryModel = 60908;
+                itemDef.maleModel0 = 60903;
+                itemDef.femaleModel0 = 60903;
+                itemDef.zoom2d = ItemDefinition.lookup(20107).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(20107).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(20107).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(20107).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(20107).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
+            case 33401:
+                itemDef.name = "@pur@Pink Ankou Mask";
+                itemDef.inventoryModel = 60909;
+                itemDef.maleModel0 = 60904;
+                itemDef.femaleModel0 = 60904;
+                itemDef.zoom2d = ItemDefinition.lookup(20101).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(20101).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(20101).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(20101).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(20101).yOffset2d;
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 break;
         }
