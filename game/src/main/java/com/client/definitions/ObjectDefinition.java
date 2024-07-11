@@ -45,6 +45,13 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 			}
 		}
 
+		switch (i) {
+			case 37568:
+				objectDef.name = "Start Shadow Crusade Raid";
+				objectDef.actions  = new String[]{"Start", null, null, null, null};
+				break;
+		}
+
 		/*switch (i) {
 			case 46539:
 				objectDef.actions = new String[]{null, "Collect", null, null, null};

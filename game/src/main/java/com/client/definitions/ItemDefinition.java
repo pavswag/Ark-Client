@@ -143,20 +143,49 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
     private static ItemDefinition customItems(ItemDefinition itemDef) {
         int itemId = itemDef.id;
         switch (itemId) {
+
+//            Boxes
+            case 33358:
+                itemDef.name = "Dragons Box";
+                itemDef.zoom2d = ItemDefinition.lookup(6677).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(6677).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(6677).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(6677).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(6677).yOffset2d;
+                break;
+
+//                Goodie Bags
+            case 33395:
+                itemDef.name = "Ocean Bag";
+                itemDef.inventoryModel = 60898;
+                itemDef.zoom2d = ItemDefinition.lookup(25537).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(25537).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(25537).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(25537).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(25537).yOffset2d;
+                itemDef.interfaceOptions = new String[] { "Open", null, null, null, "Drop"};
+                break;
+            case 33396:
+                itemDef.name = "Deep Ocean Bag";
+                itemDef.inventoryModel = 60899;
+                itemDef.zoom2d = ItemDefinition.lookup(25537).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(25537).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(25537).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(25537).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(25537).yOffset2d;
+                itemDef.interfaceOptions = new String[] { "Open", null, null, null, "Drop"};
+                break;
+
+//                Misc Items
             case 23309:
                 itemDef.name = "Double Drop Amulet";
                 break;
-            case 29489:
-                itemDef.name = "Prophets Pride";
+            case 4277:
+                itemDef.name = "Treasure Map Scroll";
+                itemDef.interfaceOptions = new String[] { "Tear", null, null, null, "Drop"};
                 break;
             case 11505:
                 itemDef.name = "Potion of ambition";
-                break;
-            case 9068:
-                itemDef.name = "Helm of amazement";
-                break;
-            case 28796:
-                itemDef.name = "Staff of amazement";
                 break;
             case 33392:
                 itemDef.name = "Freedom Ring";
@@ -170,18 +199,13 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.yOffset2d = ItemDefinition.lookup(28327).yOffset2d;
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 break;
-            case 33393:
-                itemDef.name = "Freedom Boots";
-                itemDef.inventoryModel = 2837;
-                itemDef.maleModel0 = 60893;
-                itemDef.femaleModel0 = 60894;
-                itemDef.zoom2d = ItemDefinition.lookup(2904).zoom2d;
-                itemDef.xan2d = ItemDefinition.lookup(2904).xan2d;
-                itemDef.yan2d = ItemDefinition.lookup(2904).yan2d;
-                itemDef.zoom2d = ItemDefinition.lookup(2904).zoom2d;
-                itemDef.xOffset2d = ItemDefinition.lookup(2904).xOffset2d;
-                itemDef.yOffset2d = ItemDefinition.lookup(2904).yOffset2d;
-                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+
+//                Armour
+            case 9068:
+                itemDef.name = "Helm of amazement";
+                break;
+            case 29489:
+                itemDef.name = "Prophets Pride";
                 break;
             case 33394:
                 itemDef.name = "Freedom Gloves";
@@ -191,9 +215,25 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.zoom2d = ItemDefinition.lookup(2912).zoom2d;
                 itemDef.xan2d = ItemDefinition.lookup(2912).xan2d;
                 itemDef.yan2d = ItemDefinition.lookup(2912).yan2d;
-                itemDef.zoom2d = ItemDefinition.lookup(2912).zoom2d;
                 itemDef.xOffset2d = ItemDefinition.lookup(2912).xOffset2d;
                 itemDef.yOffset2d = ItemDefinition.lookup(2912).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
+
+//            Weapons
+            case 28796:
+                itemDef.name = "Staff of amazement";
+                break;
+            case 33393:
+                itemDef.name = "Freedom Boots";
+                itemDef.inventoryModel = 2837;
+                itemDef.maleModel0 = 60893;
+                itemDef.femaleModel0 = 60894;
+                itemDef.zoom2d = ItemDefinition.lookup(2904).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(2904).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(2904).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(2904).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(2904).yOffset2d;
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 break;
         }
