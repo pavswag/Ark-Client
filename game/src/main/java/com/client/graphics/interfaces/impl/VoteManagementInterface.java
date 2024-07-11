@@ -70,16 +70,16 @@ public class VoteManagementInterface extends RSInterface {
         get(23766).forceInvStackSizes = true;
         addItemContainer(23767, 6, 1, 4, 4, true,
                 true);
-        get(23766).forceInvStackSizes = true;
+        get(23767).forceInvStackSizes = true;
         addItemContainer(23768, 6, 1, 4, 4, true,
                 true);
-        get(23766).forceInvStackSizes = true;
+        get(23768).forceInvStackSizes = true;
         addItemContainer(23769, 6, 1, 4, 4, true,
                 true);
-        get(23766).forceInvStackSizes = true;
+        get(23769).forceInvStackSizes = true;
         addItemContainer(23770, 6, 1, 4, 4, true,
                 true);
-        get(23766).forceInvStackSizes = true;
+        get(23770).forceInvStackSizes = true;
 
         /**
          * Top 5 Monthly Voters
@@ -137,14 +137,19 @@ public class VoteManagementInterface extends RSInterface {
 
         addItemContainer(23784, 6, 1, 4, 4, true,
                 true);
+        get(23784).forceInvStackSizes = true;
         addItemContainer(23785, 6, 1, 4, 4, true,
                 true);
+        get(23785).forceInvStackSizes = true;
         addItemContainer(23786, 6, 1, 4, 4, true,
                 true);
+        get(23786).forceInvStackSizes = true;
         addItemContainer(23787, 6, 1, 4, 4, true,
                 true);
+        get(23787).forceInvStackSizes = true;
         addItemContainer(23788, 6, 1, 4, 4, true,
                 true);
+        get(23788).forceInvStackSizes = true;
 
         RSInterface.addRectangle(23789, 105, 40, 0x3A332A, 0, true);
         Objects.requireNonNull(get(23789)).secondaryColor = 0x413A2F;
