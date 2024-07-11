@@ -67,14 +67,19 @@ public class VoteManagementInterface extends RSInterface {
 
         addItemContainer(23766, 6, 1, 4, 4, true,
                 true);
+        get(23766).forceInvStackSizes = true;
         addItemContainer(23767, 6, 1, 4, 4, true,
                 true);
+        get(23766).forceInvStackSizes = true;
         addItemContainer(23768, 6, 1, 4, 4, true,
                 true);
+        get(23766).forceInvStackSizes = true;
         addItemContainer(23769, 6, 1, 4, 4, true,
                 true);
+        get(23766).forceInvStackSizes = true;
         addItemContainer(23770, 6, 1, 4, 4, true,
                 true);
+        get(23766).forceInvStackSizes = true;
 
         /**
          * Top 5 Monthly Voters
