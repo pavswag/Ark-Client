@@ -179,16 +179,8 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.name = "Instance Token";
                 itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Drop" };
                 break;*/
-            case 33358:
-                itemDef.name = "Dragons Box";
-                itemDef.zoom2d = ItemDefinition.lookup(6677).zoom2d;
-                itemDef.xan2d = ItemDefinition.lookup(6677).xan2d;
-                itemDef.yan2d = ItemDefinition.lookup(6677).yan2d;
-                itemDef.xOffset2d = ItemDefinition.lookup(6677).xOffset2d;
-                itemDef.yOffset2d = ItemDefinition.lookup(6677).yOffset2d;
-                break;
             case 33395:
-                itemDef.name = "Ocean Bag";
+                itemDef.name = "Chaotic GoodieBag";
                 itemDef.inventoryModel = 60898;
                 itemDef.zoom2d = ItemDefinition.lookup(25537).zoom2d;
                 itemDef.xan2d = ItemDefinition.lookup(25537).xan2d;
@@ -198,7 +190,7 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.interfaceOptions = new String[] { "Open", null, null, null, "Drop"};
                 break;
             case 33396:
-                itemDef.name = "Deep Ocean Bag";
+                itemDef.name = "Unused Goodie Bag";
                 itemDef.inventoryModel = 60899;
                 itemDef.zoom2d = ItemDefinition.lookup(25537).zoom2d;
                 itemDef.xan2d = ItemDefinition.lookup(25537).xan2d;
