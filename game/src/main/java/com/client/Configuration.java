@@ -11,7 +11,7 @@ public class Configuration {
 	 * the player has the most up-to-date client, otherwise they
 	 * will receive an error on login to update their client.
 	 */
-	public static final int CLIENT_VERSION = 126;
+	public static final int CLIENT_VERSION = 127;
 
 	public static boolean LOCALHOST = false;
 
