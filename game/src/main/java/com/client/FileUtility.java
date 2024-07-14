@@ -59,6 +59,7 @@ public final class FileUtility {
             totalRead++;
             return abyte0;
         } catch (Exception exception) {
+            exception.printStackTrace();
         }
         return null;
     }

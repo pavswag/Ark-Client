@@ -23,7 +23,10 @@ public enum Js5ArchiveIndex {
     WORLDMAP(19),
     WORLDMAP_GROUND(20),
     DBTABLEINDEX(21),
-    WIDGET_SPRITES(22);
+    WIDGET_SPRITES(22),
+    DAT_IDX(25),
+
+    ;
 
     private final int id;
 

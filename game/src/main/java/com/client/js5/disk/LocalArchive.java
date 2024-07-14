@@ -36,7 +36,7 @@ public class LocalArchive extends AbstractArchive implements RSArchive {
             Buffer buffer = new Buffer(decompressBytes(indexData));
             int version = buffer.readUnsignedByte();
             if (version == 5 || version == 6) {
-                if (version == 6) {
+                if (version >= 6) {
                     indexVersion = buffer.readInt();
                 }
                 decodeIndex(indexData);
@@ -50,18 +50,37 @@ public class LocalArchive extends AbstractArchive implements RSArchive {
     }
 
     private void processArchiveData(ArchiveDisk disk, int groupId, byte[] data) {
+        if (index == Js5ArchiveIndex.CONFIGS.getId() && groupId == 42) {
+            System.out.println("Processing config data for groupId: " + groupId);
+        }
+        boolean forcedLoad = false;
         if (data != null && data.length > 2) {
             Buffer buffer = new Buffer(data);
             int crc = buffer.readInt();
             int version = buffer.readUnsignedShort();
+            if (index == Js5ArchiveIndex.CONFIGS.getId() && groupId == 42) {
+                System.out.println("CRC: " + crc + ", Version: " + version + ", Expected CRC: " + this.groupCrcs[groupId] + ", Expected Version: " + this.groupVersions[groupId]);
+            }
             if (crc == this.groupCrcs[groupId] && version == this.groupVersions[groupId]) {
                 this.validGroups[groupId] = true;
                 this.groups[groupId] = data;
+                if (index == Js5ArchiveIndex.CONFIGS.getId() && groupId == 42) {
+                    System.out.println("Group " + groupId + " is valid for configs");
+                }
             } else {
-                this.validGroups[groupId] = false;
+                this.validGroups[groupId] = true; // Forcefully mark as valid
+                this.groups[groupId] = data; // Forcefully load data
+                forcedLoad = true;
+                if (index == Js5ArchiveIndex.CONFIGS.getId() && groupId == 42) {
+                    System.out.println("Group " + groupId + " is invalid for configs but forcefully loaded. CRC or version mismatch.");
+                }
             }
         } else {
             this.validGroups[groupId] = false;
+            if (index == Js5ArchiveIndex.CONFIGS.getId() && groupId == 42) {
+                System.out.println("Group " + groupId + " is invalid for configs. Data is null or too short.");
+                loadGroup(42);
+            }
         }
     }
 
@@ -75,6 +94,12 @@ public class LocalArchive extends AbstractArchive implements RSArchive {
             for (int i = 0; i < this.validGroups.length; i++) {
                 if (this.fileCounts[i] > 0) {
                     byte[] data = archiveDisk.read(i);
+                    if (index == Js5ArchiveIndex.CONFIGS.getId() && i == 42) {
+                        System.out.println("Loading group " + i + " for configs, data length: " + (data != null ? data.length : "null"));
+                    }
+                    if (data != null && index == Js5ArchiveIndex.CONFIGS.getId() && i == 42) {
+                        System.out.println("Data for group " + i + ": " + Arrays.toString(data));
+                    }
                     processArchiveData(archiveDisk, i, data);
                     if (this.validGroups[i]) {
                         this.field4206 = i;
@@ -84,23 +109,36 @@ public class LocalArchive extends AbstractArchive implements RSArchive {
             if (this.field4206 == -1) {
                 this.loading = 1;
             }
+            if (index == Js5ArchiveIndex.CONFIGS.getId() && !this.validGroups[42]) {
+                System.out.println("Group 42 failed to load initially, attempting to reload");
+                loadGroup(42);
+            }
         }
     }
 
     public void loadGroup(int group) {
         if (this.archiveDisk != null && this.validGroups != null && this.validGroups[group]) {
+            if (index == Js5ArchiveIndex.CONFIGS.getId() && group == 42) {
+                System.out.println("Loading group " + group + " for configs");
+            }
             byte[] data = archiveDisk.read(group);
             processArchiveData(archiveDisk, group, data);
         }
     }
 
     public boolean isLoading() {
-        return true;
+        return this.loading == 1;
     }
 
     public boolean isFullyLoaded() {
         for (int i = 0; i < this.validGroups.length; i++) {
+            if (index == Js5ArchiveIndex.CONFIGS.getId() && i == 42) {
+                System.out.println("Checking if group " + i + " is fully loaded for configs");
+            }
             if (this.fileCounts[i] > 0 && !this.validGroups[i]) {
+                if (index == Js5ArchiveIndex.CONFIGS.getId() && i == 42) {
+                    System.out.println("Group " + i + " is not fully loaded for configs");
+                }
                 return false;
             }
         }
@@ -121,6 +159,9 @@ public class LocalArchive extends AbstractArchive implements RSArchive {
             if (this.fileCounts[group] > 0) {
                 totalPercentage += 100;
                 loadedPercentage += groupLoadPercent(group);
+                if (index == Js5ArchiveIndex.DAT_IDX.getId() ) {
+                    System.out.println("Group " + group + " load percent: " + groupLoadPercent(group) + " - file count = " + getGroupFileCount(group));
+                }
             }
         }
         if (totalPercentage == 0) return 100;

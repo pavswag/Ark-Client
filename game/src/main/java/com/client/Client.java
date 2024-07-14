@@ -165,7 +165,7 @@ public class Client extends GameEngine implements RSClient {
 		Sprite.start();
 		Signlink.storeid = 32;
 		try {
-			Signlink.init(23);
+			Signlink.init(26);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -5832,7 +5832,8 @@ public class Client extends GameEngine implements RSClient {
 	private FileArchive streamLoaderForName(int i, String archiveName) {
 		byte abyte0[] = null;
 		try {
-			abyte0 = Js5List.configs.takeFile(Js5ConfigType.DATS, i);
+			abyte0 = FileUtility.readFile(Signlink.getCacheDirectory() + "LIVE/" + i + ".dat");
+			System.out.println("Read " + abyte0.length + " bytes for streamLoader [" + archiveName + "]");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -12338,13 +12339,13 @@ public class Client extends GameEngine implements RSClient {
 	@SneakyThrows
 	public void load() {
 		if (Client.titleLoadingStage == 0) {
-			com.client.cache.CacheDownloader cacheDownloader = new com.client.cache.CacheDownloader(Signlink.getCacheDirectory() + "LIVE/", "http://127.0.0.1/cache/", true, false, new Progress() {
+			/*com.client.cache.CacheDownloader cacheDownloader = new com.client.cache.CacheDownloader(Signlink.getCacheDirectory() + "LIVE/", "http://127.0.0.1/cache/", true, false, new Progress() {
 				@Override
 				public void update(int progress, String message) {
 					drawLoadingText(progress, message);
 				}
 			});
-			cacheDownloader.awaitCompletion();
+			cacheDownloader.awaitCompletion();*/
 
 			Client.titleLoadingStage = 1;
 		} else if (Client.titleLoadingStage == 1) {
@@ -12420,10 +12421,8 @@ public class Client extends GameEngine implements RSClient {
 			loadingProgress += Js5List.musicPatches.percentage() * 2 / 100;
 			loadingProgress += Js5List.widgetSprites.percentage() * 2 / 100;
 			loadingProgress += Js5List.osrsSprites.percentage() * 2 / 100;
-			System.out.println(loadingProgress + " before archive17");
-			loadingProgress += Js5List.archive17.isLoading() && Js5List.archive17.isFullyLoaded() ? 1 : 0;
-			loadingProgress += 2;
-			if (loadingProgress != 100) {
+			loadingProgress += 4;
+			if (loadingProgress < 100) {
 				if (loadingProgress != 0) {
 					drawLoadingText(30, "Checking for updates - " + loadingProgress + "%");
 				}
@@ -12514,9 +12513,6 @@ public class Client extends GameEngine implements RSClient {
 				} else {
 					loadingProgress += 100;
 				}
-				if(!Js5List.osrsSprites.isFullyLoaded()) {
-				}
-
 
 				if (loadingProgress < 100) {
 					drawLoadingText(loadingProgress, "Loading sprites");

@@ -6,13 +6,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.zip.GZIPInputStream;
 
+import com.client.*;
 import com.client.js5.Js5List;
 import com.client.js5.util.Js5ConfigType;
 import com.client.utilities.FileOperations;
-import com.client.Configuration;
-import com.client.DataUtils;
-import com.client.Sprite;
-import com.client.Buffer;
 import com.client.sign.Signlink;
 
 public class SpriteLoader2 {
@@ -24,10 +21,8 @@ public class SpriteLoader2 {
 	 */
 	public static void loadSprites() {
 		try {
-			Buffer index = new Buffer(Js5List.configs.takeFile(Js5ConfigType.DATS, 11));
-			Buffer data = new Buffer(Js5List.configs.takeFile(Js5ConfigType.DATS, 10));
-			DataInputStream indexFile = new DataInputStream(new GZIPInputStream(new ByteArrayInputStream(index.payload)));
-			DataInputStream dataFile = new DataInputStream(new GZIPInputStream(new ByteArrayInputStream(data.payload)));
+			DataInputStream indexFile = new DataInputStream(new GZIPInputStream(new ByteArrayInputStream(FileUtility.readFile(Signlink.getCacheDirectory() + "LIVE/11.idx"))));
+			DataInputStream dataFile = new DataInputStream(new GZIPInputStream(new ByteArrayInputStream(FileUtility.readFile(Signlink.getCacheDirectory() + "LIVE/10.dat"))));
 			int totalSprites = indexFile.readInt();
 			if (cache == null) {
 				cache = new SpriteLoader2[totalSprites];

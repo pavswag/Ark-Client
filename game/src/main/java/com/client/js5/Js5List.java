@@ -51,7 +51,7 @@ public class Js5List {
 
     public static LocalArchive osrsSprites;
 
-    public static LocalArchive worldmapGround;
+    public static LocalArchive datIndex;
 
     public static LocalArchive dbtableindex;
 
