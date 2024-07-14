@@ -7,6 +7,7 @@ import com.client.engine.task.Task;
 import com.client.engine.task.TaskHandler;
 import com.client.js5.disk.ArchiveDisk;
 import com.client.js5.disk.Js5Archive;
+import com.client.js5.disk.LocalArchive;
 import com.client.js5.util.ArchiveLoader;
 import com.client.sign.FileSystem;
 import com.client.sign.Signlink;
@@ -39,14 +40,14 @@ public class Js5System {
         }
     }
 
-    public static Js5Archive createJs5(Js5ArchiveIndex archive, boolean useWhirlpool, boolean useGzip, boolean verifyChecksums, boolean prioritizeRequests) {
+    public static LocalArchive createJs5(Js5ArchiveIndex archive, boolean useWhirlpool, boolean useGzip, boolean verifyChecksums, boolean prioritizeRequests) {
         ArchiveDisk cache = null;
         if (Signlink.cacheData != null)
             cache = new ArchiveDisk(archive.getId(), Signlink.cacheData, Signlink.cacheIndexes[archive.getId()], 1000000);
-        return new Js5Archive(cache, Signlink.masterDisk, archive, useWhirlpool, useGzip, verifyChecksums, prioritizeRequests);
+        return new LocalArchive(cache, Signlink.masterDisk, archive, useWhirlpool, useGzip, verifyChecksums, prioritizeRequests);
     }
 
-    public static void init(Js5Archive js5Archive, String name) {
+    public static void init(LocalArchive js5Archive, String name) {
         ArchiveLoader archiveLoader = new ArchiveLoader(js5Archive, name);
         ArchiveLoader.archiveLoaders.add(archiveLoader);
         groupSize += archiveLoader.groupCount;

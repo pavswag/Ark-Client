@@ -1,6 +1,7 @@
 package com.client.js5.util;
 
 import com.client.js5.disk.Js5Archive;
+import com.client.js5.disk.LocalArchive;
 import net.runelite.rs.api.RSArchiveLoader;
 
 import java.util.ArrayList;
@@ -10,13 +11,13 @@ public class ArchiveLoader implements RSArchiveLoader {
 
     public static int archiveLoadersDone;
 
-    final Js5Archive js5Archive;
+    final LocalArchive js5Archive;
 
     public final int groupCount;
 
     int loadedCount;
 
-    public ArchiveLoader(Js5Archive js5Archive, String unknown) {
+    public ArchiveLoader(LocalArchive js5Archive, String unknown) {
         this.loadedCount = 0;
         this.js5Archive = js5Archive;
         this.groupCount = js5Archive.getGroupCount();

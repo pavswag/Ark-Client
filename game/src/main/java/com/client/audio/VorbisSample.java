@@ -2,7 +2,7 @@ package com.client.audio;
 
 import com.client.Node;
 import com.client.Buffer;
-import com.client.js5.disk.Js5Archive;
+import com.client.js5.disk.LocalArchive;
 import net.runelite.rs.api.RSVorbisSample;
 
 public class VorbisSample extends Node implements RSVorbisSample {
@@ -504,7 +504,7 @@ public class VorbisSample extends Node implements RSVorbisSample {
 		}
 	} // L: 179
 	
-	private static boolean method970(Js5Archive var0) {
+	private static boolean method970(LocalArchive var0) {
 		if (!field377) { // L: 381
 			byte[] var1 = var0.takeFile(0, 0); // L: 382
 			if (var1 == null) { // L: 383
@@ -516,7 +516,7 @@ public class VorbisSample extends Node implements RSVorbisSample {
 		return true; // L: 387
 	}
 	
-	static VorbisSample readMusicSample(Js5Archive var0, int var1, int var2) {
+	static VorbisSample readMusicSample(LocalArchive var0, int var1, int var2) {
 		if (!method970(var0)) { // L: 391
 			var0.tryLoadFile(var1, var2); // L: 392
 			return null; // L: 393

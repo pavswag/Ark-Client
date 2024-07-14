@@ -7,7 +7,7 @@ import com.client.Configuration;
 import com.client.Entity;
 import com.client.definitions.SequenceDefinition;
 import com.client.js5.disk.AbstractArchive;
-import com.client.js5.disk.Js5Archive;
+import com.client.js5.disk.LocalArchive;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -107,7 +107,7 @@ public class StaticSound {
 		Configuration.disableLoginScreenMusic = !Configuration.disableLoginScreenMusic; // L:
 		// 312
 		if (!Configuration.disableLoginScreenMusic) { // L: 313
-			Js5Archive var2 = StaticSound.archive6; // L: 314
+			LocalArchive var2 = StaticSound.archive6; // L: 314
 			int var3 = var2.getGroupId("scape main"); // L: 316
 			int var4 = var2.getFileId(var3, ""); // L: 317
 			StaticSound.method2410(var2, var3, var4, 255, false); // L:
@@ -353,7 +353,7 @@ public class StaticSound {
 		} else if (var0 != -1 && var0 != currentTrackGroupId && Configuration.musicVolume != 0
 				&& !playingJingle) { // L:
 										// 3761
-			Js5Archive var1 = StaticSound.archive6; // L: 3762
+			LocalArchive var1 = StaticSound.archive6; // L: 3762
 			int var2 = Configuration.musicVolume; // L: 3763
 			StaticSound.musicPlayerStatus = 1; // L: 3765
 			StaticSound.musicTrackArchive = var1; // L: 3766
@@ -425,8 +425,8 @@ public class StaticSound {
 		StaticSound.soundEffectCount = 0; // L: 5695
 	}
 
-	public static void setup(boolean highDetail, Js5Archive archive4, Js5Archive archive6, Js5Archive archive11, Js5Archive archive14,
-							 Js5Archive archive15) {
+	public static void setup(boolean highDetail, LocalArchive archive4, LocalArchive archive6, LocalArchive archive11, LocalArchive archive14,
+							 LocalArchive archive15) {
 		// TODO Auto-generated method stub
 
 		// TODO Auto-generated method stub
@@ -459,7 +459,7 @@ public class StaticSound {
 		// TODO Auto-generated method stub
 
 		if (!Configuration.disableLoginScreenMusic) {
-			Js5Archive var11 = StaticSound.archive6;
+			LocalArchive var11 = StaticSound.archive6;
 
 			int var8 = var11.getGroupId("scape main");
 			int var9 = var11.getFileId(var8, "");
@@ -481,16 +481,16 @@ public class StaticSound {
 		}
 	}
 
-	protected static Js5Archive archive11;
-	protected static Js5Archive archive6;
+	protected static LocalArchive archive11;
+	protected static LocalArchive archive6;
 	public static int currentTrackGroupId;
 	public static Decimator decimator;
 	protected static int field1212;
 	protected static int sample_rate;
 	public static MidiPcmStream midiPcmStream;
-	protected static Js5Archive musicPatchesArchive;
+	protected static LocalArchive musicPatchesArchive;
 	public static int musicPlayerStatus = 0; // L: 11
-	protected static Js5Archive musicSamplesArchive;
+	protected static LocalArchive musicSamplesArchive;
 	protected static MusicTrack musicTrack;
 	public static AbstractArchive musicTrackArchive;
 	public static boolean musicTrackBoolean;
@@ -513,7 +513,7 @@ public class StaticSound {
 	public static int[] soundEffectIds;
 	public static SoundEffect[] soundEffects;
 
-	public static Js5Archive soundEffectsArchive;
+	public static LocalArchive soundEffectsArchive;
 
 	public static int[] soundLocations;
 
@@ -576,7 +576,7 @@ public class StaticSound {
 			StaticSound.midiPcmStream.setPcmStreamVolume(var0); // L: 37
 		}
 	} // L: 38
-	protected static void method2410(Js5Archive var0, int var1, int var2, int var3, boolean var4) {
+	protected static void method2410(LocalArchive var0, int var1, int var2, int var3, boolean var4) {
 		StaticSound.musicPlayerStatus = 1; // L: 26
 		StaticSound.musicTrackArchive = var0; // L: 27
 		StaticSound.musicTrackGroupId = var1; // L: 28

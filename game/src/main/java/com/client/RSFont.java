@@ -160,7 +160,7 @@ public class RSFont extends Rasterizer2D implements net.runelite.rs.api.RSFont {
 
 		return characterScreenWidths[i & 0xff];
 	}
-	public int paragraphHeigth(String text, int width) {
+	public int paragraphHeight(String text, int width) {
 		return method1486(text, new int[] { width }, splitTextStrings);
 	}
 	public int drawInterfaceText(final String text, final int x, final int y, final int width, final int height, final int textColor, final int shadowColor, final int transparency, final int horizontalAlignment, int verticalAlignment, int verticalSpacing) {

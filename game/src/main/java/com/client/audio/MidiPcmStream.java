@@ -1,7 +1,7 @@
 package com.client.audio;
 
 import com.client.NodeHashTable;
-import com.client.js5.disk.Js5Archive;
+import com.client.js5.disk.LocalArchive;
 import net.runelite.rs.api.RSMidiPcmStream;
 
 public class MidiPcmStream extends PcmStream implements RSMidiPcmStream {
@@ -77,7 +77,7 @@ public class MidiPcmStream extends PcmStream implements RSMidiPcmStream {
 		return this.field3222; // L: 54
 	}
 	
-	public synchronized boolean loadMusicTrack(MusicTrack var1, Js5Archive var2, SoundCache var3, int var4) {
+	public synchronized boolean loadMusicTrack(MusicTrack var1, LocalArchive var2, SoundCache var3, int var4) {
 		var1.method5466(); // L: 58
 		boolean var5 = true; // L: 59
 		int[] var6 = null; // L: 60

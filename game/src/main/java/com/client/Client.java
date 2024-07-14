@@ -39,6 +39,7 @@ import javax.swing.JFrame;
 
 import ch.qos.logback.classic.Level;
 import com.client.accounts.Account;
+import com.client.cache.Progress;
 import com.client.definitions.SequenceDefinition;
 import com.client.graphics.interfaces.*;
 import com.client.graphics.interfaces.eventcalendar.EventCalendar;
@@ -54,6 +55,7 @@ import com.client.js5.Js5System;
 import com.client.js5.disk.AbstractArchive;
 import com.client.js5.disk.ArchiveDiskActionHandler;
 import com.client.js5.disk.Js5Archive;
+import com.client.js5.disk.LocalArchive;
 import com.client.js5.net.JagexNetThread;
 import com.client.js5.util.ArchiveLoader;
 import com.client.js5.util.Js5ConfigType;
@@ -897,7 +899,7 @@ public class Client extends GameEngine implements RSClient {
 										chatMessage = chatMessage.replaceFirst("<url>", "");
 										chatMessage = "<osrsimg=2168>" + chatMessage.substring(chatMessage.indexOf(">") + 1, chatMessage.length());
 										if (newRegularFont.getTextWidth(chatMessage) > 480) {
-											int lines = newRegularFont.paragraphHeigth(chatMessage, 480);
+											int lines = newRegularFont.paragraphHeight(chatMessage, 480);
 											lineCount = newRegularFont.drawInterfaceText(chatMessage, 10, yPos - 1 + yOffset - (lines == 3 ? 18 : 12),
 													480, 0, chatMessages[k].hovered ? 0xe69943 : 0, -1, 255, 0, 1, 14);
 										} else {
@@ -905,7 +907,7 @@ public class Client extends GameEngine implements RSClient {
 										}
 									} else {
 										if (newRegularFont.getTextWidth(chatMessage) > 480) {
-											int lines = newRegularFont.paragraphHeigth(chatMessage, 480);
+											int lines = newRegularFont.paragraphHeight(chatMessage, 480);
 											lineCount = newRegularFont.drawInterfaceText(chatMessage, 10, yPos - 1 + yOffset - (lines == 3 ? 18 : 12),
 													480, 0, 0, -1, 255, 0, 1, 14);
 										} else {
@@ -4776,7 +4778,7 @@ public class Client extends GameEngine implements RSClient {
 		if(loggedIn) {
 			callbacks.tick();
 		}
-		Js5System.doCycleJs5();
+		//Js5System.doCycleJs5();
 		ArchiveDiskActionHandler.processArchiveDiskActions();
 		StaticSound.pulse();
 
@@ -9350,7 +9352,7 @@ public class Client extends GameEngine implements RSClient {
 		int width = instance.newSmallFont.stringWidth(entityDescription.getDescription());
 		width = Math.max(minWidth, width);
 		width = Math.min(maxWidth, width);
-		int lines = instance.newSmallFont.paragraphHeigth(entityDescription.getDescription(), width);
+		int lines = instance.newSmallFont.paragraphHeight(entityDescription.getDescription(), width);
 		int height = lines * 14 + 25 + (entityDescription.getType().equalsIgnoreCase("item") ? 10 : 0);
 		if(!entityDescription.getItems().isEmpty()) {
 			height += 40;
@@ -9559,7 +9561,7 @@ public class Client extends GameEngine implements RSClient {
 					String url = messageContent.substring(0, messageContent.indexOf("<"));
 					messageContent = "<osrsimg=2168>" + messageContent.substring(messageContent.indexOf(">") + 1, messageContent.length());
 
-					lineCount = newRegularFont.paragraphHeigth(messageContent, 480);
+					lineCount = newRegularFont.paragraphHeight(messageContent, 480);
 					k1 = k1 - (lineCount == 3 ? 18 : 12);
 					if (j > k1 - 14 && j <= k1) {
 						MenuEntry menuEntry = (MenuEntry) new MenuEntry(menuActionRow)
@@ -11528,8 +11530,8 @@ public class Client extends GameEngine implements RSClient {
 
 
 	// Original signature int clickType, int j, int k, int i1, int localY, int k1, int l1, int i2, int localX, boolean flag, int k2
-	private boolean doWalkTo(int clickType, int localX, int localY, int j, int k, int i1, int k1, int l1, int sceneY, boolean flag, int sceneX) {
-//		pushMessage("Clicked scene x/y[" + sceneX + "/" + sceneY + "] clickedtype=" + clickType);
+	private boolean doWalkTo(int clickType, int localX, int localY, int j, int k, int obstruction_type, int k1, int l1, int sceneY, boolean flag, int sceneX) {
+		pushMessage("Clicked scene x/y[" + sceneX + "/" + sceneY + "] clickedtype=" + clickType);
 		byte byte0 = 104;
 		byte byte1 = 104;
 		for (int l2 = 0; l2 < byte0; l2++) {
@@ -11557,17 +11559,20 @@ public class Client extends GameEngine implements RSClient {
 				reached = true;
 				break;
 			}
-			if (i1 != 0) {
-				if ((i1 < 5 || i1 == 10) && collisionMaps[plane].method219(sceneX, j3, k3, j, i1 - 1, sceneY)) {
+			if (obstruction_type != 0) {
+				if ((obstruction_type < 5 || obstruction_type == 10) && collisionMaps[plane].obstruction_wall(sceneX, j3, k3, j, obstruction_type - 1, sceneY)) {
+					pushMessage("obstruction_wall");
 					reached = true;
 					break;
 				}
-				if (i1 < 10 && collisionMaps[plane].method220(sceneX, sceneY, k3, i1 - 1, j, j3)) {
+				if (obstruction_type < 10 && collisionMaps[plane].obstruction_decor(sceneX, sceneY, k3, obstruction_type - 1, j, j3)) {
+					pushMessage("obstruction_decor");
 					reached = true;
 					break;
 				}
 			}
-			if (k1 != 0 && k != 0 && collisionMaps[plane].atObject(sceneY, sceneX, j3, k, l1, k1, k3)) {
+			if (k1 != 0 && k != 0 && collisionMaps[plane].obstruction(sceneY, sceneX, j3, k, l1, k1, k3)) {
+				pushMessage("obstruction");
 				reached = true;
 				break;
 			}
@@ -11697,16 +11702,17 @@ public class Client extends GameEngine implements RSClient {
 			}
 			if (clickType == 0) {
 				stream.createFrame(164);
-				stream.writeUnsignedByte(k4 + k4 + 3);
+				stream.writeUnsignedByte(k4 + k4 + 4);
 			}
 			if (clickType == 1) {
 				stream.createFrame(248);
-				stream.writeUnsignedByte(k4 + k4 + 3 + 14);
+				stream.writeUnsignedByte(k4 + k4 + 4);
 			}
 			if (clickType == 2) {
 				stream.createFrame(98);
-				stream.writeUnsignedByte(k4 + k4 + 3);
+				stream.writeUnsignedByte(k4 + k4 + 4);
 			}
+			stream.writeUnsignedByte(plane);
 			stream.method433(k6 + baseX);
 			destX = bigX[0];
 			destY = bigY[0];
@@ -12331,8 +12337,17 @@ public class Client extends GameEngine implements RSClient {
 	}
 	@SneakyThrows
 	public void load() {
-		//DefinitionDumper.dumpCustomText();
 		if (Client.titleLoadingStage == 0) {
+			com.client.cache.CacheDownloader cacheDownloader = new com.client.cache.CacheDownloader(Signlink.getCacheDirectory() + "LIVE/", "http://127.0.0.1/cache/", true, false, new Progress() {
+				@Override
+				public void update(int progress, String message) {
+					drawLoadingText(progress, message);
+				}
+			});
+			cacheDownloader.awaitCompletion();
+
+			Client.titleLoadingStage = 1;
+		} else if (Client.titleLoadingStage == 1) {
 			urlRequester = new SecureUrlRequester(true, 223);
 			loadWorlds();
 			getDocumentBaseHost();
@@ -12382,7 +12397,6 @@ public class Client extends GameEngine implements RSClient {
 			Js5List.musicPatches = Js5System.createJs5(Js5ArchiveIndex.MUSIC_PATCHES, false, true, true, false);
 			Js5List.osrsSprites = Js5System.createJs5(Js5ArchiveIndex.OSRS_SPRITES, false, true, true, false);
 			Js5List.archive17 = Js5System.createJs5(Js5ArchiveIndex.ARCHIVE_17, true, true, true, false);
-			//Js5List.dbtableindex = Js5System.createJs5(Js5ArchiveIndex.DBTABLEINDEX, false, true, true, true);
 			titleLoadingStage = 39;
 		} else if (Client.titleLoadingStage == 39) {
 			Js5List.widgetSprites = Js5System.createJs5(Js5ArchiveIndex.WIDGET_SPRITES, false, true, true, true);
@@ -12406,6 +12420,7 @@ public class Client extends GameEngine implements RSClient {
 			loadingProgress += Js5List.musicPatches.percentage() * 2 / 100;
 			loadingProgress += Js5List.widgetSprites.percentage() * 2 / 100;
 			loadingProgress += Js5List.osrsSprites.percentage() * 2 / 100;
+			System.out.println(loadingProgress + " before archive17");
 			loadingProgress += Js5List.archive17.isLoading() && Js5List.archive17.isFullyLoaded() ? 1 : 0;
 			loadingProgress += 2;
 			if (loadingProgress != 100) {
@@ -12415,6 +12430,7 @@ public class Client extends GameEngine implements RSClient {
 			} else {
 				Js5System.init(Js5List.animations, "Animations");
 				Js5System.init(Js5List.skeletons, "Skeletons");
+				Js5System.init(Js5List.configs, "Configs");
 				Js5System.init(Js5List.soundEffects, "Sound FX");
 				Js5System.init(Js5List.maps, "Maps");
 				Js5System.init(Js5List.musicTracks, "Music Tracks");
@@ -12427,7 +12443,9 @@ public class Client extends GameEngine implements RSClient {
 				Js5System.init(Js5List.osrsSprites, "Dumped OSRS Sprites");
 				Js5System.init(Js5List.widgetSprites, "Widget Sprites");
 				spriteIds = new GraphicsDefaults();
-				spriteIds.decode(Js5List.archive17);
+				if(Js5List.archive17.isFullyLoaded()) {
+					spriteIds.decode(Js5List.archive17);
+				}
 				drawLoadingText(30, "Loaded update list");
 				titleLoadingStage = 45;
 			}
@@ -17899,7 +17917,7 @@ public class Client extends GameEngine implements RSClient {
 		int var4;
 		int var5;
 		if (worldSelectBackSprites == null) {
-			Js5Archive var3 = Js5List.sprites;
+			LocalArchive var3 = Js5List.sprites;
 			SpritePixels[] var2;
 			if (!var3.isValidFileName("sl_back", "")) {
 				var2 = null;

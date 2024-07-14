@@ -174,7 +174,7 @@ class CacheDownloader(
         return if (!File(path, "hashes.json").exists()) {
             true
         } else {
-            getOnlineHash(URL(url + "cache.php?name=online_hashes.json")) != getHash(File(path, "hashes.json").toPath())
+            getOnlineHash(URL(url + "online_hashes.json")) != getHash(File(path, "hashes.json").toPath())
         }
     }
 
@@ -232,7 +232,6 @@ class CacheDownloader(
         } catch (ex: Exception) {
             error(ex)
         } finally {
-            // Close streams in finally block to ensure they are closed even if an exception occurs
             try {
                 inputStream?.close()
                 outputStream?.close()

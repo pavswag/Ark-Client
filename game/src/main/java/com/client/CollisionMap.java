@@ -341,7 +341,7 @@ public final class CollisionMap implements RSCollisionMap {
         adjacencies[k][j] &= 0xdfffff;
     }
 
-    public boolean method219(int i, int j, int k, int i1, int j1, int k1) {
+    public boolean obstruction_wall(int i, int j, int k, int i1, int j1, int k1) {
         if (j == i && k == k1)
             return true;
         j -= xOffset;
@@ -445,7 +445,7 @@ public final class CollisionMap implements RSCollisionMap {
         return false;
     }
 
-    public boolean method220(int i, int j, int k, int l, int i1, int j1) {
+    public boolean obstruction_decor(int i, int j, int k, int l, int i1, int j1) {
         if (j1 == i && k == j)
             return true;
         j1 -= xOffset;
@@ -490,7 +490,7 @@ public final class CollisionMap implements RSCollisionMap {
         return false;
     }
 
-    public boolean atObject(int finalY, int finalX, int x, int height, int rotation, int width, int y) {
+    public boolean obstruction(int finalY, int finalX, int x, int height, int rotation, int width, int y) {
         int maxX = (finalX + width) - 1;
         int maxY = (finalY + height) - 1;
         if (x >= finalX && x <= maxX && y >= finalY && y <= maxY)

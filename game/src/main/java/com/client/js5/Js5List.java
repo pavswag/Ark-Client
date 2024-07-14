@@ -1,6 +1,6 @@
 package com.client.js5;
 
-import com.client.js5.disk.Js5Archive;
+import com.client.js5.disk.LocalArchive;
 import com.client.js5.util.Js5ConfigType;
 import lombok.extern.slf4j.Slf4j;
 
@@ -9,51 +9,51 @@ import java.util.HashMap;
 @Slf4j
 public class Js5List {
 
-    public static Js5Archive animations;
+    public static LocalArchive animations;
 
-    public static Js5Archive skeletons;
+    public static LocalArchive skeletons;
 
-    public static Js5Archive configs;
+    public static LocalArchive configs;
 
-    public static Js5Archive interfaces;
+    public static LocalArchive interfaces;
 
-    public static Js5Archive soundEffects;
+    public static LocalArchive soundEffects;
 
-    public static Js5Archive maps;
+    public static LocalArchive maps;
 
-    public static Js5Archive musicTracks;
+    public static LocalArchive musicTracks;
 
-    public static Js5Archive models;
+    public static LocalArchive models;
 
-    public static Js5Archive sprites;
+    public static LocalArchive sprites;
 
-    public static Js5Archive textures;
+    public static LocalArchive textures;
 
-    public static Js5Archive binary;
+    public static LocalArchive binary;
 
-    public static Js5Archive musicJingles;
+    public static LocalArchive musicJingles;
 
-    public static Js5Archive clientScript;
+    public static LocalArchive clientScript;
 
-    public static Js5Archive fonts;
+    public static LocalArchive fonts;
 
-    public static Js5Archive widgetSprites;
+    public static LocalArchive widgetSprites;
 
-    public static Js5Archive musicSamples;
+    public static LocalArchive musicSamples;
 
-    public static Js5Archive musicPatches;
+    public static LocalArchive musicPatches;
 
-    public static Js5Archive archive17;
+    public static LocalArchive archive17;
 
-    public static Js5Archive worldmapGeography;
+    public static LocalArchive worldmapGeography;
 
-    public static Js5Archive worldmap;
+    public static LocalArchive worldmap;
 
-    public static Js5Archive osrsSprites;
+    public static LocalArchive osrsSprites;
 
-    public static Js5Archive worldmapGround;
+    public static LocalArchive worldmapGround;
 
-    public static Js5Archive dbtableindex;
+    public static LocalArchive dbtableindex;
 
     public static HashMap<Js5ConfigType,Integer> configSizes = new HashMap<>();
 

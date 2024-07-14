@@ -1,20 +1,20 @@
 package com.client.audio;
 
 import com.client.NodeHashTable;
-import com.client.js5.disk.Js5Archive;
+import com.client.js5.disk.LocalArchive;
 import net.runelite.rs.api.RSSoundCache;
 
 public class SoundCache implements RSSoundCache {
 
-	Js5Archive soundEffectIndex;
+	LocalArchive soundEffectIndex;
 
-	Js5Archive musicSampleIndex;
+	LocalArchive musicSampleIndex;
 	
 	NodeHashTable musicSamples;
 	
 	NodeHashTable rawSounds;
 	
-	public SoundCache(Js5Archive var1, Js5Archive var2) {
+	public SoundCache(LocalArchive var1, LocalArchive var2) {
 		this.musicSamples = new NodeHashTable(256); // L: 9
 		this.rawSounds = new NodeHashTable(256); // L: 10
 		this.soundEffectIndex = var1; // L: 13
