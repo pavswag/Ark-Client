@@ -12339,13 +12339,14 @@ public class Client extends GameEngine implements RSClient {
 	@SneakyThrows
 	public void load() {
 		if (Client.titleLoadingStage == 0) {
-			/*com.client.cache.CacheDownloader cacheDownloader = new com.client.cache.CacheDownloader(Signlink.getCacheDirectory() + "LIVE/", "http://127.0.0.1/cache/", true, false, new Progress() {
+			com.client.cache.CacheDownloader cacheDownloader = new com.client.cache.CacheDownloader(Signlink.getCacheDirectory() + "LIVE/", "https://paradisenet.b-cdn.net/kyros/", true, false, new Progress() {
 				@Override
 				public void update(int progress, String message) {
 					drawLoadingText(progress, message);
 				}
 			});
-			cacheDownloader.awaitCompletion();*/
+
+			cacheDownloader.awaitCompletion();
 
 			Client.titleLoadingStage = 1;
 		} else if (Client.titleLoadingStage == 1) {
