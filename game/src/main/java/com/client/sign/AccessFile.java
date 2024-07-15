@@ -87,7 +87,6 @@ public final class AccessFile implements RSAccessFile {
 
     protected void finalize() throws Throwable {
         if (this.file != null) {
-            System.out.println("Warning! fileondisk " + file + " not closed correctly using close(). Auto-closing instead. ");
             this.close();
         }
 
