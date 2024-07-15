@@ -145,7 +145,7 @@ class CacheDownloader(
         return if (!localHashFile.exists()) {
             true
         } else {
-            getOnlineHash(URL(url + "cache.php?name=online_hashes.json")) != getHash(localHashFile.toPath())
+            getOnlineHash(URL(url + "online_hashes.json")) != getHash(localHashFile.toPath())
         }
     }
 
