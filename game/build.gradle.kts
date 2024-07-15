@@ -27,6 +27,7 @@ dependencies {
     implementation("org.tukaani:xz:1.9")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+    implementation("com.squareup.okhttp3:okhttp:4.9.3")
 
     // Jackson
     implementation("com.fasterxml.jackson.core:jackson-core:2.8.6")
