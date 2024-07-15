@@ -18,6 +18,7 @@ import javax.xml.bind.DatatypeConverter
 import kotlin.system.exitProcess
 import java.nio.file.Paths
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import java.util.zip.ZipInputStream
 
 class CacheDownloader(
@@ -31,7 +32,11 @@ class CacheDownloader(
         }
     }
 ) {
-    private val client = OkHttpClient()
+    private val client = OkHttpClient().newBuilder()
+        .connectTimeout(30, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
+        .readTimeout(30, TimeUnit.SECONDS)
+        .build()
     private val coroutineScope = CoroutineScope(Executors.newFixedThreadPool(4).asCoroutineDispatcher())
     private val deferredTasks = mutableListOf<Deferred<Unit>>()
 
