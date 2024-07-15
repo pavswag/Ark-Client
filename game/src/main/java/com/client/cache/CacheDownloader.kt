@@ -1,23 +1,22 @@
 package com.client.cache
 
-import com.client.js5.disk.ArchiveDisk
-import com.client.sign.Signlink
 import kotlinx.coroutines.*
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
 import java.io.*
-import java.net.HttpURLConnection
 import java.net.URL
-import java.net.URLConnection
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.Paths
 import java.security.MessageDigest
-import java.util.concurrent.Executors
-import java.util.zip.ZipInputStream
+import javax.swing.JOptionPane
 import javax.xml.bind.DatatypeConverter
 import kotlin.system.exitProcess
+import java.nio.file.Paths
+import java.util.concurrent.Executors
+import java.util.zip.ZipInputStream
 
 class CacheDownloader(
     val path: String,
@@ -30,8 +29,9 @@ class CacheDownloader(
         }
     }
 ) {
+    private val client = OkHttpClient()
     private val coroutineScope = CoroutineScope(Executors.newFixedThreadPool(4).asCoroutineDispatcher())
-    private val deferredTasks = mutableListOf<Deferred<Unit>>() // Store Deferred objects
+    private val deferredTasks = mutableListOf<Deferred<Unit>>()
 
     var update: MutableList<String> = mutableListOf()
 
@@ -55,47 +55,15 @@ class CacheDownloader(
                         downloadAsync(url + it, path + it)
                     }
                     deferredTasks.add(deferred)
-                    // Check if the update is sprites.zip or sounds.zip and delete the corresponding folder if necessary
-                    if (it == "sprites.zip") {
-                        val spritesFolder = File(path, "sprites")
-                        if (spritesFolder.exists()) {
-                            spritesFolder.deleteRecursively()
-                        }
-                    } else if (it == "sounds.zip") {
-                        val soundsFolder = File(path, "sounds")
-                        if (soundsFolder.exists()) {
-                            soundsFolder.deleteRecursively()
-                        }
-                    }
+                    handleSpecialFiles(it)
                 }
 
-                // Wait for all downloads to finish
-                deferredTasks.forEach { it.await() }
+                deferredTasks.awaitAll()
 
-                // Now perform other operations
                 recheckAndDownloadMissingFilesAsync()
-
-                // Check if sprites.zip was downloaded and delete the contents of the sprites folder if necessary
-                val spritesZipFile = File(path, "sprites.zip")
-                if (spritesZipFile.exists()) {
-                    val spritesFolder = File(path, "sprites")
-                    if (!spritesFolder.exists()) {
-                        checkAndExtractZip("sprites.zip", ".")
-                    }
-                }
-
-                // Check if sounds.zip was downloaded and delete the contents of the sounds folder if necessary
-                val soundsZipFile = File(path, "sounds.zip")
-                if (soundsZipFile.exists()) {
-                    val soundsFolder = File(path, "sounds")
-                    if (!soundsFolder.exists()) {
-                        checkAndExtractZip("sounds.zip", ".")
-                    }
-                }
+                handleSpecialFilesPostDownload()
             }
             writeHashes()
-            Signlink.init(26)
-            Signlink.masterDisk = ArchiveDisk(255, Signlink.cacheData, Signlink.cacheMasterIndex, 500000)
         }
     }
 
@@ -109,20 +77,18 @@ class CacheDownloader(
     private suspend fun recheckAndDownloadMissingFilesAsync() {
         val jsonParser = JSONParser()
         val link = URL(url + "online_hashes.json")
-        val inputStream = link.openConnection().getInputStream()
-        val obj: Any = jsonParser.parse(InputStreamReader(inputStream).readText())
-        val list = obj as JSONArray
+        val inputStream = link.openStream().bufferedReader().use { it.readText() }
+        val obj = jsonParser.parse(inputStream) as JSONArray
 
-        val missingFiles = mutableListOf<String>()
-
-        list.forEach {
-            val raw: JSONObject = it as JSONObject
-            val data = raw["data"] as JSONObject
+        val missingFiles = obj.mapNotNull {
+            val data = (it as JSONObject)["data"] as JSONObject
             val name = data["name"] as String
             val hash = data["hash"] as String
             val location = data["location"] as String
             if (needsDownload(location, hash) && name != "hashes.json") {
-                missingFiles.add(location)
+                location
+            } else {
+                null
             }
         }
 
@@ -134,25 +100,22 @@ class CacheDownloader(
                 }
                 deferredTasks.add(deferred)
             }
+            deferredTasks.awaitAll()
             listener?.update(100, "Recheck and download complete")
         } else {
             listener?.update(100, "No missing files found")
         }
-
     }
 
     private fun generateList() {
         listener?.update(0, "Generating Patch List...")
         val jsonParser = JSONParser()
-
         val link = URL(url + "online_hashes.json")
-        val inputStream = link.openConnection()
-        val obj: Any = jsonParser.parse(InputStreamReader(inputStream.getInputStream()).readText())
-        val list = obj as JSONArray
+        val inputStream = link.openStream().bufferedReader().use { it.readText() }
+        val list = jsonParser.parse(inputStream) as JSONArray
 
         list.forEach {
-            val raw: JSONObject = it as JSONObject
-            val data = raw["data"] as JSONObject
+            val data = (it as JSONObject)["data"] as JSONObject
             val name = data["name"] as String
             val hash = data["hash"] as String
             val location = data["location"] as String
@@ -164,79 +127,74 @@ class CacheDownloader(
     }
 
     private fun needsDownload(location: String, hash: String): Boolean {
-        return if (!File(path, location).exists()) {
-            true
-        } else getHash(File(path, location).toPath()) != hash
+        val file = File(path, location)
+        return !file.exists() || getHash(file.toPath()) != hash
     }
 
     private fun updateFiles(): Boolean {
-        return if (!File(path, "hashes.json").exists()) {
+        val localHashFile = File(path, "hashes.json")
+        return if (!localHashFile.exists()) {
             true
         } else {
-            getOnlineHash(URL(url + "online_hashes.json")) != getHash(File(path, "hashes.json").toPath())
+            getOnlineHash(URL(url + "cache.php?name=online_hashes.json")) != getHash(localHashFile.toPath())
         }
     }
 
     private fun getOnlineHash(url: URL): String {
-        if ((url.openConnection() as HttpURLConnection).responseCode == 404) {
-            error("Could not locate cache.php at $url")
-            exitProcess(0)
+        val request = Request.Builder().url(url).build()
+        client.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) throw IOException("Unexpected code $response")
+            return response.body?.string() ?: throw IOException("Empty response body")
         }
-        val hash = InputStreamReader(url.openStream()).readText()
-        if (hash.isBlank()) {
-            error("Could not find the file you requested")
-            exitProcess(0)
-        }
-        return hash
     }
 
     private fun getHash(file: Path): String {
         val md = MessageDigest.getInstance("MD5")
         md.update(Files.readAllBytes(file))
-        val digest = md.digest()
-        return DatatypeConverter.printHexBinary(digest).toLowerCase()
+        return DatatypeConverter.printHexBinary(md.digest()).toLowerCase()
     }
 
     private fun download(name: String, path: String) {
-        var inputStream: InputStream? = null
-        var outputStream: OutputStream? = null
+        val request = Request.Builder().url(name.replace(" ", "%20")).build()
+        client.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) throw IOException("Unexpected code $response")
 
-        try {
-            val url = URL(name.replace(" ", "%20"))
-            val userAgent =
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36"
-            val con: URLConnection = url.openConnection()
-            con.setRequestProperty("User-Agent", userAgent)
-            val contentLength: Int = con.contentLength
+            val contentLength = response.body?.contentLength() ?: 0
+            val inputStream = response.body?.byteStream() ?: throw IOException("Empty response body")
 
-            inputStream = BufferedInputStream(con.getInputStream())
             File(path.substringBeforeLast("/")).mkdirs()
-            outputStream = BufferedOutputStream(FileOutputStream(path))
+            BufferedOutputStream(FileOutputStream(path)).use { outputStream ->
+                val buffer = ByteArray(8192)
+                var bytesRead: Int
+                var downloaded = 0L
 
-            val buffer = ByteArray(4096*2)
-            var length: Int
-            var downloaded = 0
-
-            while (inputStream.read(buffer).also { length = it } != -1) {
-                outputStream.write(buffer, 0, length)
-                downloaded += length
-
-                listener?.fileName = name.substringAfterLast("/")
-                listener?.link = name
-                listener?.update(
-                    ((downloaded.toDouble() * 100.0) / (contentLength * 1.0)).toInt(),
-                    "Downloading ${name.substring(name.lastIndexOf('/') + 1)}..."
-                )
+                while (inputStream.read(buffer).also { bytesRead = it } != -1) {
+                    outputStream.write(buffer, 0, bytesRead)
+                    downloaded += bytesRead
+                    listener?.fileName = name.substringAfterLast("/")
+                    listener?.link = name
+                    listener?.update(((downloaded * 100) / contentLength).toInt(), "Downloading ${name.substringAfterLast('/')}")
+                }
             }
-        } catch (ex: Exception) {
-            error(ex)
-        } finally {
-            try {
-                inputStream?.close()
-                outputStream?.close()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
+        }
+    }
+
+    private fun handleSpecialFiles(file: String) {
+        when (file) {
+            "sprites.zip" -> File(path, "sprites").deleteRecursively()
+            "sounds.zip" -> File(path, "sounds").deleteRecursively()
+        }
+    }
+
+    private fun handleSpecialFilesPostDownload() {
+        val spritesZipFile = File(path, "sprites.zip")
+        if (spritesZipFile.exists() && !File(path, "sprites").exists()) {
+            checkAndExtractZip("sprites.zip", ".")
+        }
+
+        val soundsZipFile = File(path, "sounds.zip")
+        if (soundsZipFile.exists() && !File(path, "sounds").exists()) {
+            checkAndExtractZip("sounds.zip", ".")
         }
     }
 
@@ -244,13 +202,12 @@ class CacheDownloader(
         val zipFile = File(path, zipFileName)
         if (zipFile.exists()) {
             println("Extracting $zipFileName")
-            println("Extracting ${zipFile.absoluteFile}")
             val outputDirectory = File(path, outputDirectoryName)
             extractZipFile(zipFile, outputDirectory)
         }
     }
+
     private fun extractZipFile(zipFile: File, outputDirectory: File) {
-        println("Extracting ${zipFile.absoluteFile}")
         ZipInputStream(FileInputStream(zipFile)).use { zipStream ->
             var entry = zipStream.nextEntry
             while (entry != null) {
@@ -276,22 +233,19 @@ class CacheDownloader(
             .filter { file ->
                 val fileName = file.fileName.toString()
                 val parentDir = file.parent?.toString()
-                // Exclude specific directories
-                val isExcludedDir = parentDir?.contains("sprites") ?: false ||
-                        parentDir?.contains("okhttp") ?: false ||
-                        parentDir?.contains("error_logs") ?: false||
-                        parentDir?.contains("sounds") ?: false
-                // Exclude specific files
+                val isExcludedDir = parentDir?.contains("sprites") == true ||
+                        parentDir?.contains("okhttp") == true ||
+                        parentDir?.contains("error_logs") == true ||
+                        parentDir?.contains("sounds") == true
                 val isExcludedFile = fileName == "hashes.json" ||
                         fileName == "accounts.dat" ||
                         fileName == "uid.dat"
                 !isExcludedDir && !isExcludedFile
             }
             .forEach {
-                // Process the files here
                 val data = JSONObject()
                 data["name"] = it.fileName.toString()
-                data["location"] = rootPath.relativize(it).toString().replace("\\", "/") // Use Path::relativize to get the relative path
+                data["location"] = rootPath.relativize(it).toString().replace("\\", "/")
                 data["hash"] = getHash(it)
                 val write = JSONObject()
                 write["data"] = data
@@ -312,11 +266,7 @@ class CacheDownloader(
 
     fun awaitCompletion() {
         runBlocking {
-            coroutineScope {
-                deferredTasks.forEach { deferred ->
-                    deferred.await() // Wait for each coroutine to complete
-                }
-            }
+            deferredTasks.awaitAll()
         }
     }
 }

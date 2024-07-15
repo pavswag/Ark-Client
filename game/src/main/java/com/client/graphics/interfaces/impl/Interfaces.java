@@ -4,6 +4,7 @@ import com.client.*;
 import com.client.connection.Connection;
 import com.client.graphics.interfaces.MenuItem;
 import com.client.graphics.interfaces.RSInterface;
+import com.client.graphics.interfaces.RSInterfaceConstants;
 import com.client.graphics.interfaces.builder.impl.*;
 import com.client.graphics.interfaces.builder.impl.tasks.TaskInterface;
 import com.client.graphics.interfaces.builder.impl.tob.TobFoodChest;
@@ -172,6 +173,42 @@ public final class Interfaces extends RSInterface {
 		GoodieBag.goodiebagWidget(defaultTextDrawingAreas);
 		DonationCampaign.donationCampaignWidget(defaultTextDrawingAreas);
 		VoteReminder.voteReminderWidget(defaultTextDrawingAreas);
+		TreasureOverlayInterface(defaultTextDrawingAreas);
+		//24967
+	}
+
+	private static void TreasureOverlayInterface(TextDrawingArea[] tda) {
+		int x = -3;
+		int y = 30;
+
+		int interfaceId = 24967;
+
+		int index = 1;
+
+		RSInterface mainInterface = RSInterface.addInterface(interfaceId); //main interface display
+
+		RSInterface.addRectangle(interfaceId + index++, 145, 20,0x1D2321, 130, true);
+
+		RSInterface.addText(interfaceId + index++, "Treasure Looted:", tda, 0, RSInterfaceConstants.ORANGE_TEXT, false);
+		RSInterface.addText(interfaceId + index++, "50", tda, 0, RSInterfaceConstants.WHITE, false);
+
+		RSInterface.addRectangle(interfaceId + index++, 145, 20, 0x1D2321,  130, true);
+
+		RSInterface.addText(interfaceId + index++, "Time remaining:", tda, 0, RSInterfaceConstants.ORANGE_TEXT, false);
+		RSInterface.addText(interfaceId + index++, "00:00", tda, 0, RSInterfaceConstants.WHITE, false);
+
+
+		mainInterface.totalChildren(index - 1);
+
+		index = 0;
+
+		mainInterface.child(index++, interfaceId + index, x + 5, y + 200); // background
+		mainInterface.child(index++, interfaceId + index, x + 9, y + 205); // text
+		mainInterface.child(index++, interfaceId + index, x + 133, y + 205); // text
+
+		mainInterface.child(index++, interfaceId + index, x + 5, y + 222); // background
+		mainInterface.child(index++, interfaceId + index, x + 9, y + 227); // text
+		mainInterface.child(index++, interfaceId + index, x + 115, y + 227); // text
 	}
 
 	private static void referralSystem(TextDrawingArea[] tda) {
