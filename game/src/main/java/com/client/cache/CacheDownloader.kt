@@ -1,5 +1,7 @@
 package com.client.cache
 
+import com.client.js5.disk.ArchiveDisk
+import com.client.sign.Signlink
 import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -64,6 +66,8 @@ class CacheDownloader(
                 handleSpecialFilesPostDownload()
             }
             writeHashes()
+            Signlink.init(26)
+            Signlink.masterDisk = ArchiveDisk(255, Signlink.cacheData, Signlink.cacheMasterIndex, 500000)
         }
     }
 
