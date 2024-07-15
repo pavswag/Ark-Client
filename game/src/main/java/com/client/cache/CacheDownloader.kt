@@ -1,5 +1,7 @@
 package com.client.cache
 
+import com.client.js5.disk.ArchiveDisk
+import com.client.sign.Signlink
 import kotlinx.coroutines.*
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
@@ -10,17 +12,12 @@ import java.net.URL
 import java.net.URLConnection
 import java.nio.file.Files
 import java.nio.file.Path
-import java.security.MessageDigest
-import javax.swing.JOptionPane
-import javax.xml.bind.DatatypeConverter
-import kotlin.math.roundToInt
-import kotlin.system.exitProcess
-import java.io.IOException
 import java.nio.file.Paths
+import java.security.MessageDigest
 import java.util.concurrent.Executors
-import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
-import java.util.zip.ZipOutputStream
+import javax.xml.bind.DatatypeConverter
+import kotlin.system.exitProcess
 
 class CacheDownloader(
     val path: String,
@@ -97,6 +94,8 @@ class CacheDownloader(
                 }
             }
             writeHashes()
+            Signlink.init(26)
+            Signlink.masterDisk = ArchiveDisk(255, Signlink.cacheData, Signlink.cacheMasterIndex, 500000)
         }
     }
 
