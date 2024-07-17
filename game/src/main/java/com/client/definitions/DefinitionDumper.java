@@ -31,7 +31,7 @@ public class DefinitionDumper {
     private static final boolean dumpModels = false;
     private static final boolean dumpMaps = false;
 
-    private static final boolean dumpRegions = false;
+    private static final boolean dumpRegions = true;
 
     private static final boolean dumpTextures = false;
     private static final boolean dumpSprites = false;
@@ -71,7 +71,7 @@ public class DefinitionDumper {
         }
 
         if(dumpRegions) {
-            start();
+            //start();
             regionsToDumpAndConvert.forEach(regionID -> {
                 File parent = new File("./temp/maps/" + regionID + "/");
                 if(parent.exists())
@@ -84,12 +84,12 @@ public class DefinitionDumper {
                         loc = mapIndices3[i];
                     }
                 }
+                int regionX = regionID >> 8;
+                int regionY = regionID & 255;
                 if(landscape != -1 && loc != -1) {
                     System.out.println("--");
                     System.out.println("Region[" + regionID + "]");
                     System.out.println("Original files = [" + landscape + "/" + loc + "]");
-                    int regionX = regionID >> 8;
-                    int regionY = regionID & 255;
                     String name = "_" + regionX + "_" + regionY;
                     System.out.println("New names:");
                     System.out.println("l" + name);
@@ -108,6 +108,11 @@ public class DefinitionDumper {
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
+                } else {
+                    String name = "_" + regionX + "_" + regionY;
+                    System.out.println("New names for [" + regionID + "]");
+                    System.out.println("l" + name);
+                    System.out.println("m" + name);
                 }
             });
 
@@ -174,49 +179,7 @@ public class DefinitionDumper {
         }
     }
     private static List<Integer> regionsToDumpAndConvert = List.of(
-            13363,
-            4919,
-            13462,
-            13136,
-            13137,
-            13138,
-            13139,
-            13140,
-            13141,
-            9772,
-            12345,
-            12601,
-            12344,
-            12600,
-            12605,
-            7502,
-            10033,
-            14142,
-            14398,
-            11867,
-            9043,
-            13393,
-            13394,
-            13395,
-            13396,
-            13397,
-            13381,
-            13398,
-            13142,
-            12889,
-            13145,
-            13401,
-            13146,
-            12890,
-            12633,
-            13144,
-            13402,
-            13147,
-            13403,
-            12598,
-            13112,
-            6726,
-            12861
+        
     );
     public static void moveCustomModels() {
         customModels.forEach(model -> {
