@@ -78,10 +78,12 @@ public class DefinitionDumper {
                     parent.mkdirs();
                 int landscape = -1;
                 int loc = -1;
-                for(int i = 0; i < mapIndices1.length; i++) {
-                    if(mapIndices1[i] == regionID) {
-                        landscape = mapIndices2[i];
-                        loc = mapIndices3[i];
+                if(mapIndices1 != null) {
+                    for (int i = 0; i < mapIndices1.length; i++) {
+                        if (mapIndices1[i] == regionID) {
+                            landscape = mapIndices2[i];
+                            loc = mapIndices3[i];
+                        }
                     }
                 }
                 int regionX = regionID >> 8;
@@ -115,10 +117,11 @@ public class DefinitionDumper {
                     System.out.println("m" + name);
                 }
             });
-
-            for(int i = 0; i < mapIndices2.length; i++) {
-                if(mapIndices2[i] == 1 || mapIndices3[i] == 1) {
-                    System.out.println("Map files point to region [" + mapIndices1[i] + "]");
+            if(mapIndices2 != null) {
+                for (int i = 0; i < mapIndices2.length; i++) {
+                    if (mapIndices2[i] == 1 || mapIndices3[i] == 1) {
+                        System.out.println("Map files point to region [" + mapIndices1[i] + "]");
+                    }
                 }
             }
         }
@@ -179,7 +182,6 @@ public class DefinitionDumper {
         }
     }
     private static List<Integer> regionsToDumpAndConvert = List.of(
-        
     );
     public static void moveCustomModels() {
         customModels.forEach(model -> {
