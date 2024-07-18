@@ -175,7 +175,7 @@ public class PetPerk extends RSInterface {
         cosmeticOverrides.scrollMax = 575;
         cosmeticOverrides.totalChildren(62);
         int child = 0;
-        for(int i = 33935; i <= 33965; i++) {
+        for(int i = 33935; i <= 33980; i++) {
             int yPosition = 0 + (18 * (i - 33935));
             addRectangle(i, 98, 18, 0x221e1a, 0, true);
             get(i).secondaryColor = 0x252220;
@@ -183,7 +183,7 @@ public class PetPerk extends RSInterface {
             get(i).tooltip = "<col=ff9933>Summon Pet!";
             cosmeticOverrides.child(child++, i, 0, yPosition);
         }
-        for(int i = 33966; i <= 33996; i++) {
+        for(int i = 33966; i <= 34011; i++) {
             addText(i, "", tda, 0, 0xff9933, false);
             int yPosition = 3 + (18 * (i - 33966));
             cosmeticOverrides.child(child++, i, 2, yPosition);
