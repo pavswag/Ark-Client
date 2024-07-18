@@ -53,6 +53,13 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             npcDefinition.widthScale = 200; // HEIGH
         }
 
+
+        if (i == 13527) {
+            npcDefinition.actions = new String[] { null, "Attack", null, null, null };
+            npcDefinition.isMinimapVisible = true;
+            npcDefinition.headIcon = 8;
+        }
+
         if (i == 7649) {
             npcDefinition.size = 4;
             npcDefinition.heightScale = 200; //WIDTH
