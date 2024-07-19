@@ -143,6 +143,9 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
     private static ItemDefinition customItems(ItemDefinition itemDef) {
         int itemId = itemDef.id;
         switch (itemId) {
+            case 25087:
+                itemDef.name = "Trail Of Treasure Scroll";
+                break;
             case 25365:
                 itemDef.name = "Vote Entry Token";
                 itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Drop" };
