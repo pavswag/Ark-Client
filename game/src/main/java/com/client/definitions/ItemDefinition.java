@@ -399,6 +399,19 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.yOffset2d = ItemDefinition.lookup(13235).yOffset2d;
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 break;
+            case 33404:
+                itemDef.name = "Send Nudes";
+                itemDef.inventoryModel = 60915;
+                itemDef.maleModel0 = 60914;
+                itemDef.femaleModel0 = 60914;
+                itemDef.zoom2d = 4180;
+                itemDef.xan2d = 235;
+                itemDef.yan2d = 43;
+                itemDef.zan2d = 0;
+                itemDef.xOffset2d = 1;
+                itemDef.yOffset2d = -71;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
 
         }
         return itemDef;
