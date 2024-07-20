@@ -182,6 +182,46 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.name = "Instance Token";
                 itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Drop" };
                 break;*/
+            case 33343:  //Ember helm
+                itemDef.zoom2d = 595;
+                itemDef.xan2d = 310;
+                itemDef.yan2d = 0;
+                itemDef.zan2d = 0;
+                itemDef.xOffset2d = 0;
+                itemDef.yOffset2d = 21;
+                break;
+            case 33344:  //Ember body
+                itemDef.zoom2d = 1401;
+                itemDef.xan2d = 522;
+                itemDef.yan2d = 0;
+                itemDef.zan2d = 0;
+                itemDef.xOffset2d = 0;
+                itemDef.yOffset2d = -3;
+                break;
+            case 33345:  //Ember legs
+                itemDef.zoom2d = 1804;
+                itemDef.xan2d = 431;
+                itemDef.yan2d = 0;
+                itemDef.zan2d = 0;
+                itemDef.xOffset2d = -3;
+                itemDef.yOffset2d = 5;
+                break;
+            case 33346:  //Ember boots
+                itemDef.zoom2d = 668;
+                itemDef.xan2d = 0;
+                itemDef.yan2d = 1971;
+                itemDef.zan2d = 0;
+                itemDef.xOffset2d = 0;
+                itemDef.yOffset2d = 5;
+                break;
+            case 33347:  //Ember gloves
+                itemDef.zoom2d = 961;
+                itemDef.xan2d = 371;
+                itemDef.yan2d = 0;
+                itemDef.zan2d = 0;
+                itemDef.xOffset2d = -1;
+                itemDef.yOffset2d = -1;
+                break;
             case 33395:
                 itemDef.name = "Chaotic GoodieBag";
                 itemDef.inventoryModel = 60898;
@@ -193,7 +233,7 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.interfaceOptions = new String[] { "Open", null, null, null, "Drop"};
                 break;
             case 33396:
-                itemDef.name = "Unused Goodie Bag";
+                itemDef.name = "Shadow Crusade Goodie Bag";
                 itemDef.inventoryModel = 60899;
                 itemDef.zoom2d = ItemDefinition.lookup(25537).zoom2d;
                 itemDef.xan2d = ItemDefinition.lookup(25537).xan2d;
@@ -232,6 +272,9 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 break;
             case 29489:
                 itemDef.name = "Prophets Pride";
+                break;
+            case 28416:
+                itemDef.name = "Shadow Crusade Key";
                 break;
             case 33394:
                 itemDef.name = "Freedom Gloves";
