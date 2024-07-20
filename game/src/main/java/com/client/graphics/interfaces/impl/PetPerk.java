@@ -172,7 +172,7 @@ public class PetPerk extends RSInterface {
         RSInterface cosmeticOverrides = addInterface(33934);
         cosmeticOverrides.width = 128;
         cosmeticOverrides.height = 97;
-        cosmeticOverrides.scrollMax = 575;
+        cosmeticOverrides.scrollMax = 810;
         cosmeticOverrides.totalChildren(62);
         int child = 0;
         for(int i = 33935; i <= 33980; i++) {
