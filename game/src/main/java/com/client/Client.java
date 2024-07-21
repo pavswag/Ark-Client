@@ -11528,8 +11528,8 @@ public class Client extends GameEngine implements RSClient {
 
 
 	// Original signature int clickType, int j, int k, int i1, int localY, int k1, int l1, int i2, int localX, boolean flag, int k2
-	private boolean doWalkTo(int clickType, int localX, int localY, int j, int k, int obstruction_type, int k1, int l1, int sceneY, boolean flag, int sceneX) {
-		pushMessage("Clicked scene x/y[" + sceneX + "/" + sceneY + "] clickedtype=" + clickType);
+	private boolean doWalkTo(int clickType, int localX, int localY, int j, int k, int i1, int k1, int l1, int sceneY, boolean flag, int sceneX) {
+//		pushMessage("Clicked scene x/y[" + sceneX + "/" + sceneY + "] clickedtype=" + clickType);
 		byte byte0 = 104;
 		byte byte1 = 104;
 		for (int l2 = 0; l2 < byte0; l2++) {
@@ -11557,20 +11557,17 @@ public class Client extends GameEngine implements RSClient {
 				reached = true;
 				break;
 			}
-			if (obstruction_type != 0) {
-				if ((obstruction_type < 5 || obstruction_type == 10) && collisionMaps[plane].obstruction_wall(sceneX, j3, k3, j, obstruction_type - 1, sceneY)) {
-					pushMessage("obstruction_wall");
+			if (i1 != 0) {
+				if ((i1 < 5 || i1 == 10) && collisionMaps[plane].obstruction_wall(sceneX, j3, k3, j, i1 - 1, sceneY)) {
 					reached = true;
 					break;
 				}
-				if (obstruction_type < 10 && collisionMaps[plane].obstruction_decor(sceneX, sceneY, k3, obstruction_type - 1, j, j3)) {
-					pushMessage("obstruction_decor");
+				if (i1 < 10 && collisionMaps[plane].obstruction_decor(sceneX, sceneY, k3, i1 - 1, j, j3)) {
 					reached = true;
 					break;
 				}
 			}
 			if (k1 != 0 && k != 0 && collisionMaps[plane].obstruction(sceneY, sceneX, j3, k, l1, k1, k3)) {
-				pushMessage("obstruction");
 				reached = true;
 				break;
 			}
@@ -11700,17 +11697,16 @@ public class Client extends GameEngine implements RSClient {
 			}
 			if (clickType == 0) {
 				stream.createFrame(164);
-				stream.writeUnsignedByte(k4 + k4 + 4);
+				stream.writeUnsignedByte(k4 + k4 + 3);
 			}
 			if (clickType == 1) {
 				stream.createFrame(248);
-				stream.writeUnsignedByte(k4 + k4 + 4);
+				stream.writeUnsignedByte(k4 + k4 + 3 + 14);
 			}
 			if (clickType == 2) {
 				stream.createFrame(98);
-				stream.writeUnsignedByte(k4 + k4 + 4);
+				stream.writeUnsignedByte(k4 + k4 + 3);
 			}
-			stream.writeUnsignedByte(plane);
 			stream.method433(k6 + baseX);
 			destX = bigX[0];
 			destY = bigY[0];

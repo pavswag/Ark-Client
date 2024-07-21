@@ -176,7 +176,7 @@ public class PetPerk extends RSInterface {
         cosmeticOverrides.totalChildren(62);
         int child = 0;
         for(int i = 33935; i <= 33980; i++) {
-            int yPosition = 0 + (18 * (i - 33935));
+            int yPosition = (18 * (i - 33935));
             addRectangle(i, 98, 18, 0x221e1a, 0, true);
             get(i).secondaryColor = 0x252220;
             get(i).atActionType = 1;
