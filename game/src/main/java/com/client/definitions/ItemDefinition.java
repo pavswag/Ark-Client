@@ -233,7 +233,7 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.interfaceOptions = new String[] { "Open", null, null, null, "Drop"};
                 break;
             case 33360:
-                itemDef.name = "Mini Shadow Crusade Box";
+                itemDef.name = "Mini Shadow Crusade Raid Box";
                 itemDef.inventoryModel = 60325;
                 itemDef.zoom2d = ItemDefinition.lookup(6678).zoom2d;
                 itemDef.xan2d = ItemDefinition.lookup(6678).xan2d;
@@ -242,7 +242,7 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.yOffset2d = ItemDefinition.lookup(6678).yOffset2d;
                 break;
             case 33396:
-                itemDef.name = "Shadow Crusade Goodie Bag";
+                itemDef.name = "Crusade Goodie Bag";
                 itemDef.inventoryModel = 60899;
                 itemDef.zoom2d = ItemDefinition.lookup(25537).zoom2d;
                 itemDef.xan2d = ItemDefinition.lookup(25537).xan2d;
