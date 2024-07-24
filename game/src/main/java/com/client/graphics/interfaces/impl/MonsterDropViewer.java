@@ -12,18 +12,21 @@ public class MonsterDropViewer extends RSInterface {
     public static void onConfigChanged(int config, int value) {
         if (config == CONFIG_ID) {
             RSInterface container = interfaceCache.get(CONTAINER_ID);
-            for (int index = 0; index < 80; index++) {
-                // main.child(240 + i, 34003, 175, 2 + yy);
-                // main.child(320 + i, 34004, 234, 2 + yy);
-                // main.child(400 + i, 34005, 293, 2 + yy);
-                if (index >= value) {
-                    container.children[240 + index] = EMPTY;
-                    container.children[320 + index] = EMPTY;
-                    container.children[400 + index] = EMPTY;
-                } else {
-                    container.children[240 + index] = 34003;
-                    container.children[320 + index] = 34004;
-                    container.children[400 + index] = 34005;
+            if(container != null) {
+                try {
+                    for (int index = 0; index < 80; index++) {
+                        if (index >= value) {
+                            container.children[240 + index] = EMPTY;
+                            container.children[320 + index] = EMPTY;
+                            container.children[400 + index] = EMPTY;
+                        } else {
+                            container.children[240 + index] = 34003;
+                            container.children[320 + index] = 34004;
+                            container.children[400 + index] = 34005;
+                        }
+                    }
+                } catch (Exception e) {
+                    //TODO - look into what these are precisely
                 }
             }
         }
