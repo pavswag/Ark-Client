@@ -58,7 +58,7 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             npcDefinition.actions = new String[] { null, "Attack", null, null, null };
             npcDefinition.isMinimapVisible = true;
             npcDefinition.headIconArchiveIds = new int[440];
-            npcDefinition.headIconSpriteIndex = new short[0];
+            npcDefinition.headIconSpriteIndex = new short[8];
         }
 
         if (i == 7649) {
