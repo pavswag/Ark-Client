@@ -123,6 +123,7 @@ public class ModelLoader {
         def.verticesCount = var9;
         def.trianglesCount = var10;
         def.texturesCount = var11;
+        def.modelParticles = new int[var9];
         def.verticesX = new int[var9];
         def.verticesY = new int[var9];
         def.verticesZ = new int[var9];
@@ -440,6 +441,7 @@ public class ModelLoader {
         def.verticesCount = var9;
         def.trianglesCount = var10;
         def.texturesCount = var11;
+        def.modelParticles = new int[var9];
         def.verticesX = new int[var9];
         def.verticesY = new int[var9];
         def.verticesZ = new int[var9];
@@ -833,6 +835,7 @@ public class ModelLoader {
         def.verticesCount = var9;
         def.trianglesCount = var10;
         def.texturesCount = var11;
+        def.modelParticles = new int[var9];
         def.verticesX = new int[var9];
         def.verticesY = new int[var9];
         def.verticesZ = new int[var9];
@@ -1130,6 +1133,7 @@ public class ModelLoader {
         def.verticesCount = var9;
         def.trianglesCount = var10;
         def.texturesCount = var11;
+        def.modelParticles = new int[var9];
         def.verticesX = new int[var9];
         def.verticesY = new int[var9];
         def.verticesZ = new int[var9];

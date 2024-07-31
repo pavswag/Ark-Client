@@ -2130,6 +2130,7 @@ public class Mesh extends Renderable implements RSModelData {
         this.method4240();
         var8.verticesCount = this.verticesCount;
         var8.verticesX = this.verticesX;
+        var8.modelParticles = new int[this.verticesCount];
         var8.verticesY = this.verticesY;
         var8.verticesZ = this.verticesZ;
         var8.trianglesCount = this.faceCount;

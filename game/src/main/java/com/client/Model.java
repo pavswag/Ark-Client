@@ -14,6 +14,9 @@ import com.client.definitions.skeletal.SkaFSet;
 import com.client.definitions.skeletal.TO;
 import com.client.engine.impl.MouseHandler;
 import com.client.js5.Js5List;
+import com.client.particle.Particle;
+import com.client.particle.ParticleAttachment;
+import com.client.particle.ParticleDefinition;
 import com.client.util.math.Matrix4f;
 import com.client.utilities.ObjectKeyUtil;
 import com.displee.cache.index.Index;
@@ -92,6 +95,40 @@ public class Model extends Renderable implements RSModel {
                 if (renderPriorities != null) {
                     for (int j = 0; j < renderPriorities.length; j++) {
                         renderPriorities[j] = 10;
+                    }
+                }
+            }
+            int[][] attachments = ParticleAttachment.getAttachments(modelId);
+            if (attachments != null) {
+                System.out.println("Found particles for model [" + modelId + "]");
+                for (int[] attach : attachments) {
+                    if (attach[0] == -1) {
+                        for (int z = 0; z < getFaceIndices1().length; ++z) {
+                            modelParticles[getFaceIndices1()[z]] = attach[1] + 1;
+                        }
+                    } else if (attach[0] == -2) {
+                        for (int z = 0; z < getFaceIndices2().length; ++z) {
+                            modelParticles[getFaceIndices2()[z]] = attach[1] + 1;
+                        }
+                    } else if (attach[0] == -3) {
+                        for (int z = 0; z < getFaceIndices3().length; ++z) {
+                            modelParticles[getFaceIndices3()[z]] = attach[1] + 1;
+                        }
+                    } else if (attach[0] == -4) {
+                        for (int z = 0; z < getFaceIndices1().length; ++z) {
+                            modelParticles[getFaceIndices1()[z]] = attach[1] + 1;
+                        }
+
+                        for (int z = 0; z < getFaceIndices2().length; ++z) {
+                            modelParticles[getFaceIndices2()[z]] = attach[1] + 1;
+                        }
+
+                        for (int z = 0; z < getFaceIndices3().length; ++z) {
+                            modelParticles[getFaceIndices3()[z]] = attach[1] + 1;
+                        }
+                    } else {
+                        modelParticles[attach[0]] = attach[1] + 1;
+                        System.out.println("Vert [" + attach[0] + "] = " + (attach[1] + 1));
                     }
                 }
             }
@@ -269,6 +306,7 @@ public class Model extends Renderable implements RSModel {
                 }
             }
 
+            modelParticles = new int[verticesCount];
             verticesX = new int[verticesCount];
             verticesY = new int[verticesCount];
             verticesZ = new int[verticesCount];
@@ -364,6 +402,8 @@ public class Model extends Renderable implements RSModel {
 
             vertexNormals();
 
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -390,6 +430,7 @@ public class Model extends Renderable implements RSModel {
         colorsX = model.colorsX;
         colorsY = model.colorsY;
         colorsZ = model.colorsZ;
+        modelParticles = model.modelParticles;
         verticesY = model.verticesY;
         verticesX = model.verticesX;
         verticesZ = model.verticesZ;
@@ -461,6 +502,7 @@ public class Model extends Renderable implements RSModel {
             }
         }
 
+        modelParticles = new int[verticesCount];
         verticesX = new int[verticesCount];
         verticesY = new int[verticesCount];
         verticesZ = new int[verticesCount];
@@ -507,6 +549,7 @@ public class Model extends Renderable implements RSModel {
                     verticesX[verticesCount] = build.verticesX[point];
                     verticesY[verticesCount] = build.verticesY[point];
                     verticesZ[verticesCount] = build.verticesZ[point];
+                    modelParticles[verticesCount] = build.modelParticles[point];
                     verticesCount++;
                 }
                 for (int face = 0; face < build.trianglesCount; face++) {
@@ -584,10 +627,12 @@ public class Model extends Renderable implements RSModel {
         trianglesCount = model.trianglesCount;
         texturesCount = model.texturesCount;
         if (animated) {
+            modelParticles = model.modelParticles;
             verticesX = model.verticesX;
             verticesY = model.verticesY;
             verticesZ = model.verticesZ;
         } else {
+            modelParticles = new int[verticesCount];
             verticesX = new int[verticesCount];
             verticesY = new int[verticesCount];
             verticesZ = new int[verticesCount];
@@ -595,6 +640,7 @@ public class Model extends Renderable implements RSModel {
                 verticesX[point] = model.verticesX[point];
                 verticesY[point] = model.verticesY[point];
                 verticesZ[point] = model.verticesZ[point];
+                modelParticles[point] = model.modelParticles[point];
             }
 
         }
@@ -689,6 +735,7 @@ public class Model extends Renderable implements RSModel {
             drawType = model.drawType;
         }
 
+        modelParticles = model.modelParticles;
         verticesX = model.verticesX;
         verticesZ = model.verticesZ;
         colors = model.colors;
@@ -736,6 +783,7 @@ public class Model extends Renderable implements RSModel {
         var2.trianglesCount = this.trianglesCount;
         var2.texturesCount = this.texturesCount;
         if (var2.verticesX == null || var2.verticesX.length < this.verticesCount) {
+            var2.modelParticles = new int[verticesCount + 100];
             var2.verticesX = new int[this.verticesCount + 100];
             var2.verticesY = new int[this.verticesCount + 100];
             var2.verticesZ = new int[this.verticesCount + 100];
@@ -746,6 +794,7 @@ public class Model extends Renderable implements RSModel {
             var2.verticesX[var4] = this.verticesX[var4];
             var2.verticesY[var4] = this.verticesY[var4];
             var2.verticesZ[var4] = this.verticesZ[var4];
+            var2.modelParticles[var4] = this.modelParticles[var4];
         }
 
         if (var1) {
@@ -802,6 +851,7 @@ public class Model extends Renderable implements RSModel {
             sharedVerticesZ = new int[verticesCount + 100];
         }
 
+        modelParticles = new int[verticesCount];
         verticesX = sharedVerticesX;
         verticesY = sharedVerticesY;
         verticesZ = sharedVerticesZ;
@@ -809,6 +859,7 @@ public class Model extends Renderable implements RSModel {
             verticesX[point] = model.verticesX[point];
             verticesY[point] = model.verticesY[point];
             verticesZ[point] = model.verticesZ[point];
+            modelParticles[point] = model.modelParticles[point];
         }
 
         if (replaceAlpha) {
@@ -860,6 +911,7 @@ public class Model extends Renderable implements RSModel {
 
     private int getFirstIdenticalVertexId(final Model model, final int vertex) {
         int vertexId = -1;
+        int p = model.modelParticles[vertex];
         final int x = model.verticesX[vertex];
         final int y = model.verticesY[vertex];
         final int z = model.verticesZ[vertex];
@@ -872,6 +924,7 @@ public class Model extends Renderable implements RSModel {
         }
 
         if (vertexId == -1) {
+            modelParticles[verticesCount] = p;
             this.verticesX[this.verticesCount] = x;
             this.verticesY[this.verticesCount] = y;
             this.verticesZ[this.verticesCount] = z;
@@ -1748,6 +1801,7 @@ public class Model extends Renderable implements RSModel {
 
         this.prepareSkeleton();
         model.verticesCount = this.verticesCount;
+        model.modelParticles = this.modelParticles;
         model.verticesX = this.verticesX;
         model.verticesY = this.verticesY;
         model.verticesZ = this.verticesZ;
@@ -1770,7 +1824,6 @@ public class Model extends Renderable implements RSModel {
         this.textures = model.textures;
         this.texturesX = model.texturesX;
         this.texturesY = model.texturesY;
-        this.texturesZ = model.texturesZ;
         this.texturesZ = model.texturesZ;
 
         if (flatShading) {
@@ -2074,13 +2127,19 @@ public class Model extends Renderable implements RSModel {
         return texturesZ;
     }
 
+    private int offX = 0;
+    private int offY = 0;
+    private int offZ = 0;
     //Scene models
     @Override
     public final void renderAtPoint(int orientation, int pitchSine, int pitchCos, int yawSin, int yawCos, int offsetX, int offsetY, int offsetZ, long uid, int plane) {
         if (this.boundsType != 1) {
             this.calculateBoundsCylinder();
         }
-
+        lastRenderedRotation = orientation;
+        offX = offsetX + Client.instance.getCameraX();
+        offY = offsetX + Client.instance.getCameraY();
+        offZ = offsetX + Client.instance.getCameraZ();
         calculateBoundingBox(orientation);
         int sceneX = offsetZ * yawCos - offsetX * yawSin >> 16;
         int sceneY = offsetY * pitchSine + sceneX * pitchCos >> 16;
@@ -2367,6 +2426,7 @@ public class Model extends Renderable implements RSModel {
                 }
             }
             if (gpu) {
+                System.out.println("GPU mode");
                 return;
             }
             if (this.renderPriorities == null) {
@@ -2513,8 +2573,35 @@ public class Model extends Renderable implements RSModel {
 
             }
         }
+        /*for (int m = 0; m < verticesCount; m++) {
+
+            int pid = modelParticles[m] - 1;
+            if (pid < 0) {
+                continue;
+            }
+
+            ParticleDefinition def = ParticleDefinition.cache[pid];
+            int pX = verticesX[m] >> 0;
+            int pY = verticesY[m] >> 0;
+            int pZ = verticesZ[m] >> 0;
+            if (lastRenderedRotation != 0) {
+                int sine = Model.SINE[lastRenderedRotation];
+                int cosine = Model.COSINE[lastRenderedRotation];
+                int rotatedX = pZ * sine + pX * cosine >> 16;
+                pZ = pZ * cosine - pX * sine >> 16;
+                pX = rotatedX;
+            }
+            pX += offX;
+            pZ += offZ;
+            com.client.particle.Vector basePos = new com.client.particle.Vector(pX, -pY, pZ);
+            for (int p = 0; p < def.getSpawnRate(); p++) {
+                Particle particle = new Particle(def, basePos, pid);
+                Client.instance.addParticle(particle);
+            }
+        }*/
     }
 
+    private int lastRenderedRotation = 0;
     public void drawFace(int face) { //method484
         if (outOfReach[face]) {
             faceRotation(face);
@@ -2808,6 +2895,7 @@ public class Model extends Renderable implements RSModel {
     private static int sharedVerticesY[] = new int[2000];
     private static int sharedVerticesZ[] = new int[2000];
     private static byte sharedTriangleAlpha[] = new byte[2000];
+    public int[] modelParticles;
     public int verticesCount;
     public int verticesX[];
     public int verticesY[];
@@ -3339,6 +3427,7 @@ public class Model extends Renderable implements RSModel {
                     var11.texturesCount = this.texturesCount;
                     var11.verticesX = this.verticesX;
                     var11.verticesZ = this.verticesZ;
+                    var11.modelParticles = this.modelParticles;
                     var11.trianglesX = this.trianglesX;
                     var11.trianglesY = this.trianglesY;
                     var11.trianglesZ = this.trianglesZ;

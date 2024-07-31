@@ -92,6 +92,7 @@ import com.client.menu.MenuManager;
 import com.client.model.Items;
 import com.client.music.Class56;
 import com.client.osrs.OSRSCacheLoader;
+import com.client.particle.Particle;
 import com.client.sign.Signlink;
 import com.client.skillorbs.SkillOrbs;
 import com.client.sound.Music;
@@ -4726,7 +4727,67 @@ public class Client extends GameEngine implements RSClient {
 			}
 		}
 	}
+	private List<Particle> currentParticles;
+	private List<Particle> deadParticles;
 
+	public final void addParticle(Particle particle) {
+		currentParticles.add(particle);
+	}
+	private void renderParticles() {
+		Iterator<Particle> it = currentParticles.iterator();
+		while (it.hasNext()) {
+			Particle p = it.next();
+			if (p != null) {
+				p.tick();
+				if (p.isDead()) {
+					it.remove();
+				} else {
+					int x = p.getPosition().getX();
+					int y = p.getPosition().getY();
+					int z = p.getPosition().getZ();
+					int alpha = (int) (p.getAlpha() * 255.0F);
+					float size = p.getSize();
+
+					int[] projection = particleProjection(x, y, z);
+
+					try {
+						System.out.println("Drawing particle @ [" + projection[0] + "/" + projection[1] + "] from [" + x + "/" + y + "]");
+						Rasterizer2D.fillCircleAlpha(projection[0], projection[1], (int) (size * 4), p.getColor(), alpha);
+					} catch(Exception e) {
+
+					}
+				}
+			}
+		}
+	}
+	private int[] particleProjection(int i, int j, int l) {
+		if (i < 128 || l < 128 || i > 13056 || l > 13056) {
+			System.out.println("Returned");
+			return new int[] { -1, -1, -1 };
+		}
+		int i1 = getCenterHeight(this.plane, l, i) - j; //getCenterHeight
+		i -= this.xCameraPos;
+		i1 -= this.zCameraPos;
+		l -= this.yCameraPos;
+		int j1 = Model.SINE[this.yCameraCurve];
+		int k1 = Model.COSINE[this.yCameraCurve];
+		int l1 = Model.SINE[this.xCameraCurve];
+		int i2 = Model.COSINE[this.xCameraCurve];
+		int j2 = l * l1 + i * i2 >> 16;
+		l = l * i2 - i * l1 >> 16;
+		i = j2;
+		j2 = i1 * k1 - l * j1 >> 16;
+		l = i1 * j1 + l * k1 >> 16;
+		i1 = j2;
+		if (l >= 50) {
+			return new int[] {
+					(Rasterizer3D.originViewX + i * Rasterizer3D.fieldOfView / l) + (!isResized() ? 4 : 0),
+					(Rasterizer3D.originViewY + i1 * Rasterizer3D.fieldOfView / l) + (!isResized() ? 4 : 0),
+					l };
+		} else {
+			return new int[] { -1, -1, -1, -1, -1, -1, -1 };
+		}
+	}
 	private void method46(int i, Buffer stream) {
 		//if (var1.bitsRemaining(Client.packetWriter.serverPacketLength) >= var2 + 12) {
 		while (stream.bitsRemaining(i) >= 28) {
@@ -12240,7 +12301,6 @@ public class Client extends GameEngine implements RSClient {
 			} else if (entityDescription_request.isDone()) {
 				byte[] var0 = entityDescription_request.getResponse();
 				if(var0 == null) {
-//					System.out.println("World request is null");
 					return false;
 				}
 				Buffer var1 = new Buffer(var0);
@@ -20949,11 +21009,10 @@ public class Client extends GameEngine implements RSClient {
 						int l25 = inStream.readUnsignedByte(); // Amount
 						if (l25 == 255)
 							l25 = inStream.readDWord();
-						if (j20 >= 0 && j20 < class9_2.inventoryItemId.length) {
+						if (class9_2 != null && class9_2.inventoryItemId != null && class9_2.inventoryAmounts != null && j20 >= 0 && j20 < class9_2.inventoryItemId.length) {
 							class9_2.inventoryItemId[j20] = i23;
 							class9_2.inventoryAmounts[j20] = l25;
 						}
-//						System.out.println(i9 + " / " + i23 + " / " + l25  + " / " + j20);
 					}
 					incomingPacket = -1;
 					return true;
@@ -21416,6 +21475,7 @@ public class Client extends GameEngine implements RSClient {
 		rasterProvider.setRaster();
 		scene.clearGameObjectCache();
 
+		renderParticles();
 		updateEntities();
 		drawHeadIcon();
 
@@ -21478,8 +21538,9 @@ public class Client extends GameEngine implements RSClient {
 	private Sprite[] chatButtons;
 
 	public Client() {
-
 		setGameState(GameState.STARTING);
+		currentParticles = new ArrayList<>();
+		deadParticles = new ArrayList<>();
 		accountManager = new AccountManager();
 		fullscreenInterfaceID = -1;
 		firstLoginMessage = "";
