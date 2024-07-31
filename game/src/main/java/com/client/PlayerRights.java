@@ -48,7 +48,8 @@ public enum PlayerRights {
     EVENT_MAN(29, "60201f"),
     COMMUNITY_MANAGER(30, "8f8f8f", ADMINISTRATOR),
     WILDYMAN(93,"60201f"),
-    HARDCORE_WILDYMAN(94, "60201f")
+    HARDCORE_WILDYMAN(94, "60201f"),
+    HEAD_ADMINISTRATOR(92, "f717ff", ADMINISTRATOR)
     ;
 
     /**
@@ -80,7 +81,7 @@ public enum PlayerRights {
     }
 
     public boolean isStaffPosition() {
-        return this == HELPER || this == ADMINISTRATOR || this == MODERATOR || this == STAFF_MANAGER || this == GAME_DEVELOPER || this == COMMUNITY_MANAGER;
+        return this == HELPER || this == ADMINISTRATOR || this == MODERATOR || this == STAFF_MANAGER || this == GAME_DEVELOPER || this == COMMUNITY_MANAGER || this == HEAD_ADMINISTRATOR;
     }
 
     public int spriteId() {
@@ -100,7 +101,7 @@ public enum PlayerRights {
     }
 
     public static final EnumSet[] DISPLAY_GROUPS = {
-            EnumSet.of(HELPER, GUIDE_GURU, MODERATOR, ADMINISTRATOR, COMMUNITY_MANAGER, GAME_DEVELOPER, STAFF_MANAGER, UNKNOWN, KRILLIN, GOTEN, GOHAN, CELL, VEGETA, GOKU, GOGETTA,
+            EnumSet.of(HELPER, GUIDE_GURU, MODERATOR, ADMINISTRATOR, HEAD_ADMINISTRATOR, COMMUNITY_MANAGER, GAME_DEVELOPER, STAFF_MANAGER, UNKNOWN, KRILLIN, GOTEN, GOHAN, CELL, VEGETA, GOKU, GOGETTA,
                     GOGETTA_SS, GOGETTA_SS2, SS_BROLY, YOUTUBER),
             EnumSet.of(HITBOX, EVENT_MAN, IRONMAN, ULTIMATE_IRONMAN, OSRS,
                     OSRS_IRONMAN, MEMBERSHIP, HC_IRONMAN, ROGUE,
