@@ -1,5 +1,6 @@
 package com.client.graphics.interfaces.impl;
 
+import com.client.Client;
 import com.client.TextDrawingArea;
 import com.client.graphics.interfaces.RSInterface;
 
@@ -12,6 +13,8 @@ public class MonsterDropViewer extends RSInterface {
     public static void onConfigChanged(int config, int value) {
         if (config == CONFIG_ID) {
             RSInterface container = interfaceCache.get(CONTAINER_ID);
+            if(container == null)
+                Client.instance.pushMessage("Container could not be found [widget " + CONTAINER_ID + "]");
             if(container != null) {
                 try {
                     for (int index = 0; index < 80; index++) {
