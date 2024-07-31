@@ -433,7 +433,7 @@ public final class Interfaces extends RSInterface {
 	}
 
 	private static void coinFlipItemsInterface(TextDrawingArea[] tda) {
-		int interfaceId = 24500;
+		int interfaceId = 587;
 		int childId = 0;
 		RSInterface inter = addInterface(interfaceId++);
 		inter.totalChildren(4);
@@ -466,7 +466,7 @@ public final class Interfaces extends RSInterface {
 		int index = 1;
 		int baseX = 100, baseY = 8;
 
-		main.totalChildren(15);
+		main.totalChildren(17);
 
 		addSprite(MAIN_INTERFACE + index++, 0, dir);
 		configHoverButton(MAIN_INTERFACE + index, "Close interface", dir,
@@ -484,10 +484,13 @@ public final class Interfaces extends RSInterface {
 		addText(MAIN_INTERFACE + index++, "ITEM NAME", tda, 1, 0xFF981F, true);
 		hoverButton(MAIN_INTERFACE + index++, "Settings", 2, 3, "   Settings", tda, 2, 0xFF981F, 0xffffff, false, dir);
 
+		addText(MAIN_INTERFACE + index ++, "RAKEBACK", tda, 2, 0xFF981F);
+		addText(MAIN_INTERFACE + index ++, "0/25, until guaranteed reward!", tda, 2, 0xFF981F);
+
 		index = 0;
 
 		main.child(index++, MAIN_INTERFACE + index, baseX, baseY); //background
-		main.child(index++, MAIN_INTERFACE + index, 330 + baseX, 8 + baseY); //close button
+		main.child(index++, MAIN_INTERFACE + index, 330 + baseX, 10 + baseY); //close button
 		main.child(index++, MAIN_INTERFACE + index, 80 + baseX, 48 + baseY); //Blue Coin
 		main.child(index++, MAIN_INTERFACE + index, 20 + baseX, 48 + baseY); //Red Coin
 		main.child(index++, MAIN_INTERFACE + index, 145 + baseX, 37 + baseY); //Main Coin
@@ -500,6 +503,9 @@ public final class Interfaces extends RSInterface {
 		main.child(index++, MAIN_INTERFACE + index, 12 + baseX, 175 + baseY); //Item Name Box
 		main.child(index++, MAIN_INTERFACE + index, 72 + baseX, 178 + baseY); //Item Name Text
 		main.child(index++, MAIN_INTERFACE + index, 25 + baseX, 215 + baseY); //Settings Button
+
+		main.child(index++, MAIN_INTERFACE + index, 20 + baseX, 260 + baseY); //RAKEBACK Text
+		main.child(index++, MAIN_INTERFACE + index, 120 + baseX, 260 + baseY); //RAKEBACK Text
 	}
 
 	private static void offerDealsInterface(TextDrawingArea[] tda) {
