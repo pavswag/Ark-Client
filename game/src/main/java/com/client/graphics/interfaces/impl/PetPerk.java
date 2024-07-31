@@ -126,7 +126,7 @@ public class PetPerk extends RSInterface {
         main.child(28, 22754, 45, 73);
         main.child(29, 22755, 118, 73);
         main.child(30, 22756, 86, 98);
-        main.child(31, 33934, 17, 211);
+        main.child(31, 24974, 17, 211);
         main.child(32, 48848, 0, 0);
         main.child(33, 39350, 0, 0);
 
@@ -169,25 +169,26 @@ public class PetPerk extends RSInterface {
         petDescription.child(5, 48852, 100, 195);
         petDescription.child(6, 48853, 105, 195);
 
-        RSInterface cosmeticOverrides = addInterface(33934);
+        RSInterface cosmeticOverrides = addInterface(24974);
         cosmeticOverrides.width = 128;
         cosmeticOverrides.height = 97;
         cosmeticOverrides.scrollMax = 810;
         cosmeticOverrides.totalChildren(62);
         int child = 0;
-        for(int i = 33935; i <= 33980; i++) {
-            int yPosition = (18 * (i - 33935));
+        for(int i = 24975; i <= 25020; i++) {
+            int yPosition = (18 * (i - 24975));
             addRectangle(i, 98, 18, 0x221e1a, 0, true);
             get(i).secondaryColor = 0x252220;
             get(i).atActionType = 1;
             get(i).tooltip = "<col=ff9933>Summon Pet!";
             cosmeticOverrides.child(child++, i, 0, yPosition);
         }
-        for(int i = 33966; i <= 34011; i++) {
+        for(int i = 25006; i <= 25051; i++) {
             addText(i, "", tda, 0, 0xff9933, false);
-            int yPosition = 3 + (18 * (i - 33966));
+            int yPosition = 3 + (18 * (i - 25006));
             cosmeticOverrides.child(child++, i, 2, yPosition);
         }
+
 
 
         petDescription = addInterface(39350);
