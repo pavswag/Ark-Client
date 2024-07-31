@@ -118,8 +118,6 @@ public final class Interfaces extends RSInterface {
 		cataTele(defaultTextDrawingAreas);
 		groupInformation(defaultTextDrawingAreas);
 		groupLeaderboard(defaultTextDrawingAreas);
-		new MonsterDropViewer().OsDropViewer(defaultTextDrawingAreas);
-		dropTable(defaultTextDrawingAreas);
 		new TobPartyOverlay().build();
 		new TobRewardsInterface().build();
 		new TobFoodChest().build();
@@ -175,6 +173,8 @@ public final class Interfaces extends RSInterface {
 		VoteReminder.voteReminderWidget(defaultTextDrawingAreas);
 		TreasureOverlayInterface(defaultTextDrawingAreas);
 		//24967
+		new MonsterDropViewer().OsDropViewer(defaultTextDrawingAreas);
+		dropTable(defaultTextDrawingAreas);
 	}
 
 	private static void TreasureOverlayInterface(TextDrawingArea[] tda) {
