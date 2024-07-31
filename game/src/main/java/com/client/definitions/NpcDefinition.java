@@ -67,6 +67,14 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             npcDefinition.widthScale = 200; // HEIGH
         }
 
+        if (i == 2580) {
+            npcDefinition.actions = new String[] {"Talk to", null, "Teleport", null, null };
+        }
+
+        if (i == 12256) {
+            npcDefinition.name = "Shadow Crusade Store";
+        }
+
        /* if (i == Npcs.BOB_BARTER_HERBS) {
             npcDefinition.custom = true;
             npcDefinition.actions = new String[] { "Talk-to", "Prices", "Decant", "Clean", null };
