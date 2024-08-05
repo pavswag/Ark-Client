@@ -1504,6 +1504,29 @@ public class Model extends Renderable implements RSModel {
         }
     }
 
+    public void setTextureFromColor(int color, int texture) {
+        if(colors == null)
+            return;
+        if(materials == null) {
+            materials = new short[trianglesCount];
+            Arrays.fill(materials, (short) -1);
+        }
+        for (int face = 0; face < trianglesCount; face++) {
+            if (colors[face] == color) {
+                materials[face] = (short) texture;
+            }
+        }
+    }
+    public void retextureRestOfModel(int texture) {
+        if(materials == null)
+            throw new IllegalStateException("Materials is null, this method requires some texturing before usage.");
+        for (int face = 0; face < trianglesCount; face++) {
+            if (materials[face] == -1) {
+                materials[face] = (short) texture;
+            }
+        }
+    }
+
     public void mirror() {
         for (int vertex = 0; vertex < verticesCount; vertex++)
             verticesZ[vertex] = -verticesZ[vertex];

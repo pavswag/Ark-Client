@@ -4,6 +4,9 @@ package com.client.definitions;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 //import java.io.FileNotFoundException;
 //import java.io.IOException;
 //import java.nio.file.Files;
@@ -40,6 +43,31 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
                 System.out.println("Error decoding NPC [" + i + "], previous opcode[" + npcDefinition.previousOpcode + "]");
                 e.printStackTrace();
             }
+        }
+        if(i==12783) {
+            NpcDefinition toCopy = lookup(12821);
+            npcDefinition.name = "<icon=164> Superior Sol Heredit <icon=164>";
+            npcDefinition.category = toCopy.category;
+            npcDefinition.actions = toCopy.actions;
+            npcDefinition.walkAnim = toCopy.walkAnim;
+            npcDefinition.size = toCopy.size;
+            npcDefinition.chatheadModels = toCopy.chatheadModels;
+            npcDefinition.standAnim = toCopy.standAnim;
+            npcDefinition.rotation = toCopy.rotation;
+            npcDefinition.isInteractable = toCopy.isInteractable;
+            npcDefinition.ambient = toCopy.ambient;
+            npcDefinition.heightScale = toCopy.heightScale;
+            npcDefinition.isMinimapVisible = toCopy.isMinimapVisible;
+            npcDefinition.widthScale = toCopy.widthScale;
+            npcDefinition.contrast = toCopy.contrast;
+            npcDefinition.hasRenderPriority = toCopy.hasRenderPriority;
+            npcDefinition.models = toCopy.models;
+            npcDefinition.stats = toCopy.stats;
+            npcDefinition.combatLevel = toCopy.combatLevel;
+        }
+        if(i==12821) {
+
+            System.out.println(npcDefinition);
         }
         if (i==13003) {
             npcDefinition.custom = true;
@@ -1969,6 +1997,22 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
                 for (int i1 = 0; i1 < originalTextureColours.length; i1++)
                     model.retexture(originalTextureColours[i1], modifiedTextureColours[i1]);
             }
+
+            if(id==12783) {
+                Map<Integer, Integer> colorCountMap = new HashMap<>();
+                for (int color : model.colors) {
+                    colorCountMap.put(color, colorCountMap.getOrDefault(color, 0) + 1);
+                }
+                for (Map.Entry<Integer, Integer> entry : colorCountMap.entrySet()) {
+                    System.out.println("Color: " + entry.getKey() + ", Occurrences: " + entry.getValue());
+                }
+
+
+                model.setTextureFromColor(5532, 138);
+                model.setTextureFromColor(3470, 138);
+                model.setTextureFromColor(-25538, 138);
+                model.retextureRestOfModel(140);
+            }
             model.prepareSkeleton();
             model.light(64 + ambient, 850 + contrast, -30, -50, -30, true);
             // model.method479(84 + anInt85, 1000 + anInt92, -90, -580, -90, true);
@@ -1992,6 +2036,7 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
         model_1.groupedVertexLabels = null;
         if (size == 1)
             model_1.singleTile = true;
+
         return model_1;
     }
 
