@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Entity extends Renderable {
-
+	public int index = -1;
 	void playAnimationSound(SequenceDefinition var0, int var1, int var2, int var3) {
 		StaticSound.playAnimationSound(var0,var1,var2,var3,this);
 	}

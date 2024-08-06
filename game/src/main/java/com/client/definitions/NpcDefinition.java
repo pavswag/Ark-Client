@@ -65,9 +65,8 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             npcDefinition.stats = toCopy.stats;
             npcDefinition.combatLevel = toCopy.combatLevel;
         }
-        if(i==12821) {
-
-            System.out.println(npcDefinition);
+        if(i==12780) {
+            npcDefinition.name = "Mini-Me";
         }
         if (i==13003) {
             npcDefinition.custom = true;

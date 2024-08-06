@@ -20,8 +20,39 @@ import java.awt.image.BufferedImage;
 import java.util.Iterator;
 
 public final class Npc extends Entity implements RSNPC {
-
+	private Player owner = null;
 	private Model getAnimatedModel() {
+		if(definition != null && definition.id == 12780) {
+			if(owner == null) {
+				Actor interacting = getInteracting();
+				if (interacting != null && interacting instanceof Player) {
+					owner = (Player) interacting;
+					walkAnimIndex = owner.walkAnimIndex;
+				}
+				return null;
+			} else {
+				Model model = owner.getRotatedModel();
+				model.scale(75, 75, 75);
+				return model;
+			}
+		}
+		if(definition != null && definition.id == 12781) {
+			if(owner == null) {
+				Actor interacting = getInteracting();
+				if (interacting != null && interacting instanceof Player) {
+					owner = (Player) interacting;
+					walkAnimIndex = owner.walkAnimIndex;
+				}
+				return null;
+			} else {
+				Model model = owner.getRotatedModel();
+				model.scale(75, 75, 75);
+				model.recolor(0);
+				model.prepareSkeleton();
+				model.light(64, 850, -30, -50, -30, true);
+				return model;
+			}
+		}
 		SequenceDefinition primarySeq = null;
 		SequenceDefinition secondarySeq = null;
 		if ((super.primarySeqID >= 0) && (super.primarySeqDelay == 0)) {
@@ -203,7 +234,12 @@ public final class Npc extends Entity implements RSNPC {
 
 		index -= 32768;
 		Player[] players = client.players;
-		return players[index];
+		if (index == Client.instance.localPlayerIndex)
+			index = Client.instance.maxPlayerCount;
+		Player player = players[index];
+		if(player == null)
+			player = players[Client.instance.playerIndices[index]];
+		return player;
 	}
 
 	@Override

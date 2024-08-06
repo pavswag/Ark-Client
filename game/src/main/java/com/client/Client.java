@@ -21762,7 +21762,7 @@ public class Client extends GameEngine implements RSClient {
 	private MouseDetection mouseDetection;
 	private volatile boolean drawFlames;
 	private String reportAbuseInput;
-	private int localPlayerIndex;
+	public int localPlayerIndex;
 	public boolean menuOpen;
 	private int anInt886;
 	public static String inputString;

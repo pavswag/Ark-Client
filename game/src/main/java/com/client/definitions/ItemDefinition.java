@@ -435,7 +435,14 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.yOffset2d = ItemDefinition.lookup(25537).yOffset2d;
                 itemDef.interfaceOptions = new String[] { "Open", null, null, null, "Drop"};
                 break;
-
+            case 10198:
+                itemDef.name = "Mini-me Pet";
+                itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop"};
+                break;
+            case 10199:
+                itemDef.name = "Shadow Pet";
+                itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop"};
+                break;
         }
         return itemDef;
     }
@@ -657,6 +664,7 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
 
 
     public static Sprite getSprite(int itemId, int stackSize, int outlineColor) {
+
         if (outlineColor == 0) {
             Sprite sprite = (Sprite) sprites.get(itemId);
             if (sprite != null && sprite.height != stackSize && sprite.height != -1) {
@@ -682,6 +690,25 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef = lookup(stack_item_id);
         }
         Model model = itemDef.getModel(1);
+        if(itemId == 10198) {
+            model = Client.localPlayer.getRotatedModel();
+            if(model != null) {
+                model.scale(95, 95, 95);
+                model.rotate90Degrees();
+                model.rotate90Degrees();
+                model.rotate90Degrees();
+            }
+        }
+        if(itemId == 10199) {
+            model = Client.localPlayer.getRotatedModel();
+            if(model != null) {
+                model.scale(95, 95, 95);
+                model.rotate90Degrees();
+                model.recolor(0);
+                model.prepareSkeleton();
+                model.light(64, 850, -30, -50, -30, true);
+            }
+        }
         if (model == null)
             return null;
         Sprite sprite = null;
@@ -751,7 +778,7 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
             sprite.width = old_w;
             sprite.height = old_h;
         }
-        if (outlineColor == 0)
+        if (outlineColor == 0 && (itemId != 10198 && itemId != 10199))
             sprites.put(enabledSprite, itemId);
         Rasterizer2D.initDrawingArea(height, width, pixels);
         Rasterizer2D.setDrawingArea(vp_bottom, vp_left, vp_right, vp_top);
