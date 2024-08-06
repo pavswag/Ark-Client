@@ -435,6 +435,76 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.yOffset2d = ItemDefinition.lookup(25537).yOffset2d;
                 itemDef.interfaceOptions = new String[] { "Open", null, null, null, "Drop"};
                 break;
+            case 33406:
+                itemDef.name = "Heredit Ring";
+                itemDef.inventoryModel = 60917;
+                itemDef.maleModel0 = 60917;
+                itemDef.femaleModel0 = 60917;
+                itemDef.zoom2d = ItemDefinition.lookup(12601).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(12601).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(12601).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(12601).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(12601).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
+            case 33407:
+                itemDef.name = "Heredit Amulet";
+                itemDef.inventoryModel = 60919;
+                itemDef.maleModel0 = 60920;
+                itemDef.femaleModel0 = 60920;
+                itemDef.zoom2d = ItemDefinition.lookup(19553).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(19553).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(19553).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(19553).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(19553).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
+            case 33408:
+                itemDef.name = "Heredit Boots";
+                itemDef.inventoryModel = 60918;
+                itemDef.maleModel0 = 60918;
+                itemDef.femaleModel0 = 60918;
+                itemDef.zoom2d = ItemDefinition.lookup(22954).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(22954).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(22954).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(22954).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(22954).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
+            case 33409:
+                itemDef.name = "Heredit Gloves";
+                itemDef.inventoryModel = 60921;
+                itemDef.maleModel0 = 60922;
+                itemDef.femaleModel0 = 60922;
+                itemDef.zoom2d = ItemDefinition.lookup(22981).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(22981).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(22981).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(22981).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(22981).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
+            case 33410:
+                itemDef.name = "Heredit Cape";
+                itemDef.inventoryModel = 60924;
+                itemDef.maleModel0 = 60925;
+                itemDef.femaleModel0 = 60925;
+                itemDef.zoom2d = ItemDefinition.lookup(27447).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(27447).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(27447).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(27447).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(27447).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
+            case 33411:
+                itemDef.name = "Heredit Quiver";
+                itemDef.inventoryModel = 60923;
+                itemDef.zoom2d = ItemDefinition.lookup(5562).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(5562).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(5562).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(5562).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(5562).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
 
         }
         return itemDef;
