@@ -41,8 +41,8 @@ public final class Player extends Entity implements RSPlayer {
 		int processedGraphics = 1;
 		while(spotAnimIterator.hasNext()) {
 			processedGraphics++;
-			if(processedGraphics >= 3)
-				break;
+			//if(processedGraphics >= 3)
+			//	break;
 			EntitySpotAnim graphicObject = (EntitySpotAnim) spotAnimIterator.next();
 			if(graphicObject.getId() == -1 ) {
 				graphicObject.remove();
