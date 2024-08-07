@@ -20555,8 +20555,7 @@ public class Client extends GameEngine implements RSClient {
 				case 126:
 					try {
 						text = inStream.readString();
-						int frame = inStream.readUShortA();
-
+						int frame = inStream.readInt();
 						handleScrollPosition(text, frame);
 						handleRunePouch(text, frame);
 
