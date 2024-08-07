@@ -125,6 +125,7 @@ public class GroundItemsPlugin extends Plugin
 	private boolean hideAll;
 
 	private List<String> hiddenItemList = new CopyOnWriteArrayList<>();
+	@Getter(AccessLevel.PACKAGE)
 	private List<String> highlightedItemsList = new CopyOnWriteArrayList<>();
 
 	@Inject
@@ -224,6 +225,7 @@ public class GroundItemsPlugin extends Plugin
 	public void onItemSpawned(ItemSpawned itemSpawned)
 	{
 		TileItem item = itemSpawned.getItem();
+
 		Tile tile = itemSpawned.getTile();
 		GroundItem groundItem = buildGroundItem(tile, item);
 		GroundItem existing = collectedGroundItems.get(tile.getWorldLocation(), item.getId());

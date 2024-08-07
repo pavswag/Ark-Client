@@ -213,7 +213,13 @@ public class GroundItemsOverlay extends Overlay
 				// Do not display non-highlighted items
 				if (config.showHighlightedOnly())
 				{
-					continue;
+					boolean showItem = false;
+					for(String itemName : plugin.getHighlightedItemsList()) {
+						if(itemName.equalsIgnoreCase(client.getItemComposition(item.getItemId()).getName()))
+							showItem = true;
+					}
+					if(!showItem)
+						continue;
 				}
 			}
 
