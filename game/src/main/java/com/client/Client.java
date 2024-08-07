@@ -13889,6 +13889,7 @@ public class Client extends GameEngine implements RSClient {
 			if (entity.primarySeqID != -1 && entity.primarySeqDelay <= 1) {
 				if (entity.primarySeqID >= SequenceDefinition.length()) {
 					entity.primarySeqID = -1;
+					return;
 				}
 				SequenceDefinition primarySeq = SequenceDefinition.get(entity.primarySeqID);
 				if (primarySeq.getMoveStyle() == 1 && entity.remaining_steps > 0 && entity.initiate_movement <= cycle && entity.cease_movement < cycle) {
