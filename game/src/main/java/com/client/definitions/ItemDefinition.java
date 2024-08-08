@@ -144,6 +144,9 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
     private static ItemDefinition customItems(ItemDefinition itemDef) {
         int itemId = itemDef.id;
         switch (itemId) {
+            case 11489:
+                itemDef.name = "<rank=35>The AIO Potion of POWER!<rank=35>";
+                break;
             case 25087:
                 itemDef.name = "Trail Of Treasure Scroll";
                 break;
