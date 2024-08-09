@@ -16662,6 +16662,9 @@ public class Client extends GameEngine implements RSClient {
 				if (instruction == 3)
 					value = currentExp[script[counter++]];
 				if (instruction == 4) { // Check for item inside interface, interfaceId = ai[l++]
+					if(interfaceCache.get(1688).hasItem(33411)) {
+						return Integer.MAX_VALUE;
+					}
 					RSInterface inventoryContainer = interfaceCache.get(script[counter++]);
 					int item = script[counter++];
 					if (item >= 0 && item < ItemDefinition.totalItems
