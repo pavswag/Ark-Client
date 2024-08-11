@@ -6,7 +6,7 @@ public final class CollisionMap implements RSCollisionMap {
 
     private static final int BLOCKED_TILE = 0x200000;
     //private static final int OBJECT_TILE = 0x100;
-    public final int[][] adjacencies;
+    public final int[][] clipData;
     private final int xOffset;
     private final int yOffset;
     private final int width;
@@ -17,7 +17,7 @@ public final class CollisionMap implements RSCollisionMap {
         yOffset = 0;
         width = 104;
         height = 104;
-        adjacencies = new int[width][height];
+        clipData = new int[width][height];
         setDefault();
     }
 
@@ -26,9 +26,9 @@ public final class CollisionMap implements RSCollisionMap {
             for (int y = 0; y < height; y++)
                 if (x == 0 || y == 0 || x == width - 1
                         || y == height - 1)
-                    adjacencies[x][y] = 0xffffff;
+                    clipData[x][y] = 0xffffff;
                 else
-                    adjacencies[x][y] = 0x1000000;
+                    clipData[x][y] = 0x1000000;
         }
 
     }
@@ -180,11 +180,11 @@ public final class CollisionMap implements RSCollisionMap {
     public void block(int x, int y) {
         x -= xOffset;
         y -= yOffset;
-        adjacencies[x][y] |= BLOCKED_TILE;
+        clipData[x][y] |= BLOCKED_TILE;
     }
 
     private void flag(int x, int y, int value) {
-        adjacencies[x][y] |= value;
+        clipData[x][y] |= value;
     }
 
     public void removeObject(int i, int j, boolean flag, int k, int l) {
@@ -332,16 +332,16 @@ public final class CollisionMap implements RSCollisionMap {
     }
 
     private void method217(int i, int j, int k) {
-        adjacencies[j][k] &= 0xffffff - i;
+        clipData[j][k] &= 0xffffff - i;
     }
 
     public void removeFloorDecoration(int j, int k) {
         k -= xOffset;
         j -= yOffset;
-        adjacencies[k][j] &= 0xdfffff;
+        clipData[k][j] &= 0xdfffff;
     }
 
-    public boolean obstruction_wall(int i, int j, int k, int i1, int j1, int k1) {
+    public boolean method219(int i, int j, int k, int i1, int j1, int k1) {
         if (j == i && k == k1)
             return true;
         j -= xOffset;
@@ -353,37 +353,37 @@ public final class CollisionMap implements RSCollisionMap {
                 if (j == i - 1 && k == k1)
                     return true;
                 if (j == i && k == k1 + 1
-                        && (adjacencies[j][k] & 0x1280120) == 0)
+                        && (clipData[j][k] & 0x1280120) == 0)
                     return true;
                 if (j == i && k == k1 - 1
-                        && (adjacencies[j][k] & 0x1280102) == 0)
+                        && (clipData[j][k] & 0x1280102) == 0)
                     return true;
             } else if (i1 == 1) {
                 if (j == i && k == k1 + 1)
                     return true;
                 if (j == i - 1 && k == k1
-                        && (adjacencies[j][k] & 0x1280108) == 0)
+                        && (clipData[j][k] & 0x1280108) == 0)
                     return true;
                 if (j == i + 1 && k == k1
-                        && (adjacencies[j][k] & 0x1280180) == 0)
+                        && (clipData[j][k] & 0x1280180) == 0)
                     return true;
             } else if (i1 == 2) {
                 if (j == i + 1 && k == k1)
                     return true;
                 if (j == i && k == k1 + 1
-                        && (adjacencies[j][k] & 0x1280120) == 0)
+                        && (clipData[j][k] & 0x1280120) == 0)
                     return true;
                 if (j == i && k == k1 - 1
-                        && (adjacencies[j][k] & 0x1280102) == 0)
+                        && (clipData[j][k] & 0x1280102) == 0)
                     return true;
             } else if (i1 == 3) {
                 if (j == i && k == k1 - 1)
                     return true;
                 if (j == i - 1 && k == k1
-                        && (adjacencies[j][k] & 0x1280108) == 0)
+                        && (clipData[j][k] & 0x1280108) == 0)
                     return true;
                 if (j == i + 1 && k == k1
-                        && (adjacencies[j][k] & 0x1280180) == 0)
+                        && (clipData[j][k] & 0x1280180) == 0)
                     return true;
             }
         if (j1 == 2)
@@ -393,28 +393,28 @@ public final class CollisionMap implements RSCollisionMap {
                 if (j == i && k == k1 + 1)
                     return true;
                 if (j == i + 1 && k == k1
-                        && (adjacencies[j][k] & 0x1280180) == 0)
+                        && (clipData[j][k] & 0x1280180) == 0)
                     return true;
                 if (j == i && k == k1 - 1
-                        && (adjacencies[j][k] & 0x1280102) == 0)
+                        && (clipData[j][k] & 0x1280102) == 0)
                     return true;
             } else if (i1 == 1) {
                 if (j == i - 1 && k == k1
-                        && (adjacencies[j][k] & 0x1280108) == 0)
+                        && (clipData[j][k] & 0x1280108) == 0)
                     return true;
                 if (j == i && k == k1 + 1)
                     return true;
                 if (j == i + 1 && k == k1)
                     return true;
                 if (j == i && k == k1 - 1
-                        && (adjacencies[j][k] & 0x1280102) == 0)
+                        && (clipData[j][k] & 0x1280102) == 0)
                     return true;
             } else if (i1 == 2) {
                 if (j == i - 1 && k == k1
-                        && (adjacencies[j][k] & 0x1280108) == 0)
+                        && (clipData[j][k] & 0x1280108) == 0)
                     return true;
                 if (j == i && k == k1 + 1
-                        && (adjacencies[j][k] & 0x1280120) == 0)
+                        && (clipData[j][k] & 0x1280120) == 0)
                     return true;
                 if (j == i + 1 && k == k1)
                     return true;
@@ -424,28 +424,28 @@ public final class CollisionMap implements RSCollisionMap {
                 if (j == i - 1 && k == k1)
                     return true;
                 if (j == i && k == k1 + 1
-                        && (adjacencies[j][k] & 0x1280120) == 0)
+                        && (clipData[j][k] & 0x1280120) == 0)
                     return true;
                 if (j == i + 1 && k == k1
-                        && (adjacencies[j][k] & 0x1280180) == 0)
+                        && (clipData[j][k] & 0x1280180) == 0)
                     return true;
                 if (j == i && k == k1 - 1)
                     return true;
             }
         if (j1 == 9) {
-            if (j == i && k == k1 + 1 && (adjacencies[j][k] & 0x20) == 0)
+            if (j == i && k == k1 + 1 && (clipData[j][k] & 0x20) == 0)
                 return true;
-            if (j == i && k == k1 - 1 && (adjacencies[j][k] & 2) == 0)
+            if (j == i && k == k1 - 1 && (clipData[j][k] & 2) == 0)
                 return true;
-            if (j == i - 1 && k == k1 && (adjacencies[j][k] & 8) == 0)
+            if (j == i - 1 && k == k1 && (clipData[j][k] & 8) == 0)
                 return true;
-            if (j == i + 1 && k == k1 && (adjacencies[j][k] & 0x80) == 0)
+            if (j == i + 1 && k == k1 && (clipData[j][k] & 0x80) == 0)
                 return true;
         }
         return false;
     }
 
-    public boolean obstruction_decor(int i, int j, int k, int l, int i1, int j1) {
+    public boolean method220(int i, int j, int k, int l, int i1, int j1) {
         if (j1 == i && k == j)
             return true;
         j1 -= xOffset;
@@ -456,62 +456,62 @@ public final class CollisionMap implements RSCollisionMap {
             if (l == 7)
                 i1 = i1 + 2 & 3;
             if (i1 == 0) {
-                if (j1 == i + 1 && k == j && (adjacencies[j1][k] & 0x80) == 0)
+                if (j1 == i + 1 && k == j && (clipData[j1][k] & 0x80) == 0)
                     return true;
-                if (j1 == i && k == j - 1 && (adjacencies[j1][k] & 2) == 0)
+                if (j1 == i && k == j - 1 && (clipData[j1][k] & 2) == 0)
                     return true;
             } else if (i1 == 1) {
-                if (j1 == i - 1 && k == j && (adjacencies[j1][k] & 8) == 0)
+                if (j1 == i - 1 && k == j && (clipData[j1][k] & 8) == 0)
                     return true;
-                if (j1 == i && k == j - 1 && (adjacencies[j1][k] & 2) == 0)
+                if (j1 == i && k == j - 1 && (clipData[j1][k] & 2) == 0)
                     return true;
             } else if (i1 == 2) {
-                if (j1 == i - 1 && k == j && (adjacencies[j1][k] & 8) == 0)
+                if (j1 == i - 1 && k == j && (clipData[j1][k] & 8) == 0)
                     return true;
-                if (j1 == i && k == j + 1 && (adjacencies[j1][k] & 0x20) == 0)
+                if (j1 == i && k == j + 1 && (clipData[j1][k] & 0x20) == 0)
                     return true;
             } else if (i1 == 3) {
-                if (j1 == i + 1 && k == j && (adjacencies[j1][k] & 0x80) == 0)
+                if (j1 == i + 1 && k == j && (clipData[j1][k] & 0x80) == 0)
                     return true;
-                if (j1 == i && k == j + 1 && (adjacencies[j1][k] & 0x20) == 0)
+                if (j1 == i && k == j + 1 && (clipData[j1][k] & 0x20) == 0)
                     return true;
             }
         }
         if (l == 8) {
-            if (j1 == i && k == j + 1 && (adjacencies[j1][k] & 0x20) == 0)
+            if (j1 == i && k == j + 1 && (clipData[j1][k] & 0x20) == 0)
                 return true;
-            if (j1 == i && k == j - 1 && (adjacencies[j1][k] & 2) == 0)
+            if (j1 == i && k == j - 1 && (clipData[j1][k] & 2) == 0)
                 return true;
-            if (j1 == i - 1 && k == j && (adjacencies[j1][k] & 8) == 0)
+            if (j1 == i - 1 && k == j && (clipData[j1][k] & 8) == 0)
                 return true;
-            if (j1 == i + 1 && k == j && (adjacencies[j1][k] & 0x80) == 0)
+            if (j1 == i + 1 && k == j && (clipData[j1][k] & 0x80) == 0)
                 return true;
         }
         return false;
     }
 
-    public boolean obstruction(int finalY, int finalX, int x, int height, int rotation, int width, int y) {
+    public boolean atObject(int finalY, int finalX, int x, int height, int rotation, int width, int y) {
         int maxX = (finalX + width) - 1;
         int maxY = (finalY + height) - 1;
         if (x >= finalX && x <= maxX && y >= finalY && y <= maxY)
             return true;
         if (x == finalX - 1 && y >= finalY && y <= maxY
-                && (adjacencies[x - xOffset][y - yOffset] & 8) == 0
+                && (clipData[x - xOffset][y - yOffset] & 8) == 0
                 && (rotation & 8) == 0)
             return true;
         if (x == maxX + 1 && y >= finalY && y <= maxY
-                && (adjacencies[x - xOffset][y - yOffset] & 0x80) == 0
+                && (clipData[x - xOffset][y - yOffset] & 0x80) == 0
                 && (rotation & 2) == 0)
             return true;
         return y == finalY - 1 && x >= finalX && x <= maxX
-                && (adjacencies[x - xOffset][y - yOffset] & 2) == 0
+                && (clipData[x - xOffset][y - yOffset] & 2) == 0
                 && (rotation & 4) == 0 || y == maxY + 1 && x >= finalX && x <= maxX
-                && (adjacencies[x - xOffset][y - yOffset] & 0x20) == 0
+                && (clipData[x - xOffset][y - yOffset] & 0x20) == 0
                 && (rotation & 1) == 0;
     }
 
     @Override
     public int[][] getFlags() {
-        return adjacencies;
+        return clipData;
     }
 }

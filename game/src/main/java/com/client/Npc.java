@@ -20,6 +20,9 @@ import java.awt.image.BufferedImage;
 import java.util.Iterator;
 
 public final class Npc extends Entity implements RSNPC {
+	public String displayName;
+	public int combatLevel;
+	public String[] actions;
 	private Player owner = null;
 	private Model getAnimatedModel() {
 		if(definition != null && definition.id == 12780) {
@@ -680,5 +683,9 @@ public final class Npc extends Entity implements RSNPC {
 	@Override
 	public void draw(int orientation, int pitchSin, int pitchCos, int yawSin, int yawCos, int x, int y, int z, long hash) {
 
+	}
+
+	public void updateEntityProperty() {
+		entityProperties.forEach(entityProperties1 -> entityProperties1.apply(this));
 	}
 }

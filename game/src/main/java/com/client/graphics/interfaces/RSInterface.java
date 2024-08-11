@@ -5596,6 +5596,7 @@ public class RSInterface implements RSWidget {
 
 	public boolean coverWholeScreen;
 
+	public boolean readyToRender = true;
 	private int anInt255;
 	private int anInt256;
 	public int disabledAnimationId;

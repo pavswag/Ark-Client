@@ -68,6 +68,12 @@ public enum InstructionId {
             return new SetPetManagementNpc();
         }
     },
+    SET_WIDGET_READY_TO_RENDER(13_021) {
+        @Override
+        public VoidInstruction getInstruction() {
+            return new SetWidgetReadyToRender();
+        }
+    },
 
     ; // End of enum
 

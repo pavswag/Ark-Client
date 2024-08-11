@@ -1921,9 +1921,10 @@ public class Client extends GameEngine implements RSClient {
 					if (objId == 46201) {
 						j3 = -1;
 					}
+					System.out.println("Found def [" + j3 + "] for object [" + (ObjectDefinition.lookup(objId).name == null ? objId : ObjectDefinition.lookup(objId).name) + "]");
 					if (j3 >= 0) {
 						int sprite = AreaDefinition.lookup(j3).sprite1;
-						if (sprite != -1) {
+						if (sprite != -1 && AreaDefinition.lookup(j3).field1940) {
 							int k3 = k2;
 							int l3 = l2;
 							try {
@@ -1942,9 +1943,10 @@ public class Client extends GameEngine implements RSClient {
 /*								if (j3 == 58 || j3 == 71 || j3 == 66 || j3 == 79 || j3 == 91) {
 									System.out.println(objId + " object and the icon " + j3);
 								}*/
-								mapIconSprite[mapIconAmount] = mapFunctions[j3];
-								anIntArray1072[mapIconAmount] = k3;
-								anIntArray1073[mapIconAmount] = l3;
+								//mapIconSprite[mapIconAmount] = mapFunctions[j3];
+								mapIconSprite[mapIconAmount] = AreaDefinition.lookup(j3).getIconSprite();
+								mapIconXs[mapIconAmount] = k3;
+								mapIconYs[mapIconAmount] = l3;
 								mapIconAmount++;
 							} catch(Exception e) {
 
@@ -3122,11 +3124,18 @@ public class Client extends GameEngine implements RSClient {
 			throw new RuntimeException("eek");
 		}
 
-		for (int i1 = 0; i1 < npcCount; i1++)
+		for (int i1 = 0; i1 < npcCount; i1++) {
 			if (npcs[npcIndices[i1]] == null) {
 				Signlink.reporterror(myUsername + " null entry in npc list - pos:" + i1 + " size:" + npcCount);
 				throw new RuntimeException("eek");
+			} else {
+				npcs[npcIndices[i1]].combatLevel = npcs[npcIndices[i1]].getCombatLevel();
+				npcs[npcIndices[i1]].actions = npcs[npcIndices[i1]].definition.actions;
+				npcs[npcIndices[i1]].updateEntityProperty();
 			}
+		}
+
+
 		callbacks.updateNpcs();
 	}
 
@@ -4811,6 +4820,7 @@ public class Client extends GameEngine implements RSClient {
 			int npcId = stream.readBits(14);
 			npc.npcPetType = stream.readBits(2);
 			npc.definition = NpcDefinition.lookup(npcId);
+			npc.displayName = npc.definition.getName();
 			int k1 = stream.readBits(1);
 			if (k1 == 1)
 				anIntArray894[anInt893++] = k;
@@ -7306,9 +7316,9 @@ public class Client extends GameEngine implements RSClient {
 		}
 
 		if (l == 1025) {
-			Npc class30_sub2_sub4_sub1_sub1_5 = npcs[i1];
-			if (class30_sub2_sub4_sub1_sub1_5 != null) {
-				NpcDefinition entityDef = class30_sub2_sub4_sub1_sub1_5.definition;
+			Npc npc = npcs[i1];
+			if (npc != null) {
+				NpcDefinition entityDef = npc.definition;
 				if (entityDef != null) {
 					if (entityDef.transforms != null)
 						entityDef = entityDef.method161();
@@ -7323,7 +7333,7 @@ public class Client extends GameEngine implements RSClient {
 						}
 					}
 
-					if (entityDef.combatLevel >= 0 || entityDef.id == 10529) {
+					if (npc.combatLevel >= 0 || entityDef.id == 10529) {
 						stream.createFrame(137);
 						stream.writeWord((int) i1);
 					}
@@ -8224,8 +8234,8 @@ public class Client extends GameEngine implements RSClient {
 		projectiles = null;
 		incompleteAnimables = null;
 		variousSettings = null;
-		anIntArray1072 = null;
-		anIntArray1073 = null;
+		mapIconXs = null;
+		mapIconYs = null;
 		mapIconSprite = null;
 		minimapImage = null;
 		friendsList = null;
@@ -11589,8 +11599,7 @@ public class Client extends GameEngine implements RSClient {
 
 
 	// Original signature int clickType, int j, int k, int i1, int localY, int k1, int l1, int i2, int localX, boolean flag, int k2
-	private boolean doWalkTo(int clickType, int localX, int localY, int j, int k, int i1, int k1, int l1, int sceneY, boolean flag, int sceneX) {
-//		pushMessage("Clicked scene x/y[" + sceneX + "/" + sceneY + "] clickedtype=" + clickType);
+	private boolean doWalkTo(int clickType, int localX, int localY, int j, int k, int i1, int k1, int l1, int i2, boolean flag, int k2) {
 		byte byte0 = 104;
 		byte byte1 = 104;
 		for (int l2 = 0; l2 < byte0; l2++) {
@@ -11607,29 +11616,29 @@ public class Client extends GameEngine implements RSClient {
 		int i4 = 0;
 		bigX[l3] = localX;
 		bigY[l3++] = localY;
-		boolean reached = false;
+		boolean flag1 = false;
 		int j4 = bigX.length;
-		int ai[][] = collisionMaps[plane].adjacencies;
+		int ai[][] = collisionMaps[plane].clipData;
 		while (i4 != l3) {
 			j3 = bigX[i4];
 			k3 = bigY[i4];
 			i4 = (i4 + 1) % j4;
-			if (j3 == sceneX && k3 == sceneY) {
-				reached = true;
+			if (j3 == k2 && k3 == i2) {
+				flag1 = true;
 				break;
 			}
 			if (i1 != 0) {
-				if ((i1 < 5 || i1 == 10) && collisionMaps[plane].obstruction_wall(sceneX, j3, k3, j, i1 - 1, sceneY)) {
-					reached = true;
+				if ((i1 < 5 || i1 == 10) && collisionMaps[plane].method219(k2, j3, k3, j, i1 - 1, i2)) {
+					flag1 = true;
 					break;
 				}
-				if (i1 < 10 && collisionMaps[plane].obstruction_decor(sceneX, sceneY, k3, i1 - 1, j, j3)) {
-					reached = true;
+				if (i1 < 10 && collisionMaps[plane].method220(k2, i2, k3, i1 - 1, j, j3)) {
+					flag1 = true;
 					break;
 				}
 			}
-			if (k1 != 0 && k != 0 && collisionMaps[plane].obstruction(sceneY, sceneX, j3, k, l1, k1, k3)) {
-				reached = true;
+			if (k1 != 0 && k != 0 && collisionMaps[plane].atObject(i2, k2, j3, k, l1, k1, k3)) {
+				flag1 = true;
 				break;
 			}
 			int l4 = anIntArrayArray825[j3][k3] + 1;
@@ -11698,28 +11707,28 @@ public class Client extends GameEngine implements RSClient {
 			}
 		}
 		anInt1264 = 0;
-		if (!reached) {
+		if (!flag1) {
 			if (flag) {
 				int i5 = 100;
 				for (int k5 = 1; k5 < 2; k5++) {
-					for (int i6 = sceneX - k5; i6 <= sceneX + k5; i6++) {
-						for (int l6 = sceneY - k5; l6 <= sceneY + k5; l6++)
+					for (int i6 = k2 - k5; i6 <= k2 + k5; i6++) {
+						for (int l6 = i2 - k5; l6 <= i2 + k5; l6++)
 							if (i6 >= 0 && l6 >= 0 && i6 < 104 && l6 < 104 && anIntArrayArray825[i6][l6] < i5) {
 								i5 = anIntArrayArray825[i6][l6];
 								j3 = i6;
 								k3 = l6;
 								anInt1264 = 1;
-								reached = true;
+								flag1 = true;
 							}
 
 					}
 
-					if (reached)
+					if (flag1)
 						break;
 				}
 
 			}
-			if (!reached)
+			if (!flag1)
 				return false;
 		}
 		i4 = 0;
@@ -11751,11 +11760,6 @@ public class Client extends GameEngine implements RSClient {
 			int k6 = bigX[i4];
 			int i7 = bigY[i4];
 			anInt1288 += k4;
-			if (anInt1288 >= 92) {
-				stream.createFrame(36);
-				stream.writeInt(0);
-				anInt1288 = 0;
-			}
 			if (clickType == 0) {
 				stream.createFrame(164);
 				stream.writeUnsignedByte(k4 + k4 + 3);
@@ -11944,6 +11948,7 @@ public class Client extends GameEngine implements RSClient {
 					}
 				}
 				npc.definition = NpcDefinition.lookup(stream.method436());
+				npc.displayName = npc.definition.getName();
 				npc.anInt1540 = npc.definition.size;
 				npc.anInt1504 = npc.definition.rotation;
 				npc.walkAnimIndex = npc.definition.walkAnim;
@@ -11970,9 +11975,9 @@ public class Client extends GameEngine implements RSClient {
 			return;
 		if (!entityDef.isInteractable)
 			return;
-		String s = entityDef.name;
-		if (entityDef.combatLevel != 0)
-			s = s + combatDiffColor(localPlayer.combatLevel, entityDef.combatLevel) + " (level-" + entityDef.combatLevel
+		String s = npcs[i].displayName != null ? npcs[i].displayName : entityDef.name;
+		if ( npcs[i].combatLevel != 0)
+			s = s + combatDiffColor(localPlayer.combatLevel,  npcs[i].combatLevel) + " (level-" +  npcs[i].combatLevel
 					+ ")";
 		if (itemSelected == 1) {
 			MenuEntry menuEntry = (MenuEntry) new MenuEntry(menuActionRow)
@@ -12003,11 +12008,11 @@ public class Client extends GameEngine implements RSClient {
 				callbacks.post(new MenuEntryAdded(menuEntry));
 			}
 		} else {
-			if (entityDef.actions != null) {
+			if (npcs[i].actions != null) {
 				for (int l = 4; l >= 0; l--)
-					if (entityDef.actions[l] != null && !entityDef.actions[l].equalsIgnoreCase("attack")) {
+					if (npcs[i].actions[l] != null && !npcs[i].actions[l].equalsIgnoreCase("attack")) {
 						MenuEntry menuEntry = (MenuEntry) new MenuEntry(menuActionRow)
-								.setOption(entityDef.actions[l] + "@yel@")
+								.setOption(npcs[i].actions[l] + "@yel@")
 								.setTarget(s)
 								.setIdentifier(i)
 								.setType(582)
@@ -12030,17 +12035,17 @@ public class Client extends GameEngine implements RSClient {
 					}
 
 			}
-			if (entityDef.actions != null) {
+			if (npcs[i].actions != null) {
 				for (int i1 = 4; i1 >= 0; i1--) {
-					if (entityDef.actions[i1] != null && entityDef.actions[i1].equalsIgnoreCase("attack")) {
+					if (npcs[i].actions[i1] != null && npcs[i].actions[i1].equalsIgnoreCase("attack")) {
 						char c = '\0';
 						if (Configuration.npcAttackOptionPriority == 3)
 							continue;
-						if (Configuration.npcAttackOptionPriority == 0 && entityDef.combatLevel > localPlayer.combatLevel
+						if (Configuration.npcAttackOptionPriority == 0 && npcs[i].combatLevel > localPlayer.combatLevel
 								|| Configuration.npcAttackOptionPriority == 1)
 							c = '\u07D0';
 						MenuEntry menuEntry = (MenuEntry) new MenuEntry(menuActionRow)
-								.setOption(entityDef.actions[i1] + "@yel@")
+								.setOption(npcs[i].actions[i1] + "@yel@")
 								.setTarget(s)
 								.setIdentifier(i)
 								.setType(582)
@@ -14245,6 +14250,18 @@ public class Client extends GameEngine implements RSClient {
 			int childCount = rsInterface.children.length;
 			for (int childId = 0; childId < childCount; childId++) {
 				try {
+					if(!rsInterface.readyToRender && childId > 0) { //childid[0] is background, we want to render that
+						AnimatedSprite animatedIcon = SpriteLoader.fetchAnimatedSprite("/gifs/" + "loading" + ".gif").getInstance(32, 32);
+						RSInterface firstChild = interfaceCache.get(rsInterface.children[0]);
+						int _x = rsInterface.childX[0] + xPosition  - (rsInterface.horizontalScroll ? scrollPosition : 0);
+						int _y = (rsInterface.childY[0] + yPosition)- (rsInterface.horizontalScroll ? 0 : scrollPosition);
+						_x += firstChild.anInt263;
+						_y += firstChild.anInt265;
+						_x += firstChild.width / 2;
+						_y += firstChild.height / 2;
+						animatedIcon.drawAdvancedSprite(_x, _y);
+						continue;
+					}
 					int _x = rsInterface.childX[childId] + xPosition  - (rsInterface.horizontalScroll ? scrollPosition : 0);
 					int _y = (rsInterface.childY[childId] + yPosition)- (rsInterface.horizontalScroll ? 0 : scrollPosition);
 					RSInterface class9_1 = interfaceCache.get(rsInterface.children[childId]);
@@ -15353,7 +15370,6 @@ public class Client extends GameEngine implements RSClient {
 							if (gif != null) {
 								gif.getInstance(class9_1.width, class9_1.height).drawAdvancedSprite(_x, _y,255);
 							}
-
 						}
 
 					if (interfaceText) {
@@ -17050,12 +17066,14 @@ public class Client extends GameEngine implements RSClient {
 
 			for (int[] icon : getCustomMapIcons()) {
 				markMinimap(mapFunctions[icon[0]], ((icon[1] - baseX) * 4 + 2) - Client.localPlayer.x / 32, ((icon[2] - baseY) * 4 + 2) - Client.localPlayer.y / 32);
+				//System.out.println("Marking getCustomMapIcons for x[" + ((icon[1] - baseX) * 4 + 2) + "] and y[" + (((icon[2] - baseY) * 4 + 2) - Client.localPlayer.y / 32) + "]");
 			}
 
 			for (int j5 = 0; j5 < mapIconAmount; j5++) {
-				int k = (anIntArray1072[j5] * 4 + 2) - localPlayer.x / 32;
-				int i3 = (anIntArray1073[j5] * 4 + 2) - localPlayer.y / 32;
+				int k = (mapIconXs[j5] * 4 + 2) - localPlayer.x / 32;
+				int i3 = (mapIconYs[j5] * 4 + 2) - localPlayer.y / 32;
 				markMinimap(mapIconSprite[j5], k, i3);
+				//System.out.println("Marking areadef minimap icon for x[" + (k) + "] and y[" + (i3) + "]");
 			}
 
 
@@ -21638,8 +21656,8 @@ public class Client extends GameEngine implements RSClient {
 		mapScenes = new IndexedImage[188];
 		barFillColor = 0x4d4233;
 		myAppearance = new int[7];
-		anIntArray1072 = new int[1000];
-		anIntArray1073 = new int[1000];
+		mapIconXs = new int[1000];
+		mapIconYs = new int[1000];
 		loadingMap = false;
 		friendsList = new String[200];
 		inStream = Buffer.create();
@@ -21944,8 +21962,8 @@ public class Client extends GameEngine implements RSClient {
 	public int currentRegionX;
 	public int currentRegionY;
 	private int mapIconAmount;
-	private int[] anIntArray1072;
-	private int[] anIntArray1073;
+	private int[] mapIconXs;
+	private int[] mapIconYs;
 
 	private Sprite[] mapDots;
 	private int loadingProgress;

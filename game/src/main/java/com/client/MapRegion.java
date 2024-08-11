@@ -6,7 +6,6 @@ import com.client.definitions.FloorUnderlayDefinition;
 import com.client.definitions.ObjectDefinition;
 import com.client.utilities.ChunkUtil;
 import com.client.utilities.ObjectKeyUtil;
-import net.runelite.api.Scene;
 
 public final class MapRegion {
 
@@ -905,7 +904,7 @@ public final class MapRegion {
 		for (int i2 = 0; i2 < 8; i2++) { //Add clipping
 			for (int j2 = 0; j2 < 8; j2++)
 				if (l + i2 > 0 && l + i2 < 103 && l1 + j2 > 0 && l1 + j2 < 103)
-					clips[k1].adjacencies[l + i2][l1 + j2] &= 0xfeffffff;
+					clips[k1].clipData[l + i2][l1 + j2] &= 0xfeffffff;
 
 		}
 
@@ -929,7 +928,7 @@ public final class MapRegion {
 			for (int j1 = 0; j1 < 64; j1++) {
 				for (int k1 = 0; k1 < 64; k1++)
 					if (j + j1 > 0 && j + j1 < 103 && i + k1 > 0 && i + k1 < 103)
-						aclass11[i1].adjacencies[j + j1][i + k1] &= 0xfeffffff;
+						aclass11[i1].clipData[j + j1][i + k1] &= 0xfeffffff;
 			}
 
 		}
