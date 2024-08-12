@@ -1,5 +1,7 @@
 package com.client.cache
 
+import com.client.Client
+import com.client.Configuration
 import com.client.js5.disk.ArchiveDisk
 import com.client.sign.Signlink
 import kotlinx.coroutines.*
@@ -9,17 +11,20 @@ import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
 import java.io.*
+import java.net.SocketTimeoutException
 import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Path
-import java.security.MessageDigest
-import javax.swing.JOptionPane
-import javax.xml.bind.DatatypeConverter
-import kotlin.system.exitProcess
 import java.nio.file.Paths
+import java.security.MessageDigest
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.zip.ZipInputStream
+import javax.xml.bind.DatatypeConverter
+import kotlin.system.exitProcess
+import kotlin.system.measureTimeMillis
 
 class CacheDownloader(
     val path: String,
@@ -32,13 +37,23 @@ class CacheDownloader(
         }
     }
 ) {
-    private val client = OkHttpClient().newBuilder()
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .writeTimeout(30, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
+    private val client = OkHttpClient.Builder()
+        .connectTimeout(60, TimeUnit.SECONDS)
+        .writeTimeout(60, TimeUnit.SECONDS)
+        .readTimeout(60, TimeUnit.SECONDS)
+        .addInterceptor { chain ->
+            val request = chain.request().newBuilder()
+                .addHeader("Accept-Encoding", "gzip, deflate, br")
+                .build()
+            chain.proceed(request)
+        }
+        .connectionPool(okhttp3.ConnectionPool(5, 5, TimeUnit.MINUTES))
         .build()
-    private val coroutineScope = CoroutineScope(Executors.newFixedThreadPool(4).asCoroutineDispatcher())
+
+    private val coroutineScope = CoroutineScope(Executors.newFixedThreadPool(8).asCoroutineDispatcher())
     private val deferredTasks = mutableListOf<Deferred<Unit>>()
+    private var totalBytesDownloaded = 0L
+    private var totalFilesSize = 0L
 
     var update: MutableList<String> = mutableListOf()
 
@@ -46,41 +61,174 @@ class CacheDownloader(
         if (writeOnlineHash) {
             updateCheck = false
             writeHashes()
+        } else {
+            runBlocking {
+                val totalTimeMillis = measureTimeMillis {
+                    initialize()
+                }
+                val summary = createDownloadSummary(totalTimeMillis)
+                println(summary)
+                logDownloadSummary(summary)
+            }
         }
-        initialize()
     }
 
-    private fun initialize() {
+    private suspend fun initialize() {
         listener?.update(0, "Looking for Updates...")
 
         if (updateFiles() && updateCheck) {
             listener?.update(0, "Updates found...")
             generateList()
-            runBlocking {
-                update.forEach {
-                    val deferred = coroutineScope.async {
-                        downloadAsync(url + it, path + it)
-                    }
-                    deferredTasks.add(deferred)
-                    handleSpecialFiles(it)
-                }
 
-                deferredTasks.awaitAll()
-
-                recheckAndDownloadMissingFilesAsync()
-                handleSpecialFilesPostDownload()
+            // Calculate total size of all files to be downloaded
+            update.forEach {
+                val fileUrl = url + it
+                totalFilesSize += getContentLength(fileUrl)
             }
+
+            update.forEach {
+                deferredTasks.add(coroutineScope.async {
+                    val fileUrl = url + it
+                    val filePath = path + it
+                    val contentLength = getContentLength(fileUrl)
+
+                    if (contentLength >= 100 * 1024 * 1024) {
+                        // Use chunked download for files 100MB or larger
+                        downloadFileInChunks(fileUrl, filePath)
+                    } else {
+                        // Use regular download for smaller files
+                        downloadFile(fileUrl, filePath)
+                    }
+                })
+            }
+
+            deferredTasks.awaitAll()
+
+            recheckAndDownloadMissingFilesAsync()
+            handleSpecialFilesPostDownload()
             writeHashes()
             Signlink.init(26)
             Signlink.masterDisk = ArchiveDisk(255, Signlink.cacheData, Signlink.cacheMasterIndex, 500000)
         }
     }
 
-    private suspend fun downloadAsync(url: String, path: String) {
-        val deferred = coroutineScope.async {
-            download(url, path)
+    private fun getContentLength(fileUrl: String): Long {
+        val request = Request.Builder().url(fileUrl).head().build()
+        client.newCall(request).execute().use { response ->
+            return response.body?.contentLength() ?: 0
         }
-        deferred.await()
+    }
+
+    private suspend fun downloadFileInChunks(url: String, path: String, chunkSize: Long = 5 * 1024 * 1024) {
+        val request = Request.Builder().url(url).build()
+        client.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) throw IOException("Unexpected code $response")
+            val contentLength = response.body?.contentLength() ?: 0
+            val numChunks = (contentLength / chunkSize).toInt() + 1
+
+            val deferredChunks = (0 until numChunks).map { chunkIndex ->
+                coroutineScope.async {
+                    val start = chunkIndex * chunkSize
+                    val end = if (chunkIndex == numChunks - 1) contentLength - 1 else (chunkIndex + 1) * chunkSize - 1
+                    downloadChunk(url, path, start, end, chunkIndex)
+                }
+            }
+
+            deferredChunks.awaitAll()
+
+            // After all chunks are downloaded, combine them
+            combineChunks(path, numChunks)
+        }
+    }
+
+    private suspend fun downloadChunk(url: String, path: String, start: Long, end: Long, chunkIndex: Int, retries: Int = 3) {
+        var attempts = 0
+        while (attempts < retries) {
+            try {
+                val request = Request.Builder()
+                    .url(url)
+                    .addHeader("Range", "bytes=$start-$end")
+                    .build()
+
+                client.newCall(request).execute().use { response ->
+                    if (response.code == 416) {
+                        // Handle the 416 error by attempting to download the entire file
+                        handle416Error(url, path, chunkIndex)
+                        return
+                    }
+
+                    if (!response.isSuccessful) throw IOException("Unexpected code $response")
+
+                    val chunkPath = "$path.part$chunkIndex"
+                    val bytesDownloaded = response.body?.byteStream()?.use { inputStream ->
+                        BufferedOutputStream(FileOutputStream(chunkPath), 128 * 1024).use { fos ->
+                            inputStream.copyTo(fos)
+                        }
+                    } ?: 0L
+
+                    totalBytesDownloaded += (end - start + 1)  // Ensure that the exact bytes are counted.
+                }
+                return // Exit the function if the download was successful
+            } catch (e: SocketTimeoutException) {
+                attempts++
+                if (attempts >= retries) {
+                    throw e // Rethrow the exception if we've exhausted the retries
+                }
+                delay(1000L * attempts) // Exponential backoff
+            } catch (e: IOException) {
+                attempts++
+                if (attempts >= retries) {
+                    throw e
+                }
+                delay(1000L * attempts)
+            }
+        }
+    }
+
+    private suspend fun handle416Error(url: String, path: String, chunkIndex: Int) {
+        // Attempt to download the file without using the range header
+        val request = Request.Builder()
+            .url(url)
+            .build()
+
+        client.newCall(request).execute().use { newResponse ->
+            if (!newResponse.isSuccessful) throw IOException("Unexpected code $newResponse")
+
+            val chunkPath = "$path.part$chunkIndex"
+            val bytesDownloaded = newResponse.body?.byteStream()?.use { inputStream ->
+                BufferedOutputStream(FileOutputStream(chunkPath), 128 * 1024).use { fos ->
+                    inputStream.copyTo(fos)
+                }
+            } ?: 0L
+
+            totalBytesDownloaded += bytesDownloaded
+        }
+    }
+
+    private suspend fun downloadFile(url: String, path: String) {
+        val request = Request.Builder().url(url).build()
+        client.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) throw IOException("Unexpected code $response")
+            val bytesDownloaded = response.body?.byteStream()?.use { inputStream ->
+                BufferedOutputStream(FileOutputStream(path), 128 * 1024).use { fos ->
+                    inputStream.copyTo(fos)
+                }
+            } ?: 0L
+
+            totalBytesDownloaded += bytesDownloaded
+        }
+    }
+
+    private fun combineChunks(path: String, numChunks: Int) {
+        FileOutputStream(path).use { fos ->
+            (0 until numChunks).forEach { chunkIndex ->
+                val chunkPath = "$path.part$chunkIndex"
+                FileInputStream(chunkPath).use { fis ->
+                    fis.copyTo(fos)
+                }
+                File(chunkPath).delete()
+            }
+        }
     }
 
     private suspend fun recheckAndDownloadMissingFilesAsync() {
@@ -104,10 +252,19 @@ class CacheDownloader(
         if (missingFiles.isNotEmpty()) {
             listener?.update(0, "Rechecking and downloading missing files...")
             missingFiles.forEach {
-                val deferred = coroutineScope.async {
-                    downloadAsync(url + it, path + it)
-                }
-                deferredTasks.add(deferred)
+                deferredTasks.add(coroutineScope.async {
+                    val fileUrl = url + it
+                    val filePath = path + it
+                    val contentLength = getContentLength(fileUrl)
+
+                    if (contentLength >= 100 * 1024 * 1024) {
+                        // Use chunked download for files 100MB or larger
+                        downloadFileInChunks(fileUrl, filePath)
+                    } else {
+                        // Use regular download for smaller files
+                        downloadFile(fileUrl, filePath)
+                    }
+                })
             }
             deferredTasks.awaitAll()
             listener?.update(100, "Recheck and download complete")
@@ -161,31 +318,6 @@ class CacheDownloader(
         val md = MessageDigest.getInstance("MD5")
         md.update(Files.readAllBytes(file))
         return DatatypeConverter.printHexBinary(md.digest()).toLowerCase()
-    }
-
-    private fun download(name: String, path: String) {
-        val request = Request.Builder().url(name.replace(" ", "%20")).build()
-        client.newCall(request).execute().use { response ->
-            if (!response.isSuccessful) throw IOException("Unexpected code $response")
-
-            val contentLength = response.body?.contentLength() ?: 0
-            val inputStream = response.body?.byteStream() ?: throw IOException("Empty response body")
-
-            File(path.substringBeforeLast("/")).mkdirs()
-            BufferedOutputStream(FileOutputStream(path)).use { outputStream ->
-                val buffer = ByteArray(8192)
-                var bytesRead: Int
-                var downloaded = 0L
-
-                while (inputStream.read(buffer).also { bytesRead = it } != -1) {
-                    outputStream.write(buffer, 0, bytesRead)
-                    downloaded += bytesRead
-                    listener?.fileName = name.substringAfterLast("/")
-                    listener?.link = name
-                    listener?.update(((downloaded * 100) / contentLength).toInt(), "Downloading ${name.substringAfterLast('/')}")
-                }
-            }
-        }
     }
 
     private fun handleSpecialFiles(file: String) {
@@ -265,12 +397,32 @@ class CacheDownloader(
                 file.write(list.toJSONString())
                 file.flush()
             }
-        } catch (e: IOException) {
-            e.printStackTrace()
+        } catch (IOException: IOException) {
+            IOException.printStackTrace()
         }
         if (writeOnlineHash) {
             exitProcess(0)
         }
+    }
+
+    private fun createDownloadSummary(totalTimeMillis: Long): String {
+        val totalTimeSeconds = totalTimeMillis / 1000.0
+        val totalMegabytes = totalBytesDownloaded / (1024.0 * 1024.0)
+        val downloadSpeed = totalMegabytes / totalTimeSeconds
+
+        return """
+            Download Summary:
+            Total size downloaded: %.2f MB
+            Total time taken: %.2f seconds
+            Average download speed: %.2f MB/s
+        """.trimIndent().format(totalMegabytes, totalTimeSeconds, downloadSpeed)
+    }
+
+    private fun logDownloadSummary(summary: String) {
+        val errorLogDirectory = Client.getErrorLogDirectory()
+        val errorLogFile = File(errorLogDirectory, Configuration.ERROR_LOG_FILE)
+        errorLogFile.parentFile.mkdirs() // Ensure that the directory exists
+        errorLogFile.appendText(summary + "\n\n")
     }
 
     fun awaitCompletion() {
@@ -279,3 +431,4 @@ class CacheDownloader(
         }
     }
 }
+

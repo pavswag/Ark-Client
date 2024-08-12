@@ -5245,7 +5245,7 @@ public class Client extends GameEngine implements RSClient {
 	public static JFrame appFrame = null;
 	public static Container gameContainer = null;
 
-	private static String getErrorLogDirectory() {
+	public static String getErrorLogDirectory() {
 		return Signlink.getCacheDirectory() + Configuration.ERROR_LOG_DIRECTORY;
 	}
 
