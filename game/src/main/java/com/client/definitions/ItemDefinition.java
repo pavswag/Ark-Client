@@ -520,6 +520,66 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.yOffset2d = ItemDefinition.lookup(5562).yOffset2d;
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 break;
+            case 33412:
+                itemDef.name = "Orange Party Hat";
+                itemDef.inventoryModel = 60926;
+                itemDef.maleModel0 = 60927;
+                itemDef.femaleModel0 = 60927;
+                itemDef.zoom2d = ItemDefinition.lookup(3128).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(3128).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(3128).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(3128).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(3128).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
+            case 33413:
+                itemDef.name = "Element Hood";
+                itemDef.inventoryModel = 60928;
+                itemDef.maleModel0 = 60929;
+                itemDef.femaleModel0 = 60929;
+                itemDef.zoom2d = ItemDefinition.lookup(20708).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(20708).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(20708).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(20708).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(20708).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
+            case 33414:
+                itemDef.name = "Element Top";
+                itemDef.inventoryModel = 60930;
+                itemDef.maleModel0 = 60931;
+                itemDef.femaleModel0 = 60931;
+                itemDef.zoom2d = ItemDefinition.lookup(20704).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(20704).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(20704).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(20704).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(20704).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
+            case 33415:
+                itemDef.name = "Element Bottoms";
+                itemDef.inventoryModel = 60932;
+                itemDef.maleModel0 = 60933;
+                itemDef.femaleModel0 = 60933;
+                itemDef.zoom2d = ItemDefinition.lookup(20706).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(20706).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(20706).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(20706).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(20706).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
+            case 33416:
+                itemDef.name = "Element Boots";
+                itemDef.inventoryModel = 60934;
+                itemDef.maleModel0 = 60934;
+                itemDef.femaleModel0 = 60934;
+                itemDef.zoom2d = ItemDefinition.lookup(20710).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(20710).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(20710).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(20710).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(20710).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
         }
         return itemDef;
     }
