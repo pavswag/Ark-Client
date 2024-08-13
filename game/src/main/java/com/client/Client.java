@@ -11760,6 +11760,11 @@ public class Client extends GameEngine implements RSClient {
 			int k6 = bigX[i4];
 			int i7 = bigY[i4];
 			anInt1288 += k4;
+			if (anInt1288 >= 92) {
+				stream.createFrame(36);
+				stream.writeInt(0);
+				anInt1288 = 0;
+			}
 			if (clickType == 0) {
 				stream.createFrame(164);
 				stream.writeUnsignedByte(k4 + k4 + 3);
