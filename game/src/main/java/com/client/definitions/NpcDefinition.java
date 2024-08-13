@@ -79,6 +79,21 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             npcDefinition.heightScale = 200; //WIDTH
             npcDefinition.widthScale = 200; // HEIGH
         }
+        if (i==2956) {
+            npcDefinition.name = "Sping Elemental";
+            npcDefinition.combatLevel = 126;
+            npcDefinition.actions = new String[] { null, "Attack", null, null, null };
+        }
+        if (i==1801) {
+            npcDefinition.name = "Summer Elemental";
+            npcDefinition.combatLevel = 126;
+            npcDefinition.actions = new String[] { null, "Attack", null, null, null };
+        }
+        if (i==5797) {
+            npcDefinition.name = "Winter Elemental";
+            npcDefinition.combatLevel = 126;
+            npcDefinition.actions = new String[] { null, "Attack", null, null, null };
+        }
 
 
         if (i == 13527) {
