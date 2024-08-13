@@ -1921,7 +1921,6 @@ public class Client extends GameEngine implements RSClient {
 					if (objId == 46201) {
 						j3 = -1;
 					}
-					System.out.println("Found def [" + j3 + "] for object [" + (ObjectDefinition.lookup(objId).name == null ? objId : ObjectDefinition.lookup(objId).name) + "]");
 					if (j3 >= 0) {
 						int sprite = AreaDefinition.lookup(j3).sprite1;
 						if (sprite != -1 && AreaDefinition.lookup(j3).field1940) {
@@ -11760,6 +11759,11 @@ public class Client extends GameEngine implements RSClient {
 			int k6 = bigX[i4];
 			int i7 = bigY[i4];
 			anInt1288 += k4;
+			if (anInt1288 >= 92) {
+				stream.createFrame(36);
+				stream.writeInt(0);
+				anInt1288 = 0;
+			}
 			if (clickType == 0) {
 				stream.createFrame(164);
 				stream.writeUnsignedByte(k4 + k4 + 3);
