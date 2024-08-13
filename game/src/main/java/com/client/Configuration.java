@@ -58,7 +58,7 @@ public class Configuration {
 	public static int npcAttackOptionPriority = 2;
 
 	public static final boolean DUMP_SPRITES = false;
-	public static final boolean PRINT_EMPTY_INTERFACE_SECTIONS = false;
+	public static final boolean PRINT_EMPTY_INTERFACE_SECTIONS = true;
 
 	public static boolean playerNames = true;
 	public static boolean npcNames = false;

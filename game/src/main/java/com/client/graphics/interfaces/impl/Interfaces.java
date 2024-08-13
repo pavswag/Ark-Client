@@ -175,6 +175,7 @@ public final class Interfaces extends RSInterface {
 		//24967
 		new MonsterDropViewer().OsDropViewer(defaultTextDrawingAreas);
 		dropTable(defaultTextDrawingAreas);
+		UpdateBooth.mainInterface(defaultTextDrawingAreas);
 	}
 
 	private static void TreasureOverlayInterface(TextDrawingArea[] tda) {
