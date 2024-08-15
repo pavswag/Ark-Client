@@ -60,10 +60,10 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 				break;
 			case 47461:
 				objectDef.name = "Isle Of The Damned Reward Chest";
-				objectDef.actions  = new String[]{"Open", null, null, null, null};
+				objectDef.actions  = new String[]{"Open", "Store", null, null, null};
 				break;
 			case 47347:
-				objectDef.name = "Star Isle Of The Damned";
+				objectDef.name = "Start Isle Of The Damned";
 				objectDef.actions  = new String[]{"Start", null, null, null, null};
 				break;
 		}

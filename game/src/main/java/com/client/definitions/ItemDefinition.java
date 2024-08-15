@@ -607,6 +607,9 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
             case 27041:
                 itemDef.name = "Enhanced Slayer Seed";
                 break;
+            case 28421:
+                itemDef.name = "Isle Of The Damned Key";
+                break;
         }
         return itemDef;
     }
