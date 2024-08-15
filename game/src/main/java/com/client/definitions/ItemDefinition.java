@@ -592,6 +592,21 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.yOffset2d = ItemDefinition.lookup(29084).yOffset2d;
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 break;
+            case 27037:
+                itemDef.name = "Enhanced Raid Seed";
+                break;
+            case 27038:
+                itemDef.name = "Enhanced Iasor";
+                break;
+            case 27039:
+                itemDef.name = "Enhanced Hespori Seed";
+                break;
+            case 27040:
+                itemDef.name = "Enhanced Damage Boost";
+                break;
+            case 27041:
+                itemDef.name = "Enhanced Slayer Seed";
+                break;
         }
         return itemDef;
     }
