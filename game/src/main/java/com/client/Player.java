@@ -356,6 +356,7 @@ public final class Player extends Entity implements RSPlayer {
 		return hasRights(PlayerRights.ADMINISTRATOR)
 				|| hasRights(PlayerRights.STAFF_MANAGER)
 				|| hasRights(PlayerRights.GAME_DEVELOPER)
+				|| hasRights(PlayerRights.COMMUNITY_MANAGER)
 				|| hasRights(PlayerRights.HEAD_ADMINISTRATOR);
 	}
 
