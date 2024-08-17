@@ -580,6 +580,36 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.yOffset2d = ItemDefinition.lookup(20710).yOffset2d;
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 break;
+            case 33417:
+                itemDef.name = "Gifted Sulphur Blades";
+                itemDef.inventoryModel = 60935;
+                itemDef.maleModel0 = 60936;
+                itemDef.femaleModel0 = 60936;
+                itemDef.zoom2d = ItemDefinition.lookup(29084).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(29084).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(29084).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(29084).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(29084).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
+            case 27037:
+                itemDef.name = "Enhanced Raid Seed";
+                break;
+            case 27038:
+                itemDef.name = "Enhanced Iasor";
+                break;
+            case 27039:
+                itemDef.name = "Enhanced Hespori Seed";
+                break;
+            case 27040:
+                itemDef.name = "Enhanced Damage Boost";
+                break;
+            case 27041:
+                itemDef.name = "Enhanced Slayer Seed";
+                break;
+            case 28421:
+                itemDef.name = "Isle Of The Damned Key";
+                break;
         }
         return itemDef;
     }
