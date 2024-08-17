@@ -122,6 +122,7 @@ public class CombatLevelPlugin extends Plugin
 		setCombatLevelWidget(1702);
 		setCombatLevelWidget(1768);
 		setCombatLevelWidget(2427);
+		setCombatLevelWidget(4450);
 	}
 	private void setCombatLevelWidget(int id) {
 		Widget combatLevelWidget = client.getWidget(id);
