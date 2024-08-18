@@ -117,6 +117,12 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             npcDefinition.name = "Shadow Crusade Store";
         }
 
+        if (i==12617) {
+            npcDefinition.name = "Sharathteerk";
+            npcDefinition.combatLevel = 426;
+            npcDefinition.actions = new String[] { null, "Attack", null, null, null };
+        }
+
        /* if (i == Npcs.BOB_BARTER_HERBS) {
             npcDefinition.custom = true;
             npcDefinition.actions = new String[] { "Talk-to", "Prices", "Decant", "Clean", null };
