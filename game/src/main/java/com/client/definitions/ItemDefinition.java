@@ -610,6 +610,124 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
             case 28421:
                 itemDef.name = "Isle Of The Damned Key";
                 break;
+            case 33418:
+                itemDef.name = "Heredit Ring (or)";
+                itemDef.inventoryModel = 60937;
+                itemDef.maleModel0 = 60937;
+                itemDef.femaleModel0 = 60937;
+                itemDef.zoom2d = ItemDefinition.lookup(12601).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(12601).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(12601).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(12601).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(12601).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
+            case 33419:
+                itemDef.name = "Heredit Amulet (or)";
+                itemDef.inventoryModel = 60939;
+                itemDef.maleModel0 = 60940;
+                itemDef.femaleModel0 = 60940;
+                itemDef.zoom2d = ItemDefinition.lookup(19553).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(19553).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(19553).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(19553).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(19553).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
+            case 33420:
+                itemDef.name = "Heredit Boots (or)";
+                itemDef.inventoryModel = 60938;
+                itemDef.maleModel0 = 60938;
+                itemDef.femaleModel0 = 60938;
+                itemDef.zoom2d = ItemDefinition.lookup(22954).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(22954).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(22954).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(22954).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(22954).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
+            case 33421:
+                itemDef.name = "Heredit Gloves (or)";
+                itemDef.inventoryModel = 60941;
+                itemDef.maleModel0 = 60942;
+                itemDef.femaleModel0 = 60942;
+                itemDef.zoom2d = ItemDefinition.lookup(22981).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(22981).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(22981).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(22981).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(22981).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
+            case 33422:
+                itemDef.name = "Heredit Cape (or)";
+                itemDef.inventoryModel = 60944;
+                itemDef.maleModel0 = 60945;
+                itemDef.femaleModel0 = 60945;
+                itemDef.zoom2d = ItemDefinition.lookup(27447).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(27447).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(27447).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(27447).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(27447).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
+            case 33423:
+                itemDef.name = "Heredit Quiver (or)";
+                itemDef.inventoryModel = 60943;
+                itemDef.zoom2d = ItemDefinition.lookup(5562).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(5562).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(5562).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(5562).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(5562).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
+            case 33424:
+                itemDef.name = "Nova Hat";
+                itemDef.inventoryModel = 60946;
+                itemDef.maleModel0 = 60947;
+                itemDef.femaleModel0 = 60947;
+                itemDef.zoom2d = ItemDefinition.lookup(24405).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(24405).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(24405).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(24405).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(24405).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
+            case 33425:
+                itemDef.name = "Nova Body";
+                itemDef.inventoryModel = 60948;
+                itemDef.maleModel0 = 60949;
+                itemDef.femaleModel0 = 60949;
+                itemDef.zoom2d = ItemDefinition.lookup(24407).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(24407).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(24407).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(24407).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(24407).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
+            case 33426:
+                itemDef.name = "Nova Legs";
+                itemDef.inventoryModel = 60950;
+                itemDef.maleModel0 = 60951;
+                itemDef.femaleModel0 = 60951;
+                itemDef.zoom2d = ItemDefinition.lookup(24409).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(24409).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(24409).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(24409).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(24409).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
+            case 33427:
+                itemDef.name = "Nova Boots";
+                itemDef.inventoryModel = 60952;
+                itemDef.maleModel0 = 60952;
+                itemDef.femaleModel0 = 60952;
+                itemDef.zoom2d = ItemDefinition.lookup(24411).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(24411).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(24411).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(24411).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(24411).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
         }
         return itemDef;
     }
