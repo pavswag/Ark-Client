@@ -13,6 +13,7 @@ import com.client.graphics.interfaces.builder.impl.tob.TobRewardsInterface;
 import com.client.graphics.interfaces.daily.DailyRewards;
 import com.client.graphics.interfaces.dropdown.KeybindingMenu;
 import com.client.graphics.interfaces.eventcalendar.EventCalendar;
+import com.client.graphics.interfaces.impl.castle_wars.LoadoutSelection;
 import com.client.graphics.interfaces.settings.SettingsInterface;
 
 import java.util.Random;
@@ -176,6 +177,7 @@ public final class Interfaces extends RSInterface {
 		new MonsterDropViewer().OsDropViewer(defaultTextDrawingAreas);
 		dropTable(defaultTextDrawingAreas);
 		UpdateBooth.mainInterface(defaultTextDrawingAreas);
+		LoadoutSelection.loadoutSelection(defaultTextDrawingAreas);
 	}
 
 	private static void TreasureOverlayInterface(TextDrawingArea[] tda) {
