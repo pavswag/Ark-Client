@@ -2364,7 +2364,8 @@ public class Model extends Renderable implements RSModel {
     }
     static final Set<Integer> IGNORE_HEIGHT_FIX = ImmutableSet.of(
             BALANCING_LEDGE_23547,
-            26503, 26461//bandos door
+            26503, 26461, //bandos door
+            4469, 4470
     );
     final void withinObject(boolean var25, boolean highlighted, long uid, int plane) {
         final boolean gpu = Client.instance.isGpu() && Rasterizer3D.world;

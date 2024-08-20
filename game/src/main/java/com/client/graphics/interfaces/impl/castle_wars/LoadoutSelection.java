@@ -19,7 +19,7 @@ public class LoadoutSelection extends RSInterface {
         get(27553).secondaryColor = 0x252220;
         get(27553).atActionType = 1;
         get(27553).tooltip = "<col=ff9933>Select Melee!";
-        addText(27554, "<icon=134> Melee <icon=134> ", tda, 2, 0xff9933, true);
+        addText(27554, "<icon=134> Melee <icon=134>", tda, 2, 0xff9933, true);
 
 
 
