@@ -46,6 +46,26 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 		}
 
 		switch (i) {
+			case 26277:
+				objectDef.name = "Golden Boss Barrel";
+				objectDef.actions  = new String[]{"Purchase", null, null, null, null};
+				break;
+
+			case 26278:
+				objectDef.name = "Double Drop Barrel";
+				objectDef.actions  = new String[]{"Purchase", null, null, null, null};
+				break;
+
+			case 26279:
+				objectDef.name = "Healing Barrel";
+				objectDef.actions  = new String[]{"Purchase", null, null, null, null};
+				break;
+
+			case 26280:
+				objectDef.name = "Absorption Barrel";
+				objectDef.actions  = new String[]{"Purchase", null, null, null, null};
+				break;
+
 			case 10733:
 				objectDef.actions  = new String[]{"Activate", null, null, null, null};
 				break;
