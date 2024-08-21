@@ -3021,5 +3021,14 @@
   "3019": "interfaces/sms/sprite 7",
   "3020": "interfaces/sms/sprite 8",
   "3021": "player/modicons 91",
-  "3022": "widget/background 1"
+  "3022": "widget/background 1",
+  "3033": "selectloadout/sprite 1",
+  "3034": "selectloadout/sprite 2",
+  "3035": "selectloadout/sprite 3",
+  "3036": "selectloadout/sprite 4",
+  "3037": "selectloadout/sprite 5",
+  "3038": "selectloadout/sprite 6",
+  "3039": "selectloadout/sprite 7",
+  "3040": "selectloadout/sprite 8",
+  "3041": "selectloadout/sprite 9"
 }
