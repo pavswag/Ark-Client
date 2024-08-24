@@ -73,7 +73,7 @@ public class PetPerk extends RSInterface {
                 get(48848).interfaceHidden = false;
             }
         };
-        addText(22750, "Found out more\\nabout your pet here!", tda, 2, 0xff9933, true);
+        addText(22750, "Find out more\\nabout your pet here!", tda, 2, 0xff9933, true);
         addText(22751, "Cosmetic Overrides", tda, 2, 0xff9933, true);
         addText(22752, "Pet Information", tda, 2, 0xff9933, true);
         hoverButton(22753, dir, "Dismiss", 4, 5);

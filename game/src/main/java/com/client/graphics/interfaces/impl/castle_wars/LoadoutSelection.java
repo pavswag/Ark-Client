@@ -12,55 +12,45 @@ public class LoadoutSelection extends RSInterface {
     public static void loadoutSelection(TextDrawingArea[] tda) {
         RSInterface main = addInterface(27550);
 
-        addSprite(27551, 1, "widget/background");
+        addSprite(27551, 1, "selectloadout/sprite");
         addText(27552, "Select Your Loadout", tda, 2, 0xff9933, true);
 
-        RSInterface.addRectangle(27553, 100, 55, 0x221e1a, 0, true);
-        get(27553).secondaryColor = 0x252220;
-        get(27553).atActionType = 1;
-        get(27553).tooltip = "<col=ff9933>Select Melee!";
-        addText(27554, "<icon=134> Melee <icon=134>", tda, 2, 0xff9933, true);
 
+        hoverButton(27553, "selectloadout/sprite", "<icon=134> Select Melee <icon=134>", 4, 5);
+        addHoverImage(27554, 2, 3, "selectloadout/sprite");
+        addText(27555, "<icon=134> Melee <icon=134>\\n" +
+                "Dragon Scim\\nDragon Dag++\\nRune Armour", tda, 2, 0xff9933, true);
 
+        hoverButton(27556, "selectloadout/sprite", "<icon=137> Select Range <icon=137>", 6, 7);
+        addHoverImage(27557, 2, 3, "selectloadout/sprite");
+        addText(27558, "<icon=137> Range <icon=137>\\n" +
+                "Rune C'bow\\nBlack D'hide\\nRunite Bolts", tda, 2, 0xff9933, true);
 
-        RSInterface.addRectangle(27555, 100, 55, 0x221e1a, 0, true);
-        get(27555).secondaryColor = 0x252220;
-        get(27555).atActionType = 1;
-        get(27555).tooltip = "<col=ff9933>Select Range!";
-        addText(27556, "<icon=137> Range <icon=137> ", tda, 2, 0xff9933, true);
+        hoverButton(27559, "selectloadout/sprite", "<icon=139> Select Mage <icon=139>", 8, 9);
+        addHoverImage(27560, 2, 3, "selectloadout/sprite");
+        addText(27561, "<icon=139> Magic <icon=139>\\n" +
+                "Mystic Robes\\nAncients", tda, 2, 0xff9933, true);
 
+        addText(27562, "Currently Selected: <icon=139> Magic <icon=139> ", tda, 2, 0xff9933, false);
 
-
-
-        RSInterface.addRectangle(27557, 100, 55, 0x221e1a, 0, true);
-        get(27557).secondaryColor = 0x252220;
-        get(27557).atActionType = 1;
-        get(27557).tooltip = "<col=ff9933>Select Magic!";
-        addText(27558, "<icon=139> Magic <icon=139> ", tda, 2, 0xff9933, true);
-
-
-        addText(27559, "Currently Selected: <icon=139> Magic <icon=139> ", tda, 2, 0xff9933, true);
-
-
-        hoverButton(27560, "votereminder/sprite", "Confirm", 3, 4);
-        interfaceCache.get(27560).message = "Confirm";
-        interfaceCache.get(27560).textColor = RSInterfaceConstants.ORANGE;
-        interfaceCache.get(27560).msgX =  interfaceCache.get(27560).width / 2;
-        interfaceCache.get(27560).msgY = (interfaceCache.get(27560).height / 2) + 4;
+        hoverButton(27563, "selectloadout/sprite", "Confirm", 5, 5);
 
         main.child(0, 27551, BASE_X, BASE_Y);
-        main.child(1, 27552, BASE_X + 225, BASE_Y + 7);
+        main.child(1, 27552, BASE_X + 175, BASE_Y + 9);
 
-        main.child(2, 27553, BASE_X + 25, BASE_Y + 135);
-        main.child(3, 27554, BASE_X + 80, BASE_Y + 155);
+        main.child(2, 27553, BASE_X + 38, BASE_Y + 45);
+        main.child(3, 27554, BASE_X + 16, BASE_Y + 85);
+        main.child(4, 27555, BASE_X + 65, BASE_Y + 95);
 
-        main.child(4, 27555, BASE_X + 170, BASE_Y + 135);
-        main.child(5, 27556, BASE_X + 225, BASE_Y + 155);
+        main.child(5, 27556, BASE_X + 148, BASE_Y + 45);
+        main.child(6, 27557, BASE_X + 126, BASE_Y + 85);
+        main.child(7, 27558, BASE_X + 175, BASE_Y + 95);
 
-        main.child(6, 27557, BASE_X + 315, BASE_Y + 135);
-        main.child(7, 27558, BASE_X + 370, BASE_Y + 155);
+        main.child(8, 27559, BASE_X + 255, BASE_Y + 45);
+        main.child(9, 27560, BASE_X + 236, BASE_Y + 85);
+        main.child(10, 27561, BASE_X + 285, BASE_Y + 95);
 
-        main.child(8, 27559, BASE_X + 225, BASE_Y + 75);
-        main.child(9, 27560, BASE_X + 185, BASE_Y + 235);
+        main.child(11, 27562, BASE_X + 25, BASE_Y + 195);
+        main.child(12, 27563, BASE_X + 275, BASE_Y + 190);
     }
 }
