@@ -113,6 +113,11 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             npcDefinition.actions = new String[] {"Talk to", null, "Teleport", null, null };
         }
 
+        if (i == 155) {
+            npcDefinition.name = "<rank=35>Mini Prophet<rank=35>";
+            npcDefinition.actions = new String[] {"Talk to", null, "Trade", null, null };
+        }
+
         if (i == 12256) {
             npcDefinition.name = "Shadow Crusade Store";
         }
