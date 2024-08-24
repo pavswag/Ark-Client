@@ -745,6 +745,78 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.yOffset2d = ItemDefinition.lookup(696).yOffset2d;
                 itemDef.interfaceOptions = new String[] { null, "Use", null, null, "Drop" };
                 break;
+            case 33430:
+                itemDef.name = "Wraith Sword";
+                itemDef.maleModel0 = 60957;
+                itemDef.femaleModel0 = 60957;
+                itemDef.inventoryModel = 60956;
+                itemDef.zoom2d = ItemDefinition.lookup(33202).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(33202).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(33202).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(33202).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(33202).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
+                break;
+            case 33431:
+                itemDef.name = "Wraith Scythe";
+                itemDef.maleModel0 = 60964;
+                itemDef.femaleModel0 = 60964;
+                itemDef.inventoryModel = 60958;
+                itemDef.zoom2d = ItemDefinition.lookup(33203).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(33203).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(33203).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(33203).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(33203).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
+                break;
+            case 33432:
+                itemDef.name = "Wraith Spear";
+                itemDef.maleModel0 = 60960;
+                itemDef.femaleModel0 = 60960;
+                itemDef.inventoryModel = 60959;
+                itemDef.zoom2d = ItemDefinition.lookup(33204).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(33204).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(33204).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(33204).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(33204).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
+                break;
+            case 33433:
+                itemDef.name = "Wraith Staff";
+                itemDef.maleModel0 = 60962;
+                itemDef.femaleModel0 = 60962;
+                itemDef.inventoryModel = 60961;
+                itemDef.zoom2d = ItemDefinition.lookup(33205).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(33205).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(33205).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(33205).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(33205).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
+                break;
+            case 33434:
+                itemDef.name = "Wraith Bow";
+                itemDef.maleModel0 = 60963;
+                itemDef.femaleModel0 = 60967;
+                itemDef.inventoryModel = 60967;
+                itemDef.zoom2d = ItemDefinition.lookup(33207).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(33207).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(33207).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(33207).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(33207).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
+                break;
+            case 33435:
+                itemDef.name = "Wraith Crossbow";
+                itemDef.maleModel0 = 60966;
+                itemDef.femaleModel0 = 60966;
+                itemDef.inventoryModel = 60965;
+                itemDef.zoom2d = ItemDefinition.lookup(26269).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(26269).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(26269).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(26269).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(26269).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
+                break;
         }
         return itemDef;
     }
