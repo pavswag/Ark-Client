@@ -170,6 +170,10 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.name = "Sharathteerk Instance Token";
                 itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Drop" };
                 break;
+            case 26879:
+                itemDef.name = "Wraith Essence";
+                itemDef.interfaceOptions = new String[] { "Inspect", null, null, null, "Drop" };
+                break;
                 /*
             case 9610:
                 itemDef.name = "Instance Token";
