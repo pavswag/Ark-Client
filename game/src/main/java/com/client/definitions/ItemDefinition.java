@@ -796,7 +796,7 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
             case 33434:
                 itemDef.name = "Wraith Bow";
                 itemDef.maleModel0 = 60963;
-                itemDef.femaleModel0 = 60967;
+                itemDef.femaleModel0 = 60963;
                 itemDef.inventoryModel = 60967;
                 itemDef.zoom2d = ItemDefinition.lookup(33207).zoom2d;
                 itemDef.xan2d = ItemDefinition.lookup(33207).xan2d;
