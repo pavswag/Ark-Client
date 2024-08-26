@@ -11267,6 +11267,9 @@ public class Client extends GameEngine implements RSClient {
 				aBoolean954 = true;
 				loggedIn = true;
 				setGameState(GameState.LOGGING_IN);
+				if (SettingsTabWidget.resized) {
+					frameMode(true);
+				}
 				stream.pos = 0;
 				inStream.pos = 0;
 				incomingPacket = -1;
@@ -19987,6 +19990,14 @@ public class Client extends GameEngine implements RSClient {
 							}
 
 						}
+						if (componentId == 27563) {
+							component.sprite1 = imageLoader(spriteIndex, "selectloadout/sprite");
+							component.sprite2 = imageLoader(spriteIndex, "selectloadout/sprite");
+						}
+						if (componentId == 27554 || componentId == 27557 || componentId == 27560) {
+							component.sprite1 = imageLoader(spriteIndex, "selectloadout/sprite");
+							component.sprite2 = imageLoader(spriteIndex, "selectloadout/sprite");
+						}
 
 						if (component.backgroundSprites != null && spriteIndex <= component.backgroundSprites.length - 1) {
 							Sprite sprite = component.backgroundSprites[spriteIndex];
@@ -25340,6 +25351,8 @@ public class Client extends GameEngine implements RSClient {
 			 */
 			setResizeCanvasNextFrame(true);
 		}
+
+
 	}
 
 

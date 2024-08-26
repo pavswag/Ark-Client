@@ -219,6 +219,8 @@ public class SettingsTabWidget extends RSInterface {
 		setBounds(42554, 13, 134 + 17, childNum++, controls);
 	}
 
+	public static boolean resized = false;
+
 	public static void settings(int button) {
 		switch (button) {
 			case 42502:
@@ -228,8 +230,10 @@ public class SettingsTabWidget extends RSInterface {
 				switchSettings(button);
 				break;
 			case FIXED_MODE:
+				resized = false;
 				break;
 			case RESIZABLE_MODE:
+				resized = true;
 				break;
 			case 42521:
 				Client.cameraZoom = 600;
