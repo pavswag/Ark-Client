@@ -825,6 +825,11 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.yOffset2d = ItemDefinition.lookup(26269).yOffset2d;
                 itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
                 break;
+            case 29625:
+                itemDef.name = "Epsteins Island Scroll";
+                itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Drop" };
+                break;
+
         }
         return itemDef;
     }
