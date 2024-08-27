@@ -115,6 +115,11 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             npcDefinition.combatLevel = 126;
             npcDefinition.actions = new String[] { null, "Attack", null, null, null };
         }
+        if (i==12784) {
+            npcDefinition.name = "<rank=35> Luke The Unstoppable <rank=35>";
+            npcDefinition.combatLevel = 126;
+            npcDefinition.actions = new String[] { null, "Attack", null, null, null };
+        }
 
 
         if (i == 13527) {
