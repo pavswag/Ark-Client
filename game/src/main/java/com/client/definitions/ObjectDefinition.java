@@ -86,6 +86,10 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 				objectDef.name = "Start Isle Of The Damned";
 				objectDef.actions  = new String[]{"Start", null, null, null, null};
 				break;
+			case 35965:
+				objectDef.name = "Start Tumekens Warden";
+				objectDef.actions  = new String[]{"Start", null, null, null, null};
+				break;
 		}
 
 		/*switch (i) {

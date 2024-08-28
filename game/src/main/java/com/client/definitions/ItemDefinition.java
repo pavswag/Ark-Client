@@ -829,6 +829,10 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.name = "Epsteins Island Scroll";
                 itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Drop" };
                 break;
+            case 9624:
+                itemDef.name = "Tumekens Warden Instance Token";
+                itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Drop" };
+                break;
 
         }
         return itemDef;
