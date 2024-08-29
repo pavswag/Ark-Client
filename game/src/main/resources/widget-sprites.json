@@ -3022,7 +3022,7 @@
   "3020": "interfaces/sms/sprite 8",
   "3021": "player/modicons 91",
   "3022": "widget/background 1",
-  "3033": "selectloadout/sprite 1",
+  "3033": "staff_pa/sprite 1",
   "3034": "selectloadout/sprite 2",
   "3035": "selectloadout/sprite 3",
   "3036": "selectloadout/sprite 4",
@@ -3030,5 +3030,14 @@
   "3038": "selectloadout/sprite 6",
   "3039": "selectloadout/sprite 7",
   "3040": "selectloadout/sprite 8",
-  "3041": "selectloadout/sprite 9"
+  "3041": "selectloadout/sprite 9",
+  "3042": "staff_panel/sprite 0",
+  "3043": "staff_panel/sprite 1",
+  "3044": "staff_panel/sprite 2",
+  "3045": "staff_panel/sprite 3",
+  "3046": "staff_panel/sprite 4",
+  "3047": "staff_panel/sprite 5",
+  "3048": "staff_panel/sprite 6",
+  "3049": "staff_panel/sprite 7",
+  "3050": "staff_panel/sprite 8"
 }
