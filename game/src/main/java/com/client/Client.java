@@ -15344,18 +15344,32 @@ public class Client extends GameEngine implements RSClient {
 
 								int width = class9_1.width;
 								int height = class9_1.height;
-								int color = class9_1.fillColor;
+								int color = class9_1.fillColor;  // This is the default color for non-gradient HUDs
 
-								Rasterizer2D.drawRectangle(_x - 1, _y - 1, class9_1.width - 5, class9_1.height + 2, 0, 250);
-								Rasterizer2D.draw_filled_rect(_x, _y, width - 7, height, class9_1.progressBackColor, class9_1.progressBackAlpha);
-								Rasterizer2D.draw_filled_rect(_x, _y, (int) ((double) current / maximum * width - 7), height, color, 200);
+								// Draw the background box and red background indicating missing health
+								Rasterizer2D.drawRectangle(_x - 1, _y - 1, width - 5, height + 2, 0, 250);
+								Rasterizer2D.draw_filled_rect(_x, _y, width - 7, height, 0xff0000, class9_1.progressBackAlpha);
 
+								// Calculate the current health bar width
+								int healthBarWidth = (int) ((double) current / maximum * (width - 7));
+								rainbowWidth = healthBarWidth * 2;
+								// Check if the current HUD type is RAINBOW or another type
+								if (class9_1.hudType == HealthHud.HudType.RAINBOW) {
+									// Draw the rainbow gradient across the current health bar width
+									Rasterizer2D.drawRainbowGradient(_x, _y, healthBarWidth, height);
+								} else {
+									// Use the existing fill color for other HUD types
+									Rasterizer2D.draw_filled_rect(_x, _y, healthBarWidth, height, color, 200);
+								}
+
+								// Draw the health text
 								RSFont font = class9_1.font == null ? newSmallFont : class9_1.font;
 								font.drawCenteredString(current + " / " + maximum, _x + (width - 8) / 2, _y + height / 2 + 5, 0xFFFFFF, 0);
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
-						} else if (class9_1.type == RSInterface.TYPE_PROGRESS_BAR_2021) {
+						}
+						else if (class9_1.type == RSInterface.TYPE_PROGRESS_BAR_2021) {
 							double percentage = class9_1.progressBar2021Percentage;
 							int color = RSInterface.getRgbProgressColor(percentage);
 
@@ -15410,6 +15424,16 @@ public class Client extends GameEngine implements RSClient {
 		} catch (Exception | StackOverflowError e) {
 			System.err.println(String.format("Error on interface j=%d, xPosition=%d, id=%d, yPosition=%d", scrollPosition, xPosition, rsInterface.id, yPosition));
 			e.printStackTrace();
+		}
+	}
+
+	public static double rainbowOffset = 0;
+	public static int rainbowWidth = 0;
+
+	public static void updateRainbowOffset() {
+		rainbowOffset += 1.0; // Smaller increment for finer control, adjust as needed
+		if (rainbowOffset >= rainbowWidth) {
+			rainbowOffset = 0; // Smooth wrap-around
 		}
 	}
 
@@ -16069,6 +16093,8 @@ public class Client extends GameEngine implements RSClient {
 				entityTarget.draw();
 			}
 		}
+
+		updateRainbowOffset();
 
 		if (getUserSettings().isGameTimers()) {
 			try {
