@@ -137,7 +137,7 @@ public class EventManager extends RSInterface {
 
 
     private static int getInterfaceId() {
-        return 68_500;
+        return 75_000;
     }
 
 }

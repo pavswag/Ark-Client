@@ -175,7 +175,25 @@ public class StaffPanel extends RSInterface {
                 skillTextId++;
             }
         }
+        System.out.println("finished skills @ " + skillTextId);
 
+        addText(68100, "General Information", tda, 3, RSInterfaceConstants.ORANGE, false);
+        playerOverviewScroll.child(playerOverviewChildIdx++, 68100, 10, 230);
+
+        addText(68101, "Total Playtime: 2 days, 58 hours", tda, 3, RSInterfaceConstants.ORANGE, true);
+        playerOverviewScroll.child(playerOverviewChildIdx++, 68101, 143, 255);
+
+        addText(68102, "Game Mode: Normal", tda, 3, RSInterfaceConstants.ORANGE, true);
+        playerOverviewScroll.child(playerOverviewChildIdx++, 68102, 143, 280);
+
+        addText(68103, "XP Rate: x1", tda, 3, RSInterfaceConstants.ORANGE, true);
+        playerOverviewScroll.child(playerOverviewChildIdx++, 68103, 143, 315);
+
+        addText(68104, "Achievements: 3/202", tda, 3, RSInterfaceConstants.ORANGE, true);
+        playerOverviewScroll.child(playerOverviewChildIdx++, 68104, 143, 340);
+
+
+        //addInputField(68101, 35, RSInterfaceConstants.ORANGE, "Enter Player Name", 169, 22, false, true, "[A-Za-z0-9 .,]");
 
         RSInterface playerHistoryScroll = addInterface(68000);
         playerHistoryScroll.totalChildren(1);
