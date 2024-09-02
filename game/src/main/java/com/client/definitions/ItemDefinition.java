@@ -848,7 +848,43 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.name = "Tumekens Warden Instance Token";
                 itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Drop" };
                 break;
-
+            case 20128:  //Darkness robes
+                itemDef.maleModel0 = 31752;
+                itemDef.femaleModel0 = 31836;
+                itemDef.inventoryModel = 31969;
+                break;
+            case 20131:  //Darkness robes
+                itemDef.maleModel0 = 31814;
+                itemDef.maleModel1 = 31802;
+                itemDef.femaleModel0 = 31877;
+                itemDef.femaleModel1 = 31865;
+                itemDef.inventoryModel = 32036;
+                break;
+            case 20137:  //Darkness robes
+                itemDef.maleModel0 = 31788;
+                itemDef.femaleModel0 = 31858;
+                itemDef.inventoryModel = 31997;
+                break;
+            case 20140:  //Darkness robes
+                itemDef.maleModel0 = 31818;
+                itemDef.femaleModel0 = 31885;
+                itemDef.inventoryModel = 32034;
+                break;
+            case 20134:  //Darkness robes
+                itemDef.maleModel0 = 31774;
+                itemDef.femaleModel0 = 31852;
+                itemDef.inventoryModel = 32001;
+                break;
+            case 33436:
+                itemDef.name = "Bank Vault";
+                itemDef.inventoryModel = 60968;
+                itemDef.zoom2d = ItemDefinition.lookup(7677).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(7677).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(7677).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(7677).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(7677).yOffset2d;
+                itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Drop" };
+                break;
         }
         return itemDef;
     }
