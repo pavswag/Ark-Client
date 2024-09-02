@@ -183,9 +183,15 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.name = "Wraith Essence";
                 itemDef.interfaceOptions = new String[] { "Inspect", null, null, null, "Drop" };
                 break;
-            case 10087:
+            case 33437:
                 itemDef.name = "Prophet's Pillow Feather";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
+                itemDef.inventoryModel = ItemDefinition.lookup(10087).inventoryModel;
+                itemDef.zoom2d = ItemDefinition.lookup(10087).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(10087).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(10087).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(10087).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(10087).yOffset2d;
                 break;
                 /*
             case 9610:
