@@ -36,5 +36,60 @@ public enum Skill {
 		return id;
 	}
 
+	public static int getIconId(Skill skill) {
+		switch (skill) {
+			case ATTACK:
+				return 134;
+			case STRENGTH:
+				return 135;
+			case DEFENCE:
+				return 136;
+			case RANGED:
+				return 137;
+			case PRAYER:
+				return 138;
+			case MAGIC:
+				return 139;
+			case RUNECRAFTING:
+				return 140;
+			case HITPOINTS:
+				return 141;
+			case AGILITY:
+				return 142;
+			case HERBLORE:
+				return 143;
+			case THIEVING:
+				return 144;
+			case CRAFTING:
+				return 145;
+			case FLETCHING:
+				return 146;
+			case MINING:
+				return 147;
+			case SMITHING:
+				return 148;
+			case FISHING:
+				return 14;
+			case COOKING:
+				return 150;
+			case FIREMAKING:
+				return 151;
+			case WOODCUTTING:
+				return 152;
+			case SLAYER:
+				return 153;
+			case FARMING:
+				return 154;
+			case HUNTER:
+				return 155;
+			case DEMON_HUNTER:
+				return 156;
+			case FORTUNE:
+				return 157;
+			default:
+				return -1;
+		}
+	}
+
 	public static final int MAXIMUM_SKILL_ID = 21;
 }

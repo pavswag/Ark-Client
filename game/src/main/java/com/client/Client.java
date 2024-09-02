@@ -6133,7 +6133,7 @@ public class Client extends GameEngine implements RSClient {
 
 		if (l == 475) {
 			stream.createFrame(185);
-			stream.writeWord(-1);
+			stream.writeInt(-1);
 			experienceCounter = 0L;
 		}
 		if (l==4251) {
@@ -6156,7 +6156,7 @@ public class Client extends GameEngine implements RSClient {
 		}
 		if (l == 1850) {
 			stream.createFrame(185);
-			stream.writeWord(5100);
+			stream.writeInt(5100);
 		}
 
 		if (l == 769) {
@@ -6179,6 +6179,9 @@ public class Client extends GameEngine implements RSClient {
 			d.dropdown.setSelected(d.dropdown.getOptions()[i1]);
 			d.dropdown.setOpen(false);
 			d.dropdown.getMenuItem().select(i1, d);
+			stream.createFrame(250);
+			stream.writeInt(d.id);
+			stream.writeWord(i1);
 			try {
 				SettingsManager.saveSettings(Client.instance);
 			} catch (IOException io) {
@@ -6189,7 +6192,7 @@ public class Client extends GameEngine implements RSClient {
 		if (l == 850) {
 			if (tabInterfaceIDs[tabID] == 17200) {
 				stream.createFrame(185);
-				stream.writeWord(5200 + buttonPressed);
+				stream.writeInt(5200 + buttonPressed);
 			}
 		}
 		if (l == 661) { // intid, slot, itemid;
@@ -6217,12 +6220,12 @@ public class Client extends GameEngine implements RSClient {
 			case 1500: // Toggle quick prayers
 				prayClicked = !prayClicked;
 				stream.createFrame(185);
-				stream.writeWord(5000);
+				stream.writeInt(5000);
 				break;
 
 			case 1506: // Select quick prayers
 				stream.createFrame(185);
-				stream.writeWord(5001);
+				stream.writeInt(5001);
 				setTab(5);
 				break;
 
@@ -6230,7 +6233,7 @@ public class Client extends GameEngine implements RSClient {
 		}
 		if (l == 1200) {
 			stream.createFrame(185);
-			stream.writeWord(buttonPressed);
+			stream.writeInt(buttonPressed);
 			RSInterface item = interfaceCache.get(buttonPressed);
 			RSInterface menu = interfaceCache.get(item.mOverInterToTrigger);
 			menu.setMenuItem(item.getMenuItem());
@@ -6261,7 +6264,7 @@ public class Client extends GameEngine implements RSClient {
 			} else {
 				stream.createFrame(185);
 				int offset = buttonPressed + (buttonPressed - 58030) * 10 + (l - 1700);
-				stream.writeWord(offset);
+				stream.writeInt(offset);
 				Bank.handleButton(offset);
 			}
 		}
@@ -6527,7 +6530,7 @@ public class Client extends GameEngine implements RSClient {
 
 							// If special attack button is not being pressed process normally
 							stream.createFrame(185);
-							stream.writeWord(buttonPressed);
+							stream.writeInt(buttonPressed);
 
 							switch (buttonPressed) {
 							}
@@ -6855,17 +6858,17 @@ public class Client extends GameEngine implements RSClient {
 				autocast = true;
 				autocastId = class9_1.id;
 				stream.createFrame(185);
-				stream.writeWord(class9_1.id);
+				stream.writeInt(class9_1.id);
 			} else if (autocastId == class9_1.id) {
 				autocast = false;
 				autocastId = 0;
 				stream.createFrame(185);
-				stream.writeWord(6666); // reset server side
+				stream.writeInt(6666); // reset server side
 			} else if (autocastId != class9_1.id) {
 				autocast = true;
 				autocastId = class9_1.id;
 				stream.createFrame(185);
-				stream.writeWord(class9_1.id);
+				stream.writeInt(class9_1.id);
 			}
 		}
 		if (l == 78) {
@@ -6932,11 +6935,11 @@ public class Client extends GameEngine implements RSClient {
 			if (!runClicked) {
 				runClicked = true;
 				stream.createFrame(185);
-				stream.writeWord(152);
+				stream.writeInt(152);
 			} else {
 				runClicked = false;
 				stream.createFrame(185);
-				stream.writeWord(152);
+				stream.writeInt(152);
 			}
 		}
 		if (l == 1550) {
@@ -7180,7 +7183,7 @@ public class Client extends GameEngine implements RSClient {
 		if (l == 646) {
 			Bank.handleButton(buttonPressed);
 			stream.createFrame(185);
-			stream.writeWord(buttonPressed);
+			stream.writeInt(buttonPressed);
 			if (!clickConfigButton(buttonPressed)) {
 				RSInterface class9_2 = interfaceCache.get(buttonPressed);
 				if (!class9_2.ignoreConfigClicking) {
@@ -7295,7 +7298,7 @@ public class Client extends GameEngine implements RSClient {
 				clearTopInterfaces();
 			else {
 				stream.createFrame(185);
-				stream.writeWord(15333);
+				stream.writeInt(15333);
 			}
 		}
 
@@ -7519,7 +7522,7 @@ public class Client extends GameEngine implements RSClient {
 		}
 		if (l == 1052) {
 			stream.createFrame(185);
-			stream.writeWord(154);
+			stream.writeInt(154);
 		}
 
 		if (l == 1004) {
@@ -7622,7 +7625,7 @@ public class Client extends GameEngine implements RSClient {
 				onRealButtonClick(buttonPressed);
 			} else {
 				stream.createFrame(185);
-				stream.writeWord(buttonPressed);
+				stream.writeInt(buttonPressed);
 				if (button.buttonListener != null)
 					button.buttonListener.accept(buttonPressed);
 				if (clientData) {
@@ -8746,7 +8749,7 @@ public class Client extends GameEngine implements RSClient {
 
 						if (inputString.equals("::resetcounter") && (j == 13 || j == 10)) {
 							stream.createFrame(185);
-							stream.writeWord(-1);
+							stream.writeInt(-1);
 							experienceCounter = 0L;
 						}
 
@@ -10433,7 +10436,7 @@ public class Client extends GameEngine implements RSClient {
 							if (Client.tabInterfaceIDs[index + 7] != -1) {
 								if (index + 7 == 13) {
 									stream.createFrame(185);
-									stream.writeWord(21406);
+									stream.writeInt(21406);
 								}
 								Client.tabID = index + 7;
 								Client.needDrawTabArea = true;
@@ -19692,8 +19695,8 @@ public class Client extends GameEngine implements RSClient {
 					return true;
 
 				case 3:
-					int setScrollMaxInterfaceId = inStream.readUShort();
-					int scrollMax = inStream.readUShort();
+					int setScrollMaxInterfaceId = inStream.readInt();
+					int scrollMax = inStream.readInt();
 					interfaceCache.get(setScrollMaxInterfaceId).scrollMax = scrollMax;
 					incomingPacket = -1;
 					return true;
@@ -19997,6 +20000,10 @@ public class Client extends GameEngine implements RSClient {
 						if (componentId == 27554 || componentId == 27557 || componentId == 27560) {
 							component.sprite1 = imageLoader(spriteIndex, "selectloadout/sprite");
 							component.sprite2 = imageLoader(spriteIndex, "selectloadout/sprite");
+						}
+						if(componentId >= 66156 || componentId <= 67156) {
+							component.sprite1 = imageLoader(spriteIndex, "staff_panel/sprite");
+							component.sprite2 = imageLoader(spriteIndex, "staff_panel/sprite");
 						}
 
 						if (component.backgroundSprites != null && spriteIndex <= component.backgroundSprites.length - 1) {
@@ -20870,7 +20877,7 @@ public class Client extends GameEngine implements RSClient {
 					return true;
 
 				case 97:
-					int l7 = inStream.readUShort();
+					int l7 = inStream.readInt();
 					resetAnimation(l7);
 					if (invOverlayInterfaceID != 0) {
 						invOverlayInterfaceID = 0;

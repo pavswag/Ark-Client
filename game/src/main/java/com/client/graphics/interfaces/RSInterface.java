@@ -3990,6 +3990,42 @@ public class RSInterface implements RSWidget {
 
 		}
 	}
+	public void child(int interID, int x, int y) {
+		if (children == null || childX == null || childY == null) {
+			children = new int[1];
+			childX = new int[1];
+			childY = new int[1];
+		}
+		int id = children.length;
+		resizeArrays(id + 1);
+		children[id] = interID;
+		childX[id] = x;
+		childY[id] = y;
+		try {
+			if (childEvents == null) {
+				childEvents = new LinkedList<>();
+				childEvents.add(new WidgetChildEvent(interID, x, y));
+				processChildEvents();
+				childEvents = null;
+			}
+			childEvents.add(new WidgetChildEvent(interID, x, y));
+		} catch (Exception e) {
+
+		}
+	}
+	private void resizeArrays(int newSize) {
+		int[] newChildren = new int[newSize];
+		int[] newChildX = new int[newSize];
+		int[] newChildY = new int[newSize];
+
+		System.arraycopy(children, 0, newChildren, 0, children.length);
+		System.arraycopy(childX, 0, newChildX, 0, childX.length);
+		System.arraycopy(childY, 0, newChildY, 0, childY.length);
+
+		children = newChildren;
+		childX = newChildX;
+		childY = newChildY;
+	}
 
 	public void child(int id, int interID, int x, int y) {
 		if (children == null || childX == null || childY == null) {
@@ -4016,19 +4052,7 @@ public class RSInterface implements RSWidget {
 		}
 	}
 
-	private void resizeArrays(int newSize) {
-		int[] newChildren = new int[newSize];
-		int[] newChildX = new int[newSize];
-		int[] newChildY = new int[newSize];
 
-		System.arraycopy(children, 0, newChildren, 0, children.length);
-		System.arraycopy(childX, 0, newChildX, 0, childX.length);
-		System.arraycopy(childY, 0, newChildY, 0, childY.length);
-
-		children = newChildren;
-		childX = newChildX;
-		childY = newChildY;
-	}
 
 	public void totalChildren(int t) {
 		children = new int[t];

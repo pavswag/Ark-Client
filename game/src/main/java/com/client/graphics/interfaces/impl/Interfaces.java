@@ -178,6 +178,7 @@ public final class Interfaces extends RSInterface {
 		dropTable(defaultTextDrawingAreas);
 		UpdateBooth.mainInterface(defaultTextDrawingAreas);
 		LoadoutSelection.loadoutSelection(defaultTextDrawingAreas);
+		StaffPanel.staffPanel(defaultTextDrawingAreas);
 	}
 
 	private static void TreasureOverlayInterface(TextDrawingArea[] tda) {
