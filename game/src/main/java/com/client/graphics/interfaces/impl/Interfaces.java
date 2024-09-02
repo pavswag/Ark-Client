@@ -179,6 +179,7 @@ public final class Interfaces extends RSInterface {
 		UpdateBooth.mainInterface(defaultTextDrawingAreas);
 		LoadoutSelection.loadoutSelection(defaultTextDrawingAreas);
 		StaffPanel.staffPanel(defaultTextDrawingAreas);
+		EventManager.eventManager(defaultTextDrawingAreas);
 	}
 
 	private static void TreasureOverlayInterface(TextDrawingArea[] tda) {
