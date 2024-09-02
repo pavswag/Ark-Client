@@ -5954,6 +5954,10 @@ public class RSInterface implements RSWidget {
 	public int borderColor;
 	public int borderWidth;
 
+	// New properties for gradient colors
+	public int startColor;
+	public int endColor;
+
 	public HealthHud.HudType hudType;
 	public int progressBackColor = 0;
 	public int progressBackAlpha = 150;

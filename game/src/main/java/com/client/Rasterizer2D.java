@@ -11,6 +11,15 @@ import static com.client.MathUtils.map;
 
 public class Rasterizer2D extends DualNode implements RSRasterizer2D {
 
+    public static final int RAINBOW_RED = 0xFFFF0000;
+    public static final int RAINBOW_ORANGE = 0xFFFF7F00;
+    public static final int RAINBOW_YELLOW = 0xFFFFFF00;
+    public static final int RAINBOW_GREEN = 0xFF00FF00;
+    public static final int RAINBOW_BLUE = 0xFF0000FF;
+    public static final int RAINBOW_INDIGO = 0xFF4B0082;
+    public static final int RAINBOW_VIOLET = 0xFF8B00FF;
+
+
     public static void drawTransparentBoxOutline(int leftX, int topY, int width, int height, int rgbColour, int opacity) {
         drawTransparentHorizontalLine(leftX, topY, width, rgbColour, opacity);
         drawTransparentHorizontalLine(leftX, topY + height - 1, width, rgbColour, opacity);
@@ -862,6 +871,85 @@ public class Rasterizer2D extends DualNode implements RSRasterizer2D {
                 drawAlpha(Rasterizer2D_pixels,pixelIndex++,transparentColour,opacity);
             }
             pixelIndex += leftOver;
+        }
+    }
+
+    public static void drawRainbowGradient(int x, int y, int width, int height) {
+        // Define the colors of the rainbow in order
+        int[] rainbowColors = {
+                0xFFFF0000,  // Red
+                0xFFFF7F00,  // Orange
+                0xFFFFFF00,  // Yellow
+                0xFF00FF00,  // Green
+                0xFF0000FF,  // Blue
+                0xFF4B0082,  // Indigo
+                0xFF8B00FF   // Violet
+        };
+
+        int numColors = rainbowColors.length;
+
+        Client.rainbowWidth = width * numColors;
+
+        int currentOffset = (int) (Client.rainbowOffset % Client.rainbowWidth);
+
+        for (int i = 0; i < width; i++) {
+            // Calculate the position in the gradient
+            float position = ((float) (i + currentOffset) / Client.rainbowWidth) * numColors;
+            int startColorIndex = (int) Math.floor(position) % numColors;
+
+            // Handle the reset directly
+            int endColorIndex;
+            if (startColorIndex == numColors - 1) {
+                endColorIndex = 0; // Directly reset from violet to red
+                currentOffset = 0;  // Force the reset to start from red immediately
+            } else {
+                endColorIndex = startColorIndex + 1;
+            }
+
+            float ratio = position - startColorIndex;
+
+            // When at the reset point, skip any interpolation to orange/yellow
+            if (startColorIndex == numColors - 1) {
+                ratio = 1.0f; // Skip any gradient between violet and red
+            }
+
+            int startColor = rainbowColors[startColorIndex];
+            int endColor = rainbowColors[endColorIndex];
+
+            int red = (int) (((startColor >> 16) & 0xFF) * (1 - ratio) + ((endColor >> 16) & 0xFF) * ratio);
+            int green = (int) (((startColor >> 8) & 0xFF) * (1 - ratio) + ((endColor >> 8) & 0xFF) * ratio);
+            int blue = (int) (((startColor) & 0xFF) * (1 - ratio) + ((endColor) & 0xFF) * ratio);
+
+            int color = (red << 16) | (green << 8) | blue;
+
+            Rasterizer2D.draw_filled_rect(x + i, y, 1, height, color, 255);
+        }
+    }
+
+
+
+
+    public static void drawGradientRect(int x, int y, int width, int height, int startColor, int endColor) {
+        int startAlpha = (startColor >> 24) & 0xFF;
+        int startRed = (startColor >> 16) & 0xFF;
+        int startGreen = (startColor >> 8) & 0xFF;
+        int startBlue = startColor & 0xFF;
+
+        int endAlpha = (endColor >> 24) & 0xFF;
+        int endRed = (endColor >> 16) & 0xFF;
+        int endGreen = (endColor >> 8) & 0xFF;
+        int endBlue = endColor & 0xFF;
+
+        for (int i = 0; i < width; i++) {
+            float ratio = (float) i / (float) width;
+
+            int alpha = (int) (startAlpha + (endAlpha - startAlpha) * ratio);
+            int red = (int) (startRed + (endRed - startRed) * ratio);
+            int green = (int) (startGreen + (endGreen - startGreen) * ratio);
+            int blue = (int) (startBlue + (endBlue - startBlue) * ratio);
+
+            int color = (alpha << 24) | (red << 16) | (green << 8) | blue;
+            Rasterizer2D.draw_filled_rect(x + i, y, 1, height, color, alpha);
         }
     }
 

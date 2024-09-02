@@ -166,6 +166,15 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.name = "Sol Heredit Instance Token";
                 itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Drop" };
                 break;
+            case 29838:
+                ItemDefinition def = ItemDefinition.lookup(29836);
+                itemDef.inventoryModel = def.inventoryModel;
+                itemDef.zoom2d = ItemDefinition.lookup(29836).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(29836).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(29836).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(29836).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(29836).yOffset2d;
+                break;
             case 9608:
                 itemDef.name = "Sharathteerk Instance Token";
                 itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Drop" };
