@@ -67,7 +67,7 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
         }
         if(i==12784) {
             NpcDefinition toCopy = lookup(604);
-            npcDefinition.name = "<rank=35> Luke The Unstoppable <rank=35>";
+            npcDefinition.name = "<rank=35> FiftyCent <rank=35>";
             npcDefinition.category = toCopy.category;
             npcDefinition.actions = toCopy.actions;
             npcDefinition.walkAnim = toCopy.walkAnim;
@@ -84,7 +84,7 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             npcDefinition.hasRenderPriority = toCopy.hasRenderPriority;
             npcDefinition.models = toCopy.models;
             npcDefinition.stats = toCopy.stats;
-            npcDefinition.combatLevel = toCopy.combatLevel;
+            npcDefinition.combatLevel = 5050;
         }
         if(i==12780) {
             npcDefinition.name = "Mini-Me";
