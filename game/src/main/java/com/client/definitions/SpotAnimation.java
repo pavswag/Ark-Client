@@ -27,12 +27,27 @@ public final class SpotAnimation extends DualNode {
 		}
 		return data;
 	}
+
 	public static void unpackConfig() {
-		/*cache[2267] = new GraphicsDefinition();
-		cache[2267].id = 2267;
-		cache[2267].modelId = 60036;
-		cache[2267].animationId = 328;
-		cache[2267].animationSequence = SequenceDefinition.get(cache[2267].animationId);*/
+		SpotAnimation customAnim1 = new SpotAnimation();
+		customAnim1.id = 3000;  // Unique ID for this animation
+		customAnim1.modelId = 54291;  // ID of the model to use
+		customAnim1.animationId = 11491;  // ID of the associated animation sequence
+		customAnim1.animationSequence = SequenceDefinition.get(customAnim1.animationId); // Link the animation sequence
+		customAnim1.resizeXY = 128;  // Scaling factors
+		customAnim1.resizeZ = 128;
+		customAnim1.rotation = 0;  // Initial rotation
+		customAnim1.modelBrightness = 64;  // Brightness adjustment
+		customAnim1.modelShadow = 850;  // Shadow intensity
+
+		// Optionally apply recolors or retextures
+		customAnim1.recolorToFind = new int[]{0};  // Color to find in the model
+		customAnim1.recolorToReplace = new int[]{0};  // Replace with this color
+		customAnim1.textureFind = new short[]{0};  // Texture to find in the model
+		customAnim1.textureReplace = new short[]{0};  // Replace with this texture
+
+		// Add the custom animation to the cache
+		SpotAnimation.cached.put(customAnim1, customAnim1.id);
 
 	}
 
