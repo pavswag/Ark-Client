@@ -7,7 +7,7 @@ import com.client.model.Items;
 public class LootViewer extends RSInterface {
 
     private static final int ID = 44_942;
-    private static final int BUTTONS = 45_010;
+    private static final int BUTTONS = 78_000;
     private static final int TABLE_ONE = 45_140;
     private static final int TABLE_TWO = 45_180;
 
@@ -204,6 +204,7 @@ public class LootViewer extends RSInterface {
                 buttonIndex = 0;
             }
         }
+        interfaceContainer.scrollMax = xCoordinate + 117;
 
         return interfaceId;
     }
