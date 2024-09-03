@@ -46,8 +46,25 @@ public class LootViewer extends RSInterface {
         LARRANS_CHEST("Larran's Chest", Items.LARRANS_KEY),
         SERENS_KEY("Seren's Key", 6792),
         WILDERNESS_CHEST("Wildyman Chest", 13302),
-        HUNNLEFS_KEY("Hunnlef's Key", 23776)
-        ;
+        HUNNLEFS_KEY("Hunnlef's Key", 23776),
+
+
+        CHAOTIC_BOX("Chaotic Box", 33358),
+        CRUSADE_BOX("Crusade Box", 33359),
+        FREEDOM_BOX("Freedom Box", 33391),
+        SHADOW_CRUSADE_RAID_BOX("Shadow C Box", 33361),
+        MINI_SHADOW_CRUSADE_RAID_BOX("Mini S C Box", 33360),
+        EPIC_BOX("Epic Box", 33357),
+        HEREDIT_BOX("Heredit Box", 33362),
+        FORSAKEN_BOX("Forsaken Box", 33364),
+        GREAT_PHANTOM_BOX("G. Phantom Box", 33356),
+        PHANTOM_BOX("Phantom Box", 33355),
+        WONDER_BOX("Wonder Box", 33354),
+        SURPRISE_BOX("Surprise Box", 33353),
+        TUMEKENS_BOX("Tumeken Box", 33381),
+        SUPER_VOTE_BOX("Super V Box", 33378),
+        TREASURE_BUSTER("Treas. Buster", 7677),
+        BANK_VAULT("Bank Vault", 33436);
 
         private final String name;
 
