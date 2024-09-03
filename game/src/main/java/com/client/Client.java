@@ -11270,7 +11270,7 @@ public class Client extends GameEngine implements RSClient {
 				aBoolean954 = true;
 				loggedIn = true;
 				setGameState(GameState.LOGGING_IN);
-				if (SettingsTabWidget.resized) {
+				if (Preferences.getPreferences().resized) {
 					frameMode(true);
 				}
 				stream.pos = 0;

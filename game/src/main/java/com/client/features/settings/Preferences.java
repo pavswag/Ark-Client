@@ -62,6 +62,8 @@ public class Preferences implements net.runelite.api.Preferences {
                     preferences.screenHeight = node.get("screenHeight").intValue();
                 if (node.has("dragTime"))
                     preferences.dragTime = node.get("dragTime").intValue();
+                if (node.has("resized"))
+                    preferences.resized = node.get("resized").booleanValue();
            /*     if (node.has("hidePetOptions"))
                     preferences.hidePetOptions = node.get("hidePetOptions").booleanValue();*/
                 if (node.has("pmNotifications"))
@@ -128,6 +130,7 @@ public class Preferences implements net.runelite.api.Preferences {
     public String groundItemTextHide = "";
     public boolean groundItemAlwaysShowUntradables;
     public boolean musicEnabled;
+    public boolean resized = false;
     public Preferences() { }
 
     public void updateClientConfiguration() {
