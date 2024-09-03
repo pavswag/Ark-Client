@@ -6007,7 +6007,7 @@ public final class Interfaces extends RSInterface {
 		int id = selectScrollId + 1, frame = 0;
 		basex = 2;
 		basey = 7;
-
+		System.out.println("Monsters ID = " + id);
 		configHoverButton1(id, "Select", dir, 3, 4, 4, 4, false, new int[]{31037, 31038, 31039, 31040, 31041});
 		selectScroll.child(frame++, id++, basex, basey);
 		configHoverButton1(id, "Select", dir, 3, 4, 4, 4, false, new int[]{31036, 31038, 31039, 31040, 31041});
