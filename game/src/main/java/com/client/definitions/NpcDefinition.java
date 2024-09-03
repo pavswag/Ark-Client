@@ -154,6 +154,10 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             npcDefinition.actions = new String[] { null, "Attack", null, null, null };
         }
 
+        if (i==12784) {
+            npcDefinition.name = "Iron Fifty Cent";
+        }
+
        /* if (i == Npcs.BOB_BARTER_HERBS) {
             npcDefinition.custom = true;
             npcDefinition.actions = new String[] { "Talk-to", "Prices", "Decant", "Clean", null };
