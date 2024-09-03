@@ -138,9 +138,9 @@ public class EventManager extends RSInterface {
 
 
         RSInterface invContainer = addInterface(77_998);
-        invContainer.child(77_999, 0, 0);
+        invContainer.child(77_999, 16, 8);
 
-        RSInterface.itemGroup(77_999, 4, 20, 12, 12, false, false, false);
+        RSInterface.itemGroup(77_999, 4, 7, 10, 4, false, false, false);
 
 
         itemInterface = RSInterface.interfaceCache.get(77_999);
