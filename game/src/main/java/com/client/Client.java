@@ -10806,7 +10806,7 @@ public class Client extends GameEngine implements RSClient {
 	}
 
 	public boolean stackTabs() {
-		return !(canvasWidth >= 1000);
+		return !(canvasWidth >= 4000);
 	}
 
 	private void processRightClick() {
@@ -12574,7 +12574,6 @@ public class Client extends GameEngine implements RSClient {
 					ObjectDefinition.init();
 					NpcDefinition.init(spriteIds.headIconArchive);
 					IdentityKit.unpackConfig();
-					SpotAnimation.unpackConfig();
 					loadPlayerData();
 				}
 			} else if (Client.titleLoadingStage == 80) {
@@ -12911,6 +12910,8 @@ public class Client extends GameEngine implements RSClient {
 					drawLoadingText(loadingProgress, "Loading Skeletons");
 				} else {
 					OSRSCacheLoader.init();
+
+					SpotAnimation.unpackConfig();
 					Client.titleLoadingStage = 110;
 				}
 			} else if (Client.titleLoadingStage == 110) {
