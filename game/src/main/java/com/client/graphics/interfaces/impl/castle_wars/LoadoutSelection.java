@@ -2,7 +2,6 @@ package com.client.graphics.interfaces.impl.castle_wars;
 
 import com.client.TextDrawingArea;
 import com.client.graphics.interfaces.RSInterface;
-import com.client.graphics.interfaces.RSInterfaceConstants;
 
 public class LoadoutSelection extends RSInterface {
 
