@@ -66,7 +66,7 @@ public class EventManager extends RSInterface {
             interfaceCache.get(interfaceId + index - 1).sprite1.advancedSprite = true;
         }
 
-        dropdownMenu(interfaceId + index++, 135, 0, new String[]{"Dig Event", "Drop Party", "Monster Hunter"}, new MenuItem() {
+        dropdownMenu(interfaceId + index++, 135, 0, new String[]{"Dig Event", "Drop Party"}, new MenuItem() {
             @Override
             public void select(int optionSelected, RSInterface rsInterface) {
 
@@ -118,7 +118,7 @@ public class EventManager extends RSInterface {
         categoryListId++;
 
         RSInterface.itemGroup(categoryListId, 4, 20, 4, 4, false, false, false);
-
+        RSInterface rewardContainer = get(categoryListId);
         String[] actions = new String[] {"Remove"};
 
         RSInterface itemInterface = RSInterface.interfaceCache.get(categoryListId);
@@ -132,7 +132,20 @@ public class EventManager extends RSInterface {
                 }
             }
         }
-        categoryList.child(i++, categoryListId++, 24, 3);
+        categoryList.child(rewardContainer.id, 24, 3);
+
+
+
+
+        RSInterface invContainer = addInterface(77_998);
+        invContainer.child(77_999, 0, 0);
+
+        RSInterface.itemGroup(77_999, 4, 20, 12, 12, false, false, false);
+
+
+        itemInterface = RSInterface.interfaceCache.get(77_999);
+
+        itemInterface.actions = new String[] {"Add 1", "Add 5", "Add 10", "Add X", "Add All"};
     }
 
 

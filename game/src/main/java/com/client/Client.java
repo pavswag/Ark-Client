@@ -12574,7 +12574,6 @@ public class Client extends GameEngine implements RSClient {
 					ObjectDefinition.init();
 					NpcDefinition.init(spriteIds.headIconArchive);
 					IdentityKit.unpackConfig();
-					SpotAnimation.unpackConfig();
 					loadPlayerData();
 				}
 			} else if (Client.titleLoadingStage == 80) {
@@ -12915,6 +12914,8 @@ public class Client extends GameEngine implements RSClient {
 				}
 			} else if (Client.titleLoadingStage == 110) {
 				drawLoadingText(92, "Loading input handler");
+
+				SpotAnimation.unpackConfig();
 				Client.titleLoadingStage = 120;
 			} else if (Client.titleLoadingStage == 120) {
 				if (!Js5List.binary.tryLoadFileByNames("huffman", "")) {
@@ -19971,7 +19972,7 @@ public class Client extends GameEngine implements RSClient {
 					return true;
 
 				case 71:
-					int l1 = inStream.readUShort();
+					int l1 = inStream.readInt();
 					int j10 = inStream.method426();
 					if (l1 == 65535)
 						l1 = -1;
@@ -20775,7 +20776,7 @@ public class Client extends GameEngine implements RSClient {
 
 				case 53:
 					needDrawTabArea = true;
-					int i7 = inStream.readUShort();
+					int i7 = inStream.readInt();
 					RSInterface class9_1 = interfaceCache.get(i7);
 					int j19 = inStream.readUShort();
 
@@ -21066,7 +21067,7 @@ public class Client extends GameEngine implements RSClient {
 
 				case 34:
 					needDrawTabArea = true;
-					int i9 = inStream.readUShort();
+					int i9 = inStream.readInt();
 					if (handledPacket34(i9)) {
 						incomingPacket = -1;
 						return true;
