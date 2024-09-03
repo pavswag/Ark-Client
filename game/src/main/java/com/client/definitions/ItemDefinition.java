@@ -309,7 +309,7 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 break;
             case 33394:
                 itemDef.name = "Freedom Gloves";
-                itemDef.inventoryModel = 2649;
+                itemDef.inventoryModel = 60969;
                 itemDef.maleModel0 = 60896;
                 itemDef.femaleModel0 = 60897;
                 itemDef.zoom2d = ItemDefinition.lookup(2912).zoom2d;
@@ -324,7 +324,7 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 break;
             case 33393:
                 itemDef.name = "Freedom Boots";
-                itemDef.inventoryModel = 2837;
+                itemDef.inventoryModel = 60970;
                 itemDef.maleModel0 = 60893;
                 itemDef.femaleModel0 = 60894;
                 itemDef.zoom2d = ItemDefinition.lookup(2904).zoom2d;
