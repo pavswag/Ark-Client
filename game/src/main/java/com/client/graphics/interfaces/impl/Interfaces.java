@@ -5781,7 +5781,7 @@ public final class Interfaces extends RSInterface {
 			basex += 30;
 		}
 
-		int boxes1 = 200;
+		int boxes1 = 100;
 
 		RSInterface teleScroll = addTabInterface(teleScrollId);
 		teleScroll.scrollMax = 36 * boxes1;
