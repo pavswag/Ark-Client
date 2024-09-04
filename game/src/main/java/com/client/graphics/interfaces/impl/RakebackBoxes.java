@@ -18,11 +18,6 @@ public class RakebackBoxes extends RSInterface {
         addText(23727, "Box Rakeback", tda, 2, 0xff9933, true);
         addText(23728, "Current progress 5/12", tda, 2, 0xff9933, false);
         hoverButton(23729, dir, "Claim", 1, 2);
-        get(23729).buttonListener = (id) -> {
-            if(id == 23729) {
-                Client.instance.pushMessage("Clicked claim [23729]");
-            }
-        };
         addText(23730, "Claim", tda, 2, 0xff9933, false);
 
         addItemContainer(23732, 6, 9, 4, 4, true,
