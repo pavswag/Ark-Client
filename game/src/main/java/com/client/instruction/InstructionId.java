@@ -62,6 +62,10 @@ public enum InstructionId {
         @Override
         public VoidInstruction getInstruction() { return new SetWidgetWidth(); }
     },
+    RESET_ACHIEVEMENT_DATA(3350) {
+        @Override
+        public VoidInstruction getInstruction() { return new ResetAchievementData(); }
+    },
     SET_PET_MANAGEMENT_NPC(13_020) {
         @Override
         public VoidInstruction getInstruction() {
