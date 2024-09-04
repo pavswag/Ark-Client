@@ -5781,7 +5781,7 @@ public final class Interfaces extends RSInterface {
 			basex += 30;
 		}
 
-		int boxes1 = 60;
+		int boxes1 = 200;
 
 		RSInterface teleScroll = addTabInterface(teleScrollId);
 		teleScroll.scrollMax = 36 * boxes1;
@@ -5790,7 +5790,7 @@ public final class Interfaces extends RSInterface {
 
 		teleScroll.totalChildren(boxes1 * 6);
 
-		id = teleScrollId + 1;
+		id = 100_000;
 		frame = 0;
 		basex = 1;
 		basey = 0;
