@@ -42,6 +42,7 @@ public class LootViewer extends RSInterface {
         TOB_CHEST("TOB Chest", 8151),
         ARBOGRAVE("Arbo Swamp", 2400),
         SHADOW_CRUSADE("Shadow Crusade", 28416),
+        DAMNED_CHEST("Isle Of The Damned", 28421),
         VOTE_KEY("Vote Key", 22093),
         CRYSTAL_CHEST("Crystal Chest", 989),
         BRIMSTONE_KEY("Brimstone Key", Items.BRIMSTONE_KEY),
