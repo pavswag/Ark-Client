@@ -20006,7 +20006,7 @@ public class Client extends GameEngine implements RSClient {
 					return true;
 
 				case 7:
-					int componentId = inStream.readDWord();
+					int componentId = inStream.readInt();
 					byte spriteIndex = inStream.readSignedByte();
 					RSInterface component = interfaceCache.get(componentId);
 
@@ -20020,7 +20020,6 @@ public class Client extends GameEngine implements RSClient {
 							} else if (spriteIndex == 8) {
 								component.tooltip = "Opened";
 							}
-
 						}
 						if (componentId == 27563) {
 							component.sprite1 = imageLoader(spriteIndex, "selectloadout/sprite");
@@ -20030,7 +20029,7 @@ public class Client extends GameEngine implements RSClient {
 							component.sprite1 = imageLoader(spriteIndex, "selectloadout/sprite");
 							component.sprite2 = imageLoader(spriteIndex, "selectloadout/sprite");
 						}
-						if(componentId >= 66156 || componentId <= 67156) {
+						if(componentId >= 66156 && componentId <= 67156) {
 							component.sprite1 = imageLoader(spriteIndex, "staff_panel/sprite");
 							component.sprite2 = imageLoader(spriteIndex, "staff_panel/sprite");
 						}
