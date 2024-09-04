@@ -217,7 +217,7 @@ class StatusBarsOverlay extends Overlay
 
 		int clientWidth = client.getCanvasWidth();
 		int clientHeight = client.getCanvasHeight();
-		boolean longTabs = clientWidth >= 1000;
+		boolean longTabs = clientWidth >= 4000;
 
 		Viewport curViewport = Viewport.FIXED;
 		final Point offsetLeft = curViewport.getOffsetLeft();
@@ -225,8 +225,8 @@ class StatusBarsOverlay extends Overlay
 		boolean tabVis = client.getVarbitValue(TAB_VISIBLE.getId()) == 1;
 		Point location = new Point(client.isResized() ? (clientWidth - (longTabs ? (tabVis ? 225 : 20) : 214)) : 546, client.isResized() ? clientHeight - (longTabs ? 312 : 296) : 205);
 
-		int curWidth = !client.isResized() ? 190 : client.isResized() ? longTabs ? 1 : 191 : 8;
-		final int height = client.isResized() ? longTabs ?RESIZED_BOTTOM_HEIGHT : 252 : HEIGHT;
+		int curWidth = 190;
+		final int height = /*client.isResized() ? longTabs ?RESIZED_BOTTOM_HEIGHT : 252 :*/ HEIGHT;
 		final int offsetLeftBarX = (location.getX() - offsetLeft.getX());
 		final int offsetLeftBarY = (location.getY() - offsetLeft.getY());
 		final int offsetRightBarX = (location.getX() - offsetRight.getX()) + curWidth;
