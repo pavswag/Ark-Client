@@ -15,7 +15,7 @@ public class ResetAchievementData implements VoidInstruction {
         int name = 100_002;
         int progress = 100_003;
         int rewards = 100_004;
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 200; i++) {
             interfaceCache.get(name).message = "";
             interfaceCache.get(progress).message = "";
             Arrays.fill(interfaceCache.get(rewards).inventoryItemId, -1);
