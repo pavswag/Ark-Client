@@ -86,6 +86,11 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             npcDefinition.stats = toCopy.stats;
             npcDefinition.combatLevel = 5050;
         }
+        if (i == 13668) {
+            npcDefinition.walkAnim = 11474;
+            npcDefinition.walkLeftAnim = 11474;
+            npcDefinition.walkRightAnim = 11474;
+        }
         if(i==12780) {
             npcDefinition.name = "Mini-Me";
         }

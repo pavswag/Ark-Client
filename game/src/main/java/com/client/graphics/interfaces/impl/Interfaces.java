@@ -5727,9 +5727,9 @@ public final class Interfaces extends RSInterface {
 	}
 
 	public static void newAchievements(TextDrawingArea[] tda) {
-		int interfaceId = 54760;
-		int selectScrollId = 54785;
-		int teleScrollId = 54795;
+		int interfaceId = 54760+20000;
+		int selectScrollId = 54785+20000;
+		int teleScrollId = 54795+20000;
 		RSInterface tab = addInterface(interfaceId);
 		String dir = "Interfaces/achievement3/SPRITE";
 		int index = 1;
@@ -5781,7 +5781,7 @@ public final class Interfaces extends RSInterface {
 			basex += 30;
 		}
 
-		int boxes1 = 60;
+		int boxes1 = 70;
 
 		RSInterface teleScroll = addTabInterface(teleScrollId);
 		teleScroll.scrollMax = 36 * boxes1;
