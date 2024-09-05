@@ -2450,7 +2450,7 @@ public class Model extends Renderable implements RSModel {
                 }
             }
             if (gpu) {
-                System.out.println("GPU mode");
+//                System.out.println("GPU mode");
                 return;
             }
             if (this.renderPriorities == null) {

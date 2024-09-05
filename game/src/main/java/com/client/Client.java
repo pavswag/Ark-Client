@@ -14588,7 +14588,7 @@ public class Client extends GameEngine implements RSClient {
 													if (class9_1.parentID < 58040 || class9_1.parentID > 58048) {
 														if (itemSprite.width == 33 || class9_1.inventoryAmounts[i3] != 1) {
 															if (class9_1.id != 23121 || class9_1.id == 23121 && ((class9_1.inventoryItemId[i3] >> 15) & 0x1) == 0) {
-																if (class9_1.invAlwaysInfinity || class9_1.id == Interfaces.SHOP_CONTAINER && class9_1.inventoryAmounts[i3] == 1_000_000_000) {
+																if (class9_1.invAlwaysInfinity || class9_1.id == Interfaces.SHOP_CONTAINER && class9_1.inventoryAmounts[i3] == Integer.MAX_VALUE) {
 																	infinity.drawSprite(k5 + k6, j6 + j7);
 																} else {
 																	int k10 = class9_1.inventoryAmounts[i3];
