@@ -180,6 +180,7 @@ public final class Interfaces extends RSInterface {
 		LoadoutSelection.loadoutSelection(defaultTextDrawingAreas);
 		StaffPanel.staffPanel(defaultTextDrawingAreas);
 		EventManager.eventManager(defaultTextDrawingAreas);
+		RuinousPowers.ruinousPowers(defaultTextDrawingAreas);
 	}
 
 	private static void TreasureOverlayInterface(TextDrawingArea[] tda) {
