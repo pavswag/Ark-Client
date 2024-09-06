@@ -22,25 +22,21 @@ public class RuinousPowers extends RSInterface {
         for(int i = 0; i < 23; i++) {
             com.client.RuinousPowers ruinousPowers = com.client.RuinousPowers.values()[i];
             addRuinousPrayer(INTERFACE_ID + index, 0, 1610 + i, 60 + i, i, ruinousPowers.getDisplayName());
-            index += 2; // Increment by 2 for the ID gap
+            index += 2;
             addPrayerHover(tda, 1, INTERFACE_ID + index++, "Level " + (50 + i) + "\\n" + ruinousPowers.getEffect(), -135, -60);
         }
 
         index = 1;
         mainInterface.child(INTERFACE_ID + index++, 85, 241);
         mainInterface.child(INTERFACE_ID + index++, 65, 241);
-        //y = row * 40
-        //5 per row
-        //x gap = 35
         for (int i = 0; i < 23; i++) {
             int row = i / 5;
             int column = i % 5;
-
-            // Calculate the x and y positions
             int currentX = baseX + (column * 35);
             int currentY = baseY + (row * 40);
 
             mainInterface.child(INTERFACE_ID + index, currentX, currentY);
+            mainInterface.child(INTERFACE_ID + index + 1, currentX, currentY);
             index += 2;
             mainInterface.child(INTERFACE_ID + index++, currentX, currentY);
         }
@@ -50,7 +46,7 @@ public class RuinousPowers extends RSInterface {
                                  String prayerName) {
         RSInterface tab = addTabInterface(i);
         tab.id = i;
-        tab.parentID = 5608;
+        tab.parentID = getInterfaceId();
         tab.type = 5;
         tab.atActionType = 4;
         tab.contentType = 0;
@@ -73,7 +69,7 @@ public class RuinousPowers extends RSInterface {
         }
         RSInterface tab2 = addTabInterface(i + 1);
         tab2.id = i + 1;
-        tab2.parentID = 5608;
+        tab2.parentID = getInterfaceId();
         tab2.type = 5;
         tab2.atActionType = 0;
         tab2.contentType = 0;
