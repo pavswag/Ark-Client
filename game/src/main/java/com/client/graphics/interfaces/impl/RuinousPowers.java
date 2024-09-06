@@ -4,6 +4,9 @@ import com.client.Client;
 import com.client.TextDrawingArea;
 import com.client.graphics.interfaces.RSInterface;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.client.graphics.interfaces.impl.Interfaces.addPrayerHover;
 
 public class RuinousPowers extends RSInterface {
@@ -19,7 +22,7 @@ public class RuinousPowers extends RSInterface {
         addText(INTERFACE_ID + index++, "99/99", 0xFF981F, false, false, -1, tda, 1);
         addSprite(INTERFACE_ID + index++, 2, "interfaces/curses/DATA");
 
-        for(int i = 0; i < 23; i++) {
+        for(int i = 0; i < 24; i++) {
             com.client.RuinousPowers ruinousPowers = com.client.RuinousPowers.values()[i];
             addRuinousPrayer(INTERFACE_ID + index, 0, 1610 + i, 60 + i, i, ruinousPowers.getDisplayName());
             index += 2;
@@ -29,7 +32,8 @@ public class RuinousPowers extends RSInterface {
         index = 1;
         mainInterface.child(INTERFACE_ID + index++, 85, 241);
         mainInterface.child(INTERFACE_ID + index++, 65, 241);
-        for (int i = 0; i < 23; i++) {
+        int[] hoverChilds = new int[24];
+        for (int i = 0; i < 24; i++) {
             int row = i / 5;
             int column = i % 5;
             int currentX = baseX + (column * 35);
@@ -38,8 +42,17 @@ public class RuinousPowers extends RSInterface {
             mainInterface.child(INTERFACE_ID + index, currentX, currentY);
             mainInterface.child(INTERFACE_ID + index + 1, currentX, currentY);
             index += 2;
-            mainInterface.child(INTERFACE_ID + index++, currentX, currentY);
+            hoverChilds[i] = INTERFACE_ID + index++;
         }
+        for (int i = 0; i < 24; i++) {
+            int row = i / 5;
+            int column = i % 5;
+            int currentX = baseX + (column * 35);
+            int currentY = baseY + (row * 40);
+
+            mainInterface.child(hoverChilds[i], currentX, currentY);
+        }
+
     }
 
     public static void addRuinousPrayer(int i, int configId, int configFrame, int requiredValues, int spriteID,
