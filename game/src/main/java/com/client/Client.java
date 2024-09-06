@@ -4915,7 +4915,7 @@ public class Client extends GameEngine implements RSClient {
 				anIntArrayArray929[j1][k1] = anInt1265;
 			}
 			player.anInt1709 = getCenterHeight(plane, player.y, player.x);
-			scene.addAnimableA(plane, player.orientation, player.anInt1709, i1, player.y, 60, player.x, player,
+			scene.addAnimableA(plane, player.orientation, player.anInt1709, i1, player.y, (2 - 1) * 64 + 60, player.x, player,
 					player.dynamic);
 		}
 	}

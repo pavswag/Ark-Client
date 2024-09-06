@@ -89,7 +89,7 @@ public class StaffPanel extends RSInterface {
             interfaceCache.get(button).sprite2 = active;
             interfaceCache.get(button + 1).sprite2 = inactive;
             interfaceCache.get(button + 2).sprite2 = inactive;
-            interfaceCache.get(getInterfaceId()).children[9] = 67173;
+            interfaceCache.get(getInterfaceId()).children[12] = 67173;
         };
 
         hoverButton(interfaceId + index++, dir, "History", 7, 7);
@@ -112,7 +112,75 @@ public class StaffPanel extends RSInterface {
             interfaceCache.get(button).sprite2 = active;
             interfaceCache.get(button - 1).sprite2 = inactive;
             interfaceCache.get(button + 1).sprite2 = inactive;
-            interfaceCache.get(getInterfaceId()).children[9] = 68000;
+            interfaceCache.get(getInterfaceId()).children[12] = 68000;
+        };
+
+        hoverButton(interfaceId + index++, dir, "Misc.", 7, 7);
+        interfaceCache.get(interfaceId + index - 1).message = "Misc.";
+        interfaceCache.get(interfaceId + index - 1).textColor = RSInterfaceConstants.ORANGE;
+        interfaceCache.get(interfaceId + index - 1).secondaryColor = RSInterfaceConstants.ORANGE;
+        interfaceCache.get(interfaceId + index - 1).textDrawingAreas = tda[0];
+        interfaceCache.get(interfaceId + index - 1).centerText = true;
+        interfaceCache.get(interfaceId + index - 1).msgX = (interfaceCache.get(interfaceId + index - 1).width / 2);
+        interfaceCache.get(interfaceId + index - 1).msgY = (interfaceCache.get(interfaceId + index - 1).height / 2) + 4;
+        interfaceCache.get(interfaceId + index - 1).sprite1.advancedSprite = true;
+        interfaceCache.get(interfaceId + index - 1).buttonListener = (button) -> {
+            Sprite active = new Sprite(dir + " 8");
+            active.advancedSprite = true;
+            Sprite inactive = new Sprite(dir + " 7");
+            inactive.advancedSprite = true;
+            interfaceCache.get(button).sprite1 = active;
+            interfaceCache.get(button - 1).sprite1 = inactive;
+            interfaceCache.get(button - 2).sprite1 = inactive;
+            interfaceCache.get(button).sprite2 = active;
+            interfaceCache.get(button - 1).sprite2 = inactive;
+            interfaceCache.get(button - 2).sprite2 = inactive;
+        };
+
+        hoverButton(interfaceId + index++, dir, "Trolling", 7, 7);
+        interfaceCache.get(interfaceId + index - 1).message = "Trolling";
+        interfaceCache.get(interfaceId + index - 1).textColor = RSInterfaceConstants.ORANGE;
+        interfaceCache.get(interfaceId + index - 1).secondaryColor = RSInterfaceConstants.ORANGE;
+        interfaceCache.get(interfaceId + index - 1).textDrawingAreas = tda[0];
+        interfaceCache.get(interfaceId + index - 1).centerText = true;
+        interfaceCache.get(interfaceId + index - 1).msgX = (interfaceCache.get(interfaceId + index - 1).width / 2);
+        interfaceCache.get(interfaceId + index - 1).msgY = (interfaceCache.get(interfaceId + index - 1).height / 2) + 4;
+        interfaceCache.get(interfaceId + index - 1).sprite1.advancedSprite = true;
+        interfaceCache.get(interfaceId + index - 1).buttonListener = (button) -> {
+            Sprite active = new Sprite(dir + " 8");
+            active.advancedSprite = true;
+            Sprite inactive = new Sprite(dir + " 7");
+            inactive.advancedSprite = true;
+            interfaceCache.get(button).sprite1 = active;
+            interfaceCache.get(button + 1).sprite1 = inactive;
+            interfaceCache.get(button + 2).sprite1 = inactive;
+            interfaceCache.get(button).sprite2 = active;
+            interfaceCache.get(button + 1).sprite2 = inactive;
+            interfaceCache.get(button + 2).sprite2 = inactive;
+            interfaceCache.get(getInterfaceId()).children[13] = 79250;
+        };
+
+        hoverButton(interfaceId + index++, dir, "Punishments", 8, 8);
+        interfaceCache.get(interfaceId + index - 1).message = "Punishments";
+        interfaceCache.get(interfaceId + index - 1).textColor = RSInterfaceConstants.ORANGE;
+        interfaceCache.get(interfaceId + index - 1).secondaryColor = RSInterfaceConstants.ORANGE;
+        interfaceCache.get(interfaceId + index - 1).textDrawingAreas = tda[0];
+        interfaceCache.get(interfaceId + index - 1).centerText = true;
+        interfaceCache.get(interfaceId + index - 1).msgX = (interfaceCache.get(interfaceId + index - 1).width / 2);
+        interfaceCache.get(interfaceId + index - 1).msgY = (interfaceCache.get(interfaceId + index - 1).height / 2) + 4;
+        interfaceCache.get(interfaceId + index - 1).sprite1.advancedSprite = true;
+        interfaceCache.get(interfaceId + index - 1).buttonListener = (button) -> {
+            Sprite active = new Sprite(dir + " 8");
+            active.advancedSprite = true;
+            Sprite inactive = new Sprite(dir + " 7");
+            inactive.advancedSprite = true;
+            interfaceCache.get(button).sprite1 = active;
+            interfaceCache.get(button - 1).sprite1 = inactive;
+            interfaceCache.get(button + 1).sprite1 = inactive;
+            interfaceCache.get(button).sprite2 = active;
+            interfaceCache.get(button - 1).sprite2 = inactive;
+            interfaceCache.get(button + 1).sprite2 = inactive;
+            interfaceCache.get(getInterfaceId()).children[13] = 79250;
         };
 
         hoverButton(interfaceId + index++, dir, "Misc.", 7, 7);
@@ -223,13 +291,46 @@ public class StaffPanel extends RSInterface {
 
         mainInterface.child(childIdx++, interfaceId + index++, 223 + baseX, 40 + baseY); //overview button
         mainInterface.child(childIdx++, interfaceId + index++, 304 + baseX, 40 + baseY); //history button
-        mainInterface.child(childIdx++, interfaceId + index++, 384 + baseX, 40 + baseY); //misc button
+        mainInterface.child(childIdx++, interfaceId + index++, 384 + baseX, 40 + baseY); //top misc button
+
+        mainInterface.child(childIdx++, interfaceId + index++, 223 + baseX, 202 + baseY); //trolling button
+        mainInterface.child(childIdx++, interfaceId + index++, 304 + baseX, 202 + baseY); //punishment button
+        mainInterface.child(childIdx++, interfaceId + index++, 384 + baseX, 202 + baseY); //bottom misc button
 
         System.out.println("Placing player overview scroll at child index [" + childIdx + "]");
         mainInterface.child(childIdx++, 67173, 194 + baseX, 58 + baseY); //player overview scroll
+        mainInterface.child(childIdx++, 79250, 194 + baseX, 221 + baseY); //punishmentScroll scroll
 
 
         mainInterface.child(childIdx++, 22753, baseX + 485, baseY + 9); //close
+
+
+        RSInterface punishmentScroll = addInterface(79250);
+        punishmentScroll.width = 287;
+        punishmentScroll.height = 97;
+        punishmentScroll.scrollMax = 850;
+        int punishmentScrollChildIDx = 79251;
+
+
+        int x, y = 8;
+        for (int i = 0; i < 50; i++) {
+            x = (i % 2 == 0) ? 1 : 145;
+            if (i % 2 == 0 && i > 0) {
+                y += 30;
+            }
+
+            hoverButton(punishmentScrollChildIDx++, dir, "Mute", 6, 5);
+            interfaceCache.get(punishmentScrollChildIDx - 1).message = "Mute";
+            interfaceCache.get(punishmentScrollChildIDx - 1).textColor = RSInterfaceConstants.ORANGE;
+            interfaceCache.get(punishmentScrollChildIDx - 1).secondaryColor = RSInterfaceConstants.ORANGE;
+            interfaceCache.get(punishmentScrollChildIDx - 1).textDrawingAreas = tda[0];
+            interfaceCache.get(punishmentScrollChildIDx - 1).centerText = true;
+            interfaceCache.get(punishmentScrollChildIDx - 1).msgX = (interfaceCache.get(punishmentScrollChildIDx - 1).width / 2);
+            interfaceCache.get(punishmentScrollChildIDx - 1).msgY = (interfaceCache.get(punishmentScrollChildIDx - 1).height / 2) + 4;
+            interfaceCache.get(punishmentScrollChildIDx - 1).sprite1.advancedSprite = true;
+            punishmentScroll.child(punishmentScrollChildIDx - 1, x, y);
+        }
+
     }
 
     private static int getInterfaceId() {

@@ -99,9 +99,15 @@ public class RSInterface implements RSWidget {
 		CENTER, LEFT, RIGHT;
 	}
 	public static void printEmptyInterfaceSections() {
+		int highestKey = Integer.MIN_VALUE; // Initialize to the smallest possible integer value
+		for (int key : interfaceCache.keySet()) {
+			if (key > highestKey) {
+				highestKey = key;
+			}
+		}
 		int count = 0;
 		int start = 0;
-		for (int index = 0; index < interfaceCache.size(); index++) {
+		for (int index = 0; index < highestKey; index++) {
 			if (interfaceCache.get(index) == null) {
 				if (start == 0) {
 					start = index;
@@ -116,12 +122,6 @@ public class RSInterface implements RSWidget {
 				}
 				start = 0;
 				count = 0;
-			}
-		}
-		int highestKey = Integer.MIN_VALUE; // Initialize to the smallest possible integer value
-		for (int key : interfaceCache.keySet()) {
-			if (key > highestKey) {
-				highestKey = key;
 			}
 		}
 		System.out.println("Last interface ID = " + highestKey);
