@@ -19,7 +19,15 @@ public class RuinousPowers extends RSInterface {
         int INTERFACE_ID = getInterfaceId();
         RSInterface mainInterface = addTabInterface(INTERFACE_ID);
         int index = 1;
-        addText(INTERFACE_ID + index++, "99/99", 0xFF981F, false, false, -1, tda, 1);
+        addText(INTERFACE_ID + index++, "%1/%2", 0xFF981F, false, false, -1, tda, 1);
+        get(INTERFACE_ID + index - 1).scripts = new int[2][3];
+        get(INTERFACE_ID + index - 1).scripts[0][0] = 1;
+        get(INTERFACE_ID + index - 1).scripts[0][1] = 5;
+        get(INTERFACE_ID + index - 1).scripts[0][2] = 0;
+        get(INTERFACE_ID + index - 1).scripts[1][0] = 2;
+        get(INTERFACE_ID + index - 1).scripts[1][1] = 5;
+        get(INTERFACE_ID + index - 1).scripts[1][2] = 0;
+
         addSprite(INTERFACE_ID + index++, 2, "interfaces/curses/DATA");
 
         for(int i = 0; i < 25; i++) {
@@ -65,7 +73,7 @@ public class RuinousPowers extends RSInterface {
         tab.contentType = 0;
         tab.opacity = 0;
         tab.mOverInterToTrigger = -1;
-        tab.sprite1 = imageLoader(0, "PRAYERGLOW");
+        tab.sprite1 = imageLoader(5, "PRAYERGLOW");
         tab.sprite2 = imageLoader(1, "PRAYERGLOW");
         tab.width = 34;
         tab.height = 34;
@@ -90,8 +98,12 @@ public class RuinousPowers extends RSInterface {
         tab2.mOverInterToTrigger = -1;
         tab2.sprite1 = imageLoader(spriteID, "ruinous_prayer/PRAYON");
         tab2.sprite1.advancedSprite = true;
+        tab2.sprite1.xOffset = 2;
+        tab2.sprite1.yOffset = 2;
         tab2.sprite2 = imageLoader(spriteID, "ruinous_prayer/PRAYOFF");
         tab2.sprite2.advancedSprite = true;
+        tab2.sprite2.xOffset = 2;
+        tab2.sprite2.yOffset = 2;
         tab2.width = 34;
         tab2.height = 34;
         tab2.anIntArray245 = new int[1];
