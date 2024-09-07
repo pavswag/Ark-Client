@@ -89,9 +89,9 @@ public class RuinousPowers extends RSInterface {
         tab2.opacity = 0;
         tab2.mOverInterToTrigger = -1;
         tab2.sprite1 = imageLoader(spriteID, "ruinous_prayer/PRAYON");
-        tab.sprite1.advancedSprite = true;
+        tab2.sprite1.advancedSprite = true;
         tab2.sprite2 = imageLoader(spriteID, "ruinous_prayer/PRAYOFF");
-        tab.sprite2.advancedSprite = true;
+        tab2.sprite2.advancedSprite = true;
         tab2.width = 34;
         tab2.height = 34;
         tab2.anIntArray245 = new int[1];
