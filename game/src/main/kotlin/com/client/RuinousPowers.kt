@@ -24,7 +24,9 @@ enum class RuinousPowers(val level: Int, val displayName: String, val effect: St
     CRUOR_VOW(89, "Cruor's Vow", "Heals 3 Hitpoints and drains 3 Prayer points upon killing a target", 1.0 / 2.5),
     GLACIES_VOW(90, "Glacies' Vow", "Attacks drain 5% of the opponent's Magic, up to 15% of their base level", 1.0 / 2.5),
     WRATH(91, "Wrath", "Upon death, deals damage up to 25% of the player's base Prayer level to targets in a 5x5 radius", 1.0 / 12),
-    INTENSIFY(92, "Intensify", "+40% accuracy in all attack styles", 1.0 / 1.3);
+    INTENSIFY(92, "Intensify", "+40% accuracy in all attack styles", 1.0 / 1.3),
+    CCENTUIN_VOW(92, "Centuion Vow", "Does some good stuff", 1.0 / 1.3),
+    ;
 
     companion object {
         fun getByLevel(level: Int): List<RuinousPowers> {

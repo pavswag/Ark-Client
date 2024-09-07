@@ -22,7 +22,7 @@ public class RuinousPowers extends RSInterface {
         addText(INTERFACE_ID + index++, "99/99", 0xFF981F, false, false, -1, tda, 1);
         addSprite(INTERFACE_ID + index++, 2, "interfaces/curses/DATA");
 
-        for(int i = 0; i < 24; i++) {
+        for(int i = 0; i < 25; i++) {
             com.client.RuinousPowers ruinousPowers = com.client.RuinousPowers.values()[i];
             addRuinousPrayer(INTERFACE_ID + index, 0, 1610 + i, 60 + i, i, ruinousPowers.getDisplayName());
             index += 2;
@@ -32,8 +32,8 @@ public class RuinousPowers extends RSInterface {
         index = 1;
         mainInterface.child(INTERFACE_ID + index++, 85, 241);
         mainInterface.child(INTERFACE_ID + index++, 65, 241);
-        int[] hoverChilds = new int[24];
-        for (int i = 0; i < 24; i++) {
+        int[] hoverChilds = new int[25];
+        for (int i = 0; i < 25; i++) {
             int row = i / 5;
             int column = i % 5;
             int currentX = baseX + (column * 35);
@@ -44,7 +44,7 @@ public class RuinousPowers extends RSInterface {
             index += 2;
             hoverChilds[i] = INTERFACE_ID + index++;
         }
-        for (int i = 0; i < 24; i++) {
+        for (int i = 0; i < 25; i++) {
             int row = i / 5;
             int column = i % 5;
             int currentX = baseX + (column * 35);
@@ -89,7 +89,9 @@ public class RuinousPowers extends RSInterface {
         tab2.opacity = 0;
         tab2.mOverInterToTrigger = -1;
         tab2.sprite1 = imageLoader(spriteID, "ruinous_prayer/PRAYON");
+        tab.sprite1.advancedSprite = true;
         tab2.sprite2 = imageLoader(spriteID, "ruinous_prayer/PRAYOFF");
+        tab.sprite2.advancedSprite = true;
         tab2.width = 34;
         tab2.height = 34;
         tab2.anIntArray245 = new int[1];
