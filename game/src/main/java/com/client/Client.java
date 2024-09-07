@@ -12700,11 +12700,11 @@ public class Client extends GameEngine implements RSClient {
 					}
 					if(headIcons == null) {
 						headIcons = Sprite.generateImages(spriteIds.headIconArchive, 0);
-						System.out.println("Found [" + headIcons.length + "] headIcons");
+						System.out.println("Found [" + headIcons.length + "] headIcons from group [" + spriteIds.headIconArchive + "]");
 					}
 					if(skullIcons == null) {
 						skullIcons = Sprite.generateImages(spriteIds.headIconsPk, 0);
-						System.out.println("Found [" + headIcons.length + "] skullIcons");
+						System.out.println("Found [" + skullIcons.length + "] headIcons from group [" + spriteIds.headIconsPk + "]");
 					}
 					for (int i = 0; i < minimapIcons.length; i++) {
 						minimapIcons[i] = new Sprite("Mapicons/ICON " + i);
