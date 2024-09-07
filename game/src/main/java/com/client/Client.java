@@ -3330,7 +3330,7 @@ public class Client extends GameEngine implements RSClient {
 							}
 							if (player.headIcon < 18) {
 								headIcons[player.headIcon].drawSprite(spriteDrawX - 12, spriteDrawY - l);
-								l += 18;
+								l += 25;
 							}
 						}
 					}
@@ -12698,6 +12698,14 @@ public class Client extends GameEngine implements RSClient {
 							headIconsHint[h1] = new Sprite(streamLoader_2, "headicons_hint", h1);
 					} catch (Exception _ex) {
 					}
+					if(headIcons == null) {
+						headIcons = Sprite.generateImages(spriteIds.headIconArchive, 0);
+						System.out.println("Found [" + headIcons.length + "] headIcons");
+					}
+					if(skullIcons == null) {
+						skullIcons = Sprite.generateImages(spriteIds.headIconsPk, 0);
+						System.out.println("Found [" + headIcons.length + "] skullIcons");
+					}
 					try {
 						for (int j4 = 0; j4 < 18; j4++)
 							headIcons[j4] = new Sprite(streamLoader_2, "headicons_prayer", j4);
@@ -21712,8 +21720,6 @@ public class Client extends GameEngine implements RSClient {
 		friendsList = new String[200];
 		inStream = Buffer.create();
 		expectedCRCs = new int[9];
-		headIcons = new Sprite[20];
-		skullIcons = new Sprite[20];
 		headIconsHint = new Sprite[20];
 		tabAreaAltered = false;
 		aString1121 = "";
