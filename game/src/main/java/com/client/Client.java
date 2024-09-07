@@ -3324,11 +3324,11 @@ public class Client extends GameEngine implements RSClient {
 					if (player.headIcon >= 0) {
 						npcScreenPos(entity, entity.defaultHeight + 15);
 						if (spriteDrawX > -1) {
-							if (player.skullIcon < 2) {
+							if (player.skullIcon < skullIcons.length) {
 								skullIcons[player.skullIcon].drawSprite(spriteDrawX - 12, spriteDrawY - l);
 								l += 25;
 							}
-							if (player.headIcon < 18) {
+							if (player.headIcon < headIcons.length) {
 								headIcons[player.headIcon].drawSprite(spriteDrawX - 12, spriteDrawY - l);
 								l += 25;
 							}
@@ -12705,13 +12705,6 @@ public class Client extends GameEngine implements RSClient {
 					if(skullIcons == null) {
 						skullIcons = Sprite.generateImages(spriteIds.headIconsPk, 0);
 						System.out.println("Found [" + headIcons.length + "] skullIcons");
-					}
-					try {
-						for (int j4 = 0; j4 < 18; j4++)
-							headIcons[j4] = new Sprite(streamLoader_2, "headicons_prayer", j4);
-						for (int j45 = 0; j45 < 3; j45++)
-							skullIcons[j45] = new Sprite(streamLoader_2, "headicons_pk", j45);
-					} catch (Exception _ex) {
 					}
 					for (int i = 0; i < minimapIcons.length; i++) {
 						minimapIcons[i] = new Sprite("Mapicons/ICON " + i);
