@@ -4728,7 +4728,7 @@ public class Client extends GameEngine implements RSClient {
 		for (int j = 0; j < 7; j++) {
 			myAppearance[j] = -1;
 			for (int k = 0; k < IdentityKit.length; k++) {
-				if (IdentityKit.lookup(k).validStyle || IdentityKit.lookup(k).bodyPartId != j + (aBoolean1047 ? 0 : 7))
+				if (IdentityKit.lookup(k).nonSelectable || IdentityKit.lookup(k).bodypartID != j + (aBoolean1047 ? 0 : 7))
 					continue;
 				myAppearance[j] = k;
 				break;
@@ -4978,7 +4978,7 @@ public class Client extends GameEngine implements RSClient {
 						i2 = IdentityKit.length - 1;
 					if (j1 == 1 && ++i2 >= IdentityKit.length)
 						i2 = 0;
-				} while (IdentityKit.lookup(i2).validStyle || IdentityKit.lookup(i2).bodyPartId != k + (aBoolean1047 ? 0 : 7));
+				} while (IdentityKit.lookup(i2).nonSelectable || IdentityKit.lookup(i2).bodypartID != k + (aBoolean1047 ? 0 : 7));
 				myAppearance[k] = i2;
 				aBoolean1031 = true;
 			}

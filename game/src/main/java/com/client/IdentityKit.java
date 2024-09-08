@@ -23,8 +23,8 @@ public final class IdentityKit extends DualNode {
 			hasCached = new IdentityKit();
 			if (data != null) {
 				hasCached.readValues(new Buffer(data));
-				hasCached.originalColors[0] = (short) 55232;
-				hasCached.replacementColors[0] = 6798;
+				hasCached.recolorFrom[0] = (short) 55232;
+				hasCached.recolorTo[0] = 6798;
 			}
 
 			cached.put(hasCached, id);
@@ -38,34 +38,34 @@ public final class IdentityKit extends DualNode {
 			if (opcode == 0)
 				return;
 			if (opcode == 1)
-				bodyPartId = buffer.readUnsignedByte();
+				bodypartID = buffer.readUnsignedByte();
 			else if (opcode == 2) {
 				int j = buffer.readUnsignedByte();
-				bodyModels = new int[j];
+				models2 = new int[j];
 				for (int k = 0; k < j; k++)
-					bodyModels[k] = buffer.readUShort();
+					models2[k] = buffer.readUShort();
 			} else if (opcode == 3) {
-				validStyle = true;
+				nonSelectable = true;
 			} else if (opcode == 40) {
 				int length = buffer.readUnsignedByte();
-				originalColors = new short[length];
-				replacementColors = new short[length];
+				recolorFrom = new short[length];
+				recolorTo = new short[length];
 
 				for (int index = 0; index < length; ++index) {
-					originalColors[index] = (short) buffer.readShort();
-					replacementColors[index] = (short) buffer.readShort();
+					recolorFrom[index] = (short) buffer.readShort();
+					recolorTo[index] = (short) buffer.readShort();
 				}
 			} else if (opcode == 41) {
 				int length = buffer.readUnsignedByte();
-				retextureToFind = new short[length];
-				retextureToReplace = new short[length];
+				retextureFrom = new short[length];
+				retextureTo = new short[length];
 
 				for (int index = 0; index < length; ++index) {
-					retextureToFind[index] = (short) buffer.readShort();
-					retextureToReplace[index] = (short) buffer.readShort();
+					retextureFrom[index] = (short) buffer.readShort();
+					retextureTo[index] = (short) buffer.readShort();
 				}
 			} else if (opcode >= 60 && opcode < 70) {
-				headModels[opcode - 60] = buffer.readUShort();
+				models[opcode - 60] = buffer.readUShort();
 			} else {
 				System.out.println("Error unrecognised config code: " + opcode);
 			}
@@ -73,36 +73,36 @@ public final class IdentityKit extends DualNode {
 	}
 
 	public boolean method537() {
-		if (bodyModels == null)
+		if (models2 == null)
 			return true;
 		boolean flag = true;
-		for (int j = 0; j < bodyModels.length; j++)
-			if (!Model.isCached(bodyModels[j]))
+		for (int j = 0; j < models2.length; j++)
+			if (!Model.isCached(models2[j]))
 				flag = false;
 
 		return flag;
 	}
 
 	public Model method538() {
-		if (bodyModels == null)
+		if (models2 == null)
 			return null;
-		Model aclass30_sub2_sub4_sub6s[] = new Model[bodyModels.length];
-		for (int i = 0; i < bodyModels.length; i++)
-			aclass30_sub2_sub4_sub6s[i] = Model.getModel(bodyModels[i]);
+		Model aclass30_sub2_sub4_sub6s[] = new Model[models2.length];
+		for (int i = 0; i < models2.length; i++)
+			aclass30_sub2_sub4_sub6s[i] = Model.getModel(models2[i]);
 
 		Model model;
 		if (aclass30_sub2_sub4_sub6s.length == 1)
 			model = aclass30_sub2_sub4_sub6s[0];
 		else
 			model = new Model(aclass30_sub2_sub4_sub6s.length, aclass30_sub2_sub4_sub6s);
-		if(originalColors != null)
-		for (int j = 0; j < originalColors.length; j++) {
-			model.recolor(originalColors[j], replacementColors[j]);
+		if(recolorFrom != null)
+		for (int j = 0; j < recolorFrom.length; j++) {
+			model.recolor(recolorFrom[j], recolorTo[j]);
 		}
 
-		if(retextureToFind != null)
-		for (int j = 0; j < retextureToFind.length; j++) {
-			model.retexture(retextureToFind[j], retextureToReplace[j]);
+		if(retextureFrom != null)
+		for (int j = 0; j < retextureFrom.length; j++) {
+			model.retexture(retextureFrom[j], retextureTo[j]);
 		}
 
 		return model;
@@ -111,7 +111,7 @@ public final class IdentityKit extends DualNode {
 	public boolean method539() {
 		boolean flag1 = true;
 		for (int i = 0; i < 5; i++)
-			if (headModels[i] != -1 && !Model.isCached(headModels[i]))
+			if (models[i] != -1 && !Model.isCached(models[i]))
 				flag1 = false;
 
 		return flag1;
@@ -121,18 +121,18 @@ public final class IdentityKit extends DualNode {
 		Model aclass30_sub2_sub4_sub6s[] = new Model[5];
 		int j = 0;
 		for (int k = 0; k < 5; k++)
-			if (headModels[k] != -1)
+			if (models[k] != -1)
 				aclass30_sub2_sub4_sub6s[j++] = Model
-						.getModel(headModels[k]);
+						.getModel(models[k]);
 
 		Model model = new Model(j, aclass30_sub2_sub4_sub6s);
-		if(originalColors != null)
-			for (int l = 0; l < originalColors.length; l++) {
-				model.recolor(originalColors[l], replacementColors[l]);
+		if(recolorFrom != null)
+			for (int l = 0; l < recolorFrom.length; l++) {
+				model.recolor(recolorFrom[l], recolorTo[l]);
 			}
-		if(retextureToFind != null)
-		for (int l = 0; l < retextureToFind.length; l++) {
-			model.retexture(retextureToFind[l], retextureToReplace[l]);
+		if(retextureFrom != null)
+		for (int l = 0; l < retextureFrom.length; l++) {
+			model.retexture(retextureFrom[l], retextureTo[l]);
 		}
 
 
@@ -140,22 +140,22 @@ public final class IdentityKit extends DualNode {
 	}
 
 	private IdentityKit() {
-		bodyPartId = -1;
-		validStyle = false;
+		bodypartID = -1;
+		nonSelectable = false;
 
 		// these aren't set when loading osrs idk
-		originalColors = new short[6];
-		replacementColors = new short[6];
+		recolorFrom = new short[6];
+		recolorTo = new short[6];
 	}
 
 	public static int length;
 	public static IdentityKit cache[];
-	public int bodyPartId;
-	private int[] bodyModels;
-	private short[] originalColors;
-	private short[] replacementColors;
-	private short[] retextureToFind;
-	private short[] retextureToReplace;
-	private final int[] headModels = { -1, -1, -1, -1, -1 };
-	public boolean validStyle;
+	public int bodypartID;
+	private int[] models2;
+	private short[] recolorFrom;
+	private short[] recolorTo;
+	private short[] retextureFrom;
+	private short[] retextureTo;
+	private final int[] models = { -1, -1, -1, -1, -1 };
+	public boolean nonSelectable;
 }
