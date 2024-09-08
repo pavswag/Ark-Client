@@ -12434,7 +12434,7 @@ public class Client extends GameEngine implements RSClient {
 			}
 
 			minimapImage = new Sprite(512, 512);
-
+			Model.method3874(35);
 			drawLoadingText(5, "Starting game engine...");
 			Client.titleLoadingStage = 20;
 		} else if (Client.titleLoadingStage == 20) {

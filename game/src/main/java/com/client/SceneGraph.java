@@ -2657,7 +2657,7 @@ public final class SceneGraph implements RSScene {
     /**
      * Runelite
      */
-    private int drawDistance = 25;
+    private int drawDistance = 35;
 
     @Override
     public void addItem(int id, int quantity, WorldPoint point) {
@@ -2731,6 +2731,7 @@ public final class SceneGraph implements RSScene {
     @Override
     public void setDrawDistance(int drawDistance) {
         this.drawDistance = drawDistance;
+        Model.method3874(drawDistance);
     }
 
     @Override

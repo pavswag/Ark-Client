@@ -14,9 +14,7 @@ import com.client.definitions.skeletal.SkaFSet;
 import com.client.definitions.skeletal.TO;
 import com.client.engine.impl.MouseHandler;
 import com.client.js5.Js5List;
-import com.client.particle.Particle;
 import com.client.particle.ParticleAttachment;
-import com.client.particle.ParticleDefinition;
 import com.client.util.math.Matrix4f;
 import com.client.utilities.ObjectKeyUtil;
 import com.displee.cache.index.Index;
@@ -25,6 +23,7 @@ import net.runelite.api.Perspective;
 import net.runelite.api.model.Jarvis;
 import net.runelite.api.model.Triangle;
 import net.runelite.api.model.Vertex;
+import net.runelite.mapping.ObfuscatedName;
 import net.runelite.rs.api.RSFrames;
 import net.runelite.rs.api.RSModel;
 
@@ -946,7 +945,7 @@ public class Model extends Renderable implements RSModel {
             this.boundsType = 1;
             super.modelBaseY = 0;
             diagonal2DAboveOrigin = 0;
-            maxY = 0;
+            bottomY = 0;
             for (int vertex = 0; vertex < verticesCount; vertex++) {
                 final int x = verticesX[vertex];
                 final int y = verticesY[vertex];
@@ -954,8 +953,8 @@ public class Model extends Renderable implements RSModel {
                 if (-y > super.modelBaseY) {
                     super.modelBaseY = -y;
                 }
-                if (y > maxY) {
-                    maxY = y;
+                if (y > bottomY) {
+                    bottomY = y;
                 }
                 final int bounds = x * x + z * z;
                 if (bounds > diagonal2DAboveOrigin) {
@@ -965,7 +964,7 @@ public class Model extends Renderable implements RSModel {
 
             diagonal2DAboveOrigin = (int)(Math.sqrt(diagonal2DAboveOrigin) + 0.98999999999999999);
             diagonal3DAboveOrigin = (int)(Math.sqrt(diagonal2DAboveOrigin * diagonal2DAboveOrigin + super.modelBaseY * super.modelBaseY) + 0.98999999999999999);
-            diagonal3D = diagonal3DAboveOrigin + (int)(Math.sqrt(diagonal2DAboveOrigin * diagonal2DAboveOrigin + maxY * maxY) + 0.98999999999999999);
+            diagonal3D = diagonal3DAboveOrigin + (int)(Math.sqrt(diagonal2DAboveOrigin * diagonal2DAboveOrigin + bottomY * bottomY) + 0.98999999999999999);
         }
     }
 
@@ -992,26 +991,26 @@ public class Model extends Renderable implements RSModel {
 
     public void normalise() {
         super.modelBaseY = 0;
-        maxY = 0;
+        bottomY = 0;
         for (int vertex = 0; vertex < verticesCount; vertex++) {
             final int y = verticesY[vertex];
             if (-y > super.modelBaseY) {
                 super.modelBaseY = -y;
             }
-            if (y > maxY) {
-                maxY = y;
+            if (y > bottomY) {
+                bottomY = y;
             }
         }
 
         this.diagonal3DAboveOrigin = (int)(Math.sqrt(diagonal2DAboveOrigin * diagonal2DAboveOrigin + super.modelBaseY * super.modelBaseY) + 0.98999999999999999);
-        this.diagonal3D = diagonal3DAboveOrigin + (int)(Math.sqrt(diagonal2DAboveOrigin * diagonal2DAboveOrigin + maxY * maxY) + 0.98999999999999999);
+        this.diagonal3D = diagonal3DAboveOrigin + (int)(Math.sqrt(diagonal2DAboveOrigin * diagonal2DAboveOrigin + bottomY * bottomY) + 0.98999999999999999);
     }
 
     public void calculateBounds() {
         if (!this.isBoundsCalculated) {
             super.modelBaseY = 0;
             diagonal2DAboveOrigin = 0;
-            maxY = 0;
+            bottomY = 0;
             minX = 0xf423f;
             maxX = 0xfff0bdc1;
             maxZ = 0xfffe7961;
@@ -1036,8 +1035,8 @@ public class Model extends Renderable implements RSModel {
                 if (-y > super.modelBaseY) {
                     super.modelBaseY = -y;
                 }
-                if (y > maxY) {
-                    maxY = y;
+                if (y > bottomY) {
+                    bottomY = y;
                 }
                 final int bounds = x * x + z * z;
                 if (bounds > diagonal2DAboveOrigin) {
@@ -2082,9 +2081,9 @@ public class Model extends Renderable implements RSModel {
             int sine = SINE[orientation];
 
             for(int vert = 0; vert < this.verticesCount; ++vert) {
-                int x = Rasterizer3D.method4046(this.verticesX[vert], this.verticesZ[vert], cosine, sine);
+                int x = Rasterizer3D.method3549(this.verticesX[vert], this.verticesZ[vert], cosine, sine);
                 int y = this.verticesY[vert];
-                int z = Rasterizer3D.method4046(this.verticesX[vert], this.verticesZ[vert], cosine, sine);
+                int z = Rasterizer3D.method3352(this.verticesX[vert], this.verticesZ[vert], cosine, sine);
                 if (x < minX) {
                     minX = x;
                 }
@@ -2149,20 +2148,16 @@ public class Model extends Renderable implements RSModel {
     public int[] getTexIndices3() {
         return texturesZ;
     }
+    static boolean field2214 = true;
 
-    private int offX = 0;
-    private int offY = 0;
-    private int offZ = 0;
-    //Scene models
+    private static void method6489(long uid) {
+        hoveringObjects[objectsHovering++] = uid;
+    }
     @Override
     public final void renderAtPoint(int orientation, int pitchSine, int pitchCos, int yawSin, int yawCos, int offsetX, int offsetY, int offsetZ, long uid, int plane) {
         if (this.boundsType != 1) {
             this.calculateBoundsCylinder();
         }
-        lastRenderedRotation = orientation;
-        offX = offsetX + Client.instance.getCameraX();
-        offY = offsetX + Client.instance.getCameraY();
-        offZ = offsetX + Client.instance.getCameraZ();
         calculateBoundingBox(orientation);
         int sceneX = offsetZ * yawCos - offsetX * yawSin >> 16;
         int sceneY = offsetY * pitchSine + sceneX * pitchCos >> 16;
@@ -2183,7 +2178,7 @@ public class Model extends Renderable implements RSModel {
         int yRot = offsetY * pitchCos - sceneX * pitchSine >> 16;
         int dimensionCosY = diagonal2DAboveOrigin * pitchSine >> 16;
 
-        int var20 = (pitchCos * this.maxY >> 16) + dimensionCosY;
+        int var20 = (pitchCos * this.bottomY >> 16) + dimensionCosY;
         int objHeight = (yRot + var20) * Rasterizer3D.fieldOfView;
         if (objHeight / pos <= -Rasterizer2D.viewportCenterY)
             return;
@@ -2196,84 +2191,91 @@ public class Model extends Renderable implements RSModel {
         int size = dimensionSinY + (super.modelBaseY * pitchSine >> 16);
 
         boolean var25 = false;
-        boolean nearSight = false;
-        if (sceneY - size <= 50)
-            nearSight = true;
+        boolean nearSight = sceneY - size <= 50;
 
-        boolean inView = nearSight || this.texturesCount > 0;
+        boolean inView = nearSight || this.materials != null;
 
         boolean highlighted = false;
-
-
-        if (DEBUG_MODELS) {
-            int x = ObjectKeyUtil.getObjectX(uid);
-            int y = ObjectKeyUtil.getObjectY(uid);
-            int opcode = ObjectKeyUtil.getObjectOpcode(uid);
-            int id = ObjectKeyUtil.getObjectId(uid);
-
-            System.out.println("Render at Point , ID: "+id+" at "+x+", "+y+" = "+uid);
-        }
-
-        if (uid > 0 && mouseInViewport) { // var32 should replace (uid > 0) in osrs, but does not work for older maps (cox pillars "null" have menus, agility obstacles/levers don't)
-            if (DEBUG_MODELS) {
-                int x = ObjectKeyUtil.getObjectX(uid);
-                int y = ObjectKeyUtil.getObjectY(uid);
-                int opcode = ObjectKeyUtil.getObjectOpcode(uid);
-                int id = ObjectKeyUtil.getObjectId(uid);
-
-                System.out.println("Render at Point Hover, ID: "+id+" at "+x+", "+y+" = "+uid);
-            }
-
+        int var40;
+        int var41;
+        int var42;
+        int var52;
+        int var55;
+        int var56;
+        int var57;
+        int field2233 = 0, field2234 = 0, field1055 = 0, field1782 = 0, field2237 = 0, field78 = 0, field2244 = 0, field992 = 0, field410 = 0;
+        boolean var33 = uid > 0;
+        boolean var31 = mouseInViewport;
+        if (var33 && var31) {
             boolean withinBounds = false;
+            if (field2214) {
+                boolean var38 = mouseInViewport;
+                boolean var36;
+                if (!var38) {
+                    var36 = false;
+                } else {
+                    int var44;
+                    int var45;
+                    int var46;
+                    int var47;
+                    int var48;
+                    if (mouseInViewport) {
+                        byte var43 = 50;
+                        var44 = method3846();
+                        var45 = (cursorX - Rasterizer3D.getClipMidX()) * var43 / Rasterizer3D.get3dZoom();
+                        var46 = (cursorY - Rasterizer3D.getClipMidY()) * var43 / Rasterizer3D.get3dZoom();
+                        var47 = (cursorX - Rasterizer3D.getClipMidX()) * var44 / Rasterizer3D.get3dZoom();
+                        var48 = (cursorY - Rasterizer3D.getClipMidY()) * var44 / Rasterizer3D.get3dZoom();
+                        int var49 = method2285(var46, var43, pitchCos, pitchSine);
+                        var57 = method3247(var46, var43, pitchCos, pitchSine);
+                        var46 = var49;
+                        var49 = method2285(var48, var44, pitchCos, pitchSine);
+                        int var50 = var44 * pitchCos - var48 * pitchSine >> 16;
+                        var48 = var49;
+                        var49 = method3183(var45, var57, yawCos, yawSin);
+                        var57 = method2382(var45, var57, yawCos, yawSin);
+                        var45 = var49;
+                        var49 = method3183(var47, var50, yawCos, yawSin);
+                        var44 = method2382(var47, var50, yawCos, yawSin);
+                        field2233 = (var49 + var45) / 2;
+                        field2234 = (var48 + var46) / 2;
+                        field1055 = (var57 + var44) / 2;
+                        field1782 = (var49 - var45) / 2;
+                        field2237 = (var48 - var46) / 2;
+                        field78 = (var44 - var57) / 2;
+                        field410 = Math.abs(field1782);
+                        field2244 = Math.abs(field2237);
+                        field992 = Math.abs(field78);
+                    }
 
-            byte distanceMin = 50;
-            short distanceMax = 3500;
-            int var43 = (cursorX - Rasterizer3D.originViewX) * distanceMin / Rasterizer3D.fieldOfView;
-            int var44 = (cursorY - Rasterizer3D.originViewY) * distanceMin / Rasterizer3D.fieldOfView;
-            int var45 = (cursorX - Rasterizer3D.originViewX) * distanceMax / Rasterizer3D.fieldOfView;
-            int var46 = (cursorY - Rasterizer3D.originViewY) * distanceMax / Rasterizer3D.fieldOfView;
-            int var47 = Rasterizer3D.method4045(var44, distanceMin, SceneGraph.camUpDownX, SceneGraph.camUpDownY);
-            int var53 = Rasterizer3D.method4046(var44, distanceMin, SceneGraph.camUpDownX, SceneGraph.camUpDownY);
-            var44 = var47;
-            var47 = Rasterizer3D.method4045(var46, distanceMax, SceneGraph.camUpDownX, SceneGraph.camUpDownY);
-            int var54 = Rasterizer3D.method4046(var46, distanceMax, SceneGraph.camUpDownX, SceneGraph.camUpDownY);
-            var46 = var47;
-            var47 = Rasterizer3D.method4025(var43, var53, SceneGraph.camLeftRightX, SceneGraph.camLeftRightY);
-            var53 = Rasterizer3D.method4044(var43, var53, SceneGraph.camLeftRightX, SceneGraph.camLeftRightY);
-            var43 = var47;
-            var47 = Rasterizer3D.method4025(var45, var54, SceneGraph.camLeftRightX, SceneGraph.camLeftRightY);
-            var54 = Rasterizer3D.method4044(var45, var54, SceneGraph.camLeftRightX, SceneGraph.camLeftRightY);
-            int ViewportMouse_field2588 = (var43 + var47) / 2;
-            int GZipDecompressor_field4821 = (var46 + var44) / 2;
-            int class340_field4138 = (var54 + var53) / 2;
-            int ViewportMouse_field2589 = (var47 - var43) / 2;
-            int ItemComposition_field2148 = (var46 - var44) / 2;
-            int User_field4308 = (var54 - var53) / 2;
-            int class421_field4607 = Math.abs(ViewportMouse_field2589);
-            int ViewportMouse_field2590 = Math.abs(ItemComposition_field2148);
-            int class136_field1612 = Math.abs(User_field4308);
+                    AABB var51 = (AABB)this.aabb.get(orientation);
+                    var40 = var51.xMid + offsetX;
+                    var41 = offsetY + var51.yMid;
+                    var42 = offsetZ + var51.zMid;
+                    var57 = var51.xMidOffset;
+                    var44 = var51.yMidOffset;
+                    var45 = var51.zMidOffset;
+                    var46 = field2233 - var40;
+                    var47 = field2234 - var41;
+                    var48 = field1055 - var42;
+                    if (Math.abs(var46) > var57 + field410) {
+                        var36 = false;
+                    } else if (Math.abs(var47) > var44 + field2244) {
+                        var36 = false;
+                    } else if (Math.abs(var48) > var45 + field992) {
+                        var36 = false;
+                    } else if (Math.abs(var48 * field2237 - var47 * field78) > var44 * field992 + var45 * field2244) {
+                        var36 = false;
+                    } else if (Math.abs(var46 * field78 - var48 * field1782) > var45 * field410 + var57 * field992) {
+                        var36 = false;
+                    } else if (Math.abs(var47 * field1782 - var46 * field2237) > var57 * field2244 + var44 * field410) {
+                        var36 = false;
+                    } else {
+                        var36 = true;
+                    }
+                }
 
-            AABB var50 = (AABB)this.aabb.get(orientation);
-            int var37 = offsetX + var50.xMid;
-            int var38 = offsetY + var50.yMid;
-            int var39 = offsetZ + var50.zMid;
-            var43 = ViewportMouse_field2588 - var37;
-            var44 = GZipDecompressor_field4821 - var38;
-            var45 = class340_field4138 - var39;
-            if (Math.abs(var43) > var50.xMidOffset + class421_field4607) {
-                withinBounds = false;
-            } else if (Math.abs(var44) > var50.yMidOffset + ViewportMouse_field2590) {
-                withinBounds = false;
-            } else if (Math.abs(var45) > var50.zMidOffset + class136_field1612) {
-                withinBounds = false;
-            } else if (Math.abs(var45 * ItemComposition_field2148 - var44 * User_field4308) > var50.yMidOffset * class136_field1612 + var50.zMidOffset * ViewportMouse_field2590) {
-                withinBounds = false;
-            } else if (Math.abs(var43 * User_field4308 - var45 * ViewportMouse_field2589) > var50.zMidOffset * class421_field4607 + var50.xMidOffset * class136_field1612) {
-                withinBounds = false;
-            } else if (Math.abs(var44 * ViewportMouse_field2589 - var43 * ItemComposition_field2148) > var50.xMidOffset * ViewportMouse_field2590 + var50.yMidOffset * class421_field4607) {
-                withinBounds = false;
-            } else {
-                withinBounds = true;
+                withinBounds = var36;
             }
 
             if(plane < Client.instance.getPlane() && !IGNORE_HEIGHT_FIX.contains(ObjectKeyUtil.getObjectId(uid))) {
@@ -2341,6 +2343,38 @@ public class Model extends Renderable implements RSModel {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    static final int method2382(int var0, int var1, int var2, int var3) {
+        return var3 * var0 + var2 * var1 >> 16;
+    }
+
+    static final int method3183(int var0, int var1, int var2, int var3) {
+        return var0 * var2 - var3 * var1 >> 16;
+    }
+
+    static final int method3247(int var0, int var1, int var2, int var3) {
+        return var2 * var1 - var3 * var0 >> 16;
+    }
+
+    static final int method2285(int var0, int var1, int var2, int var3) {
+        return var0 * var2 + var3 * var1 >> 16;
+    }
+
+    static final int method3846() {
+        return field1964;
+    }
+
+    static int field1964 = 0;
+    @ObfuscatedName("aq")
+    static void method3852(int var0) {
+        field1964 = var0;
+    }
+
+    @ObfuscatedName("al")
+    static void method3874(int var0) {
+        int var1 = var0 * 210;
+        method3852(var1);
     }
 
     private boolean inBounds(int x, int y, int z, int screenX, int screenY, int screenZ, int size) {
@@ -2945,7 +2979,7 @@ public class Model extends Renderable implements RSModel {
     public int maxZ;
     public int minZ;
     public int diagonal2DAboveOrigin;
-    public int maxY;
+    public int bottomY;
     public int diagonal3D;
     public int diagonal3DAboveOrigin;
     public int itemDropHeight;
@@ -3009,13 +3043,13 @@ public class Model extends Renderable implements RSModel {
     public int uvBufferOffset;
 
     @Override
-    public List<net.runelite.api.model.Vertex> getVertices() {
+    public List<Vertex> getVertices() {
         int[] verticesX = getVerticesX();
         int[] verticesY = getVerticesY();
         int[] verticesZ = getVerticesZ();
-        ArrayList<net.runelite.api.model.Vertex> vertices = new ArrayList<>(getVerticesCount());
+        ArrayList<Vertex> vertices = new ArrayList<>(getVerticesCount());
         for (int i = 0; i < getVerticesCount(); i++) {
-            net.runelite.api.model.Vertex vertex = new net.runelite.api.model.Vertex(verticesX[i], verticesY[i], verticesZ[i]);
+            Vertex vertex = new Vertex(verticesX[i], verticesY[i], verticesZ[i]);
             vertices.add(vertex);
         }
         return vertices;
