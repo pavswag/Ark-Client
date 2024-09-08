@@ -1,8 +1,10 @@
 package com.client.graphics.interfaces.impl;
 
 import com.client.Client;
+import com.client.RSFont;
 import com.client.TextDrawingArea;
 import com.client.graphics.interfaces.RSInterface;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +36,8 @@ public class RuinousPowers extends RSInterface {
             com.client.RuinousPowers ruinousPowers = com.client.RuinousPowers.values()[i];
             addRuinousPrayer(INTERFACE_ID + index, 0, 1610 + i, 60 + i, i, ruinousPowers.getDisplayName());
             index += 2;
-            addPrayerHover(tda, 1, INTERFACE_ID + index++, "Level " + (50 + i) + "\\n" + ruinousPowers.getEffect(), -135, -60);
+            String[] effect = Client.instance.newRegularFont.wrap(ruinousPowers.getEffect(), Client.instance.newRegularFont.getTextWidth("place of run energy whilst running"));
+            addPrayerHover(tda, 1, INTERFACE_ID + index++, "Level " + (50 + i) + "\\n" + StringUtils.join(effect, "\\n"), -135, -60);
         }
 
         index = 1;

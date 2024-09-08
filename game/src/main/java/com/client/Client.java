@@ -20986,7 +20986,7 @@ public class Client extends GameEngine implements RSClient {
 					return true;
 
 				case 36:
-					int k8 = inStream.method434();
+					int k8 = inStream.readInt();
 					byte byte0 = inStream.readSignedByte();
 					Bank.onConfigChanged(k8, byte0);
 					EventCalendar.getCalendar().onConfigReceived(k8, byte0);

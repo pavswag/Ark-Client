@@ -6,7 +6,7 @@ enum class RuinousPowers(val level: Int, val displayName: String, val effect: St
     ANCIENT_SIGHT(62, "Ancient Sight", "+20% Ranged Attack & Strength", 1.0 / 2),
     ANCIENT_WILL(63, "Ancient Will", "+20% Magic Attack", 1.0 / 2),
     PROTECT_ITEM(65, "Protect Item", "Keep one extra item upon death", 1.0 / 2),
-    RUINOUS_GRACE(66, "Ruinous Grace", "Prayer points are drained in place of run energy whilst running", 1.0 / 36),
+    RUINOUS_GRACE(66, "Ruinous Grace", "Prayer points are drained in\\nplace of run energy whilst running", 1.0 / 36),
     DAMPEN_MAGIC(67, "Dampen Magic", "100% protection from magic attacks (40% in PvP), but increases damage taken by 10%", 1.0 / 2.5),
     DAMPEN_RANGED(69, "Dampen Ranged", "100% protection from ranged attacks (40% in PvP), but increases damage taken by 10%", 1.0 / 2.5),
     DAMPEN_MELEE(71, "Dampen Melee", "100% protection from melee attacks (40% in PvP), but increases damage taken by 10%", 1.0 / 2.5),
