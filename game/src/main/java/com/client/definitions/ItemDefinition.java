@@ -183,6 +183,9 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.name = "Wraith Essence";
                 itemDef.interfaceOptions = new String[] { "Inspect", null, null, null, "Drop" };
                 break;
+            case 84:
+                itemDef.name = "The Stick of Last Resort";
+                break;
             case 33437:
                 itemDef.name = "Prophet's Pillow Feather";
                 itemDef.interfaceOptions = new String[] { null, null, null, null, "Drop" };
