@@ -14280,6 +14280,10 @@ public class Client extends GameEngine implements RSClient {
 					int _y = (rsInterface.childY[childId] + yPosition)- (rsInterface.horizontalScroll ? 0 : scrollPosition);
 					RSInterface class9_1 = interfaceCache.get(rsInterface.children[childId]);
 
+					if(class9_1.onRender != null) {
+						class9_1.onRender.accept(class9_1);
+					}
+
 					_x += class9_1.anInt263;
 					_y += class9_1.anInt265;
 

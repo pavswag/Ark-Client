@@ -3015,6 +3015,35 @@ public class RSInterface implements RSWidget {
 		rsi.height = 334;
 		return rsi;
 	}
+	public Consumer<RSInterface> onRender;
+	public List<Integer> childrenToMove = new ArrayList<>();
+	public boolean expanded = false;
+	public static RSInterface addExpandableWidget(int id, int spriteId, int hoverId, String spriteName, String text) {
+		interfaceCache.put(id, new RSInterface());
+		RSInterface rsi = interfaceCache.get(id);
+		rsi.id = id;
+		rsi.parentID = id;
+		rsi.type = 70;
+		rsi.expanded = false;
+
+		rsi.sprite1 = imageLoader(spriteId, spriteName);
+		rsi.sprite2 = imageLoader(hoverId, spriteName);
+		rsi.width = rsi.sprite1.subWidth;
+		rsi.height = rsi.sprite1.subHeight;
+
+		rsi.msgX = (rsi.width / 2) - 25;
+		rsi.msgY = (rsi.height / 2) + 4;
+		rsi.message = text + " (+)";
+		rsi.onRender = (rsinterface) -> {
+			if(rsinterface.expanded) {
+				rsinterface.message = text + " (-)";
+			} else {
+				rsinterface.message = text + " (+)";
+			}
+		};
+		rsi.atActionType = 1;
+		return rsi;
+	}
 
 	public void offsetChildrenPositions(int x, int y) {
 		for (int i = 0; i < children.length; i++) {
@@ -3220,6 +3249,7 @@ public class RSInterface implements RSWidget {
 		RSinterface.children[frame] = ID;
 		RSinterface.childX[frame] = X;
 		RSinterface.childY[frame] = Y;
+
 		childEvents.add(new WidgetChildEvent(ID, X, Y));
 	}
 
@@ -3414,7 +3444,7 @@ public class RSInterface implements RSWidget {
 		rsi.totalChildren(1);
 		rsi.child(0, id + 1, 0, 0);
 	}
-
+	public int widgetChildIndex = -1;
 	public static void addText(int i, String s, int k, boolean l, boolean m, int a, TextDrawingArea[] TDA, int j) {
 		RSInterface RSInterface = addInterface(i);
 		RSInterface.parentID = i;

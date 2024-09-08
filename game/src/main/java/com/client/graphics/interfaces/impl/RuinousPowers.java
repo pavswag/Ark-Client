@@ -38,6 +38,11 @@ public class RuinousPowers extends RSInterface {
             index += 2;
             String[] effect = Client.instance.newRegularFont.wrap(ruinousPowers.getEffect(), Client.instance.newRegularFont.getTextWidth("place of run energy whilst running"));
             addPrayerHover(tda, 1, INTERFACE_ID + index++, "Level " + (50 + i) + "\\n" + StringUtils.join(effect, "\\n"), -135, -60);
+            if(ruinousPowers == com.client.RuinousPowers.CCENTUIN_VOW) {
+                get(INTERFACE_ID + index - 1).onRender = (child) -> {
+                    child.interfaceHidden = Client.localPlayer.centurion <= 0;
+                };
+            }
         }
 
         index = 1;
