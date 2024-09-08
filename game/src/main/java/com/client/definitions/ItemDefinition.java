@@ -196,6 +196,23 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.xOffset2d = ItemDefinition.lookup(10087).xOffset2d;
                 itemDef.yOffset2d = ItemDefinition.lookup(10087).yOffset2d;
                 break;
+            case 33440:
+                itemDef.maleModel0 = ItemDefinition.lookup(7441).maleModel0;
+                itemDef.femaleModel0 = ItemDefinition.lookup(7441).femaleModel0;
+                itemDef.inventoryModel = ItemDefinition.lookup(7441).inventoryModel;
+                itemDef.zoom2d = ItemDefinition.lookup(7441).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(7441).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(7441).yan2d;
+                itemDef.zan2d = ItemDefinition.lookup(7441).zan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(7441).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(7441).yOffset2d;
+                itemDef.interfaceOptions = ItemDefinition.lookup(7441).interfaceOptions;
+                itemDef.originalColours = ItemDefinition.lookup(7441).originalColours;
+                itemDef.modifiedColours = ItemDefinition.lookup(7441).modifiedColours;
+                itemDef.originalTextureColours = ItemDefinition.lookup(7441).originalTextureColours;
+                itemDef.modifiedTextureColours = ItemDefinition.lookup(7441).modifiedTextureColours;
+                itemDef.name = "<rank=35> BONK! <rank=35>";
+                break;
                 /*
             case 9610:
                 itemDef.name = "Instance Token";

@@ -27,28 +27,35 @@ public final class SpotAnimation extends DualNode {
 		}
 		return data;
 	}
+	private static SpotAnimation createCustomAnimation(int id, int modelId, int animationId, int resizeXY, int resizeZ, int rotation, int brightness, int shadow) {
+		SpotAnimation anim = new SpotAnimation();
+		anim.id = id;
+		anim.modelId = modelId;
+		anim.animationId = animationId;
+		anim.animationSequence = SequenceDefinition.get(animationId);
+		anim.resizeXY = resizeXY;
+		anim.resizeZ = resizeZ;
+		anim.rotation = rotation;
+		anim.modelBrightness = brightness;
+		anim.modelShadow = shadow;
+
+		// Optionally handle recoloring/retexturing
+		anim.recolorToFind = new int[]{0};
+		anim.recolorToReplace = new int[]{0};
+		anim.textureFind = new short[]{0};
+		anim.textureReplace = new short[]{0};
+
+		// Add to cache
+		cached.put(anim, id);
+		return anim;
+	}
 
 	public static void unpackConfig() {
-		SpotAnimation customAnim1 = new SpotAnimation();
-		customAnim1.id = 3000;  // Unique ID for this animation
-		customAnim1.modelId = 54291;  // ID of the model to use
-		customAnim1.animationId = 11491;  // ID of the associated animation sequence
-		customAnim1.animationSequence = SequenceDefinition.get(customAnim1.animationId); // Link the animation sequence
-		customAnim1.resizeXY = 128;  // Scaling factors
-		customAnim1.resizeZ = 128;
-		customAnim1.rotation = 0;  // Initial rotation
-		customAnim1.modelBrightness = 64;  // Brightness adjustment
-		customAnim1.modelShadow = 850;  // Shadow intensity
-
-		// Optionally apply recolors or retextures
-		customAnim1.recolorToFind = new int[]{0};  // Color to find in the model
-		customAnim1.recolorToReplace = new int[]{0};  // Replace with this color
-		customAnim1.textureFind = new short[]{0};  // Texture to find in the model
-		customAnim1.textureReplace = new short[]{0};  // Replace with this texture
-
-		// Add the custom animation to the cache
-		SpotAnimation.cached.put(customAnim1, customAnim1.id);
-
+		// Creating custom animations using the factory method
+		createCustomAnimation(3000, 54291, 11491, 128, 128, 0, 64, 850);
+		createCustomAnimation(3001, 60972, SpotAnimation.lookup(2852).animationId, SpotAnimation.lookup(2852).resizeXY, SpotAnimation.lookup(2852).resizeZ, SpotAnimation.lookup(2852).rotation, SpotAnimation.lookup(2852).modelBrightness, SpotAnimation.lookup(2852).modelShadow);
+		createCustomAnimation(3002, 60973, SpotAnimation.lookup(2855).animationId, SpotAnimation.lookup(2855).resizeXY, SpotAnimation.lookup(2855).resizeZ, SpotAnimation.lookup(2855).rotation, SpotAnimation.lookup(2855).modelBrightness, SpotAnimation.lookup(2855).modelShadow);
+		createCustomAnimation(3003, 60972, SpotAnimation.lookup(2850).animationId, SpotAnimation.lookup(2850).resizeXY, SpotAnimation.lookup(2850).resizeZ, SpotAnimation.lookup(2850).rotation, SpotAnimation.lookup(2850).modelBrightness, SpotAnimation.lookup(2850).modelShadow);
 	}
 
 	public short[] textureReplace;
