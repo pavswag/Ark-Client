@@ -2210,8 +2210,8 @@ public final class Rasterizer3D extends Rasterizer2D {
             anIntArray1469[j] = 0x10000 / j;
         }
         for (int k = 0; k < 2048; k++) {
-            SINE[k] = (int) (65536D * Math.sin((double) k * 0.0030679614999999999D));
-            COSINE[k] = (int) (65536D * Math.cos((double) k * 0.0030679614999999999D));
+            SINE[k] = (int) (65536D * Math.sin((double) k * 0.0030679615D));
+            COSINE[k] = (int) (65536D * Math.cos((double) k * 0.0030679615D));
         }
     }
 
@@ -2229,5 +2229,33 @@ public final class Rasterizer3D extends Rasterizer2D {
 
     public static final int method4046(int var0, int var1, int var2, int var3) {
         return var2 * var1 - var3 * var0 >> 16; // L: 2678
+    }
+
+    static final int method3549(int var0, int var1, int var2, int var3) {
+        return var0 * var2 + var3 * var1 >> 16;
+    }
+
+    public static int get3dZoom() {
+        return fieldOfView;
+    }
+
+    public static int getClipMidX() {
+        return Rasterizer2D.viewportCenterX;
+    }
+
+    public static int Rasterizer3D_clipMidX2() {
+        return -Rasterizer2D.viewportCenterX;
+    }
+
+    public static int Rasterizer3D_clipMidY2() {
+        return -Rasterizer2D.viewportCenterY;
+    }
+
+    public static int getClipMidY() {
+        return Rasterizer2D.viewportCenterY;
+    }
+
+    static final int method3352(int var0, int var1, int var2, int var3) {
+        return var2 * var1 - var3 * var0 >> 16;
     }
 }
