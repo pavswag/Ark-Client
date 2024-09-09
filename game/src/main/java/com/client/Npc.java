@@ -20,11 +20,16 @@ import java.awt.image.BufferedImage;
 import java.util.Iterator;
 
 public final class Npc extends Entity implements RSNPC {
+	public static int field1341 = 1;
 	public String displayName;
 	public int combatLevel;
 	public String[] actions;
 	private Player owner = null;
 	private Model getAnimatedModel() {
+		if(modelOverrides != null && modelOverrides.useLocalPlayer) {
+			Model model = Client.localPlayer.getRotatedModel();
+			return model;
+		}
 		if(definition != null && definition.id == 12780) {
 			if(owner == null) {
 				Actor interacting = getInteracting();
@@ -70,10 +75,10 @@ public final class Npc extends Entity implements RSNPC {
 			}
 			// double anim
 			if (primarySeq.isSkeletalAnimation() || (secondarySeq != null && secondarySeq.isSkeletalAnimation())) {
-				return definition.getAnimatedModelSkeletal(primarySeq, secondarySeq, primarySeqFrame, secondarySeqFrame);
+				return definition.getAnimatedModelSkeletal(primarySeq, secondarySeq, primarySeqFrame, secondarySeqFrame, modelOverrides);
 			}
 			return definition.getAnimatedModel(secondaryTransformID, primaryTransformID, SequenceDefinition.get(super.primarySeqID)
-					.getMasks());
+					.getMasks(), modelOverrides);
 		}
 
 		int transformID = -1;
@@ -84,10 +89,10 @@ public final class Npc extends Entity implements RSNPC {
 		}
 
 		if (secondarySeq != null && secondarySeq.isSkeletalAnimation()) {
-			return definition.getAnimatedModelSkeletal(primarySeq, secondarySeq, primarySeqFrame, secondarySeqFrame);
+			return definition.getAnimatedModelSkeletal(primarySeq, secondarySeq, primarySeqFrame, secondarySeqFrame, modelOverrides);
 		}
 
-		return definition.getAnimatedModel(-1, transformID, null);
+		return definition.getAnimatedModel(-1, transformID, null, modelOverrides);
 	}
 
 	int vmethod2708() {
@@ -688,4 +693,8 @@ public final class Npc extends Entity implements RSNPC {
 	public void updateEntityProperty() {
 		entityProperties.forEach(entityProperties1 -> entityProperties1.apply(this));
 	}
+
+
+	public NpcOverrides modelOverrides;
+	public NpcOverrides chatheadOverrides;
 }

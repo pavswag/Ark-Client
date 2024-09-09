@@ -251,9 +251,9 @@ public final class Player extends Entity implements RSPlayer {
 				}
 			}
 			if (primarySeq != null && primarySeq.isSkeletalAnimation()) {
-				return npcDefinition.getAnimatedModelSkeletal(primarySeq, null,  primarySeqFrame, secondarySeqFrame);
+				return npcDefinition.getAnimatedModelSkeletal(primarySeq, null,  primarySeqFrame, secondarySeqFrame, null);
 			}
-			return npcDefinition.getAnimatedModel(-1, current_frame, null);
+			return npcDefinition.getAnimatedModel(-1, current_frame, null, null);
 		}
 		long l = aLong1718;
 		int k = -1;

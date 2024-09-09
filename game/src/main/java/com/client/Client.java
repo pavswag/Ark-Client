@@ -9897,7 +9897,7 @@ public class Client extends GameEngine implements RSClient {
 				int k;
 				SequenceDefinition animation = SequenceDefinition.get(npcDisplay.standAnim);
 				k = animation.frameIDs[rsInterface.animationFrame];
-				Model model_2 = npcDisplay.getAnimatedModel(-1, k, null);
+				Model model_2 = npcDisplay.getAnimatedModel(-1, k, null, null);
 				model_2.scale2((int) 1.5);
 				rsInterface.animationCycle++;
 				if (rsInterface.animationFrame < animation.getFrameCount() && rsInterface.animationCycle > animation.getDuration(rsInterface.animationFrame)) {
@@ -11947,6 +11947,62 @@ public class Client extends GameEngine implements RSClient {
 				}
 				npc.addHealthBar(stream);
 			}
+			int modelCount;
+			int colorCount;
+			int textureCount;
+			short[] recoloredModels;
+			int[] modelIds;
+			short[] retexturedModels;
+			int modelId;
+			long overrideId;
+			boolean useLocalPlayer;
+			if ((l & 16384) != 0) {
+				int overrideFlags = stream.readUnsignedByte();
+				if ((overrideFlags & 1) == 1) {
+					npc.modelOverrides = null;
+				} else {
+					modelIds = null;
+					if ((overrideFlags & 2) == 2) {
+						modelCount = stream.readUnsignedByte();
+						modelIds = new int[modelCount];
+						for (int i = 0; i < modelCount; i++) {
+							modelId = stream.readShort();
+							modelId = modelId == 65535 ? -1 : modelId;
+							modelIds[i] = modelId;
+						}
+					}
+					recoloredModels = null;
+					if ((overrideFlags & 4) == 4) {
+						colorCount = 0;
+						if (npc.definition.modifiedColours != null) {
+							colorCount = npc.definition.modifiedColours.length;
+						}
+						recoloredModels = new short[colorCount];
+						for (int i = 0; i < colorCount; i++) {
+							recoloredModels[i] = (short)stream.readShort();
+						}
+					}
+					retexturedModels = null;
+					if ((overrideFlags & 8) == 8) {
+						textureCount = 0;
+						if (npc.definition.modifiedTextureColours != null) {
+							textureCount = npc.definition.modifiedTextureColours.length;
+						}
+						retexturedModels = new short[textureCount];
+						for (int i = 0; i < textureCount; i++) {
+							retexturedModels[i] = (short)stream.readShort();
+						}
+					}
+					useLocalPlayer = false;
+					if ((overrideFlags & 16) != 0) {
+						useLocalPlayer = stream.readUnsignedByte() == 1;
+					}
+
+					overrideId = (long)(++Npc.field1341 - 1);
+					npc.modelOverrides = new NpcOverrides(overrideId, modelIds, recoloredModels, retexturedModels, useLocalPlayer);
+				}
+			}
+
 			if ((l & 2) != 0) {
 				npc.hidden = stream.readUnsignedByte() == 1;
 				int entityProperties = stream.readByte();

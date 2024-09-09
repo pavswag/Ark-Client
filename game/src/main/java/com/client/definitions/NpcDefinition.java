@@ -1972,15 +1972,18 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
         return var3 == -1 ? null : lookup(var3);
     }
 
-    public Model getAnimatedModel(int j, int k, int ai[]) {
+    public Model getAnimatedModel(int j, int k, int ai[], NpcOverrides npcOverrides) {
         if (transforms != null) {
             NpcDefinition entityDef = method161();
             if (entityDef == null)
                 return null;
             else
-                return entityDef.getAnimatedModel(j, k, ai);
+                return entityDef.getAnimatedModel(j, k, ai, npcOverrides);
         }
         Model model = (Model) mruNodes.get(id);
+        int[] models = this.models;
+        if(npcOverrides != null && npcOverrides.modelIds != null)
+            models = npcOverrides.modelIds;
         if (model == null) {
             boolean flag = false;
             for (int i1 = 0; i1 < models.length; i1++)
@@ -1997,14 +2000,24 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
                 model = aclass30_sub2_sub4_sub6s[0];
             else
                 model = new Model(aclass30_sub2_sub4_sub6s.length, aclass30_sub2_sub4_sub6s);
-            if (originalColors != null) {
-                for (int k1 = 0; k1 < originalColors.length; k1++)
-                    model.recolor(originalColors[k1], modifiedColours[k1]);
 
+            if (originalColors != null) {
+                for (int k1 = 0; k1 < originalColors.length; k1++) {
+                    if(npcOverrides != null && npcOverrides.recolorTo != null) {
+                        model.recolor(originalColors[k1], npcOverrides.recolorTo[k1]);
+                    } else {
+                        model.recolor(originalColors[k1], modifiedColours[k1]);
+                    }
+                }
             }
             if (originalTextureColours != null) {
-                for (int i1 = 0; i1 < originalTextureColours.length; i1++)
-                    model.retexture(originalTextureColours[i1], modifiedTextureColours[i1]);
+                for (int i1 = 0; i1 < originalTextureColours.length; i1++) {
+                    if(npcOverrides != null && npcOverrides.retextureTo != null) {
+                        model.retexture(originalTextureColours[i1], npcOverrides.retextureTo[i1]);
+                    } else {
+                        model.retexture(originalTextureColours[i1], modifiedTextureColours[i1]);
+                    }
+                }
             }
             model.prepareSkeleton();
             model.light(64 + ambient, 850 + contrast, -30, -50, -30, true);
@@ -2027,16 +2040,19 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
         return model_1;
     }
 
-    public Model getAnimatedModelSkeletal(SequenceDefinition primary, SequenceDefinition secondary, int primaryTick, int secondaryTick) {
+    public Model getAnimatedModelSkeletal(SequenceDefinition primary, SequenceDefinition secondary, int primaryTick, int secondaryTick, NpcOverrides npcOverrides) {
         if (transforms != null) {
             NpcDefinition entityDef = method161();
             if (entityDef == null)
                 return null;
             else
-                return entityDef.getAnimatedModelSkeletal(primary, secondary, primaryTick, secondaryTick);
+                return entityDef.getAnimatedModelSkeletal(primary, secondary, primaryTick, secondaryTick, npcOverrides);
         }
         Model model = (Model) mruNodes.get(id);
         if (model == null) {
+            int[] models = this.models;
+            if(npcOverrides != null && npcOverrides.modelIds != null)
+                models = npcOverrides.modelIds;
             boolean flag = false;
             for (int i1 = 0; i1 < models.length; i1++)
                 if (!Model.isCached(models[i1]))
@@ -2053,13 +2069,22 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             else
                 model = new Model(aclass30_sub2_sub4_sub6s.length, aclass30_sub2_sub4_sub6s);
             if (originalColors != null) {
-                for (int k1 = 0; k1 < originalColors.length; k1++)
-                    model.recolor(originalColors[k1], modifiedColours[k1]);
-
+                for (int k1 = 0; k1 < originalColors.length; k1++) {
+                    if(npcOverrides != null && npcOverrides.recolorTo != null) {
+                        model.recolor(originalColors[k1], npcOverrides.recolorTo[k1]);
+                    } else {
+                        model.recolor(originalColors[k1], modifiedColours[k1]);
+                    }
+                }
             }
             if (originalTextureColours != null) {
-                for (int i1 = 0; i1 < originalTextureColours.length; i1++)
-                    model.retexture(originalTextureColours[i1], modifiedTextureColours[i1]);
+                for (int i1 = 0; i1 < originalTextureColours.length; i1++) {
+                    if(npcOverrides != null && npcOverrides.retextureTo != null) {
+                        model.retexture(originalTextureColours[i1], npcOverrides.retextureTo[i1]);
+                    } else {
+                        model.retexture(originalTextureColours[i1], modifiedTextureColours[i1]);
+                    }
+                }
             }
 
             if(id==12783) {
