@@ -35,12 +35,22 @@ public class RuinousPowers extends RSInterface {
         for(int i = 0; i < 25; i++) {
             com.client.RuinousPowers ruinousPowers = com.client.RuinousPowers.values()[i];
             addRuinousPrayer(INTERFACE_ID + index, 0, 1610 + i, 60 + i, i, ruinousPowers.getDisplayName());
+            if(ruinousPowers == com.client.RuinousPowers.CCENTUIN_VOW) {
+                get(INTERFACE_ID + index).onRender = (child) -> {
+                    child.interfaceHidden = Client.localPlayer.centurion >= 255;
+                };
+            }
+            if(ruinousPowers == com.client.RuinousPowers.CCENTUIN_VOW) {
+                get(INTERFACE_ID + index + 1).onRender = (child) -> {
+                    child.interfaceHidden = Client.localPlayer.centurion >= 255;
+                };
+            }
             index += 2;
             String[] effect = Client.instance.newRegularFont.wrap(ruinousPowers.getEffect(), Client.instance.newRegularFont.getTextWidth("place of run energy whilst running"));
             addPrayerHover(tda, 1, INTERFACE_ID + index++, "Level " + (50 + i) + "\\n" + StringUtils.join(effect, "\\n"), -135, -60);
             if(ruinousPowers == com.client.RuinousPowers.CCENTUIN_VOW) {
                 get(INTERFACE_ID + index - 1).onRender = (child) -> {
-                    child.interfaceHidden = Client.localPlayer.centurion <= 0;
+                    child.interfaceHidden = Client.localPlayer.centurion >= 255;
                 };
             }
         }

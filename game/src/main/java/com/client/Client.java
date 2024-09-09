@@ -2107,7 +2107,7 @@ public class Client extends GameEngine implements RSClient {
 				if (class9_1 == null) {
 					break;
 				}
-				if (class9_1.invisible) {
+				if (class9_1.invisible || class9_1.interfaceHidden) {
 					continue;
 				}
 				drawX += class9_1.anInt263;
