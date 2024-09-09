@@ -181,6 +181,7 @@ public final class Interfaces extends RSInterface {
 		StaffPanel.staffPanel(defaultTextDrawingAreas);
 		EventManager.eventManager(defaultTextDrawingAreas);
 		RuinousPowers.ruinousPowers(defaultTextDrawingAreas);
+		TeleportWidget.teleportWidget(defaultTextDrawingAreas);
 	}
 
 	private static void TreasureOverlayInterface(TextDrawingArea[] tda) {

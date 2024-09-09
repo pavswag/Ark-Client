@@ -3097,5 +3097,11 @@
   "3105": "ruinous_prayer/PRAYOFF 23",
   "3106": "ruinous_prayer/PRAYON 24",
   "3107": "ruinous_prayer/PRAYOFF 24",
-  "3108": "PRAYERGLOW 5"
+  "3108": "PRAYERGLOW 5",
+  "3109": "teleport_widget/sprite 0",
+  "3110": "teleport_widget/sprite 1",
+  "3111": "teleport_widget/sprite 2",
+  "3112": "teleport_widget/sprite 3",
+  "3113": "teleport_widget/sprite 4",
+  "3114": "teleport_widget/sprite 5"
 }
