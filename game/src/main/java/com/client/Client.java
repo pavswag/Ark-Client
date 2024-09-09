@@ -118,6 +118,7 @@ import net.runelite.api.events.*;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetID;
 import net.runelite.client.RuneLite;
+import net.runelite.client.events.ClientShutdown;
 import net.runelite.client.events.ProfileChanged;
 import net.runelite.http.api.feed.FeedItem;
 import net.runelite.http.api.feed.FeedItemType;
@@ -8141,6 +8142,7 @@ public class Client extends GameEngine implements RSClient {
 
 	@Override
 	public void cleanUpForQuit() {
+		callbacks.post(new ClientShutdown());
 		Signlink.reporterror = false;
 		try {
 			if (socketStream != null)
@@ -21614,6 +21616,7 @@ public class Client extends GameEngine implements RSClient {
 	private Sprite[] chatButtons;
 
 	public Client() {
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> cleanUpForQuit()));
 		setGameState(GameState.STARTING);
 		currentParticles = new ArrayList<>();
 		deadParticles = new ArrayList<>();
