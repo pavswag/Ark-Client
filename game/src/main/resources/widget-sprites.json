@@ -3103,5 +3103,8 @@
   "3111": "teleport_widget/sprite 2",
   "3112": "teleport_widget/sprite 3",
   "3113": "teleport_widget/sprite 4",
-  "3114": "teleport_widget/sprite 5"
+  "3114": "teleport_widget/sprite 5",
+  "3115": "sanity_progress/sprite 0",
+  "3116": "sanity_progress/sprite 1",
+  "3117": "sanity_progress/sprite 2"
 }
