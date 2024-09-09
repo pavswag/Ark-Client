@@ -968,15 +968,15 @@ public class Sprite extends Rasterizer2D implements RSSpritePixels {
 		}
 	}
 
-	private void method351(int i, int j, int ai[], int ai1[], int l, int i1, int j1, int k1, int l1) {
+	private void method351(int i, int j, int ai[], int ai1[], int l, int i1, int j1, int opacity, int l1) {
 		int k;// was parameter
-		int j2 = 256 - k1;
+		int j2 = 256 - opacity;
 		for (int k2 = -i1; k2 < 0; k2++) {
 			for (int l2 = -j; l2 < 0; l2++) {
 				k = ai1[i++];
 				if (k != 0) {
 					int i3 = ai[l1];
-					drawAlpha(ai, l1++, ((k & 0xff00ff) * k1 + (i3 & 0xff00ff) * j2 & 0xff00ff00) + ((k & 0xff00) * k1 + (i3 & 0xff00) * j2 & 0xff0000) >> 8, k1);
+					drawAlpha(ai, l1++, ((k & 0xff00ff) * opacity + (i3 & 0xff00ff) * j2 & 0xff00ff00) + ((k & 0xff00) * opacity + (i3 & 0xff00) * j2 & 0xff0000) >> 8, opacity);
 				} else {
 					l1++;
 				}

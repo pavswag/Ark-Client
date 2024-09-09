@@ -182,6 +182,7 @@ public final class Interfaces extends RSInterface {
 		EventManager.eventManager(defaultTextDrawingAreas);
 		RuinousPowers.ruinousPowers(defaultTextDrawingAreas);
 		TeleportWidget.teleportWidget(defaultTextDrawingAreas);
+		SanityProgressWidget.sanityProgress(defaultTextDrawingAreas);
 	}
 
 	private static void TreasureOverlayInterface(TextDrawingArea[] tda) {
