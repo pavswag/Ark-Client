@@ -196,7 +196,7 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.xOffset2d = ItemDefinition.lookup(10087).xOffset2d;
                 itemDef.yOffset2d = ItemDefinition.lookup(10087).yOffset2d;
                 break;
-            case 33440:
+            case 33441:
                 itemDef.maleModel0 = ItemDefinition.lookup(7441).maleModel0;
                 itemDef.femaleModel0 = ItemDefinition.lookup(7441).femaleModel0;
                 itemDef.inventoryModel = ItemDefinition.lookup(7441).inventoryModel;
@@ -904,6 +904,81 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.xOffset2d = ItemDefinition.lookup(7677).xOffset2d;
                 itemDef.yOffset2d = ItemDefinition.lookup(7677).yOffset2d;
                 itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Drop" };
+                break;
+            case 33438:
+                itemDef.name = "Masori Mask (B)";
+                itemDef.maleModel0 = 60975;
+                itemDef.femaleModel0 = 60975;
+                itemDef.inventoryModel = 60974;
+                itemDef.zoom2d = ItemDefinition.lookup(27235).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(27235).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(27235).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(27235).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(27235).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
+            case 33439:
+                itemDef.name = "Masori Body (B)";
+                itemDef.maleModel0 = 60977;
+                itemDef.femaleModel0 = 60977;
+                itemDef.inventoryModel = 60976;
+                itemDef.zoom2d = ItemDefinition.lookup(27238).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(27238).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(27238).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(27238).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(27238).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
+            case 33440:
+                itemDef.name = "Masori Chaps (B)";
+                itemDef.maleModel0 = 60979;
+                itemDef.femaleModel0 = 60979;
+                itemDef.inventoryModel = 60978;
+                itemDef.zoom2d = ItemDefinition.lookup(27241).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(27241).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(27241).yan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(27241).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(27241).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
+                break;
+            case 33442:
+                itemDef.name = "100% Thrills";
+                itemDef.maleModel0 = 60981;
+                itemDef.femaleModel0 = 60981;
+                itemDef.inventoryModel = 60980;
+                itemDef.zoom2d = ItemDefinition.lookup(29796).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(29796).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(29796).yan2d;
+                itemDef.zan2d = ItemDefinition.lookup(29796).zan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(29796).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(29796).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
+                break;
+            case 33443:
+                itemDef.name = "Wraith Shield";
+                itemDef.maleModel0 = 60983;
+                itemDef.femaleModel0 = 60983;
+                itemDef.inventoryModel = 60982;
+                itemDef.zoom2d = ItemDefinition.lookup(12817).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(12817).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(12817).yan2d;
+                itemDef.zan2d = ItemDefinition.lookup(12817).zan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(12817).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(12817).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
+                break;
+            case 33444:
+                itemDef.name = "Wraith Book";
+                itemDef.maleModel0 = 60985;
+                itemDef.femaleModel0 = 60985;
+                itemDef.inventoryModel = 60984;
+                itemDef.zoom2d = ItemDefinition.lookup(26551).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(26551).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(26551).yan2d;
+                itemDef.zan2d = ItemDefinition.lookup(26551).zan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(26551).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(26551).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
                 break;
         }
         return itemDef;
