@@ -1980,7 +1980,11 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             else
                 return entityDef.getAnimatedModel(j, k, ai, npcOverrides);
         }
-        Model model = (Model) mruNodes.get(id);
+        long var6 = id;
+        if (npcOverrides != null) {
+            var6 |= npcOverrides.field2558 << 16;
+        }
+        Model model = (Model) mruNodes.get(var6);
         int[] models = this.models;
         if(npcOverrides != null && npcOverrides.modelIds != null)
             models = npcOverrides.modelIds;
@@ -2004,6 +2008,7 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             if (originalColors != null) {
                 for (int k1 = 0; k1 < originalColors.length; k1++) {
                     if(npcOverrides != null && npcOverrides.recolorTo != null) {
+                        System.out.println("Recoloring from [" + originalColors[k1] + "] to [" + npcOverrides.recolorTo[k1] + "]");
                         model.recolor(originalColors[k1], npcOverrides.recolorTo[k1]);
                     } else {
                         model.recolor(originalColors[k1], modifiedColours[k1]);
@@ -2022,7 +2027,7 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             model.prepareSkeleton();
             model.light(64 + ambient, 850 + contrast, -30, -50, -30, true);
             // model.method479(84 + anInt85, 1000 + anInt92, -90, -580, -90, true);
-            mruNodes.put(model, id);
+            mruNodes.put(model, var6);
         }
         Model model_1 = Model.emptyModel;
         model_1.buildSharedSequenceModel(model, SeqFrame.noAnimationInProgress(k) & SeqFrame.noAnimationInProgress(j));
@@ -2048,7 +2053,11 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             else
                 return entityDef.getAnimatedModelSkeletal(primary, secondary, primaryTick, secondaryTick, npcOverrides);
         }
-        Model model = (Model) mruNodes.get(id);
+        long var6 = id;
+        if (npcOverrides != null) {
+            var6 |= npcOverrides.field2558 << 16;
+        }
+        Model model = (Model) mruNodes.get(var6);
         if (model == null) {
             int[] models = this.models;
             if(npcOverrides != null && npcOverrides.modelIds != null)
@@ -2071,6 +2080,7 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             if (originalColors != null) {
                 for (int k1 = 0; k1 < originalColors.length; k1++) {
                     if(npcOverrides != null && npcOverrides.recolorTo != null) {
+                        System.out.println("Recoloring from [" + originalColors[k1] + "] to [" + npcOverrides.recolorTo[k1] + "]");
                         model.recolor(originalColors[k1], npcOverrides.recolorTo[k1]);
                     } else {
                         model.recolor(originalColors[k1], modifiedColours[k1]);
@@ -2105,7 +2115,7 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             model.prepareSkeleton();
             model.light(64 + ambient, 850 + contrast, -30, -50, -30, true);
             // model.method479(84 + anInt85, 1000 + anInt92, -90, -580, -90, true);
-            mruNodes.put(model, id);
+            mruNodes.put(model, var6);
         }
         Model model_1 = Model.emptyModel;
         model_1.buildSharedSequenceModel(model, false);

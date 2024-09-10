@@ -11805,8 +11805,66 @@ public class Client extends GameEngine implements RSClient {
 		for (int j = 0; j < anInt893; j++) {
 			int k = anIntArray894[j];
 			Npc npc = npcs[k];
-			int l = stream.readUShort();
-			if((l & 0x100) != 0)
+			int updateMask = stream.readUShort();
+
+			int modelCount;
+			int colorCount;
+			int textureCount;
+			short[] recoloredModels;
+			int[] modelIds;
+			short[] retexturedModels;
+			int modelId;
+			long overrideId;
+			boolean useLocalPlayer;
+
+			if ((updateMask & 0x4000) != 0) {
+				int overrideFlags = stream.readUnsignedByte();
+				System.out.println("Found model override, flag=" + overrideFlags);
+				if ((overrideFlags & 1) == 1) {
+					npc.modelOverrides = null;
+				} else {
+					modelIds = null;
+					if ((overrideFlags & 2) == 2) {
+						modelCount = stream.readUnsignedByte();
+						modelIds = new int[modelCount];
+						for (int i = 0; i < modelCount; i++) {
+							modelId = stream.readShort();
+							modelId = modelId == 65535 ? -1 : modelId;
+							modelIds[i] = modelId;
+						}
+					}
+					recoloredModels = null;
+					if ((overrideFlags & 4) == 4) {
+						colorCount = 0;
+						if (npc.definition.modifiedColours != null) {
+							colorCount = npc.definition.modifiedColours.length;
+						}
+						recoloredModels = new short[colorCount];
+						for (int i = 0; i < colorCount; i++) {
+							recoloredModels[i] = (short)stream.readShort();
+						}
+					}
+					retexturedModels = null;
+					if ((overrideFlags & 8) == 8) {
+						textureCount = 0;
+						if (npc.definition.modifiedTextureColours != null) {
+							textureCount = npc.definition.modifiedTextureColours.length;
+						}
+						retexturedModels = new short[textureCount];
+						for (int i = 0; i < textureCount; i++) {
+							retexturedModels[i] = (short)stream.readShort();
+						}
+					}
+					useLocalPlayer = false;
+					if ((overrideFlags & 16) != 0) {
+						useLocalPlayer = stream.readUnsignedByte() == 1;
+					}
+
+					overrideId = (long)(++Npc.field1341 - 1);
+					npc.modelOverrides = new NpcOverrides(overrideId, modelIds, recoloredModels, retexturedModels, useLocalPlayer);
+				}
+			}
+			if((updateMask & 0x100) != 0)
 			{
 				npc.anInt1543 = stream.readUnsignedByte();
 				npc.anInt1545 = stream.readUnsignedByte();
@@ -11817,7 +11875,7 @@ public class Client extends GameEngine implements RSClient {
 				npc.forceMovementDirection = stream.readUnsignedByte();
 				npc.method446();
 			}
-			if ((l & 0x10) != 0) {
+			if ((updateMask & 0x10) != 0) {
 				int i1 = stream.method434();
 				if (i1 == 65535)
 					i1 = -1;
@@ -11845,7 +11903,7 @@ public class Client extends GameEngine implements RSClient {
 				animationChanged.setActor(npc);
 				callbacks.post(animationChanged);
 			}
-			if ((l & 0x80) != 0) {
+			if ((updateMask & 0x80) != 0) {
 				int graphicsReceived = stream.readUShort();
 				for(int i = 0; i < graphicsReceived; i++) {
 					npc.graphicId = stream.readUShort();
@@ -11861,13 +11919,13 @@ public class Client extends GameEngine implements RSClient {
 					npc.createSpotAnim(npc.graphicId, npc.graphicId, npc.graphicHeight, (k1 & 0xffff));
 				}
 			}
-			if ((l & 0x20) != 0) {
+			if ((updateMask & 0x20) != 0) {
 				npc.interactingEntity = stream.readUShort();
 				if (npc.interactingEntity == 65535)
 					npc.interactingEntity = -1;
 				callbacks.post(new InteractingChanged(npc, npc.getInteracting()));
 			}
-			if ((l & 1) != 0) {
+			if ((updateMask & 1) != 0) {
 				String s = stream.readString();
 				int j2 = -1;
 				if (s.startsWith("yellow:")) {
@@ -11913,7 +11971,7 @@ public class Client extends GameEngine implements RSClient {
 				npc.textSpoken = s;
 				npc.textCycle = 150;
 			}
-			if ((l & 0x40) != 0) {
+			if ((updateMask & 0x40) != 0) {
 				int damage = stream.readInt();
 				int type = stream.readByte();
 				int damage2 = stream.readInt();
@@ -11947,63 +12005,8 @@ public class Client extends GameEngine implements RSClient {
 				}
 				npc.addHealthBar(stream);
 			}
-			int modelCount;
-			int colorCount;
-			int textureCount;
-			short[] recoloredModels;
-			int[] modelIds;
-			short[] retexturedModels;
-			int modelId;
-			long overrideId;
-			boolean useLocalPlayer;
-			if ((l & 16384) != 0) {
-				int overrideFlags = stream.readUnsignedByte();
-				if ((overrideFlags & 1) == 1) {
-					npc.modelOverrides = null;
-				} else {
-					modelIds = null;
-					if ((overrideFlags & 2) == 2) {
-						modelCount = stream.readUnsignedByte();
-						modelIds = new int[modelCount];
-						for (int i = 0; i < modelCount; i++) {
-							modelId = stream.readShort();
-							modelId = modelId == 65535 ? -1 : modelId;
-							modelIds[i] = modelId;
-						}
-					}
-					recoloredModels = null;
-					if ((overrideFlags & 4) == 4) {
-						colorCount = 0;
-						if (npc.definition.modifiedColours != null) {
-							colorCount = npc.definition.modifiedColours.length;
-						}
-						recoloredModels = new short[colorCount];
-						for (int i = 0; i < colorCount; i++) {
-							recoloredModels[i] = (short)stream.readShort();
-						}
-					}
-					retexturedModels = null;
-					if ((overrideFlags & 8) == 8) {
-						textureCount = 0;
-						if (npc.definition.modifiedTextureColours != null) {
-							textureCount = npc.definition.modifiedTextureColours.length;
-						}
-						retexturedModels = new short[textureCount];
-						for (int i = 0; i < textureCount; i++) {
-							retexturedModels[i] = (short)stream.readShort();
-						}
-					}
-					useLocalPlayer = false;
-					if ((overrideFlags & 16) != 0) {
-						useLocalPlayer = stream.readUnsignedByte() == 1;
-					}
 
-					overrideId = (long)(++Npc.field1341 - 1);
-					npc.modelOverrides = new NpcOverrides(overrideId, modelIds, recoloredModels, retexturedModels, useLocalPlayer);
-				}
-			}
-
-			if ((l & 2) != 0) {
+			if ((updateMask & 2) != 0) {
 				npc.hidden = stream.readUnsignedByte() == 1;
 				int entityProperties = stream.readByte();
 				if(entityProperties > 0) {
@@ -12025,7 +12028,7 @@ public class Client extends GameEngine implements RSClient {
 				npc.turn90CCWAnimIndex = npc.definition.walkRightAnim;
 				npc.seqStandID = npc.definition.standAnim;
 			}
-			if ((l & 4) != 0) {
+			if ((updateMask & 4) != 0) {
 				npc.anInt1538 = stream.method434();
 				npc.anInt1539 = stream.method434();
 			}

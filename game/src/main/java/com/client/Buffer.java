@@ -209,16 +209,7 @@ public final class Buffer extends Cacheable implements RSBuffer {
         return baseVal + lastVal;
     }
 
-    public int readShort() {
-        pos += 2;
-        int value = ((payload[pos - 2] & 0xff) << 8)
-                + (payload[pos - 1] & 0xff);
 
-        if (value > 32767) {
-            value -= 0x10000;
-        }
-        return value;
-    }
 
     public String readNewString() {
         int i = pos;
@@ -412,7 +403,16 @@ public final class Buffer extends Cacheable implements RSBuffer {
                 + ((payload[pos - 2] & 0xff) << 8)
                 + (payload[pos - 1] & 0xff);
     }
+    public int readShort() {
+        pos += 2;
+        int value = ((payload[pos - 2] & 0xff) << 8)
+                + (payload[pos - 1] & 0xff);
 
+        if (value > 32767) {
+            value -= 0x10000;
+        }
+        return value;
+    }
 
     public int readUShort() {
         pos += 2;
