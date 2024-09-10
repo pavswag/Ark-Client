@@ -954,6 +954,32 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.yOffset2d = ItemDefinition.lookup(29796).yOffset2d;
                 itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
                 break;
+            case 33443:
+                itemDef.name = "Wraith Shield";
+                itemDef.maleModel0 = 60983;
+                itemDef.femaleModel0 = 60983;
+                itemDef.inventoryModel = 60982;
+                itemDef.zoom2d = ItemDefinition.lookup(12817).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(12817).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(12817).yan2d;
+                itemDef.zan2d = ItemDefinition.lookup(12817).zan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(12817).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(12817).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
+                break;
+            case 33444:
+                itemDef.name = "Wraith Book";
+                itemDef.maleModel0 = 60985;
+                itemDef.femaleModel0 = 60985;
+                itemDef.inventoryModel = 60984;
+                itemDef.zoom2d = ItemDefinition.lookup(26551).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(26551).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(26551).yan2d;
+                itemDef.zan2d = ItemDefinition.lookup(26551).zan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(26551).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(26551).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
+                break;
         }
         return itemDef;
     }
