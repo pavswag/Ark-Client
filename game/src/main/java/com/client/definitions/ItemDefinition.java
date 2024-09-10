@@ -906,7 +906,7 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Drop" };
                 break;
             case 33438:
-                itemDef.name = "Masori Mask (B)";
+                itemDef.name = "Wraith Mask";
                 itemDef.maleModel0 = 60975;
                 itemDef.femaleModel0 = 60975;
                 itemDef.inventoryModel = 60974;
@@ -918,7 +918,7 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 break;
             case 33439:
-                itemDef.name = "Masori Body (B)";
+                itemDef.name = "Wraith Body";
                 itemDef.maleModel0 = 60977;
                 itemDef.femaleModel0 = 60977;
                 itemDef.inventoryModel = 60976;
@@ -930,7 +930,7 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 break;
             case 33440:
-                itemDef.name = "Masori Chaps (B)";
+                itemDef.name = "Wraith legs";
                 itemDef.maleModel0 = 60979;
                 itemDef.femaleModel0 = 60979;
                 itemDef.inventoryModel = 60978;
@@ -978,6 +978,19 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.zan2d = ItemDefinition.lookup(26551).zan2d;
                 itemDef.xOffset2d = ItemDefinition.lookup(26551).xOffset2d;
                 itemDef.yOffset2d = ItemDefinition.lookup(26551).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
+                break;
+            case 33445:
+                itemDef.name = "Wraith Defender";
+                itemDef.maleModel0 = 60987;
+                itemDef.femaleModel0 = 60987;
+                itemDef.inventoryModel = 60986;
+                itemDef.zoom2d = ItemDefinition.lookup(27552).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(27552).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(27552).yan2d;
+                itemDef.zan2d = ItemDefinition.lookup(27552).zan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(27552).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(27552).yOffset2d;
                 itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
                 break;
         }
