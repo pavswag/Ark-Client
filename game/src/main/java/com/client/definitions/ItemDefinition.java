@@ -992,6 +992,20 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.yOffset2d = ItemDefinition.lookup(27552).yOffset2d;
                 itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
                 break;
+            case 33446:
+                itemDef.name = "ale of the scotty";
+                itemDef.maleModel0 = 60989;
+                itemDef.femaleModel0 = 60990;
+                itemDef.inventoryModel = 60988;
+                itemDef.zoom2d = ItemDefinition.lookup(20056).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(20056).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(20056).yan2d;
+                itemDef.zan2d = ItemDefinition.lookup(20056).zan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(20056).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(20056).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
+                break;
+
         }
         return itemDef;
     }
