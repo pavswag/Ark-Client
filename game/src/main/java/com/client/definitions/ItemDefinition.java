@@ -213,23 +213,22 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.modifiedTextureColours = ItemDefinition.lookup(7441).modifiedTextureColours;
                 itemDef.name = "<rank=35> BONK! <rank=35>";
                 break;
-                /*
-            case 9610:
-                itemDef.name = "Instance Token";
-                itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Drop" };
-                break;
+//            case 9610:
+//                itemDef.name = "Instance Token";
+//                itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Drop" };
+//                break;
             case 9612:
-                itemDef.name = "Instance Token";
+                itemDef.name = "Yama Instance Token";
                 itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Drop" };
                 break;
-            case 9620:
-                itemDef.name = "Instance Token";
-                itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Drop" };
-                break;
-            case 9624:
-                itemDef.name = "Instance Token";
-                itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Drop" };
-                break;*/
+//            case 9620:
+//                itemDef.name = "Instance Token";
+//                itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Drop" };
+//                break;
+//            case 9624:
+//                itemDef.name = "Instance Token";
+//                itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Drop" };
+//                break;
             case 33343:  //Ember helm
                 itemDef.zoom2d = 595;
                 itemDef.xan2d = 310;
