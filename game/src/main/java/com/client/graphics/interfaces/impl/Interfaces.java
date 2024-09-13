@@ -14,6 +14,7 @@ import com.client.graphics.interfaces.daily.DailyRewards;
 import com.client.graphics.interfaces.dropdown.KeybindingMenu;
 import com.client.graphics.interfaces.eventcalendar.EventCalendar;
 import com.client.graphics.interfaces.impl.castle_wars.LoadoutSelection;
+import com.client.graphics.interfaces.impl.pet_duel.PetDuelInterface;
 import com.client.graphics.interfaces.settings.SettingsInterface;
 
 import java.util.Random;
@@ -183,6 +184,7 @@ public final class Interfaces extends RSInterface {
 		RuinousPowers.ruinousPowers(defaultTextDrawingAreas);
 		TeleportWidget.teleportWidget(defaultTextDrawingAreas);
 		SanityProgressWidget.sanityProgress(defaultTextDrawingAreas);
+		PetDuelInterface.petDualInterface(defaultTextDrawingAreas);
 	}
 
 	private static void TreasureOverlayInterface(TextDrawingArea[] tda) {

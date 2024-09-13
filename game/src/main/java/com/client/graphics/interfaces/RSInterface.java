@@ -3015,6 +3015,18 @@ public class RSInterface implements RSWidget {
 		rsi.height = 334;
 		return rsi;
 	}
+	public static RSInterface addFullScreen(int id) {
+		if (interfaceCache.containsKey(id) && developerMode) {
+			//System.err.println("Overwriting interface id: " + id);
+		}
+		interfaceCache.put(id, new RSInterface());
+		RSInterface rsi = interfaceCache.get(id);
+		rsi.id = id;
+		rsi.parentID = id;
+		rsi.width = 2500;
+		rsi.height = 2500;
+		return rsi;
+	}
 	public Consumer<RSInterface> onRender;
 	public List<Integer> childrenToMove = new ArrayList<>();
 	public boolean expanded = false;
@@ -4043,7 +4055,24 @@ public class RSInterface implements RSWidget {
 
 		}
 	}
-	private void resizeArrays(int newSize) {
+
+	public void petDuelChild(int interID, int x, int y) {
+		if (children == null || childX == null || childY == null) {
+			children = new int[1];
+			childX = new int[1];
+			childY = new int[1];
+		}
+		int id = children.length;
+		resizeArrays(id + 1);
+		children[id] = interID;
+		childX[id] = x;
+		childY[id] = y;
+		get(interID).widgetChildIndex = id;
+		get(interID).setOriginalX(x);
+		get(interID).setOriginalY(y);
+	}
+
+	protected void resizeArrays(int newSize) {
 		int[] newChildren = new int[newSize];
 		int[] newChildX = new int[newSize];
 		int[] newChildY = new int[newSize];
@@ -4696,25 +4725,26 @@ public class RSInterface implements RSWidget {
 	public void setScrollHeight(int height) {
 
 	}
-
+	public int originalX;
 	@Override
 	public int getOriginalX() {
-		return 0;
+		return originalX;
 	}
 
 	@Override
 	public void setOriginalX(int originalX) {
-
+		this.originalX = originalX;
 	}
 
+	public int originalY;
 	@Override
 	public int getOriginalY() {
-		return 0;
+		return originalY;
 	}
 
 	@Override
 	public void setOriginalY(int originalY) {
-
+		this.originalY = originalY;
 	}
 
 	@Override
@@ -5604,6 +5634,7 @@ public class RSInterface implements RSWidget {
 	public int width;
 	public String tooltip;
 	public String selectedActionName;
+	public boolean drawTextFromLeft;
 	public boolean centerText;
 	public int scrollPosition;
 	public int plrJaw, gender;
@@ -5640,6 +5671,7 @@ public class RSInterface implements RSWidget {
 	public int inventoryItemId[];
 	public boolean allowInvDraggingToOtherContainers;
 	public boolean smallInvSprites;
+	public boolean smallFont;
 	public boolean hideInvStackSizes;
 	public boolean forceInvStackSizes;
 	public boolean invAutoScrollHeight;

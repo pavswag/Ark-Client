@@ -3106,5 +3106,11 @@
   "3114": "teleport_widget/sprite 5",
   "3115": "sanity_progress/sprite 0",
   "3116": "sanity_progress/sprite 1",
-  "3117": "sanity_progress/sprite 2"
+  "3117": "sanity_progress/sprite 2",
+  "3119": "pet_duel/sprite 0",
+  "3120": "pet_duel/sprite 1",
+  "3121": "pet_duel/sprite 2",
+  "3122": "pet_duel/sprite 3",
+  "3123": "pet_duel/sprite 4",
+  "3124": "pet_duel/sprite 5"
 }

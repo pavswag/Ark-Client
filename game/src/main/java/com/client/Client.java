@@ -4556,40 +4556,40 @@ public class Client extends GameEngine implements RSClient {
 		int k1 = (int) Math.sqrt(l * l + j1 * j1);
 		int l1 = (int) (Math.atan2(i1, k1) * 325.94900000000001D) & 0x7ff;
 		int i2 = (int) (Math.atan2(l, j1) * -325.94900000000001D) & 0x7ff;
-		if (l1 < 128)
-			l1 = 128;
+		if (l1 < 35)
+			l1 = 35;
 		if (l1 > 383)
 			l1 = 383;
-		if (yCameraCurve < l1) {
-			yCameraCurve += anInt998 + ((l1 - yCameraCurve) * anInt999) / 1000;
-			if (yCameraCurve > l1)
-				yCameraCurve = l1;
+		if (cameraPitch < l1) {
+			cameraPitch += anInt998 + ((l1 - cameraPitch) * anInt999) / 1000;
+			if (cameraPitch > l1)
+				cameraPitch = l1;
 		}
-		if (yCameraCurve > l1) {
-			yCameraCurve -= anInt998 + ((yCameraCurve - l1) * anInt999) / 1000;
-			if (yCameraCurve < l1)
-				yCameraCurve = l1;
+		if (cameraPitch > l1) {
+			cameraPitch -= anInt998 + ((cameraPitch - l1) * anInt999) / 1000;
+			if (cameraPitch < l1)
+				cameraPitch = l1;
 		}
-		int j2 = i2 - xCameraCurve;
+		int j2 = i2 - cameraYaw;
 		if (j2 > 1024)
 			j2 -= 2048;
 		if (j2 < -1024)
 			j2 += 2048;
 		if (j2 > 0) {
-			xCameraCurve += anInt998 + (j2 * anInt999) / 1000;
-			xCameraCurve &= 0x7ff;
+			cameraYaw += anInt998 + (j2 * anInt999) / 1000;
+			cameraYaw &= 0x7ff;
 		}
 		if (j2 < 0) {
-			xCameraCurve -= anInt998 + (-j2 * anInt999) / 1000;
-			xCameraCurve &= 0x7ff;
+			cameraYaw -= anInt998 + (-j2 * anInt999) / 1000;
+			cameraYaw &= 0x7ff;
 		}
-		int k2 = i2 - xCameraCurve;
+		int k2 = i2 - cameraYaw;
 		if (k2 > 1024)
 			k2 -= 2048;
 		if (k2 < -1024)
 			k2 += 2048;
 		if (k2 < 0 && j2 > 0 || k2 > 0 && j2 < 0)
-			xCameraCurve = i2;
+			cameraYaw = i2;
 	}
 	public void shiftMenuEntriesLeft() {
 		MenuEntry temp = getMenuManager().getMenuEntries()[menuActionRow];
@@ -4778,10 +4778,10 @@ public class Client extends GameEngine implements RSClient {
 		i -= this.xCameraPos;
 		i1 -= this.zCameraPos;
 		l -= this.yCameraPos;
-		int j1 = Model.SINE[this.yCameraCurve];
-		int k1 = Model.COSINE[this.yCameraCurve];
-		int l1 = Model.SINE[this.xCameraCurve];
-		int i2 = Model.COSINE[this.xCameraCurve];
+		int j1 = Model.SINE[this.cameraPitch];
+		int k1 = Model.COSINE[this.cameraPitch];
+		int l1 = Model.SINE[this.cameraYaw];
+		int i2 = Model.COSINE[this.cameraYaw];
 		int j2 = l * l1 + i * i2 >> 16;
 		l = l * i2 - i * l1 >> 16;
 		i = j2;
@@ -10836,32 +10836,35 @@ public class Client extends GameEngine implements RSClient {
 			buildBroadcasts();
 			anInt886 = 0;
 			anInt1315 = 0;
-
-			if (!isResized()) {
-				if (isFullscreenInterface(openInterfaceID)) {
-
-					if(!isResized()) {
-						buildInterfaceMenu(0, interfaceCache.get(openInterfaceID), MouseHandler_x, 0, MouseHandler_y - 4, 0);
-					} else {
-						buildInterfaceMenu((int) getOnScreenWidgetOffsets().getX(), interfaceCache.get(openInterfaceID), MouseHandler_x, (int) getOnScreenWidgetOffsets().getY(), MouseHandler_y, 0);
-					}
-				} else if (getMouseX() > 0 && getMouseY() > 0 && getMouseX() < 516 && getMouseY() < 343) {
-					if (openInterfaceID != -1) {
-						buildInterfaceMenu(0, interfaceCache.get(openInterfaceID), getMouseX(), 0, getMouseY(), 0);
-					} else {
-						build3dScreenMenu();
-					}
-				}
+			if(fullScreenWidget != -1) {
+				buildInterfaceMenu(0, interfaceCache.get(fullScreenWidget), MouseHandler_x, 0, MouseHandler_y - 4, 0);
 			} else {
-				if (checkMainScreenBounds()) {
-					int interfaceX = (canvasWidth / 2) - 256 - 99;
-					int interfaceY = (canvasHeight / 2) - 167 - 63;
-					if (openInterfaceID != -1 && openInterfaceID != 44900) {
-						buildInterfaceMenu(interfaceX, interfaceCache.get(openInterfaceID),
-								getMouseX(), interfaceY, getMouseY(), 0);
+				if (!isResized()) {
+					if (isFullscreenInterface(openInterfaceID)) {
+
+						if(!isResized()) {
+							buildInterfaceMenu(0, interfaceCache.get(openInterfaceID), MouseHandler_x, 0, MouseHandler_y - 4, 0);
+						} else {
+							buildInterfaceMenu((int) getOnScreenWidgetOffsets().getX(), interfaceCache.get(openInterfaceID), MouseHandler_x, (int) getOnScreenWidgetOffsets().getY(), MouseHandler_y, 0);
+						}
+					} else if (getMouseX() > 0 && getMouseY() > 0 && getMouseX() < 516 && getMouseY() < 343) {
+						if (openInterfaceID != -1) {
+							buildInterfaceMenu(0, interfaceCache.get(openInterfaceID), getMouseX(), 0, getMouseY(), 0);
+						} else {
+							build3dScreenMenu();
+						}
 					}
-					if (openInterfaceID == -1 || getMouseX() < interfaceX || getMouseY() < interfaceY || getMouseX() > interfaceX + 516 || getMouseY() > interfaceY + 338) {
-						build3dScreenMenu();
+				} else {
+					if (checkMainScreenBounds()) {
+						int interfaceX = (canvasWidth / 2) - 256 - 99;
+						int interfaceY = (canvasHeight / 2) - 167 - 63;
+						if (openInterfaceID != -1 && openInterfaceID != 44900) {
+							buildInterfaceMenu(interfaceX, interfaceCache.get(openInterfaceID),
+									getMouseX(), interfaceY, getMouseY(), 0);
+						}
+						if (openInterfaceID == -1 || getMouseX() < interfaceX || getMouseY() < interfaceY || getMouseX() > interfaceX + 516 || getMouseY() > interfaceY + 338) {
+							build3dScreenMenu();
+						}
 					}
 				}
 			}
@@ -14037,6 +14040,9 @@ public class Client extends GameEngine implements RSClient {
 					if (openInterfaceID != -1) {
 						processWidgetAnimations(tickDelta, openInterfaceID);
 					}
+					if(fullScreenWidget != -1) {
+						processWidgetAnimations(tickDelta, fullScreenWidget);
+					}
 				} catch(Exception ex) {
 
 				}
@@ -14097,7 +14103,7 @@ public class Client extends GameEngine implements RSClient {
 			}
 		}
 
-		if (backDialogID == -1) {
+		if (backDialogID == -1 && fullScreenWidget == -1) {
 			int scroller = chatAreaScrollLength - anInt1089 - 110;
 			if(scroller < 0) {
 				chatboxInterface.scrollPosition = 0;
@@ -14163,17 +14169,6 @@ public class Client extends GameEngine implements RSClient {
 				tickDelta = 0;
 				return;
 			}
-			String s;
-			if (itemSelected == 1 && menuActionRow < 2)
-				s = "Use " + selectedItemName + " with...";
-			else if (spellSelected == 1 && menuActionRow < 2)
-				s = spellTooltip + "...";
-			else
-				s =( menuManager.getMenuEntry(menuActionRow - 1).getTarget() == null ||  menuManager.getMenuEntry(menuActionRow - 1).getTarget().equalsIgnoreCase("null")) ? menuManager.getMenuEntry(menuActionRow - 1).getOption() : menuManager.getMenuEntry(menuActionRow - 1).getOption() + " " + menuManager.getMenuEntry(menuActionRow - 1).getTarget();
-
-			//if (s != null && !s.contains("Walk here") && !menuOpen)
-			//	drawHoverBox(MouseHandler.mouseX+10, MouseHandler.mouseY-10, s);
-
 
 			if(getUserSettings().isInventoryContextMenu()) {
 				drawHintMenu(getUserSettings().getStartMenuColor());
@@ -14181,7 +14176,7 @@ public class Client extends GameEngine implements RSClient {
 		}
 
 
-		//ObjectSound.updateObjectSounds(plane, localPlayer.x, localPlayer.y, tickDelta); // L:
+		//ObjectSound.updateObjectSounds(plane, localPlayer.x, localPlayer.y, tickDelta);
 		tickDelta = 0;
 	}
 
@@ -14321,6 +14316,10 @@ public class Client extends GameEngine implements RSClient {
 			//if (rsInterface.id <= 24507)
 			if (!inheritDrawingArea) {
 				Rasterizer2D.setDrawingArea(yPosition + rsInterface.height, xPosition, xPosition + rsInterface.width, yPosition);
+			}
+
+			if(rsInterface.onRender != null) {
+				rsInterface.onRender.accept(rsInterface);
 			}
 			int childCount = rsInterface.children.length;
 			for (int childId = 0; childId < childCount; childId++) {
@@ -14851,9 +14850,11 @@ public class Client extends GameEngine implements RSClient {
 									font.drawInterfaceText(s1, _x, l6,
 											class9_1.width, 0,i4, class9_1.textShadow ? 0 : -1, 255, 1, 0, 0);
 								} else {
-									if (class9_1.type == RSInterface.TYPE_TEXT_DRAW_FROM_LEFT) {
+									if (class9_1.type == RSInterface.TYPE_TEXT_DRAW_FROM_LEFT || class9_1.drawTextFromLeft) {
 										int width = font.getTextWidth(s1);
 										font.drawBasicString(s1, _x - width, l6, i4, class9_1.textShadow ? 0 : -1);
+									} else if(class9_1.smallFont) {
+										smallText.method389(class9_1.centerText, _x, i4, s1, l6);
 									} else if (class9_1.centerText) {
 										font.drawCenteredString(s1, _x + class9_1.width / 2, l6, i4, class9_1.textShadow ? 0 : -1);
 									} else {
@@ -16299,7 +16300,7 @@ public class Client extends GameEngine implements RSClient {
 
 			aTextDrawingArea_1271.method385(0xffff00,
 					"Camera Position: X: " + xCameraPos + ", Y: " + yCameraPos + ", Z: " + zCameraPos, 167, 5);
-			aTextDrawingArea_1271.method385(0xffff00, "Camera Curve: X: " + xCameraCurve + ", Y: " + yCameraCurve, 181,
+			aTextDrawingArea_1271.method385(0xffff00, "Camera Curve: X: " + cameraYaw + ", Y: " + cameraPitch, 181,
 					5);
 			y = 181;
 			y += 15;
@@ -16638,7 +16639,7 @@ public class Client extends GameEngine implements RSClient {
 
 	private int method120() {
 		int j = 3;
-		if (yCameraCurve < 310 || isRemoveRoofs(localPlayer)) {
+		if (cameraPitch < 310 || isRemoveRoofs(localPlayer)) {
 			int k = getXCameraPosShift();
 			int l = getYCameraPosShift();
 			int i1 = localPlayer.x >> 7;
@@ -17702,10 +17703,10 @@ public class Client extends GameEngine implements RSClient {
 		i -= this.xCameraPos;
 		i1 -= this.zCameraPos;
 		l -= this.yCameraPos;
-		int j1 = Model.SINE[this.yCameraCurve];
-		int k1 = Model.COSINE[this.yCameraCurve];
-		int l1 = Model.SINE[this.xCameraCurve];
-		int i2 = Model.COSINE[this.xCameraCurve];
+		int j1 = Model.SINE[this.cameraPitch];
+		int k1 = Model.COSINE[this.cameraPitch];
+		int l1 = Model.SINE[this.cameraYaw];
+		int i2 = Model.COSINE[this.cameraYaw];
 		int j2 = l * l1 + i * i2 >> 16;
 		l = l * i2 - i * l1 >> 16;
 		i = j2;
@@ -19555,8 +19556,8 @@ public class Client extends GameEngine implements RSClient {
 		xCameraPos = l - j2;
 		zCameraPos = i1 - k2;
 		yCameraPos = k1 - l2;
-		yCameraCurve = k;
-		xCameraCurve = j1;
+		cameraPitch = k;
+		cameraYaw = j1;
 		onCameraPitchChanged(k);
 	}
 
@@ -20915,12 +20916,12 @@ public class Client extends GameEngine implements RSClient {
 						int k25 = i20 - zCameraPos;
 						int j28 = k14 - yCameraPos;
 						int i30 = (int) Math.sqrt(l22 * l22 + j28 * j28);
-						yCameraCurve = (int) (Math.atan2(k25, i30) * 325.94900000000001D) & 0x7ff;
-						xCameraCurve = (int) (Math.atan2(l22, j28) * -325.94900000000001D) & 0x7ff;
-						if (yCameraCurve < 128)
-							yCameraCurve = 128;
-						if (yCameraCurve > 383)
-							yCameraCurve = 383;
+						cameraPitch = (int) (Math.atan2(k25, i30) * 325.94900000000001D) & 0x7ff;
+						cameraYaw = (int) (Math.atan2(l22, j28) * -325.94900000000001D) & 0x7ff;
+						if (cameraPitch < 35)
+							cameraPitch = 35;
+						if (cameraPitch > 383)
+							cameraPitch = 383;
 					}
 					incomingPacket = -1;
 					return true;
@@ -21564,16 +21565,31 @@ public class Client extends GameEngine implements RSClient {
 			j = method120();
 		else
 			j = method121();
+		variousSettings[30000] = 1;
+		if(variousSettings[30000] != 0) {
+			switch (variousSettings[30000]) {
+				case 1:
+					xCameraPos = 6418;
+					yCameraPos = -1478;
+					zCameraPos = 7091;
+					cameraPitch = 158;
+					cameraYaw = 1350;
+					cameraZoom = 690;
+				break;
+				case 2:
 
+				break;
+			}
+		}
 		int l = xCameraPos;
 		int i1 = zCameraPos;
 		int j1 = yCameraPos;
-		int k1 = yCameraCurve;
-		int l1 = xCameraCurve;
+		int k1 = cameraPitch;
+		int l1 = cameraYaw;
 
 		for (int i2 = 0; i2 < 5; i2++) {
 			if (aBooleanArray876[i2]) {
-				int j2 = (int) ((Math.random() * (aintIntTest[i2] * 2 + 1) - aintIntTest[i2])
+				int j2 = (int) (((aintIntTest[i2] * 2 + 1) - aintIntTest[i2])
 						+ Math.sin(anIntArray1030[i2] * (anIntArray928[i2] / 100D)) * anIntArray1203[i2]);
 				if (i2 == 0)
 					xCameraPos += j2;
@@ -21582,13 +21598,13 @@ public class Client extends GameEngine implements RSClient {
 				if (i2 == 2)
 					yCameraPos += j2;
 				if (i2 == 3)
-					xCameraCurve = xCameraCurve + j2 & 0x7ff;
+					cameraYaw = cameraYaw + j2 & 0x7ff;
 				if (i2 == 4) {
-					yCameraCurve += j2;
-					if (yCameraCurve < 128)
-						yCameraCurve = 128;
-					if (yCameraCurve > 383)
-						yCameraCurve = 383;
+					cameraPitch += j2;
+					if (cameraPitch < 35)
+						cameraPitch = 35;
+					if (cameraPitch > 383)
+						cameraPitch = 383;
 				}
 			}
 		}
@@ -21601,13 +21617,10 @@ public class Client extends GameEngine implements RSClient {
 			Rasterizer3D.fieldOfView = cameraZoom;
 		}
 
-		Rasterizer2D.setDrawingArea(getViewportHeight(),
-				(!isResized() ? 0 : 0),
-				getViewportWidth(),
-				(!isResized() ? 0 : 0));
+		Rasterizer2D.Rasterizer2D_expandClip(0, 0, getViewportWidth(), getViewportHeight());
 
 
-		scene.render(xCameraPos, yCameraPos, xCameraCurve, zCameraPos, j, yCameraCurve);
+		scene.render(xCameraPos, yCameraPos, cameraYaw, zCameraPos, j, cameraPitch);
 		StaticSound.playPcmPlayers();
 		rasterProvider.setRaster();
 		scene.clearGameObjectCache();
@@ -21618,16 +21631,25 @@ public class Client extends GameEngine implements RSClient {
 
 		((TextureProvider)Rasterizer3D.textureLoader).animate(tickDelta);
 		callbacks.drawAboveOverheads();
-
-		draw3dScreen();
+		if(fullScreenWidget == -1) {
+			draw3dScreen();
+		} else {
+			processWidgetAnimations(tickDelta, fullScreenWidget);
+			drawInterface(0, 0, RSInterface.get(fullScreenWidget), 0);
+			if (!menuOpen) {
+				processRightClick();
+				drawTopLeftTooltip();
+			}
+		}
 
 		if (getUserSettings().isGroundItemOverlay()) {
 			displayGroundItems();
 		}
-
-		drawMinimap();
-		drawTabArea();
-		drawChatArea();
+		if(fullScreenWidget == -1) {
+			drawMinimap();
+			drawTabArea();
+			drawChatArea();
+		}
 		devConsole.draw_console();
 
 		processExperienceCounter();
@@ -21635,8 +21657,8 @@ public class Client extends GameEngine implements RSClient {
 		xCameraPos = l;
 		zCameraPos = i1;
 		yCameraPos = j1;
-		yCameraCurve = k1;
-		xCameraCurve = l1;
+		cameraPitch = k1;
+		cameraYaw = l1;
 
 		if (!isResized()) {
 			callbacks.drawInterface(WidgetID.FIXED_VIEWPORT_GROUP_ID, Collections.emptyList());
@@ -21887,8 +21909,8 @@ public class Client extends GameEngine implements RSClient {
 	private int xCameraPos;
 	private int zCameraPos;
 	private int yCameraPos;
-	private int yCameraCurve;
-	private int xCameraCurve;
+	private int cameraPitch;
+	private int cameraYaw;
 	public final int[] currentExp;
 	private Sprite mapFlag;
 	private Sprite mapMarker;
@@ -22251,6 +22273,7 @@ public class Client extends GameEngine implements RSClient {
 	public static boolean controlIsDown;
 	public int drawCount;
 	public int fullscreenInterfaceID;
+	public int fullScreenWidget = -1;//500_000;
 	public int anInt1044;// 377
 	public int anInt1129;// 377
 	public int anInt1315;// 377
@@ -23113,17 +23136,17 @@ public class Client extends GameEngine implements RSClient {
 
 	@Override
 	public int getCameraPitch() {
-		return yCameraCurve;
+		return cameraPitch;
 	}
 
 	@Override
 	public void setCameraPitch(int cameraPitch) {
-		yCameraCurve = cameraPitch;
+		this.cameraPitch = cameraPitch;
 	}
 
 	@Override
 	public int getCameraYaw() {
-		return xCameraCurve;
+		return cameraYaw;
 	}
 
 	@Override
@@ -23143,22 +23166,22 @@ public class Client extends GameEngine implements RSClient {
 
 	@Override
 	public int getViewportHeight() {
-		return !isResized() ? 334 : canvasHeight;
+		return !isResized() ? fullScreenWidget == -1 ? 334 : canvasHeight : canvasHeight;
 	}
 
 	@Override
 	public int getViewportWidth() {
-		return !isResized() ? 512 : canvasWidth;
+		return !isResized() ? fullScreenWidget == -1 ? 512 : canvasWidth : canvasWidth;
 	}
 
 	@Override
 	public int getViewportXOffset() {
-		return !isResized() ? 4 : 0;
+		return !isResized() ? fullScreenWidget == -1 ? 4 : 0 : 0;
 	}
 
 	@Override
 	public int getViewportYOffset() {
-		return !isResized() ? 4 : 0;
+		return !isResized() ? fullScreenWidget == -1 ? 4 : 0 : 0;
 	}
 
 	@Override
