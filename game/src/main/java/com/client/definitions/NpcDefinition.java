@@ -65,6 +65,27 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             npcDefinition.stats = toCopy.stats;
             npcDefinition.combatLevel = toCopy.combatLevel;
         }
+        if (i == 13655) {
+            NpcDefinition toCopy = lookup(10956);
+            npcDefinition.name = "lil' Xamp";
+            npcDefinition.category = toCopy.category;
+            npcDefinition.actions = new String[] { null, null, null, null, null };
+            npcDefinition.walkAnim = toCopy.walkAnim;
+            npcDefinition.size = (byte) (toCopy.size/2);
+            npcDefinition.chatheadModels = toCopy.chatheadModels;
+            npcDefinition.standAnim = toCopy.standAnim;
+            npcDefinition.rotation = toCopy.rotation;
+            npcDefinition.isInteractable = toCopy.isInteractable;
+            npcDefinition.ambient = toCopy.ambient;
+            npcDefinition.heightScale = (toCopy.heightScale/2);
+            npcDefinition.isMinimapVisible = false;
+            npcDefinition.widthScale = (toCopy.widthScale/2);
+            npcDefinition.contrast = toCopy.contrast;
+            npcDefinition.hasRenderPriority = toCopy.hasRenderPriority;
+            npcDefinition.models = toCopy.models;
+            npcDefinition.stats = toCopy.stats;
+            npcDefinition.combatLevel = 0;
+        }
         if(i==12784) {
             NpcDefinition toCopy = lookup(604);
             npcDefinition.name = "<rank=35> FiftyCent <rank=35>";
