@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Trevor <https://github.com/Trevor159>
+ * Copyright (c) 2020, TheStonedTurtle <https://github.com/TheStonedTurtle>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,16 +22,18 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.client.events;
+package net.runelite.client.plugins.devtools;
 
-import java.awt.TrayIcon;
-import lombok.Value;
-import net.runelite.client.config.Notification;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import net.runelite.api.Item;
 
-@Value
-public class NotificationFired
+@Data
+@AllArgsConstructor
+class InventoryItem
 {
-	final Notification notification;
-	final String message;
-	final TrayIcon.MessageType type;
+	private final int slot;
+	private Item item;
+	private final String name;
+	private final boolean stackable;
 }

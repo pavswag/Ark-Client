@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Trevor <https://github.com/Trevor159>
+ * Copyright (c) 2021 Abex
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,16 +22,47 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.client.events;
+package net.runelite.client.plugins.devtools;
 
-import java.awt.TrayIcon;
-import lombok.Value;
-import net.runelite.client.config.Notification;
+import lombok.AccessLevel;
+import lombok.Setter;
+import net.runelite.client.ui.ClientUI;
 
-@Value
-public class NotificationFired
+import javax.swing.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.Arrays;
+
+public class DevToolsFrame extends JFrame
 {
-	final Notification notification;
-	final String message;
-	final TrayIcon.MessageType type;
+	@Setter(AccessLevel.PACKAGE)
+	protected DevToolsButton devToolsButton;
+
+	public DevToolsFrame()
+	{
+		setIconImages(Arrays.asList(ClientUI.ICON_128, ClientUI.ICON_16));
+
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		addWindowListener(new WindowAdapter()
+		{
+			@Override
+			public void windowClosing(WindowEvent e)
+			{
+				close();
+				devToolsButton.setActive(false);
+			}
+		});
+	}
+
+	public void open()
+	{
+		setVisible(true);
+		toFront();
+		repaint();
+	}
+
+	public void close()
+	{
+		setVisible(false);
+	}
 }

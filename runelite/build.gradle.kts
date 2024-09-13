@@ -17,6 +17,7 @@ dependencies {
     )
 
     implementation("net.runelite:flatlaf:3.2.5-rl4")
+    implementation("net.runelite:flatlaf-extras:3.2.5-rl4")
 
     annotationProcessor(group = "org.projectlombok", name = "lombok", version = lombokVersion)
 

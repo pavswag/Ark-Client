@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Trevor <https://github.com/Trevor159>
+ * Copyright (c) 2018, Tomas Slusny <slusnucky@gmail.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,16 +22,53 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.client.events;
+package net.runelite.client.plugins.devtools;
 
-import java.awt.TrayIcon;
-import lombok.Value;
-import net.runelite.client.config.Notification;
+import lombok.Getter;
+import net.runelite.client.ui.ColorScheme;
 
-@Value
-public class NotificationFired
+import javax.swing.*;
+import java.awt.*;
+
+public class DevToolsButton extends JButton
 {
-	final Notification notification;
-	final String message;
-	final TrayIcon.MessageType type;
+	@Getter
+	private boolean active;
+
+	DevToolsButton(String title)
+	{
+		super(title);
+		addActionListener((ev) -> setActive(!active));
+		this.setToolTipText(title);
+	}
+
+	void setActive(boolean active)
+	{
+		this.active = active;
+
+		if (active)
+		{
+			setBackground(Color.GREEN);
+		}
+		else
+		{
+			setBackground(ColorScheme.DARKER_GRAY_COLOR);
+		}
+	}
+
+	void addFrame(DevToolsFrame frame)
+	{
+		frame.setDevToolsButton(this);
+		addActionListener(ev ->
+		{
+			if (isActive())
+			{
+				frame.close();
+			}
+			else
+			{
+				frame.open();
+			}
+		});
+	}
 }
