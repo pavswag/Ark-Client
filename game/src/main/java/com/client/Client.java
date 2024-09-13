@@ -13030,7 +13030,7 @@ public class Client extends GameEngine implements RSClient {
 					setGameState(GameState.LOGIN_SCREEN);
 					isLoading = false;
 					long clientLoadStart = System.currentTimeMillis();
-					DefinitionDumper.dumpDefs();
+					//DefinitionDumper.dumpDefs();
 					clientLoaded = true;
 					long clientLoadEnd = System.currentTimeMillis();
 					long clientLoadDifference = clientLoadEnd - clientLoadStart;
@@ -21565,7 +21565,7 @@ public class Client extends GameEngine implements RSClient {
 			j = method120();
 		else
 			j = method121();
-		variousSettings[30000] = 1;
+		//variousSettings[30000] = 1;
 		if(variousSettings[30000] != 0) {
 			switch (variousSettings[30000]) {
 				case 1:
