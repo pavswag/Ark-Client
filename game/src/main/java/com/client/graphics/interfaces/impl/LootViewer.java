@@ -65,7 +65,9 @@ public class LootViewer extends RSInterface {
         HEREDIT_BOX("Heredit Box", 33362),
         DAMED_BOX("Damned Box", 33374),
         FORSAKEN_BOX("Forsaken Box", 33364),
-        TUMEKENS_BOX("Tumekens Box", 33381);
+        TUMEKENS_BOX("Tumekens Box", 33381),
+        JUDGES_BOX("Judges Box", 33375),
+        XAMPHUR_BOX("Xamphur Box", 33376);
 
         private final String name;
 

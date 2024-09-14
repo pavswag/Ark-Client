@@ -221,10 +221,10 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.name = "Yama Instance Token";
                 itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Drop" };
                 break;
-//            case 9620:
-//                itemDef.name = "Instance Token";
-//                itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Drop" };
-//                break;
+            case 9620:
+                itemDef.name = "Xamphur Instance Token";
+                itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Drop" };
+                break;
 //            case 9624:
 //                itemDef.name = "Instance Token";
 //                itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Drop" };
