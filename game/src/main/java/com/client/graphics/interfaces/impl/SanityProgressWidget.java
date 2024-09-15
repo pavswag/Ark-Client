@@ -9,7 +9,7 @@ public class SanityProgressWidget extends RSInterface {
 
     private static String dir = "sanity_progress/sprite";
 
-    private static final int configId = 155;
+    private static final int configId = 4397;
 
     public static void sanityProgress(TextDrawingArea[] tda) {
         int baseX = 12;
