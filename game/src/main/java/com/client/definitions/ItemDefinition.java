@@ -1007,9 +1007,9 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 break;
             case 33447:
                 itemDef.name = "Xamphur's Lure";
-                itemDef.maleModel0 = ItemDefinition.lookup(9627).zoom2d;
-                itemDef.femaleModel0 = ItemDefinition.lookup(9627).zoom2d;
-                itemDef.inventoryModel = ItemDefinition.lookup(9627).zoom2d;
+                itemDef.maleModel0 = ItemDefinition.lookup(9627).maleModel0;
+                itemDef.femaleModel0 = ItemDefinition.lookup(9627).femaleModel0;
+                itemDef.inventoryModel = ItemDefinition.lookup(9627).inventoryModel;
                 itemDef.zoom2d = ItemDefinition.lookup(9627).zoom2d;
                 itemDef.xan2d = ItemDefinition.lookup(9627).xan2d;
                 itemDef.yan2d = ItemDefinition.lookup(9627).yan2d;
