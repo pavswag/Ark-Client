@@ -12498,7 +12498,7 @@ public class Client extends GameEngine implements RSClient {
 			}
 
 			minimapImage = new Sprite(512, 512);
-			Model.method3874(35);
+			Model.method3874(25);
 			drawLoadingText(5, "Starting game engine...");
 			Client.titleLoadingStage = 20;
 		} else if (Client.titleLoadingStage == 20) {
@@ -21565,7 +21565,7 @@ public class Client extends GameEngine implements RSClient {
 			j = method120();
 		else
 			j = method121();
-		//variousSettings[30000] = 1;
+		variousSettings[30000] = 0;
 		if(variousSettings[30000] != 0) {
 			switch (variousSettings[30000]) {
 				case 1:
@@ -21617,7 +21617,10 @@ public class Client extends GameEngine implements RSClient {
 			Rasterizer3D.fieldOfView = cameraZoom;
 		}
 
-		Rasterizer2D.Rasterizer2D_expandClip(0, 0, getViewportWidth(), getViewportHeight());
+		Rasterizer2D.setDrawingArea(getViewportHeight(),
+				(!isResized() ? 0 : 0),
+				getViewportWidth(),
+				(!isResized() ? 0 : 0));
 
 
 		scene.render(xCameraPos, yCameraPos, cameraYaw, zCameraPos, j, cameraPitch);
