@@ -20162,7 +20162,7 @@ public class Client extends GameEngine implements RSClient {
 					return true;
 
 				case 208:
-					int i3 = inStream.readUShort();
+					int i3 = inStream.readInt();
 					if (i3 == 65535)
 						i3 = -1; // Changed to unsigned short so need to manually make it -1
 					if (i3 >= 0)
