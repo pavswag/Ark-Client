@@ -12472,7 +12472,7 @@ public class Client extends GameEngine implements RSClient {
 	public void load() {
 		if (Client.titleLoadingStage == 0) {
 //			if(!RuneLite.devMode) {
-				com.client.cache.CacheDownloader cacheDownloader = new com.client.cache.CacheDownloader(Signlink.getCacheDirectory() + "LIVE/", "https://paradisenet.b-cdn.net/kyros-beta/", true, false, new Progress() {
+				com.client.cache.CacheDownloader cacheDownloader = new com.client.cache.CacheDownloader(Signlink.getCacheDirectory() + "LIVE/", "https://paradisenet.b-cdn.net/kyros-beta/", false, false, new Progress() {
 					@Override
 					public void update(int progress, String message) {
 						drawLoadingText(progress, message);
