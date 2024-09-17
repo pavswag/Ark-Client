@@ -87,7 +87,7 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             npcDefinition.combatLevel = 0;
         }
         if (i == 10956) {
-            npcDefinition.headIcon = 1;
+            npcDefinition.headIcon = 0;
             /*npcDefinition.headIconArchiveIds = new int[440];
             npcDefinition.headIconSpriteIndex = new short[1];*/
         }
@@ -156,8 +156,7 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
         if (i == 13527) {
             npcDefinition.actions = new String[] { null, "Attack", null, null, null };
             npcDefinition.isMinimapVisible = true;
-            npcDefinition.headIconArchiveIds = new int[440];
-            npcDefinition.headIconSpriteIndex = new short[8];
+            npcDefinition.headIcon = 1;
         }
 
         if (i == 7649) {
