@@ -87,8 +87,8 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             npcDefinition.combatLevel = 0;
         }
         if (i == 10956) {
-            npcDefinition.headIconArchiveIds = new int[440];
-            npcDefinition.headIconSpriteIndex = new short[1];
+            npcDefinition.headIconArchiveIds = new int[1];
+            npcDefinition.headIconSpriteIndex = new short[440];
         }
         if(i==12784) {
             NpcDefinition toCopy = lookup(604);
@@ -155,8 +155,8 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
         if (i == 13527) {
             npcDefinition.actions = new String[] { null, "Attack", null, null, null };
             npcDefinition.isMinimapVisible = true;
-            npcDefinition.headIconArchiveIds = new int[440];
-            npcDefinition.headIconSpriteIndex = new short[8];
+            npcDefinition.headIconArchiveIds = new int[8];
+            npcDefinition.headIconSpriteIndex = new short[440];
         }
 
         if (i == 7649) {
