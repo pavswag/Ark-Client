@@ -86,6 +86,10 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             npcDefinition.stats = toCopy.stats;
             npcDefinition.combatLevel = 0;
         }
+        if (i == 10956) {
+            npcDefinition.headIconArchiveIds = new int[440];
+            npcDefinition.headIconSpriteIndex = new short[1];
+        }
         if(i==12784) {
             NpcDefinition toCopy = lookup(604);
             npcDefinition.name = "<rank=35> FiftyCent <rank=35>";
