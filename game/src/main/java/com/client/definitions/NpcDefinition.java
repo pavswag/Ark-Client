@@ -86,11 +86,12 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             npcDefinition.stats = toCopy.stats;
             npcDefinition.combatLevel = 0;
         }
+
         if (i == 10956) {
-            npcDefinition.headIcon = 0;
-            /*npcDefinition.headIconArchiveIds = new int[440];
-            npcDefinition.headIconSpriteIndex = new short[1];*/
+            npcDefinition.headIconArchiveIds = new int[440];
+            npcDefinition.headIconSpriteIndex = new short[1];
         }
+
         if(i==12784) {
             NpcDefinition toCopy = lookup(604);
             npcDefinition.name = "<rank=35> FiftyCent <rank=35>";
@@ -156,7 +157,8 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
         if (i == 13527) {
             npcDefinition.actions = new String[] { null, "Attack", null, null, null };
             npcDefinition.isMinimapVisible = true;
-            npcDefinition.headIcon = 1;
+            npcDefinition.headIconArchiveIds = new int[440];
+            npcDefinition.headIconSpriteIndex = new short[8];
         }
 
         if (i == 7649) {
@@ -1869,7 +1871,7 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
                         headIconSpriteIndex[var6] = -1;
                     } else {
                         headIconArchiveIds[var6] = buffer.readNullableLargeSmart();
-                        headIconSpriteIndex[var6] = (short)buffer.readShortSmartSub();
+                        headIconSpriteIndex[var6] = (short) buffer.readShortSmartSub();
                     }
                 }
             } else if (opcode == 103)
