@@ -194,6 +194,21 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
         npcDefinition.actions = new String[] { null, "Attack", null, null, null };
         }
 
+        if (i == 4987) {
+            npcDefinition.combatLevel = 399;
+            npcDefinition.size = 2;
+            npcDefinition.heightScale = 100; //WIDTH
+            npcDefinition.widthScale = 100; // HEIGHT
+        }
+
+        if (i == 911) {
+            npcDefinition.combatLevel = 299;
+        }
+
+        if (i == 5079) {
+            npcDefinition.combatLevel = 499;
+        }
+
        /* if (i == Npcs.BOB_BARTER_HERBS) {
             npcDefinition.custom = true;
             npcDefinition.actions = new String[] { "Talk-to", "Prices", "Decant", "Clean", null };
