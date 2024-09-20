@@ -1028,11 +1028,14 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.xOffset2d = ItemDefinition.lookup(26879).xOffset2d;
                 itemDef.yOffset2d = ItemDefinition.lookup(26879).yOffset2d;
                 itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Drop" };
+                itemDef.animateInventory = true;
                 break;
 
         }
         return itemDef;
     }
+
+    public boolean animateInventory;
 
     public transient boolean custom = false;
 
@@ -1233,7 +1236,7 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
             sprite.height = old_h;
         }
 
-        if (outlineColor == 0) {
+        if (outlineColor == 0 && !definition.animateInventory) {
             sprites.put(enabledSprite, itemId);
         }
 
@@ -1365,7 +1368,7 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
             sprite.width = old_w;
             sprite.height = old_h;
         }
-        if (outlineColor == 0 && (itemId != 10198 && itemId != 10199))
+        if (outlineColor == 0 && (itemId != 10198 && itemId != 10199 && itemId != 33448) && !itemDef.animateInventory)
             sprites.put(enabledSprite, itemId);
         Rasterizer2D.initDrawingArea(height, width, pixels);
         Rasterizer2D.setDrawingArea(vp_bottom, vp_left, vp_right, vp_top);
