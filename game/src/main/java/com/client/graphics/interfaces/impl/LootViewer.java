@@ -47,7 +47,7 @@ public class LootViewer extends RSInterface {
         CRYSTAL_CHEST("Crystal Chest", 989),
         BRIMSTONE_KEY("Brimstone Key", Items.BRIMSTONE_KEY),
         HESPORI_KEY("Hespori Key", 22374),
-        PORAZDIRS_KEY("Unbearable key", 4185),
+        PORAZDIRS_KEY("Porazdir's Key", 4185),
         LARRANS_CHEST("Larran's Chest", Items.LARRANS_KEY),
         SERENS_KEY("Seren's Key", 6792),
         WILDERNESS_CHEST("Wildyman Chest", 13302),
