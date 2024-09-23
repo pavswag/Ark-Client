@@ -213,6 +213,10 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.modifiedTextureColours = ItemDefinition.lookup(7441).modifiedTextureColours;
                 itemDef.name = "<rank=35> BONK! <rank=35>";
                 break;
+            case 9602:
+                itemDef.name = "Minotaur Instance Token";
+                itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Drop" };
+                break;
 //            case 9610:
 //                itemDef.name = "Instance Token";
 //                itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Drop" };
@@ -225,10 +229,6 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.name = "Xamphur Instance Token";
                 itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Drop" };
                 break;
-//            case 9624:
-//                itemDef.name = "Instance Token";
-//                itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Drop" };
-//                break;
             case 33343:  //Ember helm
                 itemDef.zoom2d = 595;
                 itemDef.xan2d = 310;
@@ -1030,6 +1030,88 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.interfaceOptions = new String[] { "Consume", null, null, null, "Drop" };
                 itemDef.animateInventory = true;
                 break;
+            case 33449:
+                itemDef.name = "Goblin Cape";
+                itemDef.maleModel0 = 60998;
+                itemDef.femaleModel0 = 60998;
+                itemDef.inventoryModel = 60997;
+                itemDef.zoom2d = ItemDefinition.lookup(24855).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(24855).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(24855).yan2d;
+                itemDef.zan2d = ItemDefinition.lookup(24855).zan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(24855).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(24855).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
+                itemDef.animateInventory = true;
+                break;
+            case 33450:
+                itemDef.name = "Goblin Boots";
+                itemDef.maleModel0 = 61000;
+                itemDef.femaleModel0 = 61000;
+                itemDef.inventoryModel = 60999;
+                itemDef.zoom2d = ItemDefinition.lookup(28945).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(28945).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(28945).yan2d;
+                itemDef.zan2d = ItemDefinition.lookup(28945).zan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(28945).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(28945).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
+                itemDef.animateInventory = true;
+                break;
+            case 33451:
+                itemDef.name = "Goblin Gloves";
+                itemDef.maleModel0 = 60996;
+                itemDef.femaleModel0 = 60996;
+                itemDef.inventoryModel = 60995;
+                itemDef.zoom2d = ItemDefinition.lookup(7462).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(7462).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(7462).yan2d;
+                itemDef.zan2d = ItemDefinition.lookup(7462).zan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(7462).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(7462).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
+                itemDef.animateInventory = true;
+                break;
+            case 33452:
+                itemDef.name = "Goblin Ring";
+                itemDef.maleModel0 = 60994;
+                itemDef.femaleModel0 = 60994;
+                itemDef.inventoryModel = 60994;
+                itemDef.zoom2d = ItemDefinition.lookup(26770).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(26770).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(26770).yan2d;
+                itemDef.zan2d = ItemDefinition.lookup(26770).zan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(26770).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(26770).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
+                itemDef.animateInventory = true;
+                break;
+            case 33453:
+                itemDef.name = "Goblin Amulet";
+                itemDef.maleModel0 = 60993;
+                itemDef.femaleModel0 = 60993;
+                itemDef.inventoryModel = 60992;
+                itemDef.zoom2d = ItemDefinition.lookup(13136).zoom2d;
+                itemDef.xan2d = ItemDefinition.lookup(13136).xan2d;
+                itemDef.yan2d = ItemDefinition.lookup(13136).yan2d;
+                itemDef.zan2d = ItemDefinition.lookup(13136).zan2d;
+                itemDef.xOffset2d = ItemDefinition.lookup(13136).xOffset2d;
+                itemDef.yOffset2d = ItemDefinition.lookup(13136).yOffset2d;
+                itemDef.interfaceOptions = new String[] { null, "Wield", null, null, "Drop" };
+                itemDef.animateInventory = true;
+                break;
+//            case :
+//                itemDef.name = "Goblin";
+//                itemDef.inventoryModel = ;
+//                itemDef.zoom2d = ItemDefinition.lookup().zoom2d;
+//                itemDef.xan2d = ItemDefinition.lookup().xan2d;
+//                itemDef.yan2d = ItemDefinition.lookup().yan2d;
+//                itemDef.zan2d = ItemDefinition.lookup().zan2d;
+//                itemDef.xOffset2d = ItemDefinition.lookup().xOffset2d;
+//                itemDef.yOffset2d = ItemDefinition.lookup().yOffset2d;
+//                itemDef.interfaceOptions = new String[] { "Wield", null, null, null, "Drop" };
+//                itemDef.animateInventory = true;
+//                break;
 
         }
         return itemDef;
