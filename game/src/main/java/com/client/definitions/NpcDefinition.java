@@ -92,6 +92,26 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             npcDefinition.headIconSpriteIndex = new short[1];
         }
 
+        if (i == 13011) {
+            npcDefinition.standAnim = 10999;
+            npcDefinition.walkAnim = 10991;
+            npcDefinition.size = 4;
+
+        }
+
+        if (i == 13012) {
+            npcDefinition.standAnim = 11016;
+            npcDefinition.walkAnim = 10991;
+            npcDefinition.size = 4;
+
+        }
+
+        if (i == 13013) {
+            npcDefinition.standAnim = 10995;
+            npcDefinition.walkAnim = 10991;
+            npcDefinition.size = 4;
+        }
+
         if(i==12784) {
             NpcDefinition toCopy = lookup(604);
             npcDefinition.name = "<rank=35> FiftyCent <rank=35>";

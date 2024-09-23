@@ -3007,7 +3007,7 @@ public class Model extends Renderable implements RSModel {
     static int vertexMovedY[] = new int[25000];
     static int vertexMovedZ[] = new int[25000];
     static int depth[] = new int[6000];
-    static int faceLists[][] = new int[6000][512];
+    static int faceLists[][] = new int[6000][2048];
     static int anIntArray1673[] = new int[12];
     static int anIntArrayArray1674[][] = new int[12][25000];
     static int anIntArray1676[] = new int[25000];
