@@ -96,6 +96,13 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             npcDefinition.standAnim = 10999;
             npcDefinition.walkAnim = 10991;
             npcDefinition.size = 4;
+            NpcDefinition toCopy = lookup(12879);
+            npcDefinition.category = toCopy.category;
+            npcDefinition.rotation = toCopy.rotation;
+            npcDefinition.ambient = toCopy.ambient;
+            npcDefinition.isMinimapVisible = true;
+            npcDefinition.hasRenderPriority = toCopy.hasRenderPriority;
+            npcDefinition.stats = toCopy.stats;
 
         }
 
@@ -103,6 +110,14 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             npcDefinition.standAnim = 11016;
             npcDefinition.walkAnim = 10991;
             npcDefinition.size = 4;
+            NpcDefinition toCopy = lookup(12879);
+
+            npcDefinition.category = toCopy.category;
+            npcDefinition.rotation = toCopy.rotation;
+            npcDefinition.ambient = toCopy.ambient;
+            npcDefinition.isMinimapVisible = true;
+            npcDefinition.hasRenderPriority = toCopy.hasRenderPriority;
+            npcDefinition.stats = toCopy.stats;
 
         }
 
@@ -110,6 +125,14 @@ public final class NpcDefinition extends DualNode implements RSNPCComposition {
             npcDefinition.standAnim = 10995;
             npcDefinition.walkAnim = 10991;
             npcDefinition.size = 4;
+            NpcDefinition toCopy = lookup(12879);
+
+            npcDefinition.category = toCopy.category;
+            npcDefinition.rotation = toCopy.rotation;
+            npcDefinition.ambient = toCopy.ambient;
+            npcDefinition.isMinimapVisible = true;
+            npcDefinition.hasRenderPriority = toCopy.hasRenderPriority;
+            npcDefinition.stats = toCopy.stats;
         }
 
         if(i==12784) {
