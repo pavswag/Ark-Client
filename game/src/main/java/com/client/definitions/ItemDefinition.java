@@ -1031,7 +1031,7 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.animateInventory = true;
                 break;
             case 33449:
-                itemDef.name = "Goblin Cape";
+                itemDef.name = "Minotaur Cape";
                 itemDef.maleModel0 = 60998;
                 itemDef.femaleModel0 = 60998;
                 itemDef.inventoryModel = 60997;
@@ -1045,7 +1045,7 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.animateInventory = true;
                 break;
             case 33450:
-                itemDef.name = "Goblin Boots";
+                itemDef.name = "Minotaur Boots";
                 itemDef.maleModel0 = 61000;
                 itemDef.femaleModel0 = 61000;
                 itemDef.inventoryModel = 60999;
@@ -1059,7 +1059,7 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.animateInventory = true;
                 break;
             case 33451:
-                itemDef.name = "Goblin Gloves";
+                itemDef.name = "Minotaur Gloves";
                 itemDef.maleModel0 = 60996;
                 itemDef.femaleModel0 = 60996;
                 itemDef.inventoryModel = 60995;
@@ -1073,7 +1073,7 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.animateInventory = true;
                 break;
             case 33452:
-                itemDef.name = "Goblin Ring";
+                itemDef.name = "Minotaur Ring";
                 itemDef.maleModel0 = 60994;
                 itemDef.femaleModel0 = 60994;
                 itemDef.inventoryModel = 60994;
@@ -1087,7 +1087,7 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.animateInventory = true;
                 break;
             case 33453:
-                itemDef.name = "Goblin Amulet";
+                itemDef.name = "Minotaur Amulet";
                 itemDef.maleModel0 = 60993;
                 itemDef.femaleModel0 = 60993;
                 itemDef.inventoryModel = 60992;

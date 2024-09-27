@@ -40,6 +40,7 @@ import javax.swing.JFrame;
 import ch.qos.logback.classic.Level;
 import com.client.accounts.Account;
 import com.client.cache.Progress;
+import com.client.definitions.EnumComposition;
 import com.client.definitions.SequenceDefinition;
 import com.client.graphics.interfaces.*;
 import com.client.graphics.interfaces.eventcalendar.EventCalendar;

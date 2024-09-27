@@ -68,7 +68,7 @@ public class LootViewer extends RSInterface {
         TUMEKENS_BOX("Tumekens Box", 33381),
         JUDGES_BOX("Judges Box", 33375),
         XAMPHUR_BOX("Xamphur Box", 33376),
-        GOBLIN_BOX("Goblin Box", 33363);
+        GOBLIN_BOX("Minotaur Box", 33363);
 
         private final String name;
 
