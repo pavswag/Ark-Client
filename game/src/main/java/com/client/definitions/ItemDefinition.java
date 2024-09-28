@@ -434,18 +434,6 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 itemDef.yOffset2d = ItemDefinition.lookup(22981).yOffset2d;
                 itemDef.interfaceOptions = new String[] { null, "Wear", null, null, "Drop" };
                 break;
-            case 29499:
-                itemDef.name = "New BIS Cape";
-                break;
-            case 13589:
-                itemDef.name = "New BIS Boots";
-                break;
-            case 23593:
-                itemDef.name = "New BIS Gloves";
-                break;
-            case 23640:
-                itemDef.name = "New BIS Amulet";
-                break;
             case 33403:
                 itemDef.name = "Hallowed Boots";
                 itemDef.inventoryModel = 60912;
@@ -1741,37 +1729,37 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
                 for (int i1 = 0; i1 < modifiedTextureColours.length; i1++)
                     primaryModel_.retexture(modifiedTextureColours[i1], originalTextureColours[i1]);
             }
-        if(id == 29499) {
-            primaryModel_.setTextureFromColor(-11139, 134);
-            primaryModel_.setTextureFromColor(-11112, 134);
-            primaryModel_.setTextureFromColor(-14541, 134);
-            primaryModel_.setTextureFromColor(-14533, 134);
-            primaryModel_.setTextureFromColor(-11180, 134);
-            primaryModel_.setTextureFromColor(-14679, 134);
-            primaryModel_.setTextureFromColor(-14518, 134);
-            primaryModel_.setTextureFromColor(-11126, 134);
-            primaryModel_.setTextureFromColor(-11194, 134);
-            primaryModel_.setTextureFromColor(-14524, 134);
-            primaryModel_.setTextureFromColor(-14685, 134);
-            primaryModel_.setTextureFromColor(-11139, 134);
-            primaryModel_.setTextureFromColor(-11112, 134);
-            primaryModel_.setTextureFromColor(-14541, 134);
-            primaryModel_.setTextureFromColor(-14533, 134);
-            primaryModel_.setTextureFromColor(-11180, 134);
-            primaryModel_.setTextureFromColor(-14679, 134);
-            primaryModel_.setTextureFromColor(-14518, 134);
-            primaryModel_.setTextureFromColor(-11126, 134);
-            primaryModel_.setTextureFromColor(-11194, 134);
-            primaryModel_.setTextureFromColor(-14524, 134);
-            primaryModel_.setTextureFromColor(-14685, 134);
-            primaryModel_.setTextureFromColor(10198, 134);
-            primaryModel_.setTextureFromColor(10027, 134);
-            primaryModel_.setTextureFromColor(10023, 134);
-        }
-        if(id == 13589 || id == 23593 || id == 23640) {
-            primaryModel_.setTextureFromColor(-11139, 134);
-            primaryModel_.retextureRestOfModel(134);
-        }
+//        if(id == 29499) {
+//            primaryModel_.setTextureFromColor(-11139, 134);
+//            primaryModel_.setTextureFromColor(-11112, 134);
+//            primaryModel_.setTextureFromColor(-14541, 134);
+//            primaryModel_.setTextureFromColor(-14533, 134);
+//            primaryModel_.setTextureFromColor(-11180, 134);
+//            primaryModel_.setTextureFromColor(-14679, 134);
+//            primaryModel_.setTextureFromColor(-14518, 134);
+//            primaryModel_.setTextureFromColor(-11126, 134);
+//            primaryModel_.setTextureFromColor(-11194, 134);
+//            primaryModel_.setTextureFromColor(-14524, 134);
+//            primaryModel_.setTextureFromColor(-14685, 134);
+//            primaryModel_.setTextureFromColor(-11139, 134);
+//            primaryModel_.setTextureFromColor(-11112, 134);
+//            primaryModel_.setTextureFromColor(-14541, 134);
+//            primaryModel_.setTextureFromColor(-14533, 134);
+//            primaryModel_.setTextureFromColor(-11180, 134);
+//            primaryModel_.setTextureFromColor(-14679, 134);
+//            primaryModel_.setTextureFromColor(-14518, 134);
+//            primaryModel_.setTextureFromColor(-11126, 134);
+//            primaryModel_.setTextureFromColor(-11194, 134);
+//            primaryModel_.setTextureFromColor(-14524, 134);
+//            primaryModel_.setTextureFromColor(-14685, 134);
+//            primaryModel_.setTextureFromColor(10198, 134);
+//            primaryModel_.setTextureFromColor(10027, 134);
+//            primaryModel_.setTextureFromColor(10023, 134);
+//        }
+//        if(id == 13589 || id == 23593 || id == 23640) {
+//            primaryModel_.setTextureFromColor(-11139, 134);
+//            primaryModel_.retextureRestOfModel(134);
+//        }
         return primaryModel_;
     }
 
@@ -1971,37 +1959,37 @@ public final class ItemDefinition extends DualNode implements RSItemComposition 
             for (int i1 = 0; i1 < modifiedTextureColours.length; i1++)
                 model.retexture(modifiedTextureColours[i1], originalTextureColours[i1]);
         }
-        if(id == 29499) {
-            model.setTextureFromColor(-11139, 134);
-            model.setTextureFromColor(-11112, 134);
-            model.setTextureFromColor(-14541, 134);
-            model.setTextureFromColor(-14533, 134);
-            model.setTextureFromColor(-11180, 134);
-            model.setTextureFromColor(-14679, 134);
-            model.setTextureFromColor(-14518, 134);
-            model.setTextureFromColor(-11126, 134);
-            model.setTextureFromColor(-11194, 134);
-            model.setTextureFromColor(-14524, 134);
-            model.setTextureFromColor(-14685, 134);
-            model.setTextureFromColor(-11139, 134);
-            model.setTextureFromColor(-11112, 134);
-            model.setTextureFromColor(-14541, 134);
-            model.setTextureFromColor(-14533, 134);
-            model.setTextureFromColor(-11180, 134);
-            model.setTextureFromColor(-14679, 134);
-            model.setTextureFromColor(-14518, 134);
-            model.setTextureFromColor(-11126, 134);
-            model.setTextureFromColor(-11194, 134);
-            model.setTextureFromColor(-14524, 134);
-            model.setTextureFromColor(-14685, 134);
-            model.setTextureFromColor(10198, 134);
-            model.setTextureFromColor(10027, 134);
-            model.setTextureFromColor(10023, 134);
-        }
-        if(id == 13589 || id == 23593 || id == 23640) {
-            model.setTextureFromColor(-11139, 134);
-            model.retextureRestOfModel(134);
-        }
+//        if(id == 29499) {
+//            model.setTextureFromColor(-11139, 134);
+//            model.setTextureFromColor(-11112, 134);
+//            model.setTextureFromColor(-14541, 134);
+//            model.setTextureFromColor(-14533, 134);
+//            model.setTextureFromColor(-11180, 134);
+//            model.setTextureFromColor(-14679, 134);
+//            model.setTextureFromColor(-14518, 134);
+//            model.setTextureFromColor(-11126, 134);
+//            model.setTextureFromColor(-11194, 134);
+//            model.setTextureFromColor(-14524, 134);
+//            model.setTextureFromColor(-14685, 134);
+//            model.setTextureFromColor(-11139, 134);
+//            model.setTextureFromColor(-11112, 134);
+//            model.setTextureFromColor(-14541, 134);
+//            model.setTextureFromColor(-14533, 134);
+//            model.setTextureFromColor(-11180, 134);
+//            model.setTextureFromColor(-14679, 134);
+//            model.setTextureFromColor(-14518, 134);
+//            model.setTextureFromColor(-11126, 134);
+//            model.setTextureFromColor(-11194, 134);
+//            model.setTextureFromColor(-14524, 134);
+//            model.setTextureFromColor(-14685, 134);
+//            model.setTextureFromColor(10198, 134);
+//            model.setTextureFromColor(10027, 134);
+//            model.setTextureFromColor(10023, 134);
+//        }
+//        if(id == 13589 || id == 23593 || id == 23640) {
+//            model.setTextureFromColor(-11139, 134);
+//            model.retextureRestOfModel(134);
+//        }
         int lightInt = 64 + ambient;
         int lightMag = 768 + contrast;
         model.light(lightInt, lightMag, -50, -10, -50, true);
