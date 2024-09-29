@@ -410,11 +410,11 @@ public class Bank extends RSInterface {
             addInterface(58050 + i);
             if (i == 0) {
                 addConfigButton(58031, 5292, 0, 1, "banktab/tab",
-                        48, 38, new String[]{"Price Check", "View"}, 1, 1111);
+                        48, 38, new String[]{"Dissolve All Items For Nomad", "View"}, 1, 1111);
                 interfaceCache.get(58031).disabledHover = imageLoader(1, "banktab/tab");
             } else {
                 addConfigButton(58031 + i, 5292, 4, 3, "banktab/tab",
-                        48, 38, new String[]{"Price check", "Collapse", "View"}, 1, 1111 + i);
+                        48, 38, new String[]{"Dissolve For Nomad", "Collapse", "View"}, 1, 1111 + i);
                 interfaceCache.get(58031 + i).disabledHover = imageLoader(2, "banktab/tab");
             }
             addToItemGroup(58040 + i, 1, 1, 0, 0, false, "", "", "");
