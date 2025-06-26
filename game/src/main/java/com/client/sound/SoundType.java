@@ -1,8 +1,8 @@
 package com.client.sound;
 
 /**
- * @author Kyros
- * @social Discord: Kyros
+ * @author DeadScape
+ * @social Discord: DeadScape
  * Website: www.kyros.net
  * @since 14/03/2024
  */

@@ -1,9 +1,9 @@
 package com.client;
 
 /**
- * @author Kyros
+ * @author DeadScape
  * @project kyros-server
- * @social Discord: Kyros
+ * @social Discord: DeadScape
  * Website: www.kyros.net
  * @since 05/01/2024
  */

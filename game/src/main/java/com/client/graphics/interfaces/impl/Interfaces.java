@@ -340,7 +340,7 @@ public final class Interfaces extends RSInterface {
             interfaceCache.get(video_interface).invisible = true;
             videoList.child(index++, video_interface++, 10, 8 + increaseY);
 
-            addText(video_interface, "Kyros RSPS | #1 Osrs Semi-Custom | Fuck cash grabs...", tda, 1, 0xffffff, false);
+            addText(video_interface, "DeadScape RSPS | #1 Osrs Semi-Custom | Fuck cash grabs...", tda, 1, 0xffffff, false);
             interfaceCache.get(video_interface).invisible = true;
             videoList.child(index++, video_interface++, 135, 12 + increaseY);
 
@@ -348,7 +348,7 @@ public final class Interfaces extends RSInterface {
             interfaceCache.get(video_interface).invisible = true;
             videoList.child(index++, video_interface++, 135, 30 + increaseY);
 
-            addText(video_interface, "Kyros", tda, 0, 0xfe3200, false);
+            addText(video_interface, "DeadScape", tda, 0, 0xfe3200, false);
             interfaceCache.get(video_interface).invisible = true;
             videoList.child(index++, video_interface++, 135, 60 + increaseY);
 
@@ -379,7 +379,7 @@ public final class Interfaces extends RSInterface {
 		main.totalChildren(26);
 
 		addSprite(MAIN_INTERFACE + index++, 0, dir);//background
-		addText(MAIN_INTERFACE + index++, "Kyros Deals Hub", 2, 0xFF981F, true, true); //title
+		addText(MAIN_INTERFACE + index++, "DeadScape Deals Hub", 2, 0xFF981F, true, true); //title
 		configHoverButton(MAIN_INTERFACE + index, "Close interface", dir, 21, 22, 21, 21, false, MAIN_INTERFACE + index++);//close button
 		configHoverButton(MAIN_INTERFACE + index, "Account Boosts", dir, 9, 10, 9, 9, false, MAIN_INTERFACE + index++);
 		configHoverButton(MAIN_INTERFACE + index, "Bonus Items", dir, 16, 16, 16, 16, false, MAIN_INTERFACE + index++);
@@ -530,7 +530,7 @@ public final class Interfaces extends RSInterface {
 
 
 		addSprite(MAIN_INTERFACE + index++, 0, dir);//background
-		addText(MAIN_INTERFACE + index++, "Kyros Deals Hub", 2, 0xFF981F, true, true); //title
+		addText(MAIN_INTERFACE + index++, "DeadScape Deals Hub", 2, 0xFF981F, true, true); //title
 		configHoverButton(MAIN_INTERFACE + index, "Close interface", dir, 21, 22, 21, 21, false, MAIN_INTERFACE + index++);//close button
 		configHoverButton(MAIN_INTERFACE + index, "Account Boosts", dir, 9, 10, 9, 9, false, MAIN_INTERFACE + index++);
 		configHoverButton(MAIN_INTERFACE + index, "Bonus Items", dir, 15, 16, 15, 15, false, MAIN_INTERFACE + index++);
@@ -601,7 +601,7 @@ public final class Interfaces extends RSInterface {
 		main.totalChildren(34);
 
 		addSprite(MAIN_INTERFACE + index++, 0, dir);//background
-		addText(MAIN_INTERFACE + index++, "Kyros Deals Hub", 2, 0xFF981F, true, true); //title
+		addText(MAIN_INTERFACE + index++, "DeadScape Deals Hub", 2, 0xFF981F, true, true); //title
 		configHoverButton(MAIN_INTERFACE + index, "Close interface", dir, 21, 22, 21, 21, false, MAIN_INTERFACE + index++);//close button
 		configHoverButton(MAIN_INTERFACE + index, "Account Boosts", dir, 9, 10, 9, 9, false, MAIN_INTERFACE + index++);
 		configHoverButton(MAIN_INTERFACE + index, "Bonus Items", dir, 15, 16, 15, 15, false, MAIN_INTERFACE + index++);
@@ -691,7 +691,7 @@ public final class Interfaces extends RSInterface {
 		main.totalChildren(25);
 
 		addSprite(MAIN_INTERFACE + index++, 0, dir);//background
-		addText(MAIN_INTERFACE + index++, "Kyros Deals Hub", 2, 0xFF981F, true, true); //title
+		addText(MAIN_INTERFACE + index++, "DeadScape Deals Hub", 2, 0xFF981F, true, true); //title
 		configHoverButton(MAIN_INTERFACE + index, "Close interface", dir, 21, 22, 21, 21, false, MAIN_INTERFACE + index++);//close button
 		configHoverButton(MAIN_INTERFACE + index, "Account Boosts", dir, 10, 10, 10, 10, false, MAIN_INTERFACE + index++);
 		configHoverButton(MAIN_INTERFACE + index, "Bonus Items", dir, 15, 16, 15, 15, false, MAIN_INTERFACE + index++);
@@ -851,7 +851,7 @@ public final class Interfaces extends RSInterface {
 		addHoveredButton(MAIN_INTERFACE + index, dir, 9, 16, 16, 1);
 		main.child(c++, MAIN_INTERFACE + index++, basex + 390, basey + 10);
 
-		addText(MAIN_INTERFACE + index, "Kyros's InGame Store", tda, 2, 0xff9933);
+		addText(MAIN_INTERFACE + index, "DeadScape's InGame Store", tda, 2, 0xff9933);
 		main.child(c++, MAIN_INTERFACE + index++, basex + 100, basey + 10);
 
 		addText(MAIN_INTERFACE + index, "Subtotal:", tda, 0, 0xff9933);
@@ -971,7 +971,7 @@ public final class Interfaces extends RSInterface {
 		addText(MAIN_INTERFACE + index, "", tda, 1, 0xff9933, true, true);
 		main.child(c++, MAIN_INTERFACE + index++, basex + 335, basey + 281);
 
-		addText(MAIN_INTERFACE + index, "Kyros's Quest List", tda, 2, 0xff9933);
+		addText(MAIN_INTERFACE + index, "DeadScape's Quest List", tda, 2, 0xff9933);
 		main.child(c++, MAIN_INTERFACE + index++, basex + 200, basey + 10);
 
 		main.child(c++, SUB_INTERFACE, basex + 6, basey + 41);//TOP BAR
@@ -1202,7 +1202,7 @@ public final class Interfaces extends RSInterface {
 	private static void StarterNew(TextDrawingArea[] tda) {
 		RSInterface Interface = addInterface(24303);
 		addSprite(24304, 0, "Interfaces/starterInt/SPRITE");
-		addText(24305, "Kyros Account Setup", 0xff9933, true, true, 52, tda, 2);
+		addText(24305, "DeadScape Account Setup", 0xff9933, true, true, 52, tda, 2);
 		addText(24306, "Mode Description:", 0xff9933, true, true, 52, tda, 2);
 		addText(24307, "Description line here (24307)", 0xff9933, true, true, 52, tda, 0);
 		addText(24308, "Description line here (24308)", 0xff9933, true, true, 52, tda, 0);
@@ -5951,7 +5951,7 @@ public final class Interfaces extends RSInterface {
 
 		addSprite(interfaceId + index++, 0, dir);
 		configHoverButton1(interfaceId + index, "Close", dir, 40, 41, 41, 41, false, new int[]{interfaceId + index++});
-		addText(interfaceId + index++, "Kyros Teleports", ryan, 2, 0xff9933, true, true);
+		addText(interfaceId + index++, "DeadScape Teleports", ryan, 2, 0xff9933, true, true);
 
 		addText(interfaceId + index++, "Favourites", ryan, 2, 0xd9bc50, false, true);
 //		addButton(interfaceId + index++, 36, dir,"Previous Teleport");

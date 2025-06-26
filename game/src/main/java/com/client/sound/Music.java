@@ -3,8 +3,8 @@ package com.client.sound;
 import lombok.Getter;
 
 /**
- * @author Kyros
- * @social Discord: Kyros
+ * @author DeadScape
+ * @social Discord: DeadScape
  * Website: www.kyros.net
  * @since 15/03/2024
  */

@@ -2,10 +2,6 @@ package com.client;
 
 import com.client.sign.Signlink;
 import com.google.common.base.Preconditions;
-import org.apache.commons.compress.archivers.ArchiveEntry;
-import org.apache.commons.compress.archivers.ArchiveException;
-import org.apache.commons.compress.archivers.ArchiveInputStream;
-import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 
@@ -16,7 +12,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Enumeration;
 import java.util.Objects;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 public class CacheDownloader {
 
@@ -27,14 +27,15 @@ public class CacheDownloader {
 
 	private Client client;
 
-	private static final int BUFFER = 1024;
+	private static final int BUFFER = 2048;
 
 	private Path fileLocation;
 
 	public CacheDownloader(Client client) {
 		Objects.requireNonNull(Signlink.getCacheDirectory());
 		this.client = client;
-		fileLocation = Paths.get(Signlink.getCacheDirectory(), getArchivedName());
+		var archiveName = getArchivedName();
+		fileLocation = Paths.get(Signlink.getCacheDirectory(), archiveName);
 	}
 
 	private int getLocalVersion() {
@@ -44,17 +45,6 @@ public class CacheDownloader {
 			return -1;
 		}
 	}
-
-//	private int getRemoteVersion() {
-//		try {
-//			URL versionUrl = new URL(Configuration.VERSION_URL);
-//			try(Scanner scanner = new Scanner(versionUrl.openStream())) {
-//				return scanner.nextInt();
-//			}
-//		} catch (Exception e) {
-//			return 0;
-//		}
-//	}
 
 	public void writeVersion(int version) {
 		File versionFile = new File(Signlink.getCacheDirectory() + File.separator + "version.dat");
@@ -88,37 +78,28 @@ public class CacheDownloader {
 			if (!location.exists() || !version.exists()) {
 				log.info("Cache does not exist, downloading.");
 				update();
-			} else {
+			}
+			else {
 				cacheVersionLocal = getLocalVersion();
 				log.info("Cache version local=" + cacheVersionLocal + ", remote=" + cacheVersionRemote);
-				if (cacheVersionRemote != cacheVersionLocal) {
+				if (cacheVersionRemote != cacheVersionLocal)
 					update();
-				} else {
+				else
 					return null;
-				}
 			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			//ClientWindow.popupMessage("Could not download the cache file.",
-					//"The website might be down or experiencing interruptions.",
-					//Signlink.getCacheDirectory());
-		} catch (Exception e) {
-			e.printStackTrace();
-			//ClientWindow.popupMessage("An error occurred while installing the cache.",
-					//"You may experience crashes or gameplay interruptions.",
-					//"Try deleting the cache and restarting the client.",
-					//Signlink.getCacheDirectory());
+		}
+		catch (Exception e) {
+			e.printStackTrace(System.err);
 		}
 		return null;
 	}
 
 	private void update() throws IOException {
-		downloadFile(Configuration.
-				CACHE_LINK, getArchivedName());
+		downloadFile(Configuration.CACHE_LINK, getArchivedName());
 	}
 
 	private void downloadFile(String adress, String localFileName) throws IOException {
-/*		OutputStream out = null;
+		OutputStream out = null;
 		URLConnection conn;
 		InputStream in = null;
 
@@ -134,34 +115,26 @@ public class CacheDownloader {
 			int numRead;
 			long numWritten = 0;
 			int fileSize = conn.getContentLength();
-			long startTime = System.currentTimeMillis();
 
 			while ((numRead = in.read(data)) != -1) {
 				out.write(data, 0, numRead);
 				numWritten += numRead;
-
 				int percentage = (int) (((double) numWritten / (double) fileSize) * 100D);
-				long elapsedTime = System.currentTimeMillis() - startTime;
-				int downloadSpeed = (int) ((numWritten / 1024) / (1 + (elapsedTime / 1000)));
-
-				float speedInBytes = 1000f * numWritten / elapsedTime;
-				int timeRemaining =  (int) ((fileSize - numWritten) / speedInBytes);
-
-				client.drawLoadingText(percentage, Configuration.CLIENT_TITLE + " - Downloading Cache " + percentage + "%");
+				client.drawLoadingText(percentage, Configuration.CLIENT_TITLE + " - Downloading Cache ");
 			}
-		} finally {
+		}
+		finally {
 			try {
-				if (in != null) {
+				if (in != null)
 					in.close();
-				}
-				if (out != null) {
+				if (out != null)
 					out.close();
-				}
 				unZip();
-			} catch (IOException ioe) {
-				ioe.printStackTrace();
 			}
-		}*/
+			catch (IOException ioe) {
+				ioe.printStackTrace(System.err);
+			}
+		}
 	}
 
 	private String getArchivedName() {
@@ -169,64 +142,64 @@ public class CacheDownloader {
 		if (lastSlashIndex >= 0 && lastSlashIndex < Configuration.CACHE_LINK.length() - 1) {
 			String u = Configuration.CACHE_LINK.substring(lastSlashIndex + 1);
 			return u.replace("?dl=1", "");
-		} else {
+		}
+		else {
 			System.err.println("error retrieving archived name.");
 		}
 		return "";
 	}
 
 	public void unZip() throws IOException {
-/*		try (SevenZFile sevenZFile = new SevenZFile(new File(fileLocation.toString()))) {
-
-			SevenZArchiveEntry entry;
+		InputStream in = new BufferedInputStream(Files.newInputStream(Paths.get(fileLocation.toString())));
+		ZipInputStream zin = new ZipInputStream(in);
+		try (var ignored = new ZipFile(new File(fileLocation.toString()))) {
+			ZipEntry entry;
 			int numWritten = 0;
-			int files = countRegularFiles(new File(fileLocation.toString()));
+			int files = countRegularFiles(new ZipFile(fileLocation.toString()));
 
-			while ((entry = sevenZFile.getNextEntry()) != null) {
+			while ((entry = zin.getNextEntry()) != null) {
 				String fileName = entry.getName();
 				File newFile = new File(Signlink.getCacheDirectory() + File.separator + fileName);
 
-				if (entry.isDirectory()) {
+				if (entry.isDirectory())
 					new File(Signlink.getCacheDirectory() + entry.getName()).mkdir();
-				} else {
+				else {
 					int percentage = (int) (((double) numWritten++ / (double) files) * 100D);
-					client.drawLoadingText(percentage, Configuration.CLIENT_TITLE + " - Installing Cache " + percentage + "%");
+					client.drawLoadingText(percentage, Configuration.CLIENT_TITLE + " - Installing Cache ");
 
 					if (fileName.equals(fileLocation.getFileName().toString())) {
 						try {
-							unzip(sevenZFile, fileLocation.toString());
-						} catch (IOException e) {
-							e.printStackTrace();
-							// Handle the IO exception (log, show error message, etc.)
+							unzip(zin, fileLocation.toString());
+						}
+						catch (IOException e) {
+							e.printStackTrace(System.err);
 						}
 						break;
 					}
 
 					File file = new File(newFile.getParent());
-					if (!file.exists()) {
+					if (!file.exists())
 						Preconditions.checkState(file.mkdirs(), "Cannot create file.");
-					}
-
 					try {
-						unzip(sevenZFile, Signlink.getCacheDirectory() + fileName);
-					} catch (IOException e) {
-						e.printStackTrace();
-						// Handle the IO exception (log, show error message, etc.)
+						unzip(zin, Signlink.getCacheDirectory() + fileName);
+					}
+					catch (IOException e) {
+						e.printStackTrace(System.err);
 					}
 				}
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			// Handle other IO exceptions (log, show error message, etc.)
-		} finally {
+		}
+		catch (IOException e) {
+			e.printStackTrace(System.err);
+		}
+		finally {
 			deleteZip();
-
 			writeVersion(cacheVersionRemote);
-		}*/
+		}
 	}
 
-	private void unzip(SevenZFile sevenZFile, String outputFilePath) throws IOException {
-		try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(outputFilePath))) {
+	private void unzip(ZipInputStream sevenZFile, String outputFilePath) throws IOException {
+		try (var out = new BufferedOutputStream(new FileOutputStream(outputFilePath))) {
 			byte[] buffer = new byte[1024];
 			int bytesRead;
 			while ((bytesRead = sevenZFile.read(buffer)) != -1) {
@@ -234,29 +207,17 @@ public class CacheDownloader {
 			}
 		}
 	}
-	private static int countRegularFiles(File sevenZFile) throws IOException {
-		int count = 0;
 
-		File tempFile = File.createTempFile("tempSevenZFile", ".7z");
-		try {
-			// Create a temporary file to copy the content of the original SevenZFile
-			Files.copy(sevenZFile.toPath(), tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-
-			// Create a new SevenZFile instance for counting
-			try (SevenZFile tempSevenZFile = new SevenZFile(tempFile)) {
-				SevenZArchiveEntry entry;
-				while ((entry = tempSevenZFile.getNextEntry()) != null) {
-					if (!entry.isDirectory()) {
-						count++;
-					}
-				}
+	private static int countRegularFiles(final ZipFile zipFile) {
+		final Enumeration<? extends ZipEntry> entries = zipFile.entries();
+		int numRegularFiles = 0;
+		while (entries.hasMoreElements()) {
+			if (! entries.nextElement().isDirectory()) {
+				++numRegularFiles;
 			}
-		} finally {
-			// Cleanup: delete the temporary file
-			tempFile.delete();
 		}
-
-		return count;
+		log.info("Number of regular files in zip: " + numRegularFiles);
+		return numRegularFiles;
 	}
 
 

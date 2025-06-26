@@ -1,8 +1,8 @@
 package com.client.graphics.interfaces;
 
 /**
- * @author Kyros
- * @social Discord: Kyros
+ * @author DeadScape
+ * @social Discord: DeadScape
  * Website: www.kyros.net
  * @since 19/03/2024
  */

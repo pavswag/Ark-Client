@@ -11,8 +11,8 @@ import java.util.HashMap;
 import static com.client.graphics.interfaces.InterfaceAnimations.moveInterface;
 
 /**
- * @author Kyros
- * @social Discord: Kyros
+ * @author DeadScape
+ * @social Discord: DeadScape
  * Website: www.kyros.net
  * @since 22/03/2024
  */

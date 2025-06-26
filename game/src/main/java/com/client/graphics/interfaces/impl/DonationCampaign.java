@@ -13,7 +13,7 @@ public class DonationCampaign extends RSInterface {
         int index = 1;
 
         addSprite(24231, 34, dir); //background
-        addText(24232, "Kyros Donation Campaign", 2, 0xFF981F, true, true); //title
+        addText(24232, "DeadScape Donation Campaign", 2, 0xFF981F, true, true); //title
         configHoverButton(24233, "Close interface", dir, 21, 22, 21, 21, false, 24234); //close button
 
         configHoverButton(24235, "Deals", dir, 7, 8, 7, 7, false, 24236);

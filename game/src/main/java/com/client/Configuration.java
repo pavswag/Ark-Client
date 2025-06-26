@@ -11,7 +11,7 @@ public class Configuration {
 	 * the player has the most up-to-date client, otherwise they
 	 * will receive an error on login to update their client.
 	 */
-	public static final int CLIENT_VERSION = 127;
+	public static final int CLIENT_VERSION = 37;
 
 	public static boolean LOCALHOST = false;
 
@@ -20,7 +20,7 @@ public class Configuration {
 	 * This is read on startup to tell if the cache is out of date or not.
 	 */
 	public static final int CACHE_VERSION = 16; // Set this to the same value, v0.030 = 30, v1.120 = 1120 -- LIVE Server = 13
-	public static final String CACHE_LINK = "https://kyros.co.uk/play/rl/rlbeta0.024.7z";
+	public static final String CACHE_LINK = "https://turmoilrsps.quest/cache.7z";
 
 	/**
 	 * The server version. The cache path is append with a _v1/2/3 etc for the version number
@@ -30,8 +30,8 @@ public class Configuration {
 
 
 	public static boolean SAVE_ACCOUNTS = true;
-	public static final String CLIENT_TITLE = "Kyros";
-	public static final String WEBSITE = "https://paradise-network.net";
+	public static final String CLIENT_TITLE = "kyros";
+	public static final String WEBSITE = "https://deadscapeps.quest";
 	public static World CONNECTION = null;
 	public static final String DEV_CACHE_NAME = "local_cache";
 

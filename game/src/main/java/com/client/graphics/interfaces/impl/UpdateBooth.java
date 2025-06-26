@@ -11,7 +11,7 @@ public class UpdateBooth extends RSInterface {
     public static void mainInterface(TextDrawingArea[] tda) {
         RSInterface main = addInterface(25_500);
         addSprite(25_501, 1, "widget/background");
-        addText(25_502, "Kyros Update Booth", tda, 2, 0xff9933, true);
+        addText(25_502, "DeadScape Update Booth", tda, 2, 0xff9933, true);
 
         RSInterface scroll = addInterface(25_525);
         scroll.totalChildren(1);

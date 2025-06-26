@@ -62,14 +62,14 @@ class FeedPanel extends PluginPanel {
     static {
         RUNELITE_ICON = new ImageIcon(ImageUtil.loadImageResource(FeedPanel.class, "runelite.png"));
         OSRS_ICON = new ImageIcon(ImageUtil.loadImageResource(FeedPanel.class, "osrs.png"));
-        currentFeedItems.add(new FeedItem(FeedItemType.GROOT, null, "Groot Spawned", ";;groot to kill them", "https://kyros.fandom.com/wiki/Kyros_Wiki", System.currentTimeMillis()+TimeUnit.SECONDS.toMillis(30)));
-        currentFeedItems.add(new FeedItem(FeedItemType.DONOR_BOSS, null, "Donor Boss Spawend", ";;db to kill them", "https://kyros.fandom.com/wiki/Kyros_Wiki", System.currentTimeMillis()+TimeUnit.SECONDS.toMillis(30)));
-        currentFeedItems.add(new FeedItem(FeedItemType.SHOOTING_STAR, null, "Shooting Star Spawend", ";;star to get to the star", "https://kyros.fandom.com/wiki/Kyros_Wiki", System.currentTimeMillis()+TimeUnit.SECONDS.toMillis(30)));
-        currentFeedItems.add(new FeedItem(FeedItemType.VOTE_BOSS, null, "Vote Boss Spawend", ";;vb to kill them", "https://kyros.fandom.com/wiki/Kyros_Wiki", System.currentTimeMillis()+TimeUnit.SECONDS.toMillis(30)));
+        currentFeedItems.add(new FeedItem(FeedItemType.GROOT, null, "Groot Spawned", ";;groot to kill them", "https://kyros.fandom.com/wiki/DeadScape_Wiki", System.currentTimeMillis()+TimeUnit.SECONDS.toMillis(30)));
+        currentFeedItems.add(new FeedItem(FeedItemType.DONOR_BOSS, null, "Donor Boss Spawend", ";;db to kill them", "https://kyros.fandom.com/wiki/DeadScape_Wiki", System.currentTimeMillis()+TimeUnit.SECONDS.toMillis(30)));
+        currentFeedItems.add(new FeedItem(FeedItemType.SHOOTING_STAR, null, "Shooting Star Spawend", ";;star to get to the star", "https://kyros.fandom.com/wiki/DeadScape_Wiki", System.currentTimeMillis()+TimeUnit.SECONDS.toMillis(30)));
+        currentFeedItems.add(new FeedItem(FeedItemType.VOTE_BOSS, null, "Vote Boss Spawend", ";;vb to kill them", "https://kyros.fandom.com/wiki/DeadScape_Wiki", System.currentTimeMillis()+TimeUnit.SECONDS.toMillis(30)));
         currentFeedItems.add(new FeedItem(FeedItemType.SEASONAL, null, "Seasonal event has spawned", ";;seasonal to get there", "", System.currentTimeMillis()+TimeUnit.SECONDS.toMillis(30)));
         currentFeedItems.add(new FeedItem(FeedItemType.WILDY_BOSS, null, "Wildy event is active", ";;wildyevent to get there", "", System.currentTimeMillis()+TimeUnit.SECONDS.toMillis(30)));
-        currentFeedItems.add(new FeedItem(FeedItemType.HESPORI_BOSS, null, "Hespori is active", ";;worldevent to get there.", "https://kyros.fandom.com/wiki/Kyros_Wiki", System.currentTimeMillis()+TimeUnit.SECONDS.toMillis(30)));
-        currentFeedItems.add(new FeedItem(FeedItemType.HOTDROP, null, "HotDrop Boss is Alive!", ";;hotdrop to get there.", "https://kyros.fandom.com/wiki/Kyros_Wiki", System.currentTimeMillis()+TimeUnit.SECONDS.toMillis(30)));
+        currentFeedItems.add(new FeedItem(FeedItemType.HESPORI_BOSS, null, "Hespori is active", ";;worldevent to get there.", "https://kyros.fandom.com/wiki/DeadScape_Wiki", System.currentTimeMillis()+TimeUnit.SECONDS.toMillis(30)));
+        currentFeedItems.add(new FeedItem(FeedItemType.HOTDROP, null, "HotDrop Boss is Alive!", ";;hotdrop to get there.", "https://kyros.fandom.com/wiki/DeadScape_Wiki", System.currentTimeMillis()+TimeUnit.SECONDS.toMillis(30)));
     }
 
     private final FeedConfig config;

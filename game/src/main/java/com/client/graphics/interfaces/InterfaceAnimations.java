@@ -10,8 +10,8 @@ import static com.client.graphics.interfaces.RSInterface.interfaceCache;
 import static java.lang.Integer.valueOf;
 
 /**
- * @author Kyros
- * @social Discord: Kyros
+ * @author DeadScape
+ * @social Discord: DeadScape
  * Website: www.kyros.net
  * @since 22/03/2024
  */

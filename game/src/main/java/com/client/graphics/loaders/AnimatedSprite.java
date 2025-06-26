@@ -12,8 +12,8 @@ import java.net.URL;
 import java.util.Hashtable;
 
 /**
- * @author Kyros
- * @social Discord: Kyros
+ * @author DeadScape
+ * @social Discord: DeadScape
  * Website: www.kyros.net
  * @since 05/03/2024
  */

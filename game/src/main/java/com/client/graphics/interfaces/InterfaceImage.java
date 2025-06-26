@@ -5,8 +5,8 @@ import com.client.Sprite;
 import java.util.HashMap;
 
 /**
- * @author Kyros
- * @social Discord: Kyros
+ * @author DeadScape
+ * @social Discord: DeadScape
  * Website: www.kyros.net
  * @since 22/03/2024
  */

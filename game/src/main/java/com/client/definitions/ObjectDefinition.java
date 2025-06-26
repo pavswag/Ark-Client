@@ -191,7 +191,7 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 				objectDef.custom = true;
 				break;
 			case 36062:
-				objectDef.description = "Teleports you anywhere around Kyros.";
+				objectDef.description = "Teleports you anywhere around DeadScape.";
 				objectDef.actions = new String[] { "Activate", "Previous Location", null, null, null };
 				objectDef.custom = true;
 				break;
@@ -299,7 +299,7 @@ public final class ObjectDefinition extends DualNode implements RSObjectComposit
 				objectDef.custom = true;
 				break;
 			case 29064:
-				objectDef.name = "Kyros Leaderboards";
+				objectDef.name = "DeadScape Leaderboards";
 				objectDef.actions = new String[] { "View", null, null, null, null };
 				objectDef.custom = true;
 				break;

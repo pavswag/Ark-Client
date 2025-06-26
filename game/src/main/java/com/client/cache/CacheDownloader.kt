@@ -64,7 +64,7 @@ class CacheDownloader(
         } else {
             runBlocking {
                 val totalTimeMillis = measureTimeMillis {
-                    initialize()
+                   initialize()
                 }
                 val summary = createDownloadSummary(totalTimeMillis)
                 println(summary)
@@ -212,6 +212,7 @@ class CacheDownloader(
             val bytesDownloaded = response.body?.byteStream()?.use { inputStream ->
                 BufferedOutputStream(FileOutputStream(path), 128 * 1024).use { fos ->
                     inputStream.copyTo(fos)
+
                 }
             } ?: 0L
 

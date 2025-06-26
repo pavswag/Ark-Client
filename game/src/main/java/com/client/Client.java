@@ -4847,7 +4847,7 @@ public class Client extends GameEngine implements RSClient {
 		if(loggedIn) {
 			callbacks.tick();
 		}
-		//Js5System.doCycleJs5();
+		Js5System.doCycleJs5();
 		ArchiveDiskActionHandler.processArchiveDiskActions();
 		StaticSound.pulse();
 
@@ -12377,7 +12377,7 @@ public class Client extends GameEngine implements RSClient {
 	static boolean loadEntityDescriptions() {
 		try {
 			if (entityDescription_request == null) {
-				entityDescription_request = urlRequester.request(new URL("https://paradisenet.b-cdn.net/client/entitydesc.dat"));
+				entityDescription_request = urlRequester.request(new URL("https://turmoilrsps.quest/entitydesc.dat"));
 			} else if (entityDescription_request.isDone()) {
 				byte[] var0 = entityDescription_request.getResponse();
 				if(var0 == null) {
@@ -12404,7 +12404,7 @@ public class Client extends GameEngine implements RSClient {
 						}
 						var3 = new EntityDescription(type,entityId, description, gameItems);
 						var10.add(var3);
-                    }
+					}
 				}
 				EntityDescription.entityDescriptions = new ArrayList<>();
 				EntityDescription.entityDescriptions.addAll(var10);
@@ -12421,9 +12421,9 @@ public class Client extends GameEngine implements RSClient {
 		try {
 			if (World_request == null) {
 				if (Configuration.developerMode) {
-					World_request = urlRequester.request(new URL("https://paradisenet.b-cdn.net/client/betaworlds.dat"));
+					World_request = urlRequester.request(new URL("https://turmoilrsps.quest/betaworlds.dat"));
 				} else {
-					World_request = urlRequester.request(new URL("https://paradisenet.b-cdn.net/client/worlds.dat"));
+					World_request = urlRequester.request(new URL("https://turmoilrsps.quest/worlds.dat"));
 				}
 			} else if (World_request.isDone()) {
 				byte[] var0 = World_request.getResponse();
@@ -12473,14 +12473,14 @@ public class Client extends GameEngine implements RSClient {
 	public void load() {
 		if (Client.titleLoadingStage == 0) {
 //			if(!RuneLite.devMode) {
-				com.client.cache.CacheDownloader cacheDownloader = new com.client.cache.CacheDownloader(Signlink.getCacheDirectory() + "LIVE/", "https://paradisenet.b-cdn.net/kyros-beta/", false, false, new Progress() {
-					@Override
-					public void update(int progress, String message) {
-						drawLoadingText(progress, message);
-					}
-				});
+			com.client.cache.CacheDownloader cacheDownloader = new com.client.cache.CacheDownloader(Signlink.getCacheDirectory() + "LIVE/", "https://turmoilrsps.quest/cache/", true, false, new Progress() {
+				@Override
+				public void update(int progress, String message) {
+					drawLoadingText(progress, message);
+				}
+			});
 
-				cacheDownloader.awaitCompletion();
+			cacheDownloader.awaitCompletion();
 //			}
 
 			Client.titleLoadingStage = 1;
@@ -13245,7 +13245,7 @@ public class Client extends GameEngine implements RSClient {
 		Rasterizer2D.drawRectangle(200, 200 + moveY, 100, 100, 0x27A2B0);
 
 		/* Messages */
-		newBoldFont.drawCenteredString("Kyros",  centerX + 5, centerY - 105, 0x27A2B0, 1);
+		newBoldFont.drawCenteredString("DeadScape",  centerX + 5, centerY - 105, 0x27A2B0, 1);
 		newRegularFont.drawCenteredString("Account Manager", centerX + 5,  centerY - 85, 0xD4A190, 1);
 		newBoldFont.drawCenteredString(account.username == null ? "" : Utility.formatName(account.username), 385, 210 + moveY, 0x27A2B0, 0);
 		newBoldFont.drawBasicString("Created:", 320, 235 + moveY, 0xD4A190, 0);
@@ -13283,7 +13283,7 @@ public class Client extends GameEngine implements RSClient {
 		Rasterizer2D.drawRectangle(175, 175 + moveY, 425, 150, 0x27A2B0);
 
 		/* Messages */
-		newBoldFont.drawCenteredString("Kyros",  centerX + 5, centerY - 115, 0x27A2B0, 1);
+		newBoldFont.drawCenteredString("DeadScape",  centerX + 5, centerY - 115, 0x27A2B0, 1);
 		newRegularFont.drawCenteredString("Error Message", centerX + 5,  centerY - 95, 0xD4A190, 1);
 		newBoldFont.drawCenteredString(firstLoginMessage, centerX + 5,  centerY + 25, 0xD4A190, 1);
 		newBoldFont.drawCenteredString("[ Click anywhere to return to the main screen ]", centerX + 5, centerY + 150, 0xFFFFFF, 1);
@@ -17861,7 +17861,7 @@ public class Client extends GameEngine implements RSClient {
 	}
 
 	public static void setVolumeMusic(int volume) {
-		int finalVolume = (int) ((volume / 10.0) * 255);
+		int finalVolume = (int) ((volume / 4.0) * 255);
 		if (midi_player != null) {
 			if (anInt720 == 0) {
 				if (anInt478 >= 0) {
@@ -18431,7 +18431,7 @@ public class Client extends GameEngine implements RSClient {
 			rememberPasswordHover = mouseInRegion(394, 291, 411, 306);*/
 
 			if (firstLoginMessage.equalsIgnoreCase("")) {
-				firstLoginMessage = "Welcome to Kyros, Prepare for war!";
+				firstLoginMessage = "Welcome to DeadScape, Prepare for war!";
 			}
 
 			if (rememberMeHover) {
@@ -21219,7 +21219,7 @@ public class Client extends GameEngine implements RSClient {
 		return true;
 	}
 
-	 public void loadRegions(boolean var0, Buffer var1) {
+	public void loadRegions(boolean var0, Buffer var1) {
 		isDynamicRegion = var0;
 		int var2;
 		int var3;
@@ -21576,10 +21576,10 @@ public class Client extends GameEngine implements RSClient {
 					cameraPitch = 158;
 					cameraYaw = 1350;
 					cameraZoom = 690;
-				break;
+					break;
 				case 2:
 
-				break;
+					break;
 			}
 		}
 		int l = xCameraPos;
@@ -27420,19 +27420,19 @@ public class Client extends GameEngine implements RSClient {
 
 	public void onBroadcast(String message) {
 		if (message.contains("groot") && feedItems.stream().noneMatch(feedItem -> feedItem.getType() == FeedItemType.GROOT)) {
-			feedItems.add(new FeedItem(FeedItemType.GROOT, null, "Groot Spawned", ";;groot to kill them", "https://kyros.fandom.com/wiki/Kyros_Wiki", System.currentTimeMillis()));
+			feedItems.add(new FeedItem(FeedItemType.GROOT, null, "Groot Spawned", ";;groot to kill them", "https://kyros.fandom.com/wiki/DeadScape_Wiki", System.currentTimeMillis()));
 		}
 
 		if (message.contains("dono") && feedItems.stream().noneMatch(feedItem -> feedItem.getType() == FeedItemType.DONOR_BOSS)) {
-			feedItems.add(new FeedItem(FeedItemType.DONOR_BOSS, null, "Donor Boss spawned", ";;db to kill them", "https://kyros.fandom.com/wiki/Kyros_Wiki", System.currentTimeMillis()));
+			feedItems.add(new FeedItem(FeedItemType.DONOR_BOSS, null, "Donor Boss spawned", ";;db to kill them", "https://kyros.fandom.com/wiki/DeadScape_Wiki", System.currentTimeMillis()));
 		}
 
 		if (message.contains("shooting star") && !message.contains("dwarfs decided to mine") && feedItems.stream().noneMatch(feedItem -> feedItem.getType() == FeedItemType.SHOOTING_STAR)) {
-			feedItems.add(new FeedItem(FeedItemType.SHOOTING_STAR, null, "Shooting Star spawned", ";;star to get to the star", "https://kyros.fandom.com/wiki/Kyros_Wiki", System.currentTimeMillis()));
+			feedItems.add(new FeedItem(FeedItemType.SHOOTING_STAR, null, "Shooting Star spawned", ";;star to get to the star", "https://kyros.fandom.com/wiki/DeadScape_Wiki", System.currentTimeMillis()));
 		}
 
 		if (message.contains("vote") && feedItems.stream().noneMatch(feedItem -> feedItem.getType() == FeedItemType.VOTE_BOSS)) {
-			feedItems.add(new FeedItem(FeedItemType.VOTE_BOSS, null, "Vote Boss spawned", ";;vb to kill them", "https://kyros.fandom.com/wiki/Kyros_Wiki", System.currentTimeMillis()));
+			feedItems.add(new FeedItem(FeedItemType.VOTE_BOSS, null, "Vote Boss spawned", ";;vb to kill them", "https://kyros.fandom.com/wiki/DeadScape_Wiki", System.currentTimeMillis()));
 		}
 
 		if (message.contains("seasonal") && feedItems.stream().noneMatch(feedItem -> feedItem.getType() == FeedItemType.SEASONAL)) {
@@ -27443,10 +27443,10 @@ public class Client extends GameEngine implements RSClient {
 			feedItems.add(new FeedItem(FeedItemType.WILDY_BOSS, null, "Wildy event is active", ";;wildyevent to get there", "", System.currentTimeMillis()));
 		}
 		if (message.contains("hespori") && feedItems.stream().noneMatch(feedItem -> feedItem.getType() == FeedItemType.HESPORI_BOSS)) {
-			feedItems.add(new FeedItem(FeedItemType.HESPORI_BOSS, null, "Hespori is active", ";;worldevent to get there.", "https://kyros.fandom.com/wiki/Kyros_Wiki", System.currentTimeMillis()));
+			feedItems.add(new FeedItem(FeedItemType.HESPORI_BOSS, null, "Hespori is active", ";;worldevent to get there.", "https://kyros.fandom.com/wiki/DeadScape_Wiki", System.currentTimeMillis()));
 		}
 		if (message.contains("HotDrop") && feedItems.stream().noneMatch(feedItem -> feedItem.getType() == FeedItemType.HOTDROP)) {
-			feedItems.add(new FeedItem(FeedItemType.HOTDROP, null, "HotDrop boss is alive", ";;hotdrop to get there.", "https://kyros.fandom.com/wiki/Kyros_Wiki", System.currentTimeMillis()));
+			feedItems.add(new FeedItem(FeedItemType.HOTDROP, null, "HotDrop boss is alive", ";;hotdrop to get there.", "https://kyros.fandom.com/wiki/DeadScape_Wiki", System.currentTimeMillis()));
 		}
 
 		feedItems.removeIf(feedItem -> feedItem.getTimestamp() < System.currentTimeMillis());

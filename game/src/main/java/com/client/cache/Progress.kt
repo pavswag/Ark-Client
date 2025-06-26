@@ -1,7 +1,7 @@
 package com.client.cache
 
-/** * @author Kyros
- * @social Discord: Kyros
+/** * @author DeadScape
+ * @social Discord: DeadScape
  * Website: www.kyros.net
  * @since 11/03/2024 */
 abstract class Progress {

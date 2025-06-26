@@ -9,8 +9,8 @@ import java.io.FileReader;
 import java.io.IOException;
 
 /**
- * @author Kyros
- * @social Discord: Kyros
+ * @author DeadScape
+ * @social Discord: DeadScape
  * Website: www.kyros.net
  * @since 29/03/2024
  */
